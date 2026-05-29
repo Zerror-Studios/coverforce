@@ -3,7 +3,6 @@
 import Header from "@/components/common/Header";
 import Footer from "@/components/common/Footer";
 import LenisScroll from "@/components/common/LenisScroll";
-import SiteGuideBorders from "@/components/common/SiteGuideBorders";
 import { usePathname } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import gsap from "gsap";
@@ -37,8 +36,6 @@ export default function SiteLayout({ children }: SiteLayoutProps) {
           </header>
 
           <div className="relative w-full flex-1">
-            <SiteGuideBorders />
-
             <main className="relative z-10 w-full">{children}</main>
 
             <footer className="relative z-10 w-full">

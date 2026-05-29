@@ -131,8 +131,9 @@ function AcordMock() {
 
 const DistributionFlow = () => {
   return (
-    <section className="bg-white py-16 md:py-20 lg:py-24">
-      <Container>
+    <section className="bg-white">
+      <Container borderColor="#5353531A">
+        <div className="relative z-10 py-16 md:py-20 lg:py-24">
         <div className="mx-auto max-w-3xl text-center">
           <SectionEyebrow>The AI distribution flow</SectionEyebrow>
           <h2 className="mt-5 text-3xl font-semibold leading-tight tracking-tight text-[#0a143b] md:text-4xl lg:text-5xl">
@@ -191,6 +192,7 @@ const DistributionFlow = () => {
           <div className="flex justify-center lg:justify-end">
             <AcordMock />
           </div>
+        </div>
         </div>
       </Container>
     </section>

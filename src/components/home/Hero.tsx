@@ -27,7 +27,7 @@ const Hero = () => {
   return (
     <section className="relative overflow-hidden bg-[#141E4B] text-white">
 
-      <Container >
+      <Container borderColor="#FFFFFF1A">
         <div className="relative z-10 flex min-h-[calc(100svh-4.5rem)] flex-col justify-between py-16 md:py-20 lg:py-24">
           <div className="flex flex-1 flex-col items-center justify-center text-center">
             <Eyebrow>The AI distribution flow</Eyebrow>

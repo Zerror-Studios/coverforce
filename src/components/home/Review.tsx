@@ -125,9 +125,9 @@ const Review = () => {
   }, []);
 
   return (
-    <section className="bg-[#2a1f5c] py-16 text-white md:py-20 lg:py-24">
-      <Container>
-       <div className="relative overflow-hidden">
+    <section className="bg-[#141E4B] text-white">
+      <Container borderColor="#FFFFFF1A" className="border-t border-[#FFFFFF1A]">
+       <div className="relative overflow-hidden py-16 md:py-20 lg:py-24">
        <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between md:mb-12">
           <h2 className="max-w-2xl text-2xl font-semibold leading-tight tracking-tight md:text-3xl lg:text-4xl">
             Why Commercial Insurance{" "}

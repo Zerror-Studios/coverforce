@@ -47,9 +47,9 @@ function CarrierBar({ label, value }: CarrierBarProps) {
 
 const DataAdvantage = () => {
   return (
-    <section className="bg-[#0a143b] py-16 text-white md:py-20 lg:py-24">
-      <Container>
-        <div className="flex flex-col gap-10 lg:gap-14">
+    <section className="bg-[#141E4B] text-white">
+      <Container borderColor="#FFFFFF1A">
+        <div className="flex flex-col gap-10 lg:gap-14 py-16 md:py-20 lg:py-24">
           <div className="grid gap-8 lg:grid-cols-2 lg:items-end lg:gap-12">
             <div className="space-y-5">
               <Eyebrow className="text-white/70">The data advantage</Eyebrow>

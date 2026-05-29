@@ -20,10 +20,10 @@ const navItems: NavItem[] = [
 
 const Header = () => {
   return (
-    <nav className="bg-[#141E4B] text-white">
+    <nav className="bg-[#141E4B] text-white border-b border-[#FFFFFF1A]">
       <Container>
-        <div className="flex items-center justify-between gap-8 py-4 md:py-5">
-          <Link href="/" className="shrink-0">
+        <div className="relative flex items-center justify-between py-4 md:py-6">
+          <Link href="/" className="relative z-10 shrink-0">
             <Image
               src="/logo.svg"
               alt="CoverForce"
@@ -34,8 +34,8 @@ const Header = () => {
             />
           </Link>
 
-          <div className="hidden items-center gap-8 lg:flex xl:gap-10">
-            <ul className="flex items-center gap-6 xl:gap-8">
+          <div className="pointer-events-none absolute inset-0 hidden items-center justify-center lg:flex">
+            <ul className="pointer-events-auto flex items-center gap-6 xl:gap-8">
               {navItems.map(({ label, href, hasDropdown }) => (
                 <li key={label}>
                   <Link
@@ -53,18 +53,18 @@ const Header = () => {
                 </li>
               ))}
             </ul>
+          </div>
 
-            <div className="flex items-center gap-6 xl:gap-8">
-              <Link
-                href="/"
-                className="text-xs font-medium uppercase tracking-[0.12em] text-white/95 transition-colors hover:text-white"
-              >
-                Login
-              </Link>
-              <Button href="/" variant="primary" size="sm">
-                Book a call
-              </Button>
-            </div>
+          <div className="relative z-10 hidden items-center gap-6 lg:flex xl:gap-8">
+            <Link
+              href="/"
+              className="text-xs font-medium uppercase tracking-[0.12em] text-white/95 transition-colors hover:text-white"
+            >
+              Login
+            </Link>
+            <Button href="/" variant="primary" size="sm">
+              Book a call
+            </Button>
           </div>
         </div>
       </Container>

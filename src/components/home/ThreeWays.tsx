@@ -164,7 +164,7 @@ function DeveloperMock() {
 
 const ThreeWays = () => {
   return (
-    <section className="relative overflow-hidden bg-white py-16 md:py-20 lg:py-24">
+    <section className="relative overflow-hidden bg-white">
       <div
         className="pointer-events-none absolute -left-32 top-20 size-[420px] rounded-full bg-[#C4D4F8]/50 blur-3xl"
         aria-hidden
@@ -179,12 +179,29 @@ const ThreeWays = () => {
       />
 
       <Container>
-        <div className="relative z-10">
-          <h2 className="text-center text-3xl font-semibold leading-tight tracking-tight text-[#0a143b] md:text-4xl lg:text-5xl">
-            One platform. Three Ways to Use It.
-          </h2>
+        <div className="relative z-10 py-16 md:py-20 lg:py-24">
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-10 xl:gap-14">
+            <div className="space-y-5 md:space-y-6">
+              <p className="flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.14em] text-[#797979]">
+                <span
+                  className="inline-block size-2 shrink-0 rounded-full bg-[#797979]"
+                  aria-hidden
+                />
+                Built for your role
+              </p>
+              <h2 className="max-w-xl text-3xl font-semibold leading-[1.12] tracking-tight text-[#0a143b] md:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
+                One platform.
+                <br />
+                Three Ways to Use It.
+              </h2>
+            </div>
+            <p className="max-w-md text-base leading-relaxed text-[#0a143b]/70 md:text-lg lg:pt-8 xl:pt-10">
+              Whether you&apos;re routing submissions, quoting carriers, or
+              building on our API, CoverForce adapts to your role.
+            </p>
+          </div>
 
-          <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 lg:mt-16">
+          <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 lg:mt-14">
             <WayCard
               label="Wholesalers"
               tagline="Grow distribution efficiently"

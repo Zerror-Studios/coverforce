@@ -13,9 +13,9 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 
 const Explore = () => {
   return (
-    <section className="relative overflow-hidden bg-[radial-gradient(ellipse_at_50%_40%,#1e3a8a_0%,#0f1d4a_45%,#0a143b_100%)] py-20 text-white md:py-24 lg:py-28">
-      <Container>
-        <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
+    <section className="relative overflow-hidden  bg-[#141E4B] text-white">
+      <Container borderColor="#FFFFFF1A">
+        <div className="mx-auto min-h-[calc(100svh-10rem)] flex max-w-2xl flex-col items-center justify-center text-center">
           <Eyebrow>Explore the platform</Eyebrow>
 
           <h2 className="mt-5 text-3xl font-semibold leading-tight tracking-tight md:text-4xl lg:text-5xl">

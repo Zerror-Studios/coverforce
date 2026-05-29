@@ -92,8 +92,8 @@ function CarrierCard({ result }: { result: CarrierResult }) {
 
 const CarrierResults = () => {
   return (
-    <section className="bg-[#0a143b] text-white">
-      <Container>
+    <section className="bg-[#141E4B] text-white">
+      <Container borderColor="#FFFFFF1A" className="border-t border-b border-[#FFFFFF1A]">
         <div className="relative py-16 md:py-20 lg:py-24">
           {/* Wave — 130% width, anchored left top inside container */}
           <div
