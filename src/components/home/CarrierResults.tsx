@@ -1,7 +1,8 @@
 import React from "react";
 import Image from "next/image";
-import Link from "next/link";
-import Container from "../common/Container";
+import Button from "@/components/common/Button";
+import Container from "@/components/common/Container";
+
 type CarrierResult = {
   id: string;
   brand: React.ReactNode;
@@ -13,7 +14,9 @@ const carrierResults: CarrierResult[] = [
   {
     id: "employers",
     brand: (
-      <span className="font-black tracking-[0.2em] text-white">EMPLOYERS</span>
+      <span className="text-base font-black tracking-[0.18em] text-white md:text-lg">
+        EMPLOYERS
+      </span>
     ),
     title: "0% Error Rate",
     description:
@@ -22,7 +25,7 @@ const carrierResults: CarrierResult[] = [
   {
     id: "nationwide",
     brand: (
-      <span className="text-lg font-bold tracking-wide text-white">
+      <span className="text-base font-bold tracking-wide text-white md:text-lg">
         NATIONWIDE
       </span>
     ),
@@ -33,7 +36,7 @@ const carrierResults: CarrierResult[] = [
   {
     id: "chubb",
     brand: (
-      <span className="text-xl font-light tracking-[0.35em] text-white">
+      <span className="text-lg font-light tracking-[0.32em] text-white md:text-xl">
         CHUBB
       </span>
     ),
@@ -44,12 +47,17 @@ const carrierResults: CarrierResult[] = [
   {
     id: "liberty",
     brand: (
-      <span className="flex flex-col text-white leading-tight">
-        <span className="text-sm font-semibold italic">Liberty Mutual</span>
-        <span className="text-[10px] font-medium uppercase tracking-wider opacity-90">
-          Insurance
+      <div className="flex items-center gap-2 text-white">
+        <span className="flex size-8 items-center justify-center rounded-full border border-white/80 text-[10px] font-bold">
+          LM
         </span>
-      </span>
+        <div className="flex flex-col leading-tight">
+          <span className="text-sm font-semibold">Liberty Mutual</span>
+          <span className="text-[10px] font-medium uppercase tracking-wider text-white/70">
+            Insurance
+          </span>
+        </div>
+      </div>
     ),
     title: "5-Point Bind Advantage",
     description:
@@ -59,7 +67,7 @@ const carrierResults: CarrierResult[] = [
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p className="flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.14em] text-white/70">
+    <p className="flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.14em] text-white/60">
       <span className="inline-block size-2 shrink-0 bg-[#5B35E0]" aria-hidden />
       {children}
     </p>
@@ -68,13 +76,13 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 
 function CarrierCard({ result }: { result: CarrierResult }) {
   return (
-    <article className="flex flex-col gap-6 border-t border-white/15 pt-8 md:gap-8 md:pt-10">
-      <div className="min-h-[2.5rem]">{result.brand}</div>
+    <article className="flex flex-col gap-10 lg:gap-12 lg:px-8 xl:px-10 first:lg:pl-0 last:lg:pr-0">
+      <div className="min-h-[3rem]">{result.brand}</div>
       <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-white md:text-xl">
+        <h3 className="text-xl font-semibold text-white md:text-2xl">
           {result.title}
         </h3>
-        <p className="text-sm leading-relaxed text-white/65">
+        <p className="max-w-[240px] text-sm leading-relaxed text-white/55">
           {result.description}
         </p>
       </div>
@@ -84,49 +92,58 @@ function CarrierCard({ result }: { result: CarrierResult }) {
 
 const CarrierResults = () => {
   return (
-    <section className="relative overflow-hidden bg-[#0a143b] py-16 text-white md:py-20 lg:py-24">
-      <div
-        className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-70"
-        aria-hidden
-      >
-        <Image
-          src="/carrier-results-wave.svg"
-          alt=""
-          width={1440}
-          height={400}
-          className="h-auto w-[120%] max-w-none object-cover"
-        />
-      </div>
-
+    <section className="bg-[#0a143b] text-white">
       <Container>
-        <div className="relative z-10 flex flex-col gap-14 lg:gap-16">
-          <div className="grid gap-8 lg:grid-cols-2 lg:items-end lg:gap-12">
-            <div className="space-y-5">
-              <Eyebrow>Named carrier results</Eyebrow>
-              <h2 className="max-w-xl text-3xl font-semibold leading-tight tracking-tight md:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">
-                Carrier results that speak for themselves
-              </h2>
-            </div>
-
-            <div className="flex flex-col gap-6 lg:items-end lg:text-right">
-              <p className="max-w-md text-sm leading-relaxed text-white/75 lg:ml-auto">
-                Named outcomes provide clear, organized quote comparisons from
-                appointed carriers, helping agents from production carrier
-                partnerships.
-              </p>
-              <Link
-                href="/"
-                className="inline-flex w-fit rounded-full bg-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-[#0a143b] transition-opacity hover:opacity-90 lg:ml-auto"
-              >
-                Explore Carrier
-              </Link>
-            </div>
+        <div className="relative py-16 md:py-20 lg:py-24">
+          {/* Wave — 130% width, anchored left top inside container */}
+          <div
+            className="pointer-events-none absolute left-0 top-0 z-0 h-[min(55vw,420px)] w-[130%] md:h-[min(50vw,480px)] lg:h-[520px]"
+            aria-hidden
+          >
+            <Image
+              src="/carrier-results-wave.svg"
+              alt=""
+              fill
+              sizes="130vw"
+              className="object-contain object-left-top"
+            />
           </div>
 
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
-            {carrierResults.map((result) => (
-              <CarrierCard key={result.id} result={result} />
-            ))}
+          <div className="relative z-10 flex flex-col">
+            {/* Header */}
+            <div className="grid gap-8 lg:grid-cols-2 lg:items-end lg:gap-16">
+              <div className="space-y-5 lg:max-w-xl">
+                <Eyebrow>Named carrier results</Eyebrow>
+                <h2 className="text-3xl font-semibold leading-[1.12] tracking-tight md:text-4xl lg:text-[2.75rem]">
+                  Carrier results that speak for themselves
+                </h2>
+              </div>
+
+              <div className="flex flex-col gap-6 lg:items-end lg:text-right">
+                <p className="max-w-md text-sm leading-relaxed text-white/70 lg:ml-auto">
+                  Named outcomes provide clear, organized quote comparisons from
+                  appointed carriers, helping agents from production carrier
+                  partnerships.
+                </p>
+                <Button
+                  href="/"
+                  variant="primary"
+                  className="w-fit px-6 py-3 lg:ml-auto"
+                >
+                  Explore Carrier
+                </Button>
+              </div>
+            </div>
+
+            {/* Spacer so wave sits between header and stats */}
+            <div className="h-[min(28vw,200px)] md:h-[min(24vw,240px)] lg:h-[280px]" />
+
+            {/* Carrier columns */}
+            <div className="grid gap-14 border-t border-white/10 pt-14 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-white/15 lg:pt-16">
+              {carrierResults.map((result) => (
+                <CarrierCard key={result.id} result={result} />
+              ))}
+            </div>
           </div>
         </div>
       </Container>

@@ -77,28 +77,28 @@ const Footer = () => {
   return (
     <footer className="relative overflow-hidden bg-white text-[#0a143b]">
       <div
-        className="pointer-events-none absolute -left-12 top-0 bottom-0 hidden w-[min(38vw,480px)] opacity-90 sm:block"
+        className="pointer-events-none absolute inset-y-0 left-0 h-full w-[60%] opacity-90"
         aria-hidden
       >
         <Image
           src="/footer-decoration.svg"
           alt=""
-          width={520}
-          height={640}
-          className="h-full w-auto object-contain object-left-bottom"
+          fill
+          sizes="60vw"
+          className="object-cover object-left"
         />
       </div>
 
       <Container>
         <div className="relative z-10">
-          <div className="flex flex-col gap-8 border-b border-neutral-200 py-12 md:flex-row md:items-start md:justify-between md:py-14 lg:py-16">
+          <div className="flex flex-col gap-6 border-b border-neutral-200 pt-12 pb-5 md:flex-row md:items-start md:justify-between md:gap-8 md:pt-14 md:pb-6 lg:pt-16 lg:pb-7">
             <Link href="/" className="shrink-0">
               <Image
                 src="/footer-logo.svg"
                 alt="CoverForce"
-                width={180}
-                height={34}
-                className="h-7 w-auto md:h-8"
+                width={240}
+                height={45}
+                className="h-10 w-auto md:h-12 lg:h-14"
               />
             </Link>
             <p className="max-w-md text-sm leading-relaxed text-neutral-600 md:text-right">
@@ -107,7 +107,7 @@ const Footer = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-6 gap-y-10 border-b border-neutral-200 py-12 sm:grid-cols-3 lg:grid-cols-5 lg:gap-x-8 lg:py-14">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 border-b border-neutral-200 pt-8 pb-12 sm:grid-cols-3 lg:grid-cols-5 lg:gap-x-8 lg:pt-10 lg:pb-14">
             {footerColumns.map((column) => (
               <FooterColumn key={column.title} {...column} />
             ))}

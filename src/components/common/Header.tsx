@@ -1,4 +1,5 @@
 import Container from "./Container";
+import Button from "./Button";
 import Link from "next/link";
 import Image from "next/image";
 import { RiArrowDownSLine } from "@remixicon/react";
@@ -60,12 +61,9 @@ const Header = () => {
               >
                 Login
               </Link>
-              <Link
-                href="/"
-                className="rounded-full bg-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.08em] text-[#0a143b] transition-opacity hover:opacity-90"
-              >
+              <Button href="/" variant="primary" size="sm">
                 Book a call
-              </Link>
+              </Button>
             </div>
           </div>
         </div>

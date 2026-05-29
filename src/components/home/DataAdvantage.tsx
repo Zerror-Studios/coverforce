@@ -1,5 +1,6 @@
 import React, { type ReactNode } from "react";
 import Link from "next/link";
+import Button from "@/components/common/Button";
 import Container from "../common/Container";
 
 type EyebrowProps = {
@@ -62,12 +63,13 @@ const DataAdvantage = () => {
                 140,000+ proprietary carrier interactions. Every transaction
                 makes the platform smarter.
               </p>
-              <Link
+              <Button
                 href="/"
-                className="inline-flex w-fit rounded-full bg-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-[#0a143b] transition-opacity hover:opacity-90 lg:ml-auto"
+                variant="primary"
+                className="w-fit px-6 py-3 lg:ml-auto"
               >
                 Explore AI
-              </Link>
+              </Button>
             </div>
           </div>
 
