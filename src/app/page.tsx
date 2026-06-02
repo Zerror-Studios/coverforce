@@ -1,6 +1,7 @@
 import Hero from "@/components/home/Hero";
 import ThreeWays from "@/components/home/ThreeWays";
 import DistributionFlow from "@/components/home/DistributionFlow";
+import ProcessFlow from "@/components/home/ProcessFlow";
 import WhyCoverforce from "@/components/home/WhyCoverforce";
 import DataAdvantage from "@/components/home/DataAdvantage";
 import Review from "@/components/home/Review";
@@ -15,6 +16,7 @@ const HomePage = () => {
       <Hero />
       <ThreeWays />
       <DistributionFlow />
+      <ProcessFlow />
       <WhyCoverforce />
       <DataAdvantage />
       <div className="relative z-[1] h-0 overflow-visible">
