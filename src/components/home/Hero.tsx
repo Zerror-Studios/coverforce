@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import Button from "@/components/common/Button";
 import Container from "../common/Container";
 import SectionRadialGlow from "../common/SectionRadialGlow";
@@ -28,9 +30,35 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 }
 
 const Hero = () => {
+  const listRef = useRef<HTMLUListElement | null>(null);
+  const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
+  const [activeIndex, setActiveIndex] = useState(1);
+  const [indicator, setIndicator] = useState({ left: 0, width: 0 });
+
+  const statCount = useMemo(() => stats.length, []);
+
+  useLayoutEffect(() => {
+    const update = () => {
+      const listEl = listRef.current;
+      const itemEl = itemRefs.current[activeIndex];
+      if (!listEl || !itemEl) return;
+
+      const listRect = listEl.getBoundingClientRect();
+      const itemRect = itemEl.getBoundingClientRect();
+      setIndicator({
+        left: itemRect.left - listRect.left,
+        width: itemRect.width,
+      });
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [activeIndex, statCount]);
+
   return (
     <section className="relative isolate overflow-hidden bg-[#141E4B] text-white">
-      <Container borderColor="#FFFFFF1A">
+      <Container borderColor="#FFFFFF1A" className="px-0!">
         <div className="relative z-10 flex min-h-[calc(100svh-4.5rem)] flex-col justify-between py-16 md:py-20 lg:py-24">
           <div className="flex flex-1 flex-col items-center justify-center text-center">
             <Eyebrow>The AI distribution flow</Eyebrow>
@@ -49,17 +77,49 @@ const Hero = () => {
             </div>
           </div>
 
-          <div className="mt-16 border-t border-white/15 pt-10 md:mt-20 md:pt-12">
-            <ul className="grid grid-cols-2 gap-x-6 gap-y-10 md:flex md:divide-x md:divide-white/15">
-              {stats.map((stat) => (
+          <div className="mt-16 border-y border-white/15 md:mt-20 ">
+            <ul
+              ref={listRef}
+              className="relative grid grid-cols-2 gap-x-6 gap-y-10 md:flex md:py-10"
+              onMouseLeave={() => setActiveIndex(1)}
+            >
+              <div className="pointer-events-none absolute inset-y-0 hidden md:block" aria-hidden>
+                <div
+                  className="absolute top-0 h-0.5 rounded-full linear-line_color transition-[transform,width] duration-300 ease-out"
+                  style={{
+                    width: `${indicator.width}px`,
+                    transform: `translateX(${indicator.left}px)`,
+                  }}
+                />
+                <div
+                  className="absolute bottom-0 h-0.5 rounded-full linear-line_color transition-[transform,width] duration-300 ease-out"
+                  style={{
+                    width: `${indicator.width}px`,
+                    transform: `translateX(${indicator.left}px)`,
+                  }}
+                />
+              </div>
+              {stats.map((stat, index) => (
                 <li
                   key={stat.label}
-                  className="flex flex-col items-center gap-2 md:flex-1 md:px-8 lg:px-10 first:md:pl-0 last:md:pr-0"
+                  ref={(el) => {
+                    itemRefs.current[index] = el;
+                  }}
+                  onMouseEnter={() => setActiveIndex(index)}
+                  className="flex flex-col items-center gap-2 md:flex-1 md:px-8 "
                 >
-                  <p className="text-2xl font-heading font-regular tracking-tight md:text-3xl lg:text-5xl">
+                  <p
+                    className={`text-2xl font-heading font-regular tracking-tight transition-colors md:text-3xl lg:text-[2.5rem] ${
+                      index === activeIndex ? "text-white" : "text-[#8296B0]"
+                    }`}
+                  >
                     {stat.value}
                   </p>
-                  <p className="text-xs font-sans text-center leading-relaxed text-white/55 md:text-lg">
+                  <p
+                    className={`text-xs font-sans font-regular text-center leading-relaxed transition-colors md:text-lg ${
+                      index === activeIndex ? "text-white/80" : "text-[#8296B0]"
+                    }`}
+                  >
                     {stat.label}
                   </p>
                 </li>

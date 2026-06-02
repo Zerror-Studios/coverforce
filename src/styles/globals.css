@@ -43,3 +43,14 @@ button {
   transform: scale(1);
   opacity: 1;
 }
+.linear-line_color {
+  background: linear-gradient(
+    to right,
+    #0C00BA 0%,
+    #8052E9 35%,
+    #B87AFF 50%,
+    #8052E9 65%,
+    #0C00BA 100%
+  );
+  filter: blur(0.5px);
+}

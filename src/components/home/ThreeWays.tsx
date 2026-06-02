@@ -55,7 +55,7 @@ function WayCard({ label, tagline, taglinePosition = "right", variant, children,
             {label}
           </p>
           )}
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#8E68F9]">
+          <span className="cursor-pointer flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#8E68F9]">
             <Image src="/images/expandicon.svg" alt="" width={20} height={20} className="size-5" aria-hidden />
           </span>
         </div>
