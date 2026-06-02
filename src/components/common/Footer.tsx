@@ -112,7 +112,7 @@ const Footer = () => {
               <FooterColumn key={column.title} {...column} />
             ))}
 
-            <div className="space-y-5 flex flex-col">
+            <div className="gap-7 flex flex-col">
               {standaloneLinks.map((label) => (
                 <FooterLink
                   key={label}

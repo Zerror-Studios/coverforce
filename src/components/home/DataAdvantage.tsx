@@ -1,54 +1,31 @@
 import React, { type ReactNode } from "react";
 import Image from "next/image";
+import AnimatedCarrierBars from "@/components/common/AnimatedCarrierBar";
+import AnimatedPercent from "@/components/common/AnimatedPercent";
 import Button from "@/components/common/Button";
 import Container from "../common/Container";
 
 type EyebrowProps = {
   children: ReactNode;
   className?: string;
+  dotClassName?: string;
 };
 
-function Eyebrow({ children, className = "" }: EyebrowProps) {
+function Eyebrow({
+  children,
+  className = "",
+  dotClassName = "bg-linear-to-r from-[#FFFFFF] to-[#AFB3EF]",
+}: EyebrowProps) {
   return (
     <p
       className={`flex items-center gap-2.5 text-xs font-mono font-medium uppercase tracking-[0.14em] ${className}`}
     >
-      <span className="inline-block size-2 shrink-0 bg-linear-to-r from-[#FFFFFF] to-[#AFB3EF] rounded-full" aria-hidden />
+      <span
+        className={`inline-block size-2 shrink-0 rounded-full ${dotClassName}`}
+        aria-hidden
+      />
       {children}
     </p>
-  );
-}
-
-type CarrierBarProps = {
-  logo: string;
-  logoAlt: string;
-  value: number;
-};
-
-function CarrierBar({ logo, logoAlt, value }: CarrierBarProps) {
-  return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between gap-4">
-        <div className="relative h-6 w-20 shrink-0">
-          <Image
-            src={logo}
-            alt={logoAlt}
-            fill
-            className="object-contain object-left"
-            sizes="80px"
-          />
-        </div>
-        <span className="shrink-0 text-sm font-mono font-medium tabular-nums text-white">
-          {value}%
-        </span>
-      </div>
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/25">
-        <div
-          className="h-full rounded-full bg-white transition-all"
-          style={{ width: `${value}%` }}
-        />
-      </div>
-    </div>
   );
 }
 
@@ -97,13 +74,14 @@ const DataAdvantage = () => {
 
               <div className="relative z-10 flex min-h-0 flex-1 flex-col justify-between">
                 <div className="space-y-8">
-                  <Eyebrow className="text-[#525252]">
+                  <Eyebrow
+                    className="text-[#525252]"
+                    dotClassName="bg-[#525252]"
+                  >
                     Submission intelligence
                   </Eyebrow>
                   <div>
-                    <p className="text-5xl font-heading font-medium leading-none tracking-tight text-[#4F63E8]">
-                      95%
-                    </p>
+                    <AnimatedPercent className="text-5xl font-heading font-medium leading-none tracking-tight text-[#4F63E8]" />
                     <p className="mt-2 text-lg font-heading font-medium text-[#525252]">
                       Pre-fill Accuracy
                     </p>
@@ -149,18 +127,7 @@ const DataAdvantage = () => {
                   </div>
                 </div>
 
-                <div className="space-y-5">
-                  <CarrierBar
-                    logo="/images/coailtionloading-logo.svg"
-                    logoAlt="Coalition"
-                    value={94.8}
-                  />
-                  <CarrierBar
-                    logo="/images/chubbloading-logo.svg"
-                    logoAlt="Chubb"
-                    value={10.4}
-                  />
-                </div>
+                <AnimatedCarrierBars />
               </div>
             </article>
           </div>
