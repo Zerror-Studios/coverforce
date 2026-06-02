@@ -69,7 +69,7 @@ function Eyebrow({
 }) {
   return (
     <p
-      className={`flex items-center gap-2.5 text-sm font-mono font-medium uppercase tracking-[0.14em] ${className}`}
+      className={`flex items-center gap-2.5 text-xs font-mono font-medium uppercase tracking-[0.14em] ${className}`}
     >
       <span
         className="inline-block size-2 shrink-0 rounded-full bg-linear-to-r from-[#FFFFFF] to-[#AFB3EF]"
@@ -87,7 +87,7 @@ function CarrierCard({ result }: { result: CarrierResult }) {
         <CarrierLogo src={result.logo} alt={result.logoAlt} />
       </div>
       <div className="space-y-3">
-        <h3 className="text-xl font-heading font-regular text-white md:text-2xl tracking-tight">
+        <h3 className="text-xl font-heading font-regular text-white md:text-xl tracking-tight">
           {result.title}
         </h3>
         <p className="max-w-[240px] text-sm font-sans font-regular text-[#D1D1D1]text-sm leading-relaxed text-white/55">
@@ -125,13 +125,13 @@ const CarrierResults = () => {
                 <Eyebrow className="text-[#FFFFFF80]">
                   Named carrier results
                 </Eyebrow>
-                <h2 className="max-w-md text-3xl font-heading font-regular leading-tight tracking-tight md:text-4xl lg:text-4xl lg:leading-[1.15]">
+                <h2 className="max-w-md text-3xl font-heading font-regular leading-tight tracking-tight md:text-4xl lg:text-3xl lg:leading-[1.15]">
                   Carrier results that speak for themselves
                 </h2>
               </div>
 
               <div className="flex max-w-md flex-col items-start justify-end gap-6 text-left lg:ml-auto">
-                <p className="text-base font-sans font-regular leading-relaxed text-[#D1D1D1]">
+                <p className="text-sm font-sans font-regular leading-relaxed text-[#D1D1D1]">
                   Named outcomes provide clear, organized quote comparisons from
                   appointed carriers, helping agents from production carrier
                   partnerships.

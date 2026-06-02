@@ -53,7 +53,7 @@ function Eyebrow({
 }) {
   return (
     <p
-      className={`flex items-center gap-2.5 text-base font-mono font-medium uppercase tracking-[0.14em] ${className}`}
+      className={`flex items-center gap-2.5 text-xs font-mono font-medium uppercase tracking-[0.14em] ${className}`}
     >
       <span
         className="inline-block size-2 shrink-0 rounded-full bg-linear-to-r from-[#5B35E0] to-[#AFB3EF]"
@@ -153,14 +153,14 @@ const WhyCoverforce = () => {
           <div className="grid gap-8 lg:grid-cols-2 lg:items-end lg:justify-between lg:gap-12">
             <div className="flex flex-col justify-end space-y-5">
               <Eyebrow className="text-[#797979]">Why Coverforce</Eyebrow>
-              <h2 className="max-w-md text-3xl font-heading font-regular leading-tight tracking-tight text-[#424242] md:text-4xl lg:text-4xl lg:leading-[1.15]">
+              <h2 className="max-w-md text-3xl font-heading font-regular leading-tight tracking-tight text-[#424242] md:text-4xl lg:text-3xl lg:leading-[1.15]">
                 Infrastructure to Run Your Distribution Not a Tool to Quote One
                 Risk.
               </h2>
             </div>
 
             <div className="flex max-w-md flex-col items-start justify-end gap-6 text-left lg:ml-auto">
-              <p className="text-lg font-sans font-regular leading-relaxed text-[#091843]/75">
+              <p className="text-sm font-sans font-regular leading-relaxed text-[#091843]/75">
                 Insurance distribution should work like infrastructure — just
                 like Stripe for payments or Plaid for identity.
               </p>

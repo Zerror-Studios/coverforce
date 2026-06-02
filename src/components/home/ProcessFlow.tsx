@@ -105,10 +105,10 @@ const ProcessFlow = () => {
             <Container borderColor="#5353531A">
                 <div className="grid min-h-screen items-center gap-12 py-16 md:py-20 lg:grid-cols-2 lg:gap-16 lg:py-24 xl:gap-20">
                     <div>
-                        <p className="text-base font-mono font-medium uppercase tracking-[0.14em] text-[#0130BE]">
+                        <p className="text-sm font-mono font-medium uppercase tracking-[0.14em] text-[#0130BE]">
                             {intake.tag}
                         </p>
-                        <h3 className="mt-4 text-2xl font-heading font-regular tracking-tight text-[#0a143b] md:text-3xl lg:text-4xl">
+                        <h3 className="mt-4 text-2xl font-heading font-regular tracking-tight text-[#0a143b] md:text-3xl lg:text-3xl">
                             {intake.heading.pre}{" "}
                             <span className="bg-linear-to-r from-[#4F63E8] to-[#0130BE] bg-clip-text text-transparent">
                                 {intake.heading.highlightLines[0]} <br />
@@ -117,7 +117,7 @@ const ProcessFlow = () => {
                             {intake.heading.postLines[0]} <br />{" "}
                             {intake.heading.postLines[1]}
                         </h3>
-                        <p className="mt-5 max-w-lg text-sm leading-relaxed text-[#4A5778] font-sans font-regular md:text-base">
+                        <p className="mt-5 max-w-lg text-sm leading-relaxed text-[#4A5778] font-sans font-regular md:text-sm">
                             {intake.desc}
                         </p>
 
@@ -139,7 +139,7 @@ const ProcessFlow = () => {
                                             {icon}
                                         </span>
                                         <p
-                                            className={`text-sm leading-relaxed font-heading font-regular md:text-base ${feature.highlighted ? "text-[#0130BE]" : "text-[#424242]"
+                                            className={`text-sm leading-relaxed font-heading font-regular md:text-sm ${feature.highlighted ? "text-[#0130BE]" : "text-[#424242]"
                                                 }`}
                                         >
                                             {feature.text}{" "}

@@ -97,16 +97,16 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
           />
         </div>
 
-        <blockquote className="max-w-3xl text-xl font-heading font-regular tracking-tight text-[#1a1a2e] md:text-2xl lg:text-5xl">
+        <blockquote className="max-w-3xl text-xl font-heading font-regular tracking-tight text-[#1a1a2e] md:text-2xl lg:text-4xl">
           &ldquo;{testimonial.quote}&rdquo;
         </blockquote>
 
         <div className="flex items-end justify-between gap-6">
           <div>
-            <p className="text-sm font-mono font-medium uppercase tracking-[0.14em]  text-[#303030]">
+            <p className="text-xs font-mono font-medium uppercase tracking-[0.14em]  text-[#303030]">
               {testimonial.name}
             </p>
-            <p className="text-sm font-mono font-medium uppercase tracking-[0.14em] text-[#303030]">
+            <p className="text-xs font-mono font-medium uppercase tracking-[0.14em] text-[#303030]">
               {testimonial.role}
             </p>
           </div>
@@ -140,7 +140,7 @@ const Review = () => {
       <Container borderColor="#FFFFFF1A" className="border-t border-[#FFFFFF1A]">
         <div className="relative overflow-hidden py-16 md:py-20 lg:py-24">
           <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between md:mb-12">
-            <h2 className="max-w-2xl text-2xl font-heading font-regular tracking-tight md:text-3xl lg:text-4xl">
+            <h2 className="max-w-lg text-2xl font-heading font-regular tracking-tight md:text-3xl lg:text-3xl">
               Why Commercial Insurance{" "}
               <span className="text-white/40">Teams Trust CoverForce for Smarter Workflows</span>
             </h2>

@@ -4,6 +4,7 @@ import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import Button from "@/components/common/Button";
 import Container from "../common/Container";
 import SectionRadialGlow from "../common/SectionRadialGlow";
+import Image from "next/image";
 
 type StatItem = {
   value: string;
@@ -19,7 +20,7 @@ const stats: StatItem[] = [
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p className="flex items-center justify-center gap-2.5 font-mono text-sm font-medium uppercase tracking-[0.14em] text-white/70">
+    <p className="flex items-center justify-center gap-2.5 font-mono text-xs font-medium uppercase tracking-[0.14em] text-white/70">
       <span
         className="inline-block size-2 shrink-0 rounded-full bg-linear-to-r from-[#FFFFFF] to-[#AFB3EF]"
         aria-hidden
@@ -63,7 +64,7 @@ const Hero = () => {
           <div className="flex flex-1 flex-col items-center justify-center text-center">
             <Eyebrow>The AI distribution flow</Eyebrow>
 
-            <h1 className="mt-6 max-w-4xl text-3xl font-heading font-regular  leading-[1.1] tracking-tight md:text-4xl lg:text-5xl xl:text-6xl">
+            <h1 className="mt-6 max-w-4xl text-3xl font-heading font-regular  leading-[1.1] tracking-tight md:text-4xl lg:text-5xl xl:text-5xl">
               AI-Native Insurance <br /> Distribution Platform
             </h1>
 
@@ -77,27 +78,34 @@ const Hero = () => {
             </div>
           </div>
 
-          <div className="mt-16 border-y border-white/15 md:mt-20 ">
+          <div className="mt-16 md:mt-20 ">
             <ul
               ref={listRef}
               className="relative grid grid-cols-2 gap-x-6 gap-y-10 md:flex md:py-10"
               onMouseLeave={() => setActiveIndex(1)}
             >
-              <div className="pointer-events-none absolute inset-y-0 hidden md:block" aria-hidden>
-                <div
-                  className="absolute top-0 h-0.5 rounded-full linear-line_color transition-[transform,width] duration-300 ease-out"
-                  style={{
-                    width: `${indicator.width}px`,
-                    transform: `translateX(${indicator.left}px)`,
-                  }}
-                />
-                <div
-                  className="absolute bottom-0 h-0.5 rounded-full linear-line_color transition-[transform,width] duration-300 ease-out"
-                  style={{
-                    width: `${indicator.width}px`,
-                    transform: `translateX(${indicator.left}px)`,
-                  }}
-                />
+              <div className="pointer-events-none w-full absolute inset-y-0 hidden md:block" aria-hidden>
+                {/* Top full-width line + moving segment */}
+                <div className="absolute left-0 top-0 h-px w-full bg-white/5">
+                  <div
+                    className="h-full rounded-full linear-line_color transition-[transform,width] duration-300 ease-out"
+                    style={{
+                      width: `${indicator.width}px`,
+                      transform: `translateX(${indicator.left}px)`,
+                    }}
+                  />
+                </div>
+
+                {/* Bottom full-width line + moving segment */}
+                <div className="absolute left-0 bottom-0 h-px w-full bg-white/5">
+                  <div
+                    className="h-full rounded-full linear-line_color transition-[transform,width] duration-300 ease-out"
+                    style={{
+                      width: `${indicator.width}px`,
+                      transform: `translateX(${indicator.left}px)`,
+                    }}
+                  />
+                </div>
               </div>
               {stats.map((stat, index) => (
                 <li
@@ -109,7 +117,7 @@ const Hero = () => {
                   className="flex flex-col items-center gap-2 md:flex-1 md:px-8 "
                 >
                   <p
-                    className={`text-2xl font-heading font-regular tracking-tight transition-colors md:text-3xl lg:text-[2.5rem] ${
+                    className={`text-2xl font-heading font-regular tracking-tight transition-colors md:text-3xl lg:text-4xl ${
                       index === activeIndex ? "text-white" : "text-[#8296B0]"
                     }`}
                   >
@@ -128,9 +136,11 @@ const Hero = () => {
           </div>
         </div>
 
-        <div className="relative h-[min(420px,55vw)] w-full md:h-[480px] lg:h-[460px]">
+        <div className="relative h-[min(420px,55vw)] w-full md:h-[480px] lg:h-[450px] -mb-10">
           <SectionRadialGlow className="absolute left-1/2 top-20 z-0 -translate-x-1/2 -translate-y-1/3 md:top-20" />
-          <div className="relative z-10 h-full w-full" aria-label="Partner network" />
+          <div className="relative z-10 h-full w-full " aria-label="Partner network" >
+            <Image src="/images/network.svg" alt="Hero background" width={100} height={100} className="h-full w-full object-contain " />
+          </div>
         </div>
       </Container>
     </section>

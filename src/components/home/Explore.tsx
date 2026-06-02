@@ -12,7 +12,7 @@ function Eyebrow({
 }) {
   return (
     <p
-      className={`flex items-center justify-center gap-2.5 font-mono text-sm font-medium uppercase tracking-[0.14em] ${className}`}
+      className={`flex items-center justify-center gap-2.5 font-mono text-xs font-medium uppercase tracking-[0.14em] ${className}`}
     >
       <span
         className="inline-block size-2 shrink-0 rounded-full bg-linear-to-r from-[#FFFFFF] to-[#AFB3EF]"
@@ -32,11 +32,11 @@ const Explore = () => {
         <div className="relative z-10 mx-auto flex min-h-[calc(100svh-2rem)] max-w-2xl flex-col items-center justify-center text-center">
           <Eyebrow className="text-[#FFFFFF80]">Explore the platform</Eyebrow>
 
-          <h2 className="mt-5 text-3xl font-heading font-regular leading-tight tracking-tight md:text-5xl lg:text-6xl lg:leading-[1.1]">
+          <h2 className="mt-5 text-3xl font-heading font-regular leading-tight tracking-tight md:text-5xl lg:text-5xl lg:leading-[1.1]">
             Start a New Quote
           </h2>
 
-          <p className="mt-5 text-base font-sans font-regular leading-relaxed text-[#FFFFFF]">
+          <p className="mt-5 text-sm font-sans font-regular leading-relaxed text-[#FFFFFF]">
             Start quoting faster with CoverForce. <br /> Submit once, compare carriers,
             and bind in one platform.
           </p>

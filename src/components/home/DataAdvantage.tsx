@@ -11,7 +11,7 @@ type EyebrowProps = {
 function Eyebrow({ children, className = "" }: EyebrowProps) {
   return (
     <p
-      className={`flex items-center gap-2.5 text-base font-mono font-medium uppercase tracking-[0.14em] ${className}`}
+      className={`flex items-center gap-2.5 text-xs font-mono font-medium uppercase tracking-[0.14em] ${className}`}
     >
       <span className="inline-block size-2 shrink-0 bg-linear-to-r from-[#FFFFFF] to-[#AFB3EF] rounded-full" aria-hidden />
       {children}
@@ -38,7 +38,7 @@ function CarrierBar({ logo, logoAlt, value }: CarrierBarProps) {
             sizes="80px"
           />
         </div>
-        <span className="shrink-0 text-base font-mono font-medium tabular-nums text-white">
+        <span className="shrink-0 text-sm font-mono font-medium tabular-nums text-white">
           {value}%
         </span>
       </div>
@@ -60,13 +60,13 @@ const DataAdvantage = () => {
           <div className="grid gap-8 lg:grid-cols-2 lg:items-end lg:justify-between lg:gap-12">
             <div className="flex flex-col justify-end space-y-5">
               <Eyebrow className="text-[#FFFFFF80]">The data advantage</Eyebrow>
-              <h2 className="max-w-md text-3xl font-heading font-regular leading-tight tracking-tight md:text-4xl lg:text-4xl lg:leading-[1.15]">
+              <h2 className="max-w-md text-3xl font-heading font-regular leading-tight tracking-tight md:text-4xl lg:text-3xl lg:leading-[1.15]">
                 Intelligence Built on Data no One Else has
               </h2>
             </div>
 
-            <div className="flex max-w-md flex-col items-start justify-end gap-6 text-left lg:ml-auto">
-              <p className="text-xl font-sans font-regular leading-relaxed text-white/80">
+            <div className="flex max-w-sm flex-col items-start justify-end gap-6 text-left lg:ml-auto">
+              <p className="text-sm font-sans font-regular leading-relaxed text-white/80">
                 140,000+ proprietary carrier interactions. Every transaction
                 makes the platform smarter.
               </p>
@@ -101,10 +101,10 @@ const DataAdvantage = () => {
                     Submission intelligence
                   </Eyebrow>
                   <div>
-                    <p className="text-6xl font-heading font-medium leading-none tracking-tight text-[#4F63E8]">
+                    <p className="text-5xl font-heading font-medium leading-none tracking-tight text-[#4F63E8]">
                       95%
                     </p>
-                    <p className="mt-2 text-xl font-heading font-medium text-[#525252]">
+                    <p className="mt-2 text-lg font-heading font-medium text-[#525252]">
                       Pre-fill Accuracy
                     </p>
                   </div>
@@ -114,7 +114,7 @@ const DataAdvantage = () => {
                   <h3 className="text-lg font-heading font-medium md:text-2xl max-w-xs">
                     Upload an ACORD form AI reads it instantly
                   </h3>
-                  <p className="text-base font-sans font-regular leading-relaxed text-[#525252]">
+                  <p className="text-sm font-sans font-regular leading-relaxed text-[#525252]">
                     Pre-fill with precision, no manual entry, no errors
                   </p>
                 </div>
@@ -143,7 +143,7 @@ const DataAdvantage = () => {
                     <h3 className="text-3xl font-heading font-medium md:text-3xl max-w-xs">
                       Same risk, <br /> different carriers.
                     </h3>
-                    <p className="max-w-sm text-base font-sans font-regular leading-relaxed text-[#FFFFFF]">
+                    <p className="max-w-[18rem] text-sm font-sans font-regular leading-relaxed text-[#FFFFFF]">
                       See which carriers quote which risks before you submit.
                     </p>
                   </div>

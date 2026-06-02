@@ -438,11 +438,11 @@ const ThreeWays = () => {
                 <span className="inline-block size-2 shrink-0 rounded-full bg-[#797979]" aria-hidden />
                 Built for your role
               </p>
-              <h2 className="max-w-xl text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#424242] md:text-4xl lg:text-4xl lg:leading-[1.1]">
+              <h2 className="max-w-xl text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#424242] md:text-4xl lg:text-3xl lg:leading-[1.1]">
                 One platform.<br />Three Ways to Use It.
               </h2>
             </div>
-            <p className="max-w-md text-base leading-relaxed text-[#091843BF] md:text-base lg:pt-8 xl:pt-10">
+            <p className="max-w-sm text-sm leading-relaxed text-[#091843BF] md:text-sm lg:pt-8 xl:pt-10">
               Whether you&apos;re routing submissions, quoting carriers, or building on our API, CoverForce adapts to your role.
             </p>
           </div>

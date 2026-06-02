@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Container from "./Container";
 import Link from "next/link";
 import Image from "next/image";
@@ -42,9 +43,27 @@ const legalLinks: LegalLink[] = [
 function FooterBullet() {
   return (
     <span
-      className="inline-block size-2 rounded-full shrink-0 bg-[#5B35E0]"
+      className="absolute left-0 top-1/2 size-2 -translate-y-1/2 origin-left scale-0 rounded-full bg-[#5B35E0] transition-transform duration-200 ease-out group-hover:scale-100"
       aria-hidden
     />
+  );
+}
+
+type FooterLinkProps = {
+  href: string;
+  children: ReactNode;
+  className?: string;
+};
+
+function FooterLink({ href, children, className = "" }: FooterLinkProps) {
+  return (
+    <Link
+      href={href}
+      className={`group relative inline-flex pl-0 font-mono text-xs leading-0 font-medium uppercase tracking-[0.1em] text-[#3F3F3F] transition-[padding-left,color] duration-200 ease-out hover:pl-3.5 hover:text-[#5B35E0] ${className}`}
+    >
+      <FooterBullet />
+      {children}
+    </Link>
   );
 }
 
@@ -53,19 +72,13 @@ type FooterColumnProps = FooterColumnData;
 function FooterColumn({ title, links }: FooterColumnProps) {
   return (
     <div>
-      <h3 className="mb-5 flex items-center gap-2.5 font-mono text-sm font-medium uppercase tracking-[0.14em] text-[#5B35E0]">
-        <FooterBullet />
+      <h3 className="mb-5 flex items-center gap-2.5 font-mono text-xs font-medium uppercase tracking-[0.14em] text-[#5B35E0]">
         {title}
       </h3>
       <ul className="space-y-3.5">
         {links.map((label) => (
           <li key={label}>
-            <Link
-              href="/"
-              className="font-mono text-sm font-medium uppercase tracking-[0.1em] text-[#3F3F3F] transition-colors hover:text-[#5B35E0]"
-            >
-              {label}
-            </Link>
+            <FooterLink href="/">{label}</FooterLink>
           </li>
         ))}
       </ul>
@@ -76,19 +89,6 @@ function FooterColumn({ title, links }: FooterColumnProps) {
 const Footer = () => {
   return (
     <footer className="relative overflow-hidden bg-white text-[#0a143b]">
-      <div
-        className="pointer-events-none absolute inset-y-0 left-0 h-full w-[60%] opacity-90"
-        aria-hidden
-      >
-        <Image
-          src="/footer-decoration.svg"
-          alt=""
-          fill
-          sizes="60vw"
-          className="object-cover object-left"
-        />
-      </div>
-
       <Container borderColor="#5353531A">
         <div className="relative z-10">
           <div className="flex flex-col gap-6 border-b border-neutral-200 pt-12 pb-5 md:flex-row md:items-start md:justify-between md:gap-8 md:pt-14 md:pb-6 lg:pt-16 lg:pb-7">
@@ -98,10 +98,10 @@ const Footer = () => {
                 alt="CoverForce"
                 width={240}
                 height={45}
-                className="h-10 w-auto md:h-12 lg:h-14"
+                className="h-10 w-auto md:h-12 lg:h-12"
               />
             </Link>
-            <p className="max-w-xs font-sans font-regular text-sm leading-relaxed text-neutral-600 md:text-left">
+            <p className="max-w-xs font-sans font-regular text-xs leading-relaxed text-neutral-600 md:text-left">
               CoverForce brings smarter insurance distribution into one
               connected workflow.
             </p>
@@ -112,34 +112,28 @@ const Footer = () => {
               <FooterColumn key={column.title} {...column} />
             ))}
 
-            <div className="space-y-5">
+            <div className="space-y-5 flex flex-col">
               {standaloneLinks.map((label) => (
-                <Link
+                <FooterLink
                   key={label}
                   href="/"
-                  className="flex items-center gap-2.5 font-mono text-sm font-medium uppercase tracking-[0.14em] text-[#3F3F3F] hover:text-[#5B35E0] transition-colors"
+                  className="tracking-[0.14em]"
                 >
-                  <FooterBullet />
                   {label}
-                </Link>
+                </FooterLink>
               ))}
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 py-8 font-mono text-sm font-medium uppercase tracking-[0.1em] text-[#3F3F3F] sm:flex-row sm:items-center sm:justify-between md:py-10">
+          <div className="flex flex-col gap-4 py-8 font-mono text-xs font-medium uppercase tracking-[0.1em] text-[#3F3F3F] sm:flex-row sm:items-center sm:justify-between md:py-10">
             <ul className="flex flex-wrap gap-6 sm:gap-8">
               {legalLinks.map(({ label, href }) => (
                 <li key={label}>
-                  <Link
-                    href={href}
-                    className="transition-colors hover:text-[#5B35E0]"
-                  >
-                    {label}
-                  </Link>
+                  <FooterLink href={href}>{label}</FooterLink>
                 </li>
               ))}
             </ul>
-            <p className="font-mono text-sm font-medium text-[#3F3F3F] sm:text-right">
+            <p className="font-mono text-xs font-medium text-[#3F3F3F] sm:text-right">
               © {new Date().getFullYear()} — Copyright Insuredge Technologies
             </p>
           </div>
