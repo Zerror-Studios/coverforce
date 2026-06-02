@@ -128,7 +128,7 @@ const Hero = () => {
           </div>
         </div>
 
-        <div className="relative h-[min(420px,55vw)] w-full md:h-[480px] lg:h-[500px]">
+        <div className="relative h-[min(420px,55vw)] w-full md:h-[480px] lg:h-[460px]">
           <SectionRadialGlow className="absolute left-1/2 top-20 z-0 -translate-x-1/2 -translate-y-1/3 md:top-20" />
           <div className="relative z-10 h-full w-full" aria-label="Partner network" />
         </div>

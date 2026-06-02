@@ -1,6 +1,6 @@
 import React from 'react'
 import Container from '../common/Container'
-import { RiCheckboxCircleFill, RiDownloadLine, RiMailLine, RiSparkling2Fill } from '@remixicon/react';
+import { RiMailLine, RiSparkling2Fill } from '@remixicon/react';
 
 type FeatureItem = {
     id: string;
@@ -11,106 +11,35 @@ type FeatureItem = {
 
 const features: FeatureItem[] = [
     {
-      id: "accept",
-      icon: <RiMailLine className="size-3" />,
-      text: "Accept submissions from email, ACORD PDFs, loss runs, prior policies, manual entry, or AMS sync.",
+        id: "accept",
+        icon: <RiMailLine className="size-3" />,
+        text: "Accept submissions from email, ACORD PDFs, loss runs, prior policies, manual entry, or AMS sync.",
     },
     {
-      id: "ai",
-      icon: <RiSparkling2Fill className="size-3" />,
-      highlighted: true,
-      text: (
-        <>
-          AI reads ACORDs, prior policies, and loss runs with 95%+ accuracy.{" "}
-          <span className="inline-flex rounded-full bg-[#0130BE] px-4 py-0.2 text-[10px] uppercase tracking-wide text-white">
-            AI
-          </span>
-        </>
-      ),
+        id: "ai",
+        icon: <RiSparkling2Fill className="size-3" />,
+        highlighted: true,
+        text: (
+            <>
+                AI reads ACORDs, prior policies, and loss runs with 95%+ accuracy.{" "}
+                <span className="inline-flex rounded-full bg-[#0130BE] px-4 py-0.2 text-[10px] uppercase tracking-wide text-white">
+                    AI
+                </span>
+            </>
+        ),
     },
     {
-      id: "customer",
-      icon: <RiMailLine className="size-3" />,
-      text: "Customer details are saved and reused for future submissions.",
+        id: "customer",
+        icon: <RiMailLine className="size-3" />,
+        text: "Customer details are saved and reused for future submissions.",
     },
-  ];
-  
+];
+
 
 function AcordMock() {
     return (
-        <div className="relative w-full max-w-md">
-            <div className="absolute -right-4 -top-4 z-10 rounded-xl border border-neutral-100 bg-white/95 p-4 shadow-lg backdrop-blur-sm md:-right-8 md:-top-6">
-                <div className="flex items-end gap-1">
-                    {[20, 35, 28, 50, 42, 65].map((h, i) => (
-                        <div
-                            key={i}
-                            className="w-2 rounded-sm bg-[#0130BE]/70"
-                            style={{ height: `${h}px` }}
-                        />
-                    ))}
-                </div>
-                <p className="mt-2 text-lg font-semibold text-[#0130BE]">+326%</p>
-            </div>
-
-            <div className="relative rounded-2xl border border-neutral-100 bg-white p-6 shadow-xl md:p-8">
-                <div className="flex items-center justify-between border-b border-neutral-100 pb-4">
-                    <span className="text-sm font-semibold text-[#0a143b]">ACORD 25</span>
-                    <button
-                        type="button"
-                        className="flex items-center gap-1.5 text-xs font-medium text-neutral-500"
-                    >
-                        Download
-                        <RiDownloadLine className="size-4" />
-                    </button>
-                </div>
-
-                <dl className="mt-5 space-y-3 text-sm">
-                    <div>
-                        <dt className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
-                            Insured
-                        </dt>
-                        <dd className="font-medium text-[#0a143b]">Construction LLC</dd>
-                    </div>
-                    <div>
-                        <dt className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
-                            Policy number
-                        </dt>
-                        <dd className="font-medium text-[#0a143b]">GL-2024-98765</dd>
-                    </div>
-                </dl>
-
-                <div className="mt-6">
-                    <div className="flex items-center justify-between">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-                            Limits summary
-                        </p>
-                        <button type="button" className="text-xs font-medium text-[#0130BE]">
-                            View all
-                        </button>
-                    </div>
-                    <ul className="mt-3 space-y-2 text-sm">
-                        <li className="flex justify-between text-[#0a143b]">
-                            <span>General liability</span>
-                            <span className="font-semibold">$1,000,000</span>
-                        </li>
-                        <li className="flex justify-between text-[#0a143b]">
-                            <span>Automobile liability</span>
-                            <span className="font-semibold">$500,000</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div className="mt-6 flex items-center gap-2 border-t border-neutral-100 pt-5">
-                    <RiCheckboxCircleFill className="size-5 text-[#0130BE]" />
-                    <div>
-                        <p className="text-xs font-semibold uppercase tracking-wide text-[#0130BE]">
-                            Verified
-                        </p>
-                        <p className="text-[11px] text-neutral-500">
-                            This certificate is valid.
-                        </p>
-                    </div>
-                </div>
+        <div className="relative w-full flex justify-center items-center aspect-square ">
+            <div className="w-full h-full">
             </div>
         </div>
     );
@@ -158,7 +87,7 @@ const ProcessFlow = () => {
                         </ul>
                     </div>
 
-                    <div className="flex justify-center lg:justify-end">
+                    <div className="flex justify-center items-center">
                         <AcordMock />
                     </div>
                 </div>
