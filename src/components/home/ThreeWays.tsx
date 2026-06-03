@@ -1,17 +1,15 @@
-import React, { type ReactNode } from "react";
+import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 
 import Container from "../common/Container";
-import AccentCardGradFlow from "./AccentCardGradFlow";
-import DeveloperCardGradFlow from "./DeveloperCardGradFlow";
-import LightCardGradFlow from "./LightCardGradFlow";
+import WayCardGradFlow, { type GradFlowVariant } from "./WayCardGradFlow";
 
 const WholesalerMock = dynamic(() => import("./WholesalerMock"), {
   loading: () => <MockPlaceholder />,
 });
 const BrokerMockWithCardHover = dynamic(
-  () => import("./BrokerMock").then((mod) => ({ default: mod.BrokerMockWithCardHover })),
+  () => import("./BrokerMock").then((m) => ({ default: m.BrokerMockWithCardHover })),
   { loading: () => <MockPlaceholder /> },
 );
 const DeveloperMock = dynamic(() => import("./DeveloperMock"), {
@@ -35,14 +33,8 @@ type WayCardProps = {
   children: ReactNode;
   className?: string;
   wide?: boolean;
-  accent?: boolean;
-  cardBg?: string;
-  cardBgImage?: string;
-  /** Animated GradFlow background (Brokers / Startups) */
-  lightGradFlow?: boolean;
-  /** Animated GradFlow background (Developers) */
-  developerGradFlow?: boolean;
-  /** Developer mock anchors to bottom via absolute positioning */
+  gradFlow?: GradFlowVariant;
+  lightStrip?: boolean;
   mockAlign?: "center" | "bottom";
 };
 
@@ -75,58 +67,45 @@ function WayCard({
   children,
   className = "",
   wide = false,
-  accent = false,
-  cardBg,
-  cardBgImage,
-  lightGradFlow = false,
-  developerGradFlow = false,
+  gradFlow,
+  lightStrip = false,
   mockAlign = "center",
 }: WayCardProps) {
   const isDark = variant === "dark";
-  const usesGradFlow = accent || lightGradFlow || developerGradFlow;
-
-  const surfaceClass = cardBg && !usesGradFlow
-    ? ""
-    : usesGradFlow
-      ? ""
-      : isDark
-        ? "bg-gradient-to-br from-[#5B35E0] via-[#4a2d9e] to-[#3d2878]"
-        : "bg-gradient-to-br from-[#EDE8F8] via-[#F5F3FA] to-white";
+  const textClass =
+    gradFlow === "developer"
+      ? "text-[#0a143b]"
+      : gradFlow === "accent" || isDark
+        ? "text-white"
+        : "text-[#0a143b]";
 
   return (
     <article
-      className={`way-card-shell cursor-pointer relative overflow-hidden rounded-sm ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${cardBg ? "text-[#0a143b]" : accent || isDark ? "text-white" : "text-[#0a143b]"} ${className}`}
+      className={`way-card-shell relative cursor-pointer overflow-hidden rounded-sm ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${textClass} ${className}`}
     >
       <div className="way-card-body absolute inset-0 flex flex-col p-5 md:p-6">
-        {accent && <AccentCardGradFlow />}
-        {lightGradFlow && <LightCardGradFlow />}
-        {developerGradFlow && <DeveloperCardGradFlow />}
-        {(cardBg && !usesGradFlow) || surfaceClass ? (
-          <div
-            className={`pointer-events-none absolute inset-0 ${surfaceClass}`}
-            style={cardBg && !usesGradFlow ? { backgroundColor: cardBg } : undefined}
-            aria-hidden
-          />
-        ) : null}
-        {cardBgImage && !lightGradFlow && (
-          <div className="pointer-events-none absolute -translate-y-1/5 left-1/2 z-0 h-[150%] w-[150%] -translate-x-1/2 md:-top-24 lg:-top-28">
-            <Image src={cardBgImage} alt="" fill className="h-full w-full object-cover object-center" sizes="(max-width: 768px) 100vw, 50vw" aria-hidden />
-          </div>
-        )}
+        {gradFlow && <WayCardGradFlow variant={gradFlow} />}
         <div className="relative z-10 flex min-h-0 flex-1 flex-col">
-          <div className={`flex items-start gap-4 ${cardBgImage ? "justify-end" : "justify-between"}`}>
-            {!cardBgImage && (
+          <div className={`flex items-start gap-4 ${lightStrip ? "justify-end" : "justify-between"}`}>
+            {!lightStrip && (
               <p className="flex items-center gap-2.5 text-xs font-mono font-medium uppercase tracking-[0.14em] text-[#FFFFFF]">
                 <span className="inline-block size-2 shrink-0 rounded-full bg-[#FFFFFF]" aria-hidden />
                 {label}
               </p>
             )}
-            <span className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg bg-[#8E68F9]">
-              <Image src="/images/expandicon.svg" alt="" width={20} height={20} className="size-5" aria-hidden />
+            <span className="way-card-expand-btn flex size-9 shrink-0 items-center justify-center rounded-lg">
+              <Image
+                src="/images/expandicon.svg"
+                alt=""
+                width={20}
+                height={20}
+                className="way-card-expand-icon size-5"
+                aria-hidden
+              />
             </span>
           </div>
           <div className="min-h-0 flex-1" aria-hidden />
-          {cardBgImage ? (
+          {lightStrip ? (
             <CardBottomStrip label={label} tagline={tagline} />
           ) : (
             <div className={`flex w-full items-center ${taglinePosition === "left" ? "justify-start" : "justify-end"}`}>
@@ -143,7 +122,11 @@ function WayCard({
         className={`way-card-mock pointer-events-none absolute inset-0 z-20 p-5 md:p-6 ${mockAlign === "center" ? "flex items-center justify-center" : ""}`}
       >
         <div
-          className={`pointer-events-auto relative ${mockAlign === "bottom" ? "h-full w-full" : "flex w-full items-center justify-center"}`}
+          className={
+            mockAlign === "bottom"
+              ? "pointer-events-auto relative h-full w-full"
+              : "pointer-events-auto relative flex w-full items-center justify-center"
+          }
         >
           {children}
         </div>
@@ -157,15 +140,15 @@ const WAY_CARDS: WayCardConfig[] = [
     label: "Wholesalers",
     tagline: "Grow distribution efficiently",
     variant: "dark",
-    accent: true,
+    gradFlow: "accent",
     mock: <WholesalerMock />,
   },
   {
     label: "Brokers",
     tagline: "One workflow for every producer",
     variant: "light",
-    lightGradFlow: true,
-    cardBgImage: "/images/secondcardbg.svg",
+    gradFlow: "light",
+    lightStrip: true,
     mock: <BrokerMockWithCardHover />,
   },
   {
@@ -174,7 +157,7 @@ const WAY_CARDS: WayCardConfig[] = [
     taglinePosition: "left",
     variant: "dark",
     wide: true,
-    developerGradFlow: true,
+    gradFlow: "developer",
     className: "md:col-span-2",
     mockAlign: "bottom",
     mock: <DeveloperMock />,
@@ -183,20 +166,20 @@ const WAY_CARDS: WayCardConfig[] = [
     label: "Startups",
     tagline: "One workflow for every producer",
     variant: "light",
-    lightGradFlow: true,
-    cardBgImage: "/images/secondcardbg.svg",
+    gradFlow: "light",
+    lightStrip: true,
     mock: <BrokerMockWithCardHover />,
   },
   {
     label: "Carriers",
     tagline: "Grow distribution efficiently",
     variant: "dark",
-    accent: true,
+    gradFlow: "accent",
     mock: <WholesalerMock />,
   },
 ];
 
-const ThreeWays = () => {
+export default function ThreeWays() {
   return (
     <section className="relative overflow-hidden bg-white">
       <Container borderColor="#0A143B1A">
@@ -229,6 +212,4 @@ const ThreeWays = () => {
       </Container>
     </section>
   );
-};
-
-export default ThreeWays;
+}
