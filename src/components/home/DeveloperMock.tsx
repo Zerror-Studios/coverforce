@@ -103,7 +103,7 @@ export default function DeveloperMock() {
   return (
     <div
       ref={rootRef}
-      className="absolute -bottom-20 right-52 z-10 w-full max-w-[420px] rounded-t-2xl bg-white shadow-[0_8px_40px_rgba(0,0,0,0.13)] will-change-[opacity,transform]"
+      className="absolute -bottom-7 right-52 z-10 w-full max-w-[420px] rounded-t-2xl bg-white shadow-[0_8px_40px_rgba(0,0,0,0.13)] will-change-[opacity,transform]"
       style={microRevealStyle(panelAnimate, { offsetY: "1rem" })}
     >
       <div

@@ -35,6 +35,8 @@ type WayCardProps = {
   accent?: boolean;
   cardBg?: string;
   cardBgImage?: string;
+  /** Developer mock anchors to bottom via absolute positioning */
+  mockAlign?: "center" | "bottom";
 };
 
 type WayCardConfig = Omit<WayCardProps, "children"> & {
@@ -69,46 +71,70 @@ function WayCard({
   accent = false,
   cardBg,
   cardBgImage,
+  mockAlign = "center",
 }: WayCardProps) {
   const isDark = variant === "dark";
 
+  const surfaceClass = cardBg
+    ? ""
+    : accent
+      ? "bg-[#9F7CFF]"
+      : isDark
+        ? "bg-gradient-to-br from-[#5B35E0] via-[#4a2d9e] to-[#3d2878]"
+        : "bg-gradient-to-br from-[#EDE8F8] via-[#F5F3FA] to-white";
+
   return (
     <article
-      className={`relative flex w-full flex-col overflow-hidden rounded-sm p-5 md:p-6 ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${cardBg ? "text-[#0a143b]" : accent ? "bg-[#9F7CFF] text-white" : isDark ? "bg-gradient-to-br from-[#5B35E0] via-[#4a2d9e] to-[#3d2878] text-white" : "bg-gradient-to-br from-[#EDE8F8] via-[#F5F3FA] to-white text-[#0a143b]"} ${className}`}
-      style={cardBg ? { backgroundColor: cardBg } : undefined}
+      className={`way-card-shell cursor-pointer relative overflow-hidden rounded-sm ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${cardBg ? "text-[#0a143b]" : accent || isDark ? "text-white" : "text-[#0a143b]"} ${className}`}
     >
-      {cardBgImage && (
-        <div className="pointer-events-none absolute -translate-y-1/5 left-1/2 z-0 h-[150%] w-[150%] -translate-x-1/2 md:-top-24 lg:-top-28">
-          <Image src={cardBgImage} alt="" fill className="h-full w-full object-cover object-center" sizes="(max-width: 768px) 100vw, 50vw" aria-hidden />
-        </div>
-      )}
-      {accent && (
-        <span className="pointer-events-none absolute -left-8 -top-2 z-0 aspect-square w-[200%] rounded-full bg-[#2C33BB] blur-3xl md:-left-12 md:-top-4" aria-hidden />
-      )}
-      <div className="relative z-10 flex min-h-0 flex-1 flex-col">
-        <div className={`flex items-start gap-4 ${cardBgImage ? "justify-end" : "justify-between"}`}>
-          {!cardBgImage && (
-            <p className="flex items-center gap-2.5 text-xs font-mono font-medium uppercase tracking-[0.14em] text-[#FFFFFF]">
-              <span className="inline-block size-2 shrink-0 rounded-full bg-[#FFFFFF]" aria-hidden />
-              {label}
-            </p>
-          )}
-          <span className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg bg-[#8E68F9]">
-            <Image src="/images/expandicon.svg" alt="" width={20} height={20} className="size-5" aria-hidden />
-          </span>
-        </div>
-        <div className="relative mt-4 flex min-h-0 flex-1 items-center justify-center py-2">{children}</div>
-        {cardBgImage ? (
-          <CardBottomStrip label={label} tagline={tagline} />
-        ) : (
-          <div className={`flex w-full items-center ${taglinePosition === "left" ? "justify-start" : "justify-end"}`}>
-            <p
-              className={`text-lg font-heading font-medium leading-tight tracking-tight text-white ${taglinePosition === "left" ? "max-w-xs text-left" : "max-w-48 text-right"}`}
-            >
-              {tagline}
-            </p>
+      <div className="way-card-body absolute inset-0 flex flex-col p-5 md:p-6">
+        <div
+          className={`pointer-events-none absolute inset-0 ${surfaceClass}`}
+          style={cardBg ? { backgroundColor: cardBg } : undefined}
+          aria-hidden
+        />
+        {cardBgImage && (
+          <div className="pointer-events-none absolute -translate-y-1/5 left-1/2 z-0 h-[150%] w-[150%] -translate-x-1/2 md:-top-24 lg:-top-28">
+            <Image src={cardBgImage} alt="" fill className="h-full w-full object-cover object-center" sizes="(max-width: 768px) 100vw, 50vw" aria-hidden />
           </div>
         )}
+        {accent && (
+          <span className="pointer-events-none absolute -left-8 -top-2 z-0 aspect-square w-[200%] rounded-full bg-[#2C33BB] blur-3xl md:-left-12 md:-top-4" aria-hidden />
+        )}
+        <div className="relative z-10 flex min-h-0 flex-1 flex-col">
+          <div className={`flex items-start gap-4 ${cardBgImage ? "justify-end" : "justify-between"}`}>
+            {!cardBgImage && (
+              <p className="flex items-center gap-2.5 text-xs font-mono font-medium uppercase tracking-[0.14em] text-[#FFFFFF]">
+                <span className="inline-block size-2 shrink-0 rounded-full bg-[#FFFFFF]" aria-hidden />
+                {label}
+              </p>
+            )}
+            <span className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg bg-[#8E68F9]">
+              <Image src="/images/expandicon.svg" alt="" width={20} height={20} className="size-5" aria-hidden />
+            </span>
+          </div>
+          <div className="min-h-0 flex-1" aria-hidden />
+          {cardBgImage ? (
+            <CardBottomStrip label={label} tagline={tagline} />
+          ) : (
+            <div className={`flex w-full items-center ${taglinePosition === "left" ? "justify-start" : "justify-end"}`}>
+              <p
+                className={`text-lg font-heading font-medium leading-tight tracking-tight text-white ${taglinePosition === "left" ? "max-w-xs text-left" : "max-w-48 text-right"}`}
+              >
+                {tagline}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+      <div
+        className={`way-card-mock pointer-events-none absolute inset-0 z-20 p-5 md:p-6 ${mockAlign === "center" ? "flex items-center justify-center" : ""}`}
+      >
+        <div
+          className={`pointer-events-auto relative ${mockAlign === "bottom" ? "h-full w-full" : "flex w-full items-center justify-center"}`}
+        >
+          {children}
+        </div>
       </div>
     </article>
   );
@@ -138,6 +164,7 @@ const WAY_CARDS: WayCardConfig[] = [
     wide: true,
     cardBg: "#8A80DDAB",
     className: "md:col-span-2",
+    mockAlign: "bottom",
     mock: <DeveloperMock />,
   },
   {
