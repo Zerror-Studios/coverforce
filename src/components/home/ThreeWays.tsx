@@ -3,6 +3,9 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 
 import Container from "../common/Container";
+import AccentCardGradFlow from "./AccentCardGradFlow";
+import DeveloperCardGradFlow from "./DeveloperCardGradFlow";
+import LightCardGradFlow from "./LightCardGradFlow";
 
 const WholesalerMock = dynamic(() => import("./WholesalerMock"), {
   loading: () => <MockPlaceholder />,
@@ -35,6 +38,10 @@ type WayCardProps = {
   accent?: boolean;
   cardBg?: string;
   cardBgImage?: string;
+  /** Animated GradFlow background (Brokers / Startups) */
+  lightGradFlow?: boolean;
+  /** Animated GradFlow background (Developers) */
+  developerGradFlow?: boolean;
   /** Developer mock anchors to bottom via absolute positioning */
   mockAlign?: "center" | "bottom";
 };
@@ -71,14 +78,17 @@ function WayCard({
   accent = false,
   cardBg,
   cardBgImage,
+  lightGradFlow = false,
+  developerGradFlow = false,
   mockAlign = "center",
 }: WayCardProps) {
   const isDark = variant === "dark";
+  const usesGradFlow = accent || lightGradFlow || developerGradFlow;
 
-  const surfaceClass = cardBg
+  const surfaceClass = cardBg && !usesGradFlow
     ? ""
-    : accent
-      ? "bg-[#9F7CFF]"
+    : usesGradFlow
+      ? ""
       : isDark
         ? "bg-gradient-to-br from-[#5B35E0] via-[#4a2d9e] to-[#3d2878]"
         : "bg-gradient-to-br from-[#EDE8F8] via-[#F5F3FA] to-white";
@@ -88,18 +98,20 @@ function WayCard({
       className={`way-card-shell cursor-pointer relative overflow-hidden rounded-sm ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${cardBg ? "text-[#0a143b]" : accent || isDark ? "text-white" : "text-[#0a143b]"} ${className}`}
     >
       <div className="way-card-body absolute inset-0 flex flex-col p-5 md:p-6">
-        <div
-          className={`pointer-events-none absolute inset-0 ${surfaceClass}`}
-          style={cardBg ? { backgroundColor: cardBg } : undefined}
-          aria-hidden
-        />
-        {cardBgImage && (
+        {accent && <AccentCardGradFlow />}
+        {lightGradFlow && <LightCardGradFlow />}
+        {developerGradFlow && <DeveloperCardGradFlow />}
+        {(cardBg && !usesGradFlow) || surfaceClass ? (
+          <div
+            className={`pointer-events-none absolute inset-0 ${surfaceClass}`}
+            style={cardBg && !usesGradFlow ? { backgroundColor: cardBg } : undefined}
+            aria-hidden
+          />
+        ) : null}
+        {cardBgImage && !lightGradFlow && (
           <div className="pointer-events-none absolute -translate-y-1/5 left-1/2 z-0 h-[150%] w-[150%] -translate-x-1/2 md:-top-24 lg:-top-28">
             <Image src={cardBgImage} alt="" fill className="h-full w-full object-cover object-center" sizes="(max-width: 768px) 100vw, 50vw" aria-hidden />
           </div>
-        )}
-        {accent && (
-          <span className="pointer-events-none absolute -left-8 -top-2 z-0 aspect-square w-[200%] rounded-full bg-[#2C33BB] blur-3xl md:-left-12 md:-top-4" aria-hidden />
         )}
         <div className="relative z-10 flex min-h-0 flex-1 flex-col">
           <div className={`flex items-start gap-4 ${cardBgImage ? "justify-end" : "justify-between"}`}>
@@ -152,7 +164,7 @@ const WAY_CARDS: WayCardConfig[] = [
     label: "Brokers",
     tagline: "One workflow for every producer",
     variant: "light",
-    cardBg: "#FFFFFFCC",
+    lightGradFlow: true,
     cardBgImage: "/images/secondcardbg.svg",
     mock: <BrokerMockWithCardHover />,
   },
@@ -162,7 +174,7 @@ const WAY_CARDS: WayCardConfig[] = [
     taglinePosition: "left",
     variant: "dark",
     wide: true,
-    cardBg: "#8A80DDAB",
+    developerGradFlow: true,
     className: "md:col-span-2",
     mockAlign: "bottom",
     mock: <DeveloperMock />,
@@ -171,7 +183,7 @@ const WAY_CARDS: WayCardConfig[] = [
     label: "Startups",
     tagline: "One workflow for every producer",
     variant: "light",
-    cardBg: "#FFFFFFCC",
+    lightGradFlow: true,
     cardBgImage: "/images/secondcardbg.svg",
     mock: <BrokerMockWithCardHover />,
   },

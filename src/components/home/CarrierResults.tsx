@@ -1,7 +1,9 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import Button from "@/components/common/Button";
 import Container from "@/components/common/Container";
+import GradFlow from "gradflow";
 
 type CarrierResult = {
   id: string;
@@ -102,21 +104,25 @@ const CarrierResults = () => {
   return (
     <section className="bg-[#141E4B] text-white">
       <Container borderColor="#FFFFFF1A" className="border-t border-b border-[#FFFFFF1A]">
-      <div
-            className="pointer-events-none absolute left-0 top-0 z-0  w-full lg:h-full"
-            aria-hidden
-          >
-            <Image
-              src="/images/result bg.svg"
-              alt=""
-              fill
-              sizes="130vw"
-              className="object-cover"
-            />
-          </div>
+        <div
+          className="pointer-events-none absolute left-0 top-0 z-0  w-full lg:h-full"
+          aria-hidden
+        >
+         <GradFlow
+          config={{
+            color1: { r: 21, g: 31, b: 77 },
+            color2: { r: 51, g: 37, b: 159 },
+            color3: { r: 1, g: 48, b: 190 },
+            speed: 0.8,
+            scale: 1,
+            type: 'wave',
+            noise: 0
+          }}
+        />
+        </div>
         <div className="relative py-16 md:py-20 lg:py-24">
           {/* Wave — 130% width, anchored left top inside container */}
-       
+
 
           <div className="relative z-10 flex flex-col gap-62">
             {/* Header */}
