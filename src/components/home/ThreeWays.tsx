@@ -2,7 +2,7 @@ import React, { type ReactNode } from "react";
 import Image from "next/image";
 
 import Container from "../common/Container";
-import BrokerMock from "./BrokerMock";
+import { BrokerMockWithCardHover } from "./BrokerMock";
 import DeveloperMock from "./DeveloperMock";
 import WholesalerMock from "./WholesalerMock";
 type WayCardProps = {
@@ -105,7 +105,7 @@ const ThreeWays = () => {
             </WayCard>
 
             <WayCard label="Brokers" tagline="One workflow for every producer" variant="light" cardBg="#FFFFFFCC" cardBgImage="/images/secondcardbg.svg">
-              <BrokerMock />
+              <BrokerMockWithCardHover />
             </WayCard>
 
             <WayCard label="Developers" tagline="Build insurance products on Coverforce APIs" taglinePosition="left" variant="dark" wide cardBg="#8A80DDAB" className="md:col-span-2">
@@ -113,7 +113,7 @@ const ThreeWays = () => {
             </WayCard>
 
             <WayCard label="Startups" tagline="One workflow for every producer" variant="light" cardBg="#FFFFFFCC" cardBgImage="/images/secondcardbg.svg">
-              <BrokerMock />
+              <BrokerMockWithCardHover />
             </WayCard>
 
             <WayCard label="Carriers" tagline="Grow distribution efficiently" variant="dark" accent>

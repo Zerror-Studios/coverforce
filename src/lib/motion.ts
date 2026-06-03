@@ -12,6 +12,7 @@ export const MICRO_CHART_MS = 900;
 export const MICRO_CHART_STAGGER_MS = 45;
 export const MICRO_WORKFLOW_MS = 1100;
 export const MICRO_WORKFLOW_DELAY_MS = 180;
+export const MICRO_TAB_COLOR_MS = 480;
 
 export function microEaseOut(progress: number): number {
   return 1 - (1 - progress) ** 4;
