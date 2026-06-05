@@ -88,7 +88,7 @@ function WayCard({
 
   return (
     <article
-      className={`way-card-shell relative cursor-pointer overflow-hidden rounded-sm ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${textClass} ${className}`}
+      className={`way-card-shell relative cursor-pointer overflow-hidden rounded-sm [contain:layout_paint] ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${textClass} ${className}`}
     >
       <div className={`way-card-body absolute inset-0 flex flex-col p-5 md:p-6 ${background ? CARD_BACKGROUNDS[background] : ""}`}>
         <div className="relative z-10 flex min-h-0 flex-1 flex-col">
@@ -105,7 +105,7 @@ function WayCard({
                 alt=""
                 width={20}
                 height={20}
-                className="way-card-expand-icon size-5"
+                className="size-5"
                 aria-hidden
               />
             </span>

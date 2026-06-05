@@ -45,17 +45,15 @@ export function microRevealStyle(
 
 type MicroPopOptions = {
   delay?: number;
-  fromScale?: number;
 };
 
 export function microPopStyle(
   animate: boolean,
-  { delay = 0, fromScale = 0 }: MicroPopOptions = {},
+  { delay = 0 }: MicroPopOptions = {},
 ): CSSProperties {
   return {
     opacity: animate ? 1 : 0,
-    transform: animate ? "scale(1)" : `scale(${fromScale})`,
-    transition: `opacity ${MICRO_ENTRANCE_MS}ms ${MICRO_EASE}, transform ${MICRO_ENTRANCE_MS}ms ${MICRO_EASE}`,
+    transition: `opacity ${MICRO_ENTRANCE_MS}ms ${MICRO_EASE}`,
     transitionDelay: `${delay}ms`,
   };
 }
