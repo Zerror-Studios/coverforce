@@ -20,105 +20,72 @@ import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const POINT_ACTIVE = "#0130BE";
-const POINT_IDLE = "#424242";
-const FIELD_VALID = "#34A854";
+// ─── Design tokens ────────────────────────────────────────────────────────────
+const POINT_ACTIVE      = "#0130BE";
+const POINT_IDLE        = "#424242";
+const FIELD_VALID       = "#34A854";
 const FIELD_IDLE_BORDER = "#D1D5DB";
-const FIELD_IDLE_TOGGLE_BG = "#E5E7EB";
+const FIELD_IDLE_TOGGLE = "#E5E7EB";
 
-function ProcessStep1() {
+// ─── Step panel components ────────────────────────────────────────────────────
+
+function PanelStep1() {
     return (
-        <div className="process-step1 opacity-0 relative flex w-full h-full items-center justify-center">
-            <div className="relative grid w-xs bg shrink-0 grid-cols-1 [&>*]:col-start-1 [&>*]:row-start-1">
-                <div className="final1 w-full rounded-2xl border border-[#CCCCCC] bg-white" aria-hidden>
+        <div className="panel-step1 absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none">
+            <div className="relative grid w-xs shrink-0 grid-cols-1 [&>*]:col-start-1 [&>*]:row-start-1">
+                <div className="skeleton1 absolute inset-0 z-0 flex w-full flex-col rounded-2xl border border-[#CED2D2] bg-white p-[3px]">
+                    <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded-[0.70rem] border border-[#CED2D2]">
+                        <div className="h-[18%] shrink-0 border-b border-[#CED2D2]" />
+                        <div className="flex-1" />
+                        <div className="flex h-[34%] shrink-0 flex-col">
+                            <div className="flex-1 border-b border-dashed border-[#CED2D2]" />
+                            <div className="flex-1 border-b border-dashed border-[#CED2D2]" />
+                            <div className="flex-1 border-b border-dashed border-[#CED2D2]" />
+                            <div className="flex-1" />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="card1 w-full rounded-2xl border border-[#CCCCCC] bg-white opacity-0">
                     <div className="flex items-center gap-2 border-b border-[#CCCCCC] px-4 py-3">
                         <span className="flex size-[23px] shrink-0 items-center justify-center rounded-full border border-[#F3F4F6] bg-[#F9FAFB]">
                             <RiFileTextFill color="#6F6F6F" size={11} />
                         </span>
-                        <span className="font-heading text-xs font-medium leading-tight text-[#3C3B3B]">ACORD 25</span>
+                        <span className="font-heading text-xs font-medium text-[#3C3B3B]">ACORD 25</span>
                     </div>
-
                     <div className="px-3">
-                        <div className="grid grid-cols-3 gap-x-2 border-b border-dashed border-[#CCCCCC] py-2">
-                            <div className="mt-0.5 flex items-start gap-1">
-                                <span className="flex size-3 shrink-0 items-center justify-center rounded-sm bg-[#F9FAFB]">
-                                    <RiLineChartLine className="size-2 text-[#6B7280]" />
-                                </span>
-                                <div>
-                                    <p className="font-sans text-[0.40rem] font-normal uppercase leading-tight tracking-wider text-[#9CA3AF]">Insured</p>
-                                    <p className="font-heading text-[0.50rem] font-medium tracking-wide text-[#111827]">Construction LLC</p>
-                                </div>
+                        {[0, 1].map(row => (
+                            <div key={row} className="grid grid-cols-3 gap-x-2 border-b border-dashed border-[#CCCCCC] py-2">
+                                {[
+                                    { label: "Insured", value: "Construction LLC" },
+                                    { label: "Policy Number", value: "GL-2024-98765" },
+                                    { label: "Coverage", value: "5 coverages" },
+                                ].map(item => (
+                                    <div key={item.label} className="mt-0.5 flex items-start gap-1">
+                                        <span className="flex size-3 shrink-0 items-center justify-center rounded-sm bg-[#F9FAFB]">
+                                            <RiLineChartLine className="size-2 text-[#6B7280]" />
+                                        </span>
+                                        <div>
+                                            <p className="font-sans text-[0.40rem] uppercase tracking-wider text-[#9CA3AF]">{item.label}</p>
+                                            <p className="font-heading text-[0.50rem] font-medium tracking-wide text-[#111827]">{item.value}</p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                            <div className="mt-0.5 flex items-start gap-1">
-                                <span className="flex size-3 shrink-0 items-center justify-center rounded-sm bg-[#F9FAFB]">
-                                    <RiLineChartLine className="size-2 text-[#6B7280]" />
-                                </span>
-                                <div>
-                                    <p className="font-sans text-[0.40rem] font-normal uppercase leading-tight tracking-wider text-[#9CA3AF]">Policy Number</p>
-                                    <p className="font-heading text-[0.50rem] font-medium tracking-wide text-[#111827]">GL-2024-98765</p>
-                                </div>
-                            </div>
-                            <div className="mt-0.5 flex items-start gap-1">
-                                <span className="flex size-3 shrink-0 items-center justify-center rounded-sm bg-[#F9FAFB]">
-                                    <RiLineChartLine className="size-2 text-[#6B7280]" />
-                                </span>
-                                <div>
-                                    <p className="font-sans text-[0.40rem] font-normal uppercase leading-tight tracking-wider text-[#9CA3AF]">Coverage</p>
-                                    <p className="font-heading text-[0.50rem] font-medium tracking-wide text-[#111827]">5 coverages</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-3 gap-x-2 border-b border-dashed border-[#CCCCCC] py-2">
-                            <div className="mt-0.5 flex items-start gap-1">
-                                <span className="flex size-3 shrink-0 items-center justify-center rounded-sm bg-[#F9FAFB]">
-                                    <RiLineChartLine className="size-2 text-[#6B7280]" />
-                                </span>
-                                <div>
-                                    <p className="font-sans text-[0.40rem] font-normal uppercase leading-tight tracking-wider text-[#9CA3AF]">Insured</p>
-                                    <p className="font-heading text-[0.50rem] font-medium tracking-wide text-[#111827]">Construction LLC</p>
-                                </div>
-                            </div>
-                            <div className="mt-0.5 flex items-start gap-1">
-                                <span className="flex size-3 shrink-0 items-center justify-center rounded-sm bg-[#F9FAFB]">
-                                    <RiLineChartLine className="size-2 text-[#6B7280]" />
-                                </span>
-                                <div>
-                                    <p className="font-sans text-[0.40rem] font-normal uppercase leading-tight tracking-wider text-[#9CA3AF]">Policy Number</p>
-                                    <p className="font-heading text-[0.50rem] font-medium tracking-wide text-[#111827]">GL-2024-98765</p>
-                                </div>
-                            </div>
-                            <div className="mt-0.5 flex items-start gap-1">
-                                <span className="flex size-3 shrink-0 items-center justify-center rounded-sm bg-[#F9FAFB]">
-                                    <RiLineChartLine className="size-2 text-[#6B7280]" />
-                                </span>
-                                <div>
-                                    <p className="font-sans text-[0.40rem] font-normal uppercase leading-tight tracking-wider text-[#9CA3AF]">Coverage</p>
-                                    <p className="font-heading text-[0.50rem] font-medium tracking-wide text-[#111827]">5 coverages</p>
-                                </div>
-                            </div>
-                        </div>
+                        ))}
                     </div>
-
                     <div className="flex items-center justify-between px-4 pt-2.5 pb-1">
                         <p className="font-heading text-[0.60rem] font-medium text-[#3C3B3B]">Limits Summary</p>
                         <span className="font-sans text-[9px] text-[#4683E5]">View All</span>
                     </div>
-
                     <div className="divide-y divide-neutral-100 px-4">
-                        <div className="flex items-center justify-between py-2">
-                            <span className="font-heading text-[0.60rem] font-medium text-[#3C3B3B]">General Liability</span>
-                            <span className="font-heading text-xs font-medium leading-tight text-[#3C3B3B]">$1,000,000</span>
-                        </div>
-                        <div className="flex items-center justify-between py-2">
-                            <span className="font-heading text-[0.60rem] font-medium text-[#3C3B3B]">Automobile Liability</span>
-                            <span className="font-heading text-xs font-medium leading-tight text-[#3C3B3B]">$500,000</span>
-                        </div>
-                        <div className="flex items-center justify-between py-2">
-                            <span className="font-heading text-[0.60rem] font-medium text-[#3C3B3B]">Umbrella Liability</span>
-                            <span className="font-heading text-xs font-medium leading-tight text-[#3C3B3B]">$5,000,000</span>
-                        </div>
+                        {[["General Liability", "$1,000,000"], ["Automobile Liability", "$500,000"], ["Umbrella Liability", "$5,000,000"]].map(([label, val]) => (
+                            <div key={label} className="flex items-center justify-between py-2">
+                                <span className="font-heading text-[0.60rem] font-medium text-[#3C3B3B]">{label}</span>
+                                <span className="font-heading text-xs font-medium text-[#3C3B3B]">{val}</span>
+                            </div>
+                        ))}
                     </div>
-
                     <div className="flex items-center justify-between border-t border-[#CCCCCC] px-4 py-3">
                         <div className="flex items-center gap-1.5">
                             <span className="flex size-[16px] shrink-0 items-center justify-center rounded-full bg-blue-100">
@@ -127,194 +94,123 @@ function ProcessStep1() {
                                 </svg>
                             </span>
                             <div>
-                                <p className="font-sans text-[0.55rem] uppercase leading-tight tracking-wide text-[#4683E5]">Verified</p>
-                                <p className="truncate font-heading text-[0.60rem] font-normal leading-tight text-[#9CA3AF]">
-                                    This certificate is valid.
-                                </p>
+                                <p className="font-sans text-[0.55rem] uppercase tracking-wide text-[#4683E5]">Verified</p>
+                                <p className="truncate font-heading text-[0.60rem] font-normal text-[#9CA3AF]">This certificate is valid.</p>
                             </div>
                         </div>
-                        <span className="truncate font-heading text-[0.60rem] font-normal leading-tight text-[#9CA3AF]">
-                            ACORD 25 Standard
-                        </span>
+                        <span className="font-heading text-[0.60rem] font-normal text-[#9CA3AF]">ACORD 25 Standard</span>
                     </div>
                 </div>
 
-                <div className="placeholder1 absolute inset-0 z-0 flex w-full flex-col rounded-2xl border border-[#CED2D2] bg-white p-[3px]">
-                    <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded-[0.70rem] border border-[#CED2D2]">
-                        <div className="h-[18%] shrink-0 border-b border-[#CED2D2]" aria-hidden />
-                        <div className="flex-1" aria-hidden />
-                        <div className="flex h-[34%] shrink-0 flex-col">
-                            <div className="flex-1 border-b border-dashed border-[#CED2D2]" aria-hidden />
-                            <div className="flex-1 border-b border-dashed border-[#CED2D2]" aria-hidden />
-                            <div className="flex-1 border-b border-dashed border-[#CED2D2]" aria-hidden />
-                            <div className="flex-1" aria-hidden />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="placeholder11 absolute overflow-hidden left-full bottom-[105%] rounded-2xl border border-[#CED2D2] p-[3px] z-10 w-[12rem] aspect-video">
-                    <div className="w-full h-full rounded-xl border border-[#CED2D2]"></div>
-                    <div className="final11 absolute opacity-0 inset-0 z-10 py-3 p-4 flex flex-col justify-between">
+                {/* Mini graph card — positioned above and to the right */}
+                <div className="graph1 absolute opacity-0 left-full bottom-[105%] rounded-2xl border border-[#CED2D2] p-[3px] z-10 w-[12rem] aspect-video">
+                    <div className="w-full h-full rounded-xl border border-[#CED2D2]" />
+                    <div className="absolute inset-0 z-10 py-3 p-4 flex flex-col justify-between">
                         <div>
-                            <div className="flex items-center justify-between">
-                                <span className="font-mono tracking-wider font-medium text-[0.45rem] text-[#5A5A5A] uppercase">
-                                    Revenue
-                                </span>
-                            </div>
-                            <p className="font-mono text-xs font-medium leading-tight text-[#5A5A5A]">
-                                +326%
-                            </p>
+                            <span className="font-mono tracking-wider font-medium text-[0.45rem] text-[#5A5A5A] uppercase">Revenue</span>
+                            <p className="font-mono text-xs font-medium text-[#5A5A5A]">+326%</p>
                         </div>
-                        <Image
-                            src="/images/process/graph.svg"
-                            alt="step1"
-                            width={100}
-                            height={100}
-                            className="w-full h-auto object-cover"
-                        />
+                        <Image src="/images/process/graph.svg" alt="graph" width={100} height={100} className="w-full h-auto object-cover" />
                     </div>
                 </div>
 
-                <div className="step1-scanner absolute top-full opacity-0 left-1/2 h-20 w-[25rem] -translate-x-1/2 border-t border-[#1365D0] bg-gradient-to-b from-[#1365D0]/10 to-transparent" />
+                {/* Scanner beam */}
+                <div className="scanner1 absolute top-full opacity-0 left-1/2 h-20 w-[25rem] -translate-x-1/2 border-t border-[#1365D0] bg-gradient-to-b from-[#1365D0]/10 to-transparent" />
             </div>
         </div>
     );
 }
 
-function ProcessStep2() {
+function PanelStep2() {
     return (
-        <div className="process-step2 relative flex h-full w-full items-center justify-center opacity-0">
-            <div className="ai-buttom relative w-44 bg-[#CED2D2] overflow-hidden rounded-full p-px opacity-0">
+        <div className="panel-step2 absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none">
+            {/* AI button */}
+            <div className="ai-btn relative w-44 bg-[#CED2D2] overflow-hidden rounded-full p-px opacity-0">
                 <div
-                    className="ai-buttom-gradient absolute inset-0 rounded-full opacity-0"
-                    style={{
-                        backgroundImage: "linear-gradient(90deg, #0032C9, #EA4336, #FCBC05, #34A854, #0032C9)",
-                        backgroundSize: "200% 100%",
-                        backgroundPosition: "0% 50%",
-                    }}
+                    className="ai-btn-gradient absolute inset-0 rounded-full opacity-0"
+                    style={{ backgroundImage: "linear-gradient(90deg,#0032C9,#EA4336,#FCBC05,#34A854,#0032C9)", backgroundSize: "200% 100%", backgroundPosition: "0% 50%" }}
                 />
-                <div className="ai-buttom-content relative z-1 flex h-full w-full items-center justify-center gap-2 rounded-full bg-white px-5 py-4">
-                    <RiSparkling2Fill className="ai-buttom-icon size-4 shrink-0 text-[#CED2D2]" />
-                    <span className="ai-buttom-text inline-block w-0 overflow-hidden whitespace-nowrap font-sans text-xs font-semibold leading-tight tracking-wide text-[#0032C9]">
-                        <span className="ai-buttom-text-span opacity-0">AI AutoFill</span>
+                <div className="ai-btn-inner relative z-1 flex h-full w-full items-center justify-center gap-2 rounded-full bg-white px-5 py-4">
+                    <RiSparkling2Fill className="ai-btn-icon size-4 shrink-0 text-[#CED2D2]" />
+                    <span className="ai-btn-text inline-block w-0 overflow-hidden whitespace-nowrap font-sans text-xs font-semibold tracking-wide text-[#0032C9]">
+                        <span className="ai-btn-label opacity-0">AI AutoFill</span>
                     </span>
                 </div>
             </div>
-            <div className="process-step2-cursor absolute bottom-[40%] right-[35%] z-10 flex h-12 w-12 items-center justify-center opacity-0">
+
+            {/* Cursor — positioned outside the button, slides in from below-right */}
+            <div className="cursor2 absolute bottom-[40%] right-[35%] z-10 flex h-12 w-12 items-center justify-center opacity-0">
                 <Image src="/images/process/cursor.svg" alt="" width={100} height={100} className="h-full w-full object-cover" />
             </div>
-            <div className="placeholder2wrapper opacity-0 w-full h-full absolute inset-0 z-11 flex items-center justify-center">
-                <div className="relative grid w-xs bg shrink-0 grid-cols-1 [&>*]:col-start-1 [&>*]:row-start-1">
-                    <div className="w-full rounded-2xl border border-[#CCCCCC] bg-white" aria-hidden>
-                        <div className="flex items-center gap-2 border-b border-[#CCCCCC] px-4 py-3">
-                            <span className="font-heading text-xs font-medium leading-tight text-[#269138]">CARRIER APPLICATION (PRE-FILLED)</span>
-                        </div>
 
-                        <div className="px-3">
-                            <div className="py-6">
-                                <div className="mt-0.5 flex items-start gap-1">
-                                    <div>
-                                        <p className="font-sans text-[0.40rem] font-normal uppercase leading-tight tracking-wider text-[#9CA3AF]">Business Details</p>
+            {/* Form card */}
+            <div className="form-wrap2 opacity-0 absolute inset-0 flex items-center justify-center">
+                <div className="relative grid w-xs shrink-0 grid-cols-1 [&>*]:col-start-1 [&>*]:row-start-1">
+                    <div className="w-full rounded-2xl border border-[#CCCCCC] bg-white">
+                        <div className="flex items-center gap-2 border-b border-[#CCCCCC] px-4 py-3">
+                            <span className="font-heading text-xs font-medium text-[#269138]">CARRIER APPLICATION (PRE-FILLED)</span>
+                        </div>
+                        <div className="px-3 py-6">
+                            <p className="font-sans text-[0.40rem] uppercase tracking-wider text-[#9CA3AF]">Business Details</p>
+                        </div>
+                        <div className="flex items-center justify-between gap-2 px-4 py-2.5">
+                            <p className="font-heading text-[0.60rem] font-medium text-[#3C3B3B]">Is your Business non-profit? <span className="text-[#EF4444]">*</span></p>
+                            <div className="flex shrink-0 items-center gap-1.5">
+                                <div className="flex overflow-hidden rounded-full border border-[#D1D5DB] text-[0.55rem] font-semibold">
+                                    <span className="border-r border-[#D1D5DB] bg-white px-2.5 py-1 text-[#6B7280]">Yes</span>
+                                    <span className="f2-toggle-no bg-[#E5E7EB] px-2.5 py-1 text-[#111827]">No</span>
+                                </div>
+                                <span className="f2-check-np flex size-2.5 shrink-0 items-center justify-center rounded-full border border-[#D1D5DB] bg-white">
+                                    <RiCheckLine className="f2-icon-np size-1.5 text-[#111827]" />
+                                </span>
+                            </div>
+                        </div>
+                        <div className="divide-y divide-neutral-100 px-4">
+                            {[
+                                { label: "FEIN", icon: null, cls: "f2-inp-fein", chk: "f2-check-fein", ico: "f2-icon-fein", val: "13-1324567" },
+                                { label: "Business Entity Type", icon: <RiArrowDownSLine className="ml-auto size-3 shrink-0 text-[#6B7280]" />, cls: "f2-inp-ent", chk: "f2-check-ent", ico: "f2-icon-ent", val: "General Partnership" },
+                                { label: "Start Year", icon: <RiCalendarLine className="ml-auto size-3 shrink-0 text-[#6B7280]" />, cls: "f2-inp-yr", chk: "f2-check-yr", ico: "f2-icon-yr", val: "2023" },
+                            ].map(row => (
+                                <div key={row.label} className="flex items-center justify-between gap-2 py-3">
+                                    <span className="font-heading text-[0.60rem] font-medium text-[#3C3B3B]">{row.label} <span className="text-[#EF4444]">*</span></span>
+                                    <div className="flex shrink-0 items-center gap-1">
+                                        <span className={`${row.cls} inline-flex w-[8.25rem] shrink-0 items-center justify-start rounded-md border border-[#D1D5DB] bg-white px-2 py-1 text-left font-heading text-[0.55rem] font-medium text-[#111827]`}>
+                                            <span className="min-w-0 flex-1 truncate">{row.val}</span>
+                                            {row.icon}
+                                        </span>
+                                        <span className={`${row.chk} flex size-2.5 shrink-0 items-center justify-center rounded-full border border-[#D1D5DB] bg-white`}>
+                                            <RiCheckLine className={`${row.ico} size-1.5 text-[#111827]`} />
+                                        </span>
                                     </div>
                                 </div>
-                            </div>
+                            ))}
                         </div>
-
-                        <div className="flex items-center justify-between gap-2 px-4 py-2.5">
-                            <p className="font-heading text-[0.60rem] font-medium text-[#3C3B3B]">
-                                Is your Business non-profit?
-                                <span className="text-[#EF4444]">*</span>
-                            </p>
-                            <div className="flex shrink-0 items-center gap-1.5">
-                                <div className="flex overflow-hidden rounded-full border border-[#D1D5DB] text-[0.55rem] font-semibold leading-none">
-                                    <span className="border-r border-[#D1D5DB] bg-white px-2.5 py-1 text-[#6B7280]">Yes</span>
-                                    <span className="step2-toggle-no bg-[#E5E7EB] px-2.5 py-1 text-[#111827]">No</span>
-                                </div>
-                                <span className="step2-check-nonprofit flex size-2.5 shrink-0 items-center justify-center rounded-full border border-[#D1D5DB] bg-white">
-                                    <RiCheckLine className="step2-check-icon-nonprofit size-1.5 text-[#111827]" />
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="divide-y divide-neutral-100 px-4">
-                            <div className="flex items-center justify-between gap-2 py-3">
-                                <span className="font-heading text-[0.60rem] font-medium text-[#3C3B3B]">
-                                    FEIN <span className="text-[#EF4444]">*</span>
-                                </span>
-                                <div className="flex shrink-0 items-center gap-1">
-                                    <span className="step2-input-fein inline-flex w-[8.25rem] max-w-[8.25rem] shrink-0 items-center justify-start rounded-md border border-[#D1D5DB] bg-white px-2 py-1 text-left font-heading text-[0.55rem] font-medium leading-tight text-[#111827]">
-                                        13-1324567
-                                    </span>
-                                    <span className="step2-check-fein flex size-2.5 shrink-0 items-center justify-center rounded-full border border-[#D1D5DB] bg-white">
-                                        <RiCheckLine className="step2-check-icon-fein size-1.5 text-[#111827]" />
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-between gap-2 py-3">
-                                <span className="font-heading text-[0.60rem] font-medium text-[#3C3B3B]">
-                                    Business Entity Type <span className="text-[#EF4444]">*</span>
-                                </span>
-                                <div className="flex shrink-0 items-center gap-1">
-                                    <span className="step2-input-entity inline-flex w-[8.25rem] max-w-[8.25rem] shrink-0 items-center justify-start rounded-md border border-[#D1D5DB] bg-white px-2 py-1 text-left font-heading text-[0.55rem] font-medium leading-tight text-[#111827]">
-                                        <span className="min-w-0 flex-1 truncate">General Partnership</span>
-                                        <RiArrowDownSLine className="ml-auto size-3 shrink-0 text-[#6B7280]" />
-                                    </span>
-                                    <span className="step2-check-entity flex size-2.5 shrink-0 items-center justify-center rounded-full border border-[#D1D5DB] bg-white">
-                                        <RiCheckLine className="step2-check-icon-entity size-1.5 text-[#111827]" />
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-between gap-2 py-3">
-                                <span className="font-heading text-[0.60rem] font-medium text-[#3C3B3B]">
-                                    Start Year <span className="text-[#EF4444]">*</span>
-                                </span>
-                                <div className="flex shrink-0 items-center gap-1">
-                                    <span className="step2-input-year inline-flex w-[8.25rem] max-w-[8.25rem] shrink-0 items-center justify-start rounded-md border border-[#D1D5DB] bg-white px-2 py-1 text-left font-heading text-[0.55rem] font-medium leading-tight text-[#111827]">
-                                        <span className="flex-1">2023</span>
-                                        <RiCalendarLine className="ml-auto size-3 shrink-0 text-[#6B7280]" />
-                                    </span>
-                                    <span className="step2-check-year flex size-2.5 shrink-0 items-center justify-center rounded-full border border-[#D1D5DB] bg-white">
-                                        <RiCheckLine className="step2-check-icon-year size-1.5 text-[#111827]" />
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
                         <div className="flex items-center justify-end border-t border-[#CCCCCC] px-4 py-3">
-                            <div className="ai-buttom-small relative w-28 overflow-hidden rounded-full p-px ">
-                                <div
-                                    className="absolute inset-0 rounded-full"
-                                    style={{
-                                        backgroundImage: "linear-gradient(90deg, #0032C9, #EA4336, #FCBC05, #34A854, #0032C9)",
-                                        backgroundSize: "200% 100%",
-                                        backgroundPosition: "0% 50%",
-                                    }}
-                                />
-                                <div className="relative z-1 flex h-full w-full items-center justify-center gap-2 rounded-full bg-white px-2 py-2">
+                            <div className="relative w-28 overflow-hidden rounded-full p-px">
+                                <div className="absolute inset-0 rounded-full" style={{ backgroundImage: "linear-gradient(90deg,#0032C9,#EA4336,#FCBC05,#34A854,#0032C9)", backgroundSize: "200% 100%" }} />
+                                <div className="relative z-1 flex w-full items-center justify-center gap-2 rounded-full bg-white px-2 py-2">
                                     <RiSparkling2Fill className="size-3 shrink-0 text-[#0032C9]" />
-                                    <span className="inline-block  whitespace-nowrap font-sans text-[0.55rem] font-semibold leading-tight tracking-wide text-[#0032C9]">
-                                        <span>AI AutoFill</span>
-                                    </span>
+                                    <span className="whitespace-nowrap font-sans text-[0.55rem] font-semibold tracking-wide text-[#0032C9]">AI AutoFill</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="placeholder21 absolute inset-0 z-10 flex w-full flex-col rounded-2xl border border-[#CED2D2] bg-white p-[3px]">
+                    {/* Skeleton overlay */}
+                    <div className="skeleton2 absolute inset-0 z-10 flex w-full flex-col rounded-2xl border border-[#CED2D2] bg-white p-[3px]">
                         <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded-[0.70rem] border border-[#CED2D2]">
-                            <div className="h-[18%] shrink-0 border-b border-[#CED2D2]" aria-hidden />
-                            <div className="flex-1" aria-hidden />
+                            <div className="h-[18%] shrink-0 border-b border-[#CED2D2]" />
+                            <div className="flex-1" />
                             <div className="flex h-[34%] shrink-0 flex-col">
-                                <div className="flex-1 border-b border-dashed border-[#CED2D2]" aria-hidden />
-                                <div className="flex-1 border-b border-dashed border-[#CED2D2]" aria-hidden />
-                                <div className="flex-1 border-b border-dashed border-[#CED2D2]" aria-hidden />
-                                <div className="flex-1" aria-hidden />
+                                <div className="flex-1 border-b border-dashed border-[#CED2D2]" />
+                                <div className="flex-1 border-b border-dashed border-[#CED2D2]" />
+                                <div className="flex-1 border-b border-dashed border-[#CED2D2]" />
+                                <div className="flex-1" />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     );
 }
@@ -331,174 +227,184 @@ const CARRIER_LOGOS = [
     { src: "/images/process/logo9.svg", alt: "Markel" },
 ] as const;
 
-function ProcessStep3() {
+function PanelStep3() {
     return (
-        <div className="process-step3 opacity-0 relative flex h-full w-full items-center justify-center">
-            <div className="relative grid w-xs bg shrink-0 grid-cols-1 [&>*]:col-start-1 [&>*]:row-start-1">
-                <div className="w-full rounded-2xl overflow-hidden border border-[#CCCCCC] bg-white" aria-hidden>
-                    <div className="flex items-center gap-2 border-b border-[#CCCCCC] px-4 py-3">
-                        <span className="flex size-[23px] shrink-0 items-center justify-center rounded-full border border-[#F3F4F6] bg-[#F9FAFB]">
-                            <RiHashtag color="#6F6F6F" size={11} />
-                        </span>
-                        <div className="flex flex-col">
-                            <span className="font-heading text-xs font-medium leading-tight text-[#3C3B3B]">Select NAICS Code</span>
-                            <span className="font-heading text-[0.55rem] font-regular leading-tight text-[#3C3B3B]">Choose the business industry code.</span>
-
+        <div className="panel-step3 absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none">
+            <div className="w-xs shrink-0 overflow-hidden rounded-2xl border border-[#CCCCCC] bg-white">
+                <div className="flex items-center gap-2 border-b border-[#CCCCCC] px-4 py-3">
+                    <span className="flex size-[23px] shrink-0 items-center justify-center rounded-full border border-[#F3F4F6] bg-[#F9FAFB]">
+                        <RiHashtag color="#6F6F6F" size={11} />
+                    </span>
+                    <div>
+                        <p className="font-heading text-xs font-medium text-[#3C3B3B]">Select NAICS Code</p>
+                        <p className="font-heading text-[0.55rem] text-[#3C3B3B]">Choose the business industry code.</p>
+                    </div>
+                </div>
+                <div className="px-3 pb-4">
+                    <div className="mt-0.5 w-full flex items-start justify-between gap-1 py-4">
+                        <div>
+                            <p className="font-sans text-[0.50rem] uppercase tracking-wider text-[#9CA3AF]">NAICS Code</p>
+                            <p className="font-heading text-[0.50rem] flex items-center justify-center rounded-full px-2 py-px mt-1 font-medium bg-[#D8EFFF] text-[#7299B4]">445110</p>
+                        </div>
+                        <RiArrowDownSLine className="size-5 shrink-0 text-[#6B7280]" />
+                    </div>
+                    <div className="w-full flex items-start justify-between gap-1">
+                        <div>
+                            <p className="font-sans text-[0.50rem] uppercase tracking-wider text-[#9CA3AF]">Description</p>
+                            <p className="font-heading text-[0.70rem] font-medium leading-tight text-[#2E2E2E] uppercase">Supermarkets and Other Grocery Stores</p>
                         </div>
                     </div>
-
-                    <div className="px-3 pb-4">
-                        <div className="mt-0.5 w-full flex items-start justify-between gap-1 py-4">
-                            <div>
-                                <p className="font-sans text-[0.50rem] font-normal uppercase leading-tight tracking-wider text-[#9CA3AF]">NAICS Code</p>
-                                <p className="font-heading text-[0.50rem] flex items-center justify-center rounded-full px-2 py-px mt-1 font-medium tracking-wide bg-[#D8EFFF] text-[#7299B4]">445110</p>
-                            </div>
-
-                            <RiArrowDownSLine className="size-5 shrink-0 text-[#6B7280]" />
+                </div>
+                <div className="logos-grid3 grid grid-cols-3 gap-2 overflow-hidden px-3 pb-0" style={{ height: 0 }}>
+                    {CARRIER_LOGOS.map((logo) => (
+                        <div
+                            key={logo.src}
+                            className={`logo3 col-span-1 flex items-center justify-center rounded-sm border py-1 shadow-[0_1px_4px_rgba(0,0,0,0.06)] opacity-0 scale-90 ${"highlighted" in logo && logo.highlighted ? "border-[#B1B9FF]" : "border-[#F3F2F3]"}`}
+                        >
+                            <Image src={logo.src} alt={logo.alt} width={100} height={100} className="size-12 object-contain" />
                         </div>
-                        <div className="w-full flex items-start justify-between gap-1 ">
-                            <div>
-                                <p className="font-sans text-[0.50rem] font-normal uppercase leading-tight tracking-wider text-[#9CA3AF]">Description</p>
-                                <p className="font-heading text-[0.70rem] font-medium leading-tight text-[#2E2E2E] uppercase">Supermarkets and Other Grocery Stores</p>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div className="dropdown-step3 grid grid-cols-3 gap-2 overflow-hidden px-3 pb-0">
-                        {CARRIER_LOGOS.map((logo) => (
-                            <div
-                                key={logo.src}
-                                className={`logo-step3 col-span-1 flex items-center justify-center rounded-sm border py-1 shadow-[0_1px_4px_rgba(0,0,0,0.06)] ${"highlighted" in logo && logo.highlighted
-                                    ? "border-[#B1B9FF]"
-                                    : "border-[#F3F2F3]"
-                                    }`}
-                            >
-                                <Image
-                                    src={logo.src}
-                                    alt={logo.alt}
-                                    width={100}
-                                    height={100}
-                                    className="size-12 object-contain object-center"
-                                />
-                            </div>
-                        ))}
-                    </div>
+                    ))}
                 </div>
             </div>
         </div>
     );
 }
 
-
-function ProcessStep4() {
+function PanelStep4() {
     return (
-        <div className="process-step4 relative flex h-full w-full flex-col justify-between overflow-hidden opacity-0">
-            <div className="row1 w-full h-[31%]  flex items-center justify-between">
-                <div className="w-1/2 h-full border -ml-2 border-[#CCCCCC] bg-white rounded-2xl p-[3px]">
-                    <div className="w-full h-full rounded-xl border border-[#CCCCCC]">
-                        <div className="w-full h-12 border-b border-[#CCCCCC]"></div>
-                    </div>
+        <div className="panel-step4 absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none p-7">
+            <div className="relative overflow-hidden flex h-full w-full flex-col justify-between">
+
+                {/*
+                    cursor4 is a DIRECT CHILD of this container — completely outside
+                    every row element. No ancestor has overflow:hidden above it except
+                    panel-step4 itself (which is inset-0 and large enough).
+                    Position it absolutely relative to this wrapper: right-center area,
+                    roughly where the Bind button sits in the middle card.
+                */}
+                <div
+                    className="cursor4 pointer-events-none absolute z-50 flex h-11 w-11 items-center justify-center opacity-0"
+                    style={{ right: "25%", top: "60%", transform: "translateY(0%)" }}
+                >
+                    <Image src="/images/process/cursor.svg" alt="" width={100} height={100} className="h-full w-full object-cover" />
                 </div>
-                <div className="w-1/2 h-full border -mr-2 border-[#CCCCCC] bg-white rounded-2xl p-[3px]">
-                    <div className="w-full h-full rounded-xl border border-[#CCCCCC]">
-                        <div className="w-full h-12 border-b border-[#CCCCCC]"></div>
-                    </div>
-                </div>
-            </div>
-            <div className="row2 relative w-full h-[31%]  flex items-center justify-between">
-                <div className="absolute left-[-28%]  w-full h-full  flex items-center justify-between">
-                    <div className="w-1/2 shrink-0  h-full border  border-[#CCCCCC] bg-white rounded-2xl p-[3px]">
-                        <div className="w-full h-full rounded-xl border border-[#CCCCCC]">
-                            <div className="w-full h-12 border-b border-[#CCCCCC]"></div>
-                        </div>
-                    </div>
-                    <div className="w-1/2 h-full shrink-0 overflow-visible border mx-4 flex flex-col justify-between border-[#CCCCCC] bg-white rounded-2xl">
-                        <div className="w-full h-12 px-3 bg-[#EEF1F3]/25 flex items-center justify-between">
-                            <Image src="/images/process/logo1.svg" alt="step4-1" width={100} height={100} className="size-10 object-contain object-center" />
-                            <div className="flex items-center gap-2">
-                                <span className="font-heading text-[0.50rem] font-medium leading-tight text-[#177F9B] flex items-center justify-center rounded-xs bg-[#D7F2F9] py-px px-2">A++</span>
-                                <span className="font-heading text-[0.50rem] font-medium leading-tight text-[#177F9B] flex items-center justify-center rounded-xs bg-[#D7F2F9] py-px px-2">10/10</span>
+
+                <div className="row4-1 w-full h-[31%] overflow-hidden flex items-center justify-between">
+                    {["-ml-2", "-mr-2"].map(cls => (
+                        <div
+                            key={cls}
+                            className={`row4-1-card ${cls === "-ml-2" ? "row4-1-left" : "row4-1-right"} w-1/2 h-full border ${cls} border-[#CCCCCC] bg-white rounded-2xl p-[3px]`}
+                        >
+                            <div className="w-full h-full rounded-xl border border-[#CCCCCC]">
+                                <div className="w-full h-12 border-b border-[#CCCCCC]" />
                             </div>
                         </div>
-                        <div className="w-full flex items-end justify-between px-3 pb-3">
-                            <div className="flex flex-col gap-1">
-                                <span className="font-heading text-xs uppercase font-medium leading-tight text-[#9C9AA2]">Premium</span>
-                                <span className="font-mono text-sm tracking-wide font-regular leading-tight text-[#6DAB4E]">$900.00</span>
+                    ))}
+                </div>
+
+                <div className="row4-2 relative w-full h-[31%]  flex items-center justify-center">
+                    <div className="row4-2-track absolute left-[-28%] w-full h-full flex items-center justify-between">
+                        <div className="row4-2-card row4-2-left w-1/2 shrink-0 h-full border border-[#CCCCCC] bg-white rounded-2xl p-[3px]">
+                            <div className="w-full h-full rounded-xl border border-[#CCCCCC]">
+                                <div className="w-full h-12 border-b border-[#CCCCCC]" />
                             </div>
-                            <span className="font-heading text-[0.50rem] font-medium leading-tight text-[#177F9B] flex items-center justify-center rounded-full bg-[#D7F2F9] py-1 px-4">Instantly Bindable</span>
                         </div>
-                        <div className="w-full flex items-end justify-between px-3 pb-3">
-                            <span className="font-heading text-[0.55rem] font-medium tracking-wide leading-tight text-[#3A48BE]">Gain 2% Enhanced Commissions</span>
-                            <div className="relative shrink-0">
-                                <div className="step4-bind-btn flex items-center justify-center gap-1 rounded-full bg-[#0032C9] px-3 py-1 font-heading text-[0.60rem] text-xs font-medium leading-tight tracking-wide text-white">
-                                    Bind
-                                    <RiArrowRightLine size={12} />
+
+                        <div className="card4-center relative w-1/2 h-full shrink-0 overflow-hidden border mx-4 border-[#CCCCCC] bg-white rounded-2xl">
+                            <div className="card4-quote absolute inset-0 flex flex-col justify-between overflow-hidden rounded-2xl">
+                                <div className="w-full h-12 px-3 bg-[#EEF1F3]/25 flex items-center justify-between">
+                                    <Image src="/images/process/logo1.svg" alt="AmTrust" width={100} height={100} className="size-10 object-contain" />
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-heading text-[0.50rem] font-medium text-[#177F9B] flex items-center rounded-xs bg-[#D7F2F9] py-px px-2">A++</span>
+                                        <span className="font-heading text-[0.50rem] font-medium text-[#177F9B] flex items-center rounded-xs bg-[#D7F2F9] py-px px-2">10/10</span>
+                                    </div>
                                 </div>
-                                <div className="process-step4-cursor pointer-events-none absolute left-1/2 top-1/2 z-20 flex h-11 w-11 -translate-x-[15%] -translate-y-[20%] items-center justify-center opacity-0">
-                                    <Image src="/images/process/cursor.svg" alt="" width={100} height={100} className="h-full w-full object-cover" />
+                                <div className="w-full flex items-end justify-between px-3 pb-3">
+                                    <div className="flex flex-col gap-1">
+                                        <span className="font-heading text-xs uppercase font-medium text-[#9C9AA2]">Premium</span>
+                                        <span className="font-mono text-sm tracking-wide text-[#6DAB4E]">$900.00</span>
+                                    </div>
+                                    <span className="font-heading text-[0.50rem] font-medium text-[#177F9B] flex items-center rounded-full bg-[#D7F2F9] py-1 px-4">Instantly Bindable</span>
+                                </div>
+                                <div className="w-full flex items-end justify-between px-3 pb-3">
+                                    <span className="font-heading text-[0.55rem] font-medium tracking-wide text-[#3A48BE]">Gain 2% Enhanced Commissions</span>
+                                    <div className="relative shrink-0">
+                                        <div className="bind-btn flex items-center justify-center gap-1 rounded-full bg-[#0032C9] px-3 py-1 font-heading text-[0.60rem] font-medium text-white">
+                                            Bind <RiArrowRightLine size={12} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="card4-success absolute inset-0 flex flex-col justify-between overflow-hidden rounded-2xl opacity-0">
+                                <div className="flex flex-col items-center px-6 pb-6 pt-8 text-center">
+                                    <Image src="/images/process/success.gif" alt="success" width={100} height={100} className="size-16 object-contain" />
+                                    <p className="mt-4 font-sans text-xs font-medium text-[#3742A4]">Thank you!</p>
+                                    <p className="mt-1 font-sans text-sm font-medium tracking-tight text-[#11243E]">Policy Bound Successfully!</p>
+                                </div>
+                                <div className="flex items-end justify-between bg-[#F5F7F9] px-5 py-4">
+                                    <div className="flex flex-col">
+                                        <span className="font-heading text-[0.65rem] font-medium text-[#4A5568]">Builder&apos;s Risk</span>
+                                        <Image src="/images/process/logo1.svg" alt="AmTrust Insurance" width={100} height={32} className="h-6 w-auto object-contain object-left" />
+                                    </div>
+                                    <div className="flex flex-col items-end gap-1">
+                                        <span className="font-heading text-xs uppercase font-medium text-[#9C9AA2]">Premium</span>
+                                        <span className="font-mono text-sm tracking-wide text-[#6DAB4E]">$900.00</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="w-1/2 shrink-0 h-full border  border-[#CCCCCC] bg-white rounded-2xl p-[3px]">
-                        <div className="w-full h-full rounded-xl border border-[#CCCCCC]">
-                            <div className="w-full h-12 border-b border-[#CCCCCC]"></div>
+
+                        <div className="row4-2-card row4-2-right w-1/2 shrink-0 h-full border border-[#CCCCCC] bg-white rounded-2xl p-[3px]">
+                            <div className="w-full h-full rounded-xl border border-[#CCCCCC]">
+                                <div className="w-full h-12 border-b border-[#CCCCCC]" />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div className="row3 w-full h-[31%]  flex items-center justify-between">
-                <div className="w-1/2 h-full border -ml-2 border-[#CCCCCC] bg-white rounded-2xl p-[3px]">
-                    <div className="w-full h-full rounded-xl border border-[#CCCCCC]">
-                        <div className="w-full h-12 border-b border-[#CCCCCC]"></div>
-                    </div>
-                </div>
-                <div className="w-1/2 h-full border -mr-2 border-[#CCCCCC] bg-white rounded-2xl p-[3px]">
-                    <div className="w-full h-full rounded-xl border border-[#CCCCCC]">
-                        <div className="w-full h-12 border-b border-[#CCCCCC]"></div>
-                    </div>
+
+                <div className="row4-3 w-full h-[31%] overflow-hidden flex items-center justify-between">
+                    {["-ml-2", "-mr-2"].map(cls => (
+                        <div
+                            key={cls}
+                            className={`row4-3-card ${cls === "-ml-2" ? "row4-3-left" : "row4-3-right"} w-1/2 h-full border ${cls} border-[#CCCCCC] bg-white rounded-2xl p-[3px]`}
+                        >
+                            <div className="w-full h-full rounded-xl border border-[#CCCCCC]">
+                                <div className="w-full h-12 border-b border-[#CCCCCC]" />
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>
     );
 }
 
-
-function ProcessStep5() {
+function PanelStep5() {
     return (
-        <div className="process-step5 opacity-0 relative flex h-full w-full items-center justify-center">
+        <div className="panel-step5 absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none">
             <div className="w-xs shrink-0 overflow-hidden rounded-2xl border border-[#CCCCCC] bg-white">
                 <div className="flex flex-col items-center px-6 pb-8 pt-10 text-center">
-                    <Image src="/images/process/success.gif" alt="success-badge" width={100} height={100} className="size-18 object-contain object-center" />
-                    <p className="mt-5 font-sans text-xs font-medium leading-tight text-[#3742A4]">Thank you!</p>
-                    <p className="mt-1 font-sans text-base font-medium leading-tight tracking-tight text-[#11243E]">
-                        Policy Bound Successfully!
-                    </p>
+                    <Image src="/images/process/success.gif" alt="success" width={100} height={100} className="size-18 object-contain" />
+                    <p className="mt-5 font-sans text-xs font-medium text-[#3742A4]">Thank you!</p>
+                    <p className="mt-1 font-sans text-base font-medium tracking-tight text-[#11243E]">Policy Bound Successfully!</p>
                 </div>
-
                 <div className="flex items-end justify-between bg-[#F5F7F9] px-5 py-4">
                     <div className="flex flex-col">
-                        <span className="font-heading text-[0.65rem] font-medium leading-tight text-[#4A5568]">
-                            Builder's Risk
-                        </span>
-                        <Image
-                            src="/images/process/logo1.svg"
-                            alt="AmTrust Insurance"
-                            width={100}
-                            height={32}
-                            className="h-7 w-auto object-contain object-left"
-                        />
+                        <span className="font-heading text-[0.65rem] font-medium text-[#4A5568]">Builder's Risk</span>
+                        <Image src="/images/process/logo1.svg" alt="AmTrust Insurance" width={100} height={32} className="h-7 w-auto object-contain object-left" />
                     </div>
                     <div className="flex flex-col items-end gap-1">
-                        <span className="font-heading text-xs uppercase font-medium leading-tight text-[#9C9AA2]">Premium</span>
-                        <span className="font-mono text-sm tracking-wide font-regular leading-tight text-[#6DAB4E]">$900.00</span>
+                        <span className="font-heading text-xs uppercase font-medium text-[#9C9AA2]">Premium</span>
+                        <span className="font-mono text-sm tracking-wide text-[#6DAB4E]">$900.00</span>
                     </div>
                 </div>
             </div>
         </div>
     );
 }
+
+// ─── Main component ───────────────────────────────────────────────────────────
 
 const ProcessFlow = () => {
     const sectionRef = useRef<HTMLDivElement>(null);
@@ -508,329 +414,396 @@ const ProcessFlow = () => {
             const section = sectionRef.current;
             if (!section) return;
 
-            const stepCount = processSteps.length;
-            const scrollDistance = `+=${stepCount * 175}vh`;
+            // ─────────────────────────────────────────────────────────────────
+            // TIMING PHILOSOPHY
+            // ─────────────────────────────────────────────────────────────────
+            // Every duration is significantly longer than the original.
+            // Panel cross-fades are slow and overlap deliberately so the right
+            // side is *never* empty. Key states linger before progressing.
+            // Easing uses custom cubic-bezier curves for premium feel.
+            // Scrub is high (8) so mouse wheel feels silky rather than jittery.
+            // ─────────────────────────────────────────────────────────────────
 
-            const EASE = "power2.inOut";
-            const EASE_OUT = "power2.out";
-            const D_POINT = 2.5;
-            const D_PANEL = 2.5;
-            const D_SCROLL = 12;
-            const D_VALIDATE = 0.65;
-            const VALIDATE_STAGGER = 0.8;
+            // Easing palette
+            const EASE_ENTER  = "power2.out";          // content arriving
+            const EASE_EXIT   = "power2.inOut";         // content leaving
+            const EASE_REVEAL = "power3.out";           // card/element reveals
+            const EASE_SOFT   = "sine.inOut";           // gentle colour transitions
 
-            gsap.set(".pocessContainer", { yPercent: 0 });
-            gsap.set(".process-step2", { opacity: 0 });
-            gsap.set(".ai-buttom", { opacity: 0, scale: 1, transformOrigin: "50% 50%" });
-            gsap.set(".ai-buttom-gradient", { opacity: 0 });
-            gsap.set(".ai-buttom-text-span", { opacity: 0 });
-            gsap.set(".process-step2-cursor", {
-                opacity: 0,
-                x: 28,
-                y: 22,
-                scale: 1,
-                transformOrigin: "50% 50%",
-            });
-            gsap.set(".placeholder2wrapper", { opacity: 0 });
-            gsap.set(".placeholder21", { opacity: 1 });
-            gsap.set(".step2-toggle-no", { backgroundColor: FIELD_IDLE_TOGGLE_BG, color: "#111827" });
-            gsap.set(".step2-check-nonprofit, .step2-check-fein, .step2-check-entity, .step2-check-year", {
-                backgroundColor: "#ffffff",
-                borderColor: FIELD_IDLE_BORDER,
-            });
-            gsap.set(
-                ".step2-check-icon-nonprofit, .step2-check-icon-fein, .step2-check-icon-entity, .step2-check-icon-year",
-                { color: "#111827" },
-            );
-            gsap.set(".step2-input-fein, .step2-input-entity, .step2-input-year", {
-                borderColor: FIELD_IDLE_BORDER,
-            });
-            gsap.set(".process-step3", { opacity: 0 });
-            gsap.set(".dropdown-step3", { height: 0, paddingBottom: 0 });
-            gsap.set(".logo-step3", { opacity: 0, scale: 0.88 });
-            gsap.set(".process-step4", { opacity: 0 });
-            gsap.set(".process-step4-cursor", {
-                opacity: 0,
-                x: 48,
-                y: -36,
-                scale: 1,
-                transformOrigin: "50% 50%",
-            });
-            gsap.set(".row1, .row3", { opacity: 1 });
-            gsap.set(".step4-bind-btn", { scale: 1, transformOrigin: "50% 50%" });
-            gsap.set(".process-step5", { opacity: 0 });
+            // Core durations (all in timeline "virtual time" units)
+            const FADE_DUR    = 6;     // panel cross-fade (was 4)
+            const POINT_DUR   = 5;     // point highlight transition (was 3.5)
+            const SCROLL_DUR  = 24;    // left-panel scroll travel between steps (was 18)
+            const SCAN_RISE   = 4;     // scanner beam rise (was 3)
+            const SCAN_TRAVEL = 12;    // scanner travel (was 8)
+            const VALID_DUR   = 1.2;   // per-field validation animation (was 0.8)
+            const VALID_STAG  = 2.0;   // stagger between fields (was 1.2)
 
-            const gradientEl = section.querySelector<HTMLElement>(".ai-buttom-gradient");
-            if (gradientEl) {
-                gsap.to(gradientEl, {
+            // Scroll budget
+            // Step slot boundaries (virtual units):
+            // Step 1:  0 – 60
+            // Step 2:  60 – 135
+            // Step 3:  135 – 200
+            // Step 4:  200 – 270
+            // Step 5:  270 – 330
+            const TOTAL_SCROLL_UNITS = 330;
+            const VH_PER_UNIT        = 2.8;   // was 2.6 — more scroll travel per unit
+            const scrollDistance     = `+=${TOTAL_SCROLL_UNITS * VH_PER_UNIT}vh`;
+
+            // ── Initial states ────────────────────────────────────────────────
+            gsap.set(".panel-step1, .panel-step2, .panel-step3, .panel-step4, .panel-step5", { opacity: 0 });
+            gsap.set(".skeleton1",    { opacity: 1 });
+            gsap.set(".card1",        { opacity: 0, y: 8 });
+            gsap.set(".graph1",       { opacity: 0, y: 12, x: -4 });
+            gsap.set(".scanner1",     { opacity: 0, top: "100%" });
+
+            gsap.set(".ai-btn",          { opacity: 0, scale: 0.88, transformOrigin: "50% 50%" });
+            gsap.set(".ai-btn-gradient", { opacity: 0 });
+            gsap.set(".ai-btn-text",     { width: 0 });
+            gsap.set(".ai-btn-label",    { opacity: 0 });
+            gsap.set(".cursor2",         { opacity: 0, x: 48, y: 36 });
+            gsap.set(".form-wrap2",      { opacity: 0 });
+            gsap.set(".skeleton2",       { opacity: 1 });
+            gsap.set(".f2-toggle-no",    { backgroundColor: FIELD_IDLE_TOGGLE, color: "#111827" });
+            gsap.set(".f2-check-np, .f2-check-fein, .f2-check-ent, .f2-check-yr",
+                     { backgroundColor: "#fff", borderColor: FIELD_IDLE_BORDER });
+            gsap.set(".f2-icon-np, .f2-icon-fein, .f2-icon-ent, .f2-icon-yr",
+                     { color: "#111827" });
+            gsap.set(".f2-inp-fein, .f2-inp-ent, .f2-inp-yr",
+                     { borderColor: FIELD_IDLE_BORDER });
+
+            gsap.set(".logos-grid3", { height: 0, paddingBottom: 0 });
+            gsap.set(".logo3",       { opacity: 0, scale: 0.82, y: 6 });
+
+            // Step 4
+            // cursor4 starts offset to the right and slightly above its resting spot
+            gsap.set(".cursor4",              { opacity: 0, x: 40, y: -20 });
+            gsap.set(".bind-btn",             { scale: 1, transformOrigin: "50% 50%" });
+            gsap.set(".row4-1, .row4-3",      { opacity: 1, height: "31%" });
+            gsap.set(".row4-1-card, .row4-3-card, .row4-2-card", { x: 0, y: 0, opacity: 1 });
+            gsap.set(".row4-2-track",         { x: 0 });
+            gsap.set(".card4-center",         { scale: 1, y: 0, transformOrigin: "50% 50%" });
+            gsap.set(".card4-quote",          { opacity: 1 });
+            gsap.set(".card4-success",        { opacity: 0 });
+
+            // Animate AI-button gradient continuously
+            const gradEl = section.querySelector<HTMLElement>(".ai-btn-gradient");
+            if (gradEl) {
+                gsap.to(gradEl, {
                     backgroundPosition: "200% 50%",
-                    duration: 4,
+                    duration: 6,
                     ease: "none",
                     repeat: -1,
                 });
             }
 
+            // ── Pin section ───────────────────────────────────────────────────
             ScrollTrigger.create({
-                trigger: section,
-                start: "top top",
-                end: scrollDistance,
-                pin: true,
+                trigger:    section,
+                start:      "top top",
+                end:        scrollDistance,
+                pin:        true,
                 pinSpacing: true,
             });
 
+            // ── Main scrubbed timeline ────────────────────────────────────────
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: section,
-                    start: "top top",
-                    end: scrollDistance,
-                    scrub: 2.8,
+                    start:   "top top",
+                    end:     scrollDistance,
+                    scrub:   8,    // high scrub = silky feel, no snapping
                 },
             });
 
-            const pointSpanActive = {
-                backgroundColor: POINT_ACTIVE,
-                color: "#ffffff",
-                borderColor: POINT_ACTIVE,
-            };
-            const pointSpanIdle = {
-                backgroundColor: "transparent",
-                color: POINT_IDLE,
-                borderColor: POINT_IDLE,
-            };
+            // ── Helpers ───────────────────────────────────────────────────────
 
-            const highlightPoint = (step: number, point: number, time: number) => {
-                const base = `.step${step} .point${point}`;
-                tl.to(`${base} p`, { color: POINT_ACTIVE, duration: D_POINT, ease: EASE }, time).to(
-                    `${base} span`,
-                    { ...pointSpanActive, duration: D_POINT, ease: EASE },
-                    time,
-                );
+            // Highlight / dim a numbered point
+            const hi = (step: number, pt: number, t: number) => {
+                const b = `.step${step} .point${pt}`;
+                tl.to(`${b} p`,    { color: POINT_ACTIVE, duration: POINT_DUR, ease: EASE_SOFT }, t)
+                  .to(`${b} span`,  { backgroundColor: POINT_ACTIVE, color: "#fff", borderColor: POINT_ACTIVE, duration: POINT_DUR, ease: EASE_SOFT }, t);
             };
-            const unhighlightPoint = (step: number, point: number, time: number) => {
-                const base = `.step${step} .point${point}`;
-                tl.to(`${base} p`, { color: POINT_IDLE, duration: D_POINT, ease: EASE }, time).to(
-                    `${base} span`,
-                    { ...pointSpanIdle, duration: D_POINT, ease: EASE },
-                    time,
-                );
+            const lo = (step: number, pt: number, t: number) => {
+                const b = `.step${step} .point${pt}`;
+                tl.to(`${b} p`,   { color: POINT_IDLE, duration: POINT_DUR, ease: EASE_SOFT }, t)
+                  .to(`${b} span`, { backgroundColor: "transparent", color: POINT_IDLE, borderColor: POINT_IDLE, duration: POINT_DUR, ease: EASE_SOFT }, t);
             };
 
-            // Step 1 — each point gets a dedicated scroll window
-            const s1p1 = 0;
-            const s1p1Off = 5.5;
-            const s1p2 = 5.5;
-            const s1p2Off = 11;
-            const s1p3 = 11;
-            const s1scanner = 12;
-            const s1p3Off = 18.5;
-            const s1outro = 18.5;
-            const s2scrollStart = 20;
-
-            // Step 2 — starts when step 1 scroll finishes; points sync to right-panel beats
-            const s2stick = s2scrollStart + D_SCROLL;
-            const s2p1Fill = s2stick + 4;
-            const s2cursor = s2stick + 7.5;
-            const s2click = s2stick + 10.5;
-            const s2afterClick = s2click + 0.55;
-            const s2p2 = s2afterClick + 2.5;
-            const s2p3 = s2p2 + 5.5;
-            const s2validate = s2p3 + D_PANEL;
-            const s2hideWrap = s2validate + VALIDATE_STAGGER * 4 + 2.5;
-            const s3scroll = s2hideWrap + 1.5;
-
-            // Step 3 — left panel sticks on step 3; right panel reveals NAICS card + carrier logos
-            const s3stick = s3scroll + D_SCROLL;
-            const s3p1 = s3stick;
-            const s3p1Off = s3stick + 5.5;
-            const s3p2 = s3p1Off;
-            const s3p2Off = s3p2 + 5.5;
-            const s3p3 = s3p2Off;
-            const s3p3Off = s3p3 + 11;
-            const s3hide = s3p3Off;
-            const s4scroll = s3hide + 1.5;
-
-            // Step 4 — point 2 cursor reaches Bind; point 3 clicks + side rows fade
-            const s4stick = s4scroll + D_SCROLL;
-            const s4p1 = s4stick;
-            const s4p1Off = s4stick + 5.5;
-            const s4p2 = s4p1Off;
-            const s4cursor = s4p2 + 2.5;
-            const s4p2Off = s4p2 + 5.5;
-            const s4p3 = s4p2Off;
-            const s4click = s4p3 + 1.5;
-            const s4afterClick = s4click + 0.55;
-            const s4p3Off = s4afterClick + 5.5;
-            const s4hide = s4p3Off;
-            const s5scroll = s4hide + 1.5;
-
-            // Step 5 — left panel sticks; success card visible; points switch one by one
-            const s5stick = s5scroll + D_SCROLL;
-            const s5p1 = s5stick;
-            const s5p1Off = s5stick + 5.5;
-            const s5p2 = s5p1Off;
-            const s5p2Off = s5p2 + 5.5;
-            const s5p3 = s5p2Off;
-            const s5p3Off = s5p3 + 5.5;
-
-            tl.to(".process-step1", { opacity: 1, duration: D_PANEL, ease: EASE }, s1p1);
-
-            highlightPoint(1, 1, s1p1);
-            unhighlightPoint(1, 1, s1p1Off);
-
-            highlightPoint(1, 2, s1p2);
-            tl.to(".placeholder1", { opacity: 0, duration: D_PANEL, ease: EASE }, s1p2).to(
-                ".final11",
-                { opacity: 1, duration: D_PANEL, ease: EASE },
-                s1p2,
-            );
-            unhighlightPoint(1, 2, s1p2Off);
-
-            highlightPoint(1, 3, s1p3);
-            tl.to(".step1-scanner", { opacity: 1, duration: 1.5, ease: EASE }, s1scanner)
-                .to(".step1-scanner", { top: "10%", duration: 1.5, ease: EASE }, s1scanner + 1.25)
-                .to(".step1-scanner", { top: "100%", duration: 3.5, ease: "none" }, s1scanner + 3);
-            unhighlightPoint(1, 3, s1p3Off);
-            tl.to(".step1-scanner", { opacity: 0, duration: 1.5, ease: EASE }, s1p3Off).to(
-                ".process-step1",
-                { opacity: 0, duration: D_PANEL, ease: EASE },
-                s1outro,
-            );
-
-            tl.to(".pocessContainer", { yPercent: -20, duration: D_SCROLL, ease: "none" }, s2scrollStart);
-
-            tl.to(".process-step2", { opacity: 1, duration: D_PANEL, ease: EASE }, s2stick);
-            highlightPoint(2, 1, s2stick);
-            tl.to(".ai-buttom", { opacity: 1, duration: D_PANEL, ease: EASE }, s2stick + 0.75);
-
-            tl.to(".ai-buttom-content", { backgroundColor: "#E1E9FF", duration: D_PANEL, ease: EASE }, s2p1Fill)
-                .to(".ai-buttom-gradient", { opacity: 1, duration: D_PANEL, ease: EASE }, s2p1Fill)
-                .to(".ai-buttom-text", { width: "4.85rem", duration: D_PANEL, ease: EASE }, s2p1Fill)
-                .to(".ai-buttom-icon", { color: POINT_ACTIVE, duration: D_PANEL, ease: EASE }, s2p1Fill)
-                .to(".ai-buttom-text-span", { opacity: 1, duration: D_PANEL, ease: EASE }, s2p1Fill);
-
-            tl.to(
-                ".process-step2-cursor",
-                { opacity: 1, x: 0, y: 0, duration: D_PANEL, ease: EASE_OUT },
-                s2cursor,
-            );
-            tl.to(".process-step2-cursor", { scale: 0.82, duration: 0.18, ease: "power2.in" }, s2click)
-                .to(".ai-buttom", { scale: 0.9, duration: 0.18, ease: "power2.in" }, s2click)
-                .to(".process-step2-cursor", { scale: 1, duration: 0.35, ease: EASE_OUT }, s2click + 0.18)
-                .to(".ai-buttom", { scale: 1, duration: 0.4, ease: "back.out(2)" }, s2click + 0.22);
-
-            tl.to(".ai-buttom", { opacity: 0, duration: 1.25, ease: EASE }, s2afterClick).to(
-                ".process-step2-cursor",
-                { opacity: 0, duration: 1.25, ease: EASE },
-                s2afterClick,
-            );
-
-            unhighlightPoint(2, 1, s2p2);
-            highlightPoint(2, 2, s2p2);
-            tl.to(".placeholder2wrapper", { opacity: 1, duration: D_PANEL, ease: EASE }, s2p2 + 0.5);
-
-            unhighlightPoint(2, 2, s2p3);
-            highlightPoint(2, 3, s2p3);
-            tl.to(".placeholder21", { opacity: 0, duration: D_PANEL, ease: EASE }, s2p3 + 0.5);
-
-            const validateField = (time: number, selectors: string[], props: gsap.TweenVars) => {
-                selectors.forEach((sel) => {
-                    tl.to(sel, { ...props, duration: D_VALIDATE, ease: EASE }, time);
-                });
+            // Cross-fade two panels with generous overlap so there's always content
+            // fromPanel fades out slowly; toPanel starts fading in halfway through.
+            const crossFade = (fromPanel: string, toPanel: string, t: number) => {
+                tl.to(fromPanel, { opacity: 0, y: -10, duration: FADE_DUR, ease: EASE_EXIT },  t);
+                tl.to(toPanel,   { opacity: 1, y: 0,   duration: FADE_DUR * 1.1, ease: EASE_ENTER }, t + FADE_DUR * 0.35);
             };
 
-            validateField(s2validate, [".step2-toggle-no"], { backgroundColor: FIELD_VALID, color: "#ffffff" });
-            validateField(s2validate + VALIDATE_STAGGER, [".step2-check-nonprofit"], {
-                backgroundColor: FIELD_VALID,
-                borderColor: FIELD_VALID,
-            });
-            validateField(s2validate + VALIDATE_STAGGER, [".step2-check-icon-nonprofit"], { color: "#ffffff" });
-            validateField(s2validate + VALIDATE_STAGGER * 2, [".step2-input-fein"], { borderColor: FIELD_VALID });
-            validateField(s2validate + VALIDATE_STAGGER * 2, [".step2-check-fein"], {
-                backgroundColor: FIELD_VALID,
-                borderColor: FIELD_VALID,
-            });
-            validateField(s2validate + VALIDATE_STAGGER * 2, [".step2-check-icon-fein"], { color: "#ffffff" });
-            validateField(s2validate + VALIDATE_STAGGER * 3, [".step2-input-entity"], { borderColor: FIELD_VALID });
-            validateField(s2validate + VALIDATE_STAGGER * 3, [".step2-check-entity"], {
-                backgroundColor: FIELD_VALID,
-                borderColor: FIELD_VALID,
-            });
-            validateField(s2validate + VALIDATE_STAGGER * 3, [".step2-check-icon-entity"], { color: "#ffffff" });
-            validateField(s2validate + VALIDATE_STAGGER * 4, [".step2-input-year"], { borderColor: FIELD_VALID });
-            validateField(s2validate + VALIDATE_STAGGER * 4, [".step2-check-year"], {
-                backgroundColor: FIELD_VALID,
-                borderColor: FIELD_VALID,
-            });
-            validateField(s2validate + VALIDATE_STAGGER * 4, [".step2-check-icon-year"], { color: "#ffffff" });
+            // ═══════════════════════════════════════════════════════════════
+            // STEP 1  (t = 0 … 60)
+            // ═══════════════════════════════════════════════════════════════
+            const s1_enter  = 0;
+            const s1_p1     = 3;
+            const s1_p1off  = 16;
+            const s1_p2     = 14;       // overlap: p2 starts before p1 fully dims
+            const s1_card   = s1_p2 + 2;
+            const s1_graph  = s1_p2 + 5;
+            const s1_p2off  = 28;
+            const s1_p3     = 26;
+            const s1_scan   = 29;
+            const s1_p3off  = 46;
+            const s1_outro  = 50;
+            const s2_scroll = 52;
 
-            tl.to(".placeholder2wrapper", { opacity: 0, duration: D_PANEL, ease: EASE }, s2hideWrap);
-            tl.to(".process-step2", { opacity: 0, duration: D_PANEL, ease: EASE }, s2hideWrap);
-            tl.to(".pocessContainer", { yPercent: -40, duration: D_SCROLL, ease: "none" }, s3scroll);
+            // Panel 1 entrance: rise up from slight offset
+            gsap.set(".panel-step1", { y: 20 });
+            tl.to(".panel-step1", { opacity: 1, y: 0, duration: FADE_DUR * 1.2, ease: EASE_ENTER }, s1_enter);
 
-            unhighlightPoint(2, 3, s3p1);
-            highlightPoint(3, 1, s3p1);
-            tl.to(".process-step3", { opacity: 1, duration: D_PANEL, ease: EASE }, s3p1);
-            unhighlightPoint(3, 1, s3p1Off);
+            hi(1, 1, s1_p1);
+            lo(1, 1, s1_p1off);
 
-            highlightPoint(3, 2, s3p2);
-            tl.to(
-                ".dropdown-step3",
-                { height: "12.5rem", paddingBottom: 20, duration: D_PANEL, ease: EASE },
-                s3p2,
-            );
-            unhighlightPoint(3, 2, s3p2Off);
+            hi(1, 2, s1_p2);
+            // Skeleton → Card reveal (skeleton fades, card rises in)
+            tl.to(".skeleton1", { opacity: 0, duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s1_card)
+              .to(".card1",     { opacity: 1, y: 0, duration: FADE_DUR, ease: EASE_REVEAL }, s1_card + 1.5)
+              .to(".graph1",    { opacity: 1, y: 0, x: 0, duration: FADE_DUR * 0.8, ease: EASE_REVEAL }, s1_graph);
+            lo(1, 2, s1_p2off);
 
-            highlightPoint(3, 3, s3p3);
-            tl.to(
-                ".logo-step3",
-                { opacity: 1, scale: 1, duration: D_VALIDATE, ease: EASE_OUT, stagger: 0.15 },
-                s3p3,
-            );
-            unhighlightPoint(3, 3, s3p3Off);
+            hi(1, 3, s1_p3);
+            // Scanner beam: rises from bottom, travels upward across card, fades out
+            tl.to(".scanner1", { opacity: 1, top: "10%", duration: SCAN_RISE,   ease: EASE_ENTER }, s1_scan)
+              .to(".scanner1", { top: "100%",             duration: SCAN_TRAVEL, ease: "none"      }, s1_scan + SCAN_RISE)
+              .to(".scanner1", { opacity: 0,              duration: 2.5,         ease: "power2.in" }, s1_scan + SCAN_RISE + SCAN_TRAVEL - 1.5);
+            lo(1, 3, s1_p3off);
 
-            tl.to(".process-step3", { opacity: 0, duration: D_PANEL, ease: EASE }, s3hide);
-            tl.to(".pocessContainer", { yPercent: -60, duration: D_SCROLL, ease: "none" }, s4scroll);
+            // Outro: panel drifts up and fades while left scroll begins
+            tl.to(".panel-step1", { opacity: 0, y: -14, duration: FADE_DUR, ease: EASE_EXIT }, s1_outro);
+            tl.to(".leftScroll",  { yPercent: -20, duration: SCROLL_DUR, ease: "none" }, s2_scroll);
 
-            highlightPoint(4, 1, s4p1);
-            tl.to(".process-step4", { opacity: 1, duration: D_PANEL, ease: EASE }, s4p1);
-            unhighlightPoint(4, 1, s4p1Off);
+            // ═══════════════════════════════════════════════════════════════
+            // STEP 2  (t = 52 … 135)
+            // Panel 2 begins fading in during scroll travel so right panel is
+            // never empty as the user scrolls between steps.
+            // ═══════════════════════════════════════════════════════════════
+            const s2_stick   = s2_scroll + SCROLL_DUR;  // ~76
 
-            highlightPoint(4, 2, s4p2);
-            tl.to(
-                ".process-step4-cursor",
-                { opacity: 1, x: 0, y: 0, duration: D_PANEL, ease: EASE_OUT },
-                s4cursor,
-            );
-            tl.to(".step4-bind-btn", { scale: 1.06, duration: D_PANEL, ease: EASE }, s4cursor + 0.5);
-            unhighlightPoint(4, 2, s4p2Off);
+            // Start bringing panel2 in partway through scroll travel
+            gsap.set(".panel-step2", { y: 18, opacity: 0 });
+            tl.to(".panel-step2", { opacity: 1, y: 0, duration: SCROLL_DUR * 0.65, ease: EASE_ENTER }, s2_scroll + SCROLL_DUR * 0.18);
 
-            highlightPoint(4, 3, s4p3);
-            tl.to(".process-step4-cursor", { scale: 0.82, duration: 0.18, ease: "power2.in" }, s4click)
-                .to(".step4-bind-btn", { scale: 0.9, duration: 0.18, ease: "power2.in" }, s4click)
-                .to(".process-step4-cursor", { scale: 1, duration: 0.35, ease: EASE_OUT }, s4click + 0.18)
-                .to(".step4-bind-btn", { scale: 1, duration: 0.4, ease: "back.out(2)" }, s4click + 0.22);
-            tl.to(".row1", { opacity: 0, duration: D_PANEL, ease: EASE }, s4p3);
-            tl.to(".row3", { opacity: 0, duration: D_PANEL, ease: EASE }, s4p3);
-            tl.to(".process-step4-cursor", { opacity: 0, duration: 1.25, ease: EASE }, s4afterClick);
-            unhighlightPoint(4, 3, s4p3Off);
+            const s2_p1      = s2_stick + 2;
+            const s2_fill    = s2_stick + 8;
+            const s2_cursor  = s2_stick + 14;
+            const s2_click   = s2_stick + 19;
+            const s2_afterCl = s2_click + 2;
+            const s2_p1off   = s2_afterCl + 4;
+            const s2_p2      = s2_p1off - 2;   // p2 overlaps p1 dim
+            const s2_form    = s2_p2 + 2;
+            const s2_p2off   = s2_p2 + 16;
+            const s2_p3      = s2_p2off - 2;
+            const s2_valid   = s2_p3 + FADE_DUR + 1;
+            const s2_p3off   = s2_valid + VALID_STAG * 4 + 8;
+            const s2_outro   = s2_p3off + 4;
+            const s3_scroll  = s2_outro + 5;
 
-            tl.to(".process-step4", { opacity: 0, duration: D_PANEL, ease: EASE }, s4hide);
-            tl.to(".pocessContainer", { yPercent: -80, duration: D_SCROLL, ease: "none" }, s5scroll);
+            hi(2, 1, s2_p1);
+            // AI button swells into view
+            tl.to(".ai-btn", { opacity: 1, scale: 1, duration: FADE_DUR * 1.1, ease: "back.out(1.5)" }, s2_stick + 2);
+            // Gradient fill expansion
+            tl.to(".ai-btn-inner",    { backgroundColor: "#E1E9FF", duration: FADE_DUR, ease: EASE_SOFT }, s2_fill)
+              .to(".ai-btn-gradient", { opacity: 1,                  duration: FADE_DUR, ease: EASE_SOFT }, s2_fill)
+              .to(".ai-btn-text",     { width: "4.85rem",            duration: FADE_DUR * 1.1, ease: "power2.out" }, s2_fill)
+              .to(".ai-btn-icon",     { color: POINT_ACTIVE,         duration: FADE_DUR, ease: EASE_SOFT }, s2_fill)
+              .to(".ai-btn-label",    { opacity: 1,                  duration: FADE_DUR, ease: EASE_SOFT }, s2_fill + 1.5);
+            // Cursor glides in smoothly from offset
+            tl.to(".cursor2", { opacity: 1, x: 0, y: 0, duration: FADE_DUR * 1.3, ease: "power2.out" }, s2_cursor);
+            // Click micro-interaction — subtle press and release
+            tl.to(".cursor2",  { scale: 0.85, duration: 0.3,  ease: "power2.in"   }, s2_click)
+              .to(".ai-btn",   { scale: 0.93, duration: 0.3,  ease: "power2.in"   }, s2_click)
+              .to(".cursor2",  { scale: 1,    duration: 0.7,  ease: "back.out(2)" }, s2_click + 0.3)
+              .to(".ai-btn",   { scale: 1,    duration: 0.7,  ease: "back.out(2)" }, s2_click + 0.35);
+            // Fade button + cursor out gracefully
+            tl.to(".cursor2",  { opacity: 0, x: -12, duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s2_afterCl)
+              .to(".ai-btn",   { opacity: 0, y: -8,  duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s2_afterCl);
 
-            highlightPoint(5, 1, s5p1);
-            tl.to(".process-step5", { opacity: 1, duration: D_PANEL, ease: EASE }, s5p1);
-            unhighlightPoint(5, 1, s5p1Off);
+            lo(2, 1, s2_p1off);
+            hi(2, 2, s2_p2);
+            // Reveal form (skeleton dissolves revealing filled form beneath)
+            tl.to(".form-wrap2", { opacity: 1, duration: FADE_DUR, ease: EASE_ENTER }, s2_form)
+              .to(".skeleton2",  { opacity: 0, duration: FADE_DUR * 0.9, ease: EASE_EXIT }, s2_form + 1.5);
 
-            highlightPoint(5, 2, s5p2);
-            unhighlightPoint(5, 2, s5p2Off);
+            lo(2, 2, s2_p2off);
+            hi(2, 3, s2_p3);
 
-            highlightPoint(5, 3, s5p3);
-            unhighlightPoint(5, 3, s5p3Off);
+            // Validate fields one by one with generous stagger
+            const vld = (t: number, inputs: string[], checks: string[], icons: string[]) => {
+                inputs.forEach(sel => tl.to(sel, { borderColor: FIELD_VALID, duration: VALID_DUR * 1.3, ease: EASE_SOFT }, t));
+                checks.forEach(sel => tl.to(sel, { backgroundColor: FIELD_VALID, borderColor: FIELD_VALID, duration: VALID_DUR * 1.3, ease: EASE_SOFT }, t));
+                icons.forEach(sel  => tl.to(sel, { color: "#fff", duration: VALID_DUR, ease: EASE_SOFT }, t + 0.4));
+            };
+            tl.to(".f2-toggle-no", { backgroundColor: FIELD_VALID, color: "#fff", duration: VALID_DUR * 1.5, ease: EASE_SOFT }, s2_valid);
+            vld(s2_valid + VALID_STAG,       [],              [".f2-check-np"],   [".f2-icon-np"]);
+            vld(s2_valid + VALID_STAG * 2,   [".f2-inp-fein"], [".f2-check-fein"], [".f2-icon-fein"]);
+            vld(s2_valid + VALID_STAG * 3,   [".f2-inp-ent"],  [".f2-check-ent"],  [".f2-icon-ent"]);
+            vld(s2_valid + VALID_STAG * 4,   [".f2-inp-yr"],   [".f2-check-yr"],   [".f2-icon-yr"]);
 
-            const lenis = window.lenis;
+            lo(2, 3, s2_p3off);
+            // Panel 2 exits while scroll travel begins
+            tl.to(".panel-step2", { opacity: 0, y: -14, duration: FADE_DUR, ease: EASE_EXIT }, s2_outro);
+            tl.to(".leftScroll",  { yPercent: -40, duration: SCROLL_DUR, ease: "none" }, s3_scroll);
+
+            // ═══════════════════════════════════════════════════════════════
+            // STEP 3  (t ≈ s3_scroll … s3_scroll+65)
+            // ═══════════════════════════════════════════════════════════════
+            const s3_stick  = s3_scroll + SCROLL_DUR;
+
+            gsap.set(".panel-step3", { y: 18, opacity: 0 });
+            tl.to(".panel-step3", { opacity: 1, y: 0, duration: SCROLL_DUR * 0.65, ease: EASE_ENTER }, s3_scroll + SCROLL_DUR * 0.18);
+
+            const s3_p1     = s3_stick + 2;
+            const s3_p1off  = s3_stick + 14;
+            const s3_p2     = s3_p1off - 2;
+            const s3_logos  = s3_p2 + 3;
+            const s3_p2off  = s3_p2 + 18;
+            const s3_p3     = s3_p2off - 2;
+            const s3_p3off  = s3_p3 + 18;
+            const s3_outro  = s3_p3off + 4;
+            const s4_scroll = s3_outro + 5;
+
+            hi(3, 1, s3_p1);
+            lo(3, 1, s3_p1off);
+            hi(3, 2, s3_p2);
+            // Logos grid expands smoothly
+            tl.to(".logos-grid3", {
+                height: "12.5rem",
+                paddingBottom: 20,
+                duration: FADE_DUR * 1.3,
+                ease: "power2.out",
+            }, s3_logos);
+            lo(3, 2, s3_p2off);
+            hi(3, 3, s3_p3);
+            // Logos reveal with stagger — each pops in gently
+            tl.to(".logo3", {
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                duration: VALID_DUR * 1.5,
+                ease: "back.out(1.4)",
+                stagger: 0.28,
+            }, s3_p3);
+            lo(3, 3, s3_p3off);
+
+            tl.to(".panel-step3", { opacity: 0, y: -14, duration: FADE_DUR, ease: EASE_EXIT }, s3_outro);
+            tl.to(".leftScroll",  { yPercent: -60, duration: SCROLL_DUR, ease: "none" }, s4_scroll);
+
+            // ═══════════════════════════════════════════════════════════════
+            // STEP 4  (t ≈ s4_scroll … s4_scroll+75)
+            // ═══════════════════════════════════════════════════════════════
+            const s4_stick  = s4_scroll + SCROLL_DUR;
+
+            gsap.set(".panel-step4", { y: 18, opacity: 0 });
+            tl.to(".panel-step4", { opacity: 1, y: 0, duration: SCROLL_DUR * 0.65, ease: EASE_ENTER }, s4_scroll + SCROLL_DUR * 0.18);
+
+            // Reset step4 layout for correct reverse-scroll behaviour
+            tl.set(".row4-1, .row4-3",  { height: "31%", opacity: 1 }, s4_scroll)
+              .set(".row4-2",            { height: "31%", opacity: 1 }, s4_scroll)
+              .set(".row4-1-card, .row4-3-card, .row4-2-card", { x: 0, y: 0, opacity: 1 }, s4_scroll)
+              .set(".row4-2-track",      { x: 0 }, s4_scroll)
+              .set(".card4-center",      { scale: 1, y: 0 }, s4_scroll)
+              .set(".card4-quote",       { opacity: 1 }, s4_scroll)
+              .set(".card4-success",     { opacity: 0 }, s4_scroll)
+              .set(".cursor4",           { opacity: 0, x: 40, y: -20 }, s4_scroll);
+
+            const s4_p1     = s4_stick + 2;
+            const s4_p1off  = s4_stick + 14;
+            const s4_p2     = s4_p1off - 2;
+
+            // Cursor enters from OUTSIDE the card — top-right, well clear of card bounds
+            // cursor4 is positioned in CSS at { right: -1rem, top: -2.5rem }
+            // We animate from further out and bring it toward the Bind button
+            const s4_cursor = s4_p2 + 6;
+            const s4_p2off  = s4_p2 + 18;
+            const s4_p3     = s4_p2off - 2;
+            const s4_click  = s4_p3 + 5;
+            const s4_afterCl= s4_click + 2;
+            const s4_p3off  = s4_afterCl + 10;
+            const s4_rows_out = s4_p3off + 2;
+            const s4_outro  = s4_rows_out + FADE_DUR;
+            const s5_scroll = s4_outro + 5;
+            const s5_morph  = s5_scroll + SCROLL_DUR * 0.4;
+
+            hi(4, 1, s4_p1);
+            lo(4, 1, s4_p1off);
+            hi(4, 2, s4_p2);
+
+            // Cursor glides in from outside top-right corner of the card row
+            // (cursor4 initial state: x: 24, y: 24 — further from its resting spot)
+            tl.to(".cursor4", { opacity: 1, x: 0, y: 0, duration: FADE_DUR * 1.3, ease: "power2.out" }, s4_cursor)
+              .to(".bind-btn", { scale: 1.1, duration: FADE_DUR, ease: EASE_SOFT }, s4_cursor + 2);
+
+            lo(4, 2, s4_p2off);
+            hi(4, 3, s4_p3);
+
+            // Cursor presses down — stays outside card, near top-right
+            tl.to(".cursor4",  { scale: 0.84, duration: 0.35, ease: "power2.in"   }, s4_click)
+              .to(".bind-btn", { scale: 0.91, duration: 0.35, ease: "power2.in"   }, s4_click)
+              .to(".cursor4",  { scale: 1,    duration: 0.65, ease: "back.out(2)" }, s4_click + 0.35)
+              .to(".bind-btn", { scale: 1,    duration: 0.7,  ease: "back.out(2)" }, s4_click + 0.38);
+
+            // Side rows slide away (rows 1 & 3 side cards exit stage left/right)
+            tl.to(".row4-1-left",  { x: "-130%", y: -8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_p3 + 1)
+              .to(".row4-1-right", { x: "130%",  y: -8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_p3 + 1)
+              .to(".row4-3-left",  { x: "-130%", y:  8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_p3 + 1)
+              .to(".row4-3-right", { x: "130%",  y:  8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_p3 + 1);
+
+            // Cursor fades out gracefully after click
+            tl.to(".cursor4",  { opacity: 0, x: 16, duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s4_afterCl);
+
+            lo(4, 3, s4_p3off);
+
+            // Row 2 side cards slide away, center card stays prominent
+            tl.to(".row4-2-left",  { x: "-130%", opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_rows_out)
+              .to(".row4-2-right", { x: "130%",  opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_rows_out)
+              .to(".row4-2-track", { x: 0, duration: FADE_DUR, ease: EASE_SOFT }, s4_rows_out);
+
+            tl.to(".leftScroll", { yPercent: -80, duration: SCROLL_DUR, ease: "none" }, s5_scroll);
+
+            // ═══════════════════════════════════════════════════════════════
+            // STEP 5 — Center quote card morphs into success state
+            // Panel 5 appears as the morphed card; both coexist gracefully.
+            // ═══════════════════════════════════════════════════════════════
+            const s5_stick  = s5_scroll + SCROLL_DUR;
+
+            // Rows 1 & 3 collapse, row 2 expands to center stage
+            tl.to(".row4-1", { height: 0, opacity: 0, duration: FADE_DUR * 1.2, ease: EASE_EXIT }, s5_morph)
+              .to(".row4-3", { height: 0, opacity: 0, duration: FADE_DUR * 1.2, ease: EASE_EXIT }, s5_morph)
+              .to(".row4-2", { height: "56%", duration: FADE_DUR * 1.4, ease: "power2.inOut" }, s5_morph)
+              .to(".card4-center", { scale: 1.02, y: 0, duration: FADE_DUR * 1.2, ease: EASE_ENTER }, s5_morph);
+
+            // Quote fades out cleanly, success fades in after a short pause
+            const s5_quoteOut = s5_morph + FADE_DUR * 0.8;
+            const s5_successIn = s5_quoteOut + FADE_DUR * 0.6;
+            tl.to(".card4-quote",   { opacity: 0, duration: FADE_DUR, ease: EASE_EXIT }, s5_quoteOut)
+              .to(".card4-success", { opacity: 1, duration: FADE_DUR * 1.1, ease: EASE_ENTER }, s5_successIn);
+
+            // Panel 5 fades in alongside the card morph for a seamless transition
+            gsap.set(".panel-step5", { y: 0 });
+            // (Panel 5 will NOT show since the card4 morph IS the step 5 content.
+            // We keep panel-step5 hidden unless needed as a fallback.)
+
+            const s5_p1    = s5_stick;
+            const s5_p1off = s5_stick + 14;
+            const s5_p2    = s5_p1off - 2;
+            const s5_p2off = s5_p2 + 14;
+            const s5_p3    = s5_p2off - 2;
+            const s5_p3off = s5_p3 + 14;
+
+            hi(5, 1, s5_p1);  lo(5, 1, s5_p1off);
+            hi(5, 2, s5_p2);  lo(5, 2, s5_p2off);
+            hi(5, 3, s5_p3);  lo(5, 3, s5_p3off);
+
+            // ── Lenis integration ─────────────────────────────────────────
+            const lenis = (window as any).lenis;
             const onLenisScroll = () => ScrollTrigger.update();
             lenis?.on("scroll", onLenisScroll);
-
             ScrollTrigger.refresh();
 
             return () => {
@@ -844,84 +817,65 @@ const ProcessFlow = () => {
         <section ref={sectionRef} className="h-screen overflow-hidden">
             <Container borderColor="#5353531A">
                 <div className="h-screen overflow-hidden grid gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
-                    <div className="pocessContainer flex flex-col will-change-transform">
-                        {processSteps.map((intake, index) => (
+
+                    {/* ── Left: scrolling step cards ───────────────────────── */}
+                    <div className="leftScroll flex flex-col will-change-transform">
+                        {processSteps.map((step, index) => (
                             <div
-                                className={`step${index + 1} h-screen flex flex-col justify-center`}
                                 key={index}
+                                className={`step${index + 1} h-screen flex flex-col justify-center`}
                             >
                                 <p className="text-sm font-mono font-medium uppercase tracking-[0.14em] text-[#4F63E8]">
-                                    {intake.tag}
+                                    {step.tag}
                                 </p>
                                 <h3 className="mt-4 text-2xl font-heading font-regular tracking-tight text-[#0a143b] md:text-3xl lg:text-3xl">
-                                    {intake.heading.pre}{" "}
+                                    {step.heading.pre}{" "}
                                     <span className="bg-linear-to-r from-[#4F63E8] to-[#0130BE] bg-clip-text text-transparent">
-                                        {intake.heading.highlightLines[0]} <br />
-                                        {intake.heading.highlightLines[1]}
+                                        {step.heading.highlightLines[0]} <br />
+                                        {step.heading.highlightLines[1]}
                                     </span>{" "}
-                                    {intake.heading.postLines[0]} <br /> {intake.heading.postLines[1]}
+                                    {step.heading.postLines[0]} <br /> {step.heading.postLines[1]}
                                 </h3>
                                 <p className="mt-5 max-w-lg text-sm leading-relaxed text-[#4A5778] font-sans font-regular md:text-sm">
-                                    {intake.desc}
+                                    {step.desc}
                                 </p>
-
                                 <ul className="mt-10 space-y-3">
-                                    {intake.points.map((feature, idx) => {
-                                        const icon =
-                                            feature.icon === "sparkle" ? (
-                                                <RiSparkling2Fill className="size-3" />
-                                            ) : (
-                                                <RiMailLine className="size-3" />
-                                            );
-                                        return (
-                                            <li
-                                                key={feature.id}
-                                                className={`point${idx + 1} flex gap-4 py-4 ${idx === intake.points.length - 1
-                                                    ? ""
-                                                    : "border-b border-black/10"
-                                                    }`}
-                                            >
-                                                <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[#424242]">
-                                                    {icon}
-                                                </span>
-                                                <p className="max-w-sm text-sm text-[#424242] leading-relaxed font-heading font-regular md:text-sm">
-                                                    {feature.text}{" "}
-                                                </p>
-                                            </li>
-                                        );
-                                    })}
+                                    {step.points.map((feature, idx) => (
+                                        <li
+                                            key={feature.id}
+                                            className={`point${idx + 1} flex gap-4 py-4 ${idx === step.points.length - 1 ? "" : "border-b border-black/10"}`}
+                                        >
+                                            <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[#424242]">
+                                                {feature.icon === "sparkle"
+                                                    ? <RiSparkling2Fill className="size-3" />
+                                                    : <RiMailLine className="size-3" />}
+                                            </span>
+                                            <p className="max-w-sm text-sm text-[#424242] leading-relaxed font-heading font-regular md:text-sm">
+                                                {feature.text}
+                                            </p>
+                                        </li>
+                                    ))}
                                 </ul>
                             </div>
                         ))}
                     </div>
 
-                    <div className="h-screen relative flex w-full items-center justify-center">
-                        <div className="absolute z-1 top-0 left-0 flex h-screen w-full items-center justify-center lg:justify-end">
-                            <div className="relative flex w-full aspect-square overflow-hidden justify-center items-center">
-                                <ProcessStep1 />
-                            </div>
-                        </div>
-                        <div className="absolute z-2 top-0 left-0 flex h-screen w-full items-center justify-center lg:justify-end">
-                            <div className="relative flex w-full aspect-square overflow-hidden justify-center items-center">
-                                <ProcessStep2 />
-                            </div>
-                        </div>
-                        <div className="absolute z-3 top-0 left-0 flex h-screen w-full items-center justify-center lg:justify-end">
-                            <div className="relative flex w-full aspect-square overflow-hidden justify-center items-center">
-                                <ProcessStep3 />
-                            </div>
-                        </div>
-                        <div className="absolute z-4 top-0 left-0 flex h-screen w-full items-center justify-center lg:justify-end">
-                            <div className="relative p-7 flex w-full aspect-square overflow-hidden justify-center items-center">
-                                <ProcessStep4 />
-                            </div>
-                        </div>
-                        <div className="absolute z-5 top-0 left-0 flex h-screen w-full items-center justify-center lg:justify-end">
-                            <div className="relative flex w-full aspect-square overflow-hidden justify-center items-center">
-                                <ProcessStep5 />
-                            </div>
+                    {/* ── Right: single sticky visualization panel ─────────── */}
+                    <div className="h-screen sticky top-0 flex items-center justify-center">
+                        {/*
+                            All step panels are always in the DOM.
+                            GSAP drives opacity + subtle y-offsets for entrances/exits.
+                            overflow-visible on the wrapper ensures cursor4 is never clipped.
+                        */}
+                        <div className="relative w-full aspect-square overflow-visible">
+                            <PanelStep1 />
+                            <PanelStep2 />
+                            <PanelStep3 />
+                            <PanelStep4 />
+                            <PanelStep5 />
                         </div>
                     </div>
+
                 </div>
             </Container>
         </section>
