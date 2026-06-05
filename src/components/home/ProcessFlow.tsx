@@ -124,13 +124,13 @@ function PanelStep1() {
 function PanelStep2() {
     return (
         <div className="panel-step2 absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none">
-            {/* AI button */}
-            <div className="ai-btn relative w-44 bg-[#CED2D2] overflow-hidden rounded-full p-px opacity-0">
+            {/* AI button — icon-only until step 2 point 1, then expands */}
+            <div className="ai-btn relative size-14 bg-[#CED2D2] overflow-hidden rounded-full p-px opacity-0">
                 <div
                     className="ai-btn-gradient absolute inset-0 rounded-full opacity-0"
                     style={{ backgroundImage: "linear-gradient(90deg,#0032C9,#EA4336,#FCBC05,#34A854,#0032C9)", backgroundSize: "200% 100%", backgroundPosition: "0% 50%" }}
                 />
-                <div className="ai-btn-inner relative z-1 flex h-full w-full items-center justify-center gap-2 rounded-full bg-white px-5 py-4">
+                <div className="ai-btn-inner relative z-1 flex h-full w-full items-center justify-center rounded-full bg-white">
                     <RiSparkling2Fill className="ai-btn-icon size-4 shrink-0 text-[#CED2D2]" />
                     <span className="ai-btn-text inline-block w-0 overflow-hidden whitespace-nowrap font-sans text-xs font-semibold tracking-wide text-[#0032C9]">
                         <span className="ai-btn-label opacity-0">AI AutoFill</span>
@@ -457,10 +457,11 @@ const ProcessFlow = () => {
             gsap.set(".graph1",       { opacity: 0, y: 12, x: -4 });
             gsap.set(".scanner1",     { opacity: 0, top: "100%" });
 
-            gsap.set(".ai-btn",          { opacity: 0, scale: 0.88, transformOrigin: "50% 50%" });
+            gsap.set(".ai-btn",          { opacity: 0, scale: 1, width: "3.5rem", transformOrigin: "50% 50%" });
             gsap.set(".ai-btn-gradient", { opacity: 0 });
             gsap.set(".ai-btn-text",     { width: 0 });
             gsap.set(".ai-btn-label",    { opacity: 0 });
+            gsap.set(".ai-btn-inner",    { backgroundColor: "#fff", gap: 0, paddingLeft: 0, paddingRight: 0 });
             gsap.set(".cursor2",         { opacity: 0, x: 48, y: 36 });
             gsap.set(".form-wrap2",      { opacity: 0 });
             gsap.set(".skeleton2",       { opacity: 1 });
@@ -473,7 +474,7 @@ const ProcessFlow = () => {
                      { borderColor: FIELD_IDLE_BORDER });
 
             gsap.set(".logos-grid3", { height: 0, paddingBottom: 0 });
-            gsap.set(".logo3",       { opacity: 0, scale: 0.82, y: 6 });
+            gsap.set(".logo3",       { opacity: 0, scale: 0.94, y: 10 });
 
             // Step 4
             // cursor4 starts offset to the right and slightly above its resting spot
@@ -574,25 +575,23 @@ const ProcessFlow = () => {
               .to(".scanner1", { opacity: 0,              duration: 2.5,         ease: "power2.in" }, s1_scan + SCAN_RISE + SCAN_TRAVEL - 1.5);
             lo(1, 3, s1_p3off);
 
-            // Outro: panel drifts up and fades while left scroll begins
-            tl.to(".panel-step1", { opacity: 0, y: -14, duration: FADE_DUR, ease: EASE_EXIT }, s1_outro);
-            tl.to(".leftScroll",  { yPercent: -20, duration: SCROLL_DUR, ease: "none" }, s2_scroll);
+            // Outro: crossfade to step 2 — AI button visible immediately (icon only, no swell)
+            gsap.set(".panel-step2", { y: 18, opacity: 0 });
+            crossFade(".panel-step1", ".panel-step2", s1_outro);
+            tl.set(".ai-btn", { opacity: 1, scale: 1 }, s1_outro + FADE_DUR * 0.35);
+            tl.to(".leftScroll", { yPercent: -20, duration: SCROLL_DUR, ease: "none" }, s2_scroll);
 
             // ═══════════════════════════════════════════════════════════════
             // STEP 2  (t = 52 … 135)
-            // Panel 2 begins fading in during scroll travel so right panel is
-            // never empty as the user scrolls between steps.
+            // Panel 2 + static AI icon already visible after step 1.
+            // Animations begin at step 2 point 1.
             // ═══════════════════════════════════════════════════════════════
             const s2_stick   = s2_scroll + SCROLL_DUR;  // ~76
 
-            // Start bringing panel2 in partway through scroll travel
-            gsap.set(".panel-step2", { y: 18, opacity: 0 });
-            tl.to(".panel-step2", { opacity: 1, y: 0, duration: SCROLL_DUR * 0.65, ease: EASE_ENTER }, s2_scroll + SCROLL_DUR * 0.18);
-
             const s2_p1      = s2_stick + 2;
-            const s2_fill    = s2_stick + 8;
-            const s2_cursor  = s2_stick + 14;
-            const s2_click   = s2_stick + 19;
+            const s2_fill    = s2_p1 + 2;
+            const s2_cursor  = s2_p1 + 10;
+            const s2_click   = s2_p1 + 15;
             const s2_afterCl = s2_click + 2;
             const s2_p1off   = s2_afterCl + 4;
             const s2_p2      = s2_p1off - 2;   // p2 overlaps p1 dim
@@ -605,14 +604,13 @@ const ProcessFlow = () => {
             const s3_scroll  = s2_outro + 5;
 
             hi(2, 1, s2_p1);
-            // AI button swells into view
-            tl.to(".ai-btn", { opacity: 1, scale: 1, duration: FADE_DUR * 1.1, ease: "back.out(1.5)" }, s2_stick + 2);
-            // Gradient fill expansion
-            tl.to(".ai-btn-inner",    { backgroundColor: "#E1E9FF", duration: FADE_DUR, ease: EASE_SOFT }, s2_fill)
-              .to(".ai-btn-gradient", { opacity: 1,                  duration: FADE_DUR, ease: EASE_SOFT }, s2_fill)
-              .to(".ai-btn-text",     { width: "4.85rem",            duration: FADE_DUR * 1.1, ease: "power2.out" }, s2_fill)
-              .to(".ai-btn-icon",     { color: POINT_ACTIVE,         duration: FADE_DUR, ease: EASE_SOFT }, s2_fill)
-              .to(".ai-btn-label",    { opacity: 1,                  duration: FADE_DUR, ease: EASE_SOFT }, s2_fill + 1.5);
+            // Point 1: expand AI button — gradient, label, width
+            tl.to(".ai-btn",         { width: "11rem", duration: FADE_DUR * 1.1, ease: "power2.out" }, s2_fill)
+              .to(".ai-btn-inner",    { backgroundColor: "#E1E9FF", gap: "0.5rem", paddingLeft: "1.25rem", paddingRight: "1.25rem", paddingTop: "1rem", paddingBottom: "1rem", duration: FADE_DUR, ease: EASE_SOFT }, s2_fill)
+              .to(".ai-btn-gradient", { opacity: 1, duration: FADE_DUR, ease: EASE_SOFT }, s2_fill)
+              .to(".ai-btn-text",     { width: "4.85rem", duration: FADE_DUR * 1.1, ease: "power2.out" }, s2_fill)
+              .to(".ai-btn-icon",     { color: POINT_ACTIVE, duration: FADE_DUR, ease: EASE_SOFT }, s2_fill)
+              .to(".ai-btn-label",    { opacity: 1, duration: FADE_DUR, ease: EASE_SOFT }, s2_fill + 1.5);
             // Cursor glides in smoothly from offset
             tl.to(".cursor2", { opacity: 1, x: 0, y: 0, duration: FADE_DUR * 1.3, ease: "power2.out" }, s2_cursor);
             // Click micro-interaction — subtle press and release
@@ -662,33 +660,36 @@ const ProcessFlow = () => {
             const s3_p1off  = s3_stick + 14;
             const s3_p2     = s3_p1off - 2;
             const s3_logos  = s3_p2 + 3;
-            const s3_p2off  = s3_p2 + 18;
+            const s3_p2off  = s3_p2 + 28;
             const s3_p3     = s3_p2off - 2;
-            const s3_p3off  = s3_p3 + 18;
+            const s3_p3off  = s3_p3 + 22;
             const s3_outro  = s3_p3off + 4;
             const s4_scroll = s3_outro + 5;
 
             hi(3, 1, s3_p1);
             lo(3, 1, s3_p1off);
             hi(3, 2, s3_p2);
-            // Logos grid expands smoothly
+            // Dropdown — slow, smooth grid expansion
             tl.to(".logos-grid3", {
                 height: "12.5rem",
                 paddingBottom: 20,
-                duration: FADE_DUR * 1.3,
-                ease: "power2.out",
+                duration: FADE_DUR * 2.8,
+                ease: "power3.inOut",
             }, s3_logos);
-            lo(3, 2, s3_p2off);
-            hi(3, 3, s3_p3);
-            // Logos reveal with stagger — each pops in gently
+            // Logos drift in while dropdown opens — no bounce
             tl.to(".logo3", {
                 opacity: 1,
                 scale: 1,
                 y: 0,
-                duration: VALID_DUR * 1.5,
-                ease: "back.out(1.4)",
-                stagger: 0.28,
-            }, s3_p3);
+                duration: FADE_DUR * 1.1,
+                ease: EASE_REVEAL,
+                stagger: {
+                    each: 0.55,
+                    from: "start",
+                },
+            }, s3_logos + 2.5);
+            lo(3, 2, s3_p2off);
+            hi(3, 3, s3_p3);
             lo(3, 3, s3_p3off);
 
             tl.to(".panel-step3", { opacity: 0, y: -14, duration: FADE_DUR, ease: EASE_EXIT }, s3_outro);
@@ -861,7 +862,7 @@ const ProcessFlow = () => {
                     </div>
 
                     {/* ── Right: single sticky visualization panel ─────────── */}
-                    <div className="h-screen sticky top-0 flex items-center justify-center">
+                    <div className="h-screen sticky top-0 flex items-center justify-center bg-white">
                         {/*
                             All step panels are always in the DOM.
                             GSAP drives opacity + subtle y-offsets for entrances/exits.
