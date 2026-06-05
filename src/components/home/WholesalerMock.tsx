@@ -1,6 +1,5 @@
 "use client";
 
-import TiltCard from "@/components/common/TiltCard";
 import { useInViewOnce } from "@/hooks/useInViewOnce";
 import {
   MICRO_BAR_MS,
@@ -69,15 +68,14 @@ export default function WholesalerMock() {
 
   return (
     <div ref={rootRef} className="relative -ml-32 w-full max-w-[290px]">
-      <TiltCard
-        wrapperClassName="absolute top-0 -right-32 z-20 w-full will-change-[opacity,transform]"
-        wrapperStyle={microRevealStyle(animate, {
+      <div
+        className="absolute top-0 -right-32 z-20 w-full will-change-[opacity,transform]"
+        style={microRevealStyle(animate, {
           offsetX: "0.75rem",
           offsetY: "-0.35rem",
         })}
-        className="w-full rounded-2xl bg-white shadow-[0_8px_30px_rgba(0,0,0,0.15)]"
-        maxTilt={11}
       >
+        <div className="w-full rounded-2xl bg-white shadow-[0_8px_30px_rgba(0,0,0,0.15)]">
         <div className="flex items-center gap-3 border-b border-dashed border-[#CCCCCC] px-4 py-2.5">
           <span className="flex size-[23px] shrink-0 items-center justify-center border border-[#F3F4F6] rounded-full bg-[#F9FAFB]">
             <RiMailFill color="#6F6F6F" size={11} />
@@ -134,14 +132,14 @@ export default function WholesalerMock() {
             </span>
           </div>
         </div>
-      </TiltCard>
+        </div>
+      </div>
 
-      <TiltCard
-        wrapperClassName="mt-[72px] w-full will-change-[opacity,transform]"
-        wrapperStyle={microRevealStyle(animate, { delay: 140, offsetY: "0.65rem" })}
-        className="w-full overflow-hidden rounded-2xl bg-white shadow-[0_8px_40px_rgba(0,0,0,0.18)]"
-        maxTilt={9}
+      <div
+        className="mt-[72px] w-full will-change-[opacity,transform]"
+        style={microRevealStyle(animate, { delay: 140, offsetY: "0.65rem" })}
       >
+        <div className="w-full overflow-hidden rounded-2xl bg-white shadow-[0_8px_40px_rgba(0,0,0,0.18)]">
         <div className="flex items-center gap-2 border-b border-[#CCCCCC] px-4 py-3">
           <span className="flex size-[23px] shrink-0 items-center justify-center border border-[#F3F4F6] rounded-full bg-[#F9FAFB]">
 
@@ -231,7 +229,8 @@ export default function WholesalerMock() {
           </div>
           <span className="truncate text-[0.60rem] font-heading font-normal leading-tight text-[#9CA3AF]">ACORD 25 Standard</span>
         </div>
-      </TiltCard>
+        </div>
+      </div>
     </div>
   );
 }

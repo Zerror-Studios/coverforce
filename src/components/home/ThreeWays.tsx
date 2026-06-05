@@ -3,7 +3,14 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 
 import Container from "../common/Container";
-import WayCardGradFlow, { type GradFlowVariant } from "./WayCardGradFlow";
+
+type CardBackground = "accent" | "light" | "developer";
+
+const CARD_BACKGROUNDS: Record<CardBackground, string> = {
+  accent: "bg-[linear-gradient(135deg,#2C33BB_0%,#6B5FD4_45%,#9F7CFF_100%)]",
+  light: "bg-[linear-gradient(135deg,#DADEF5_0%,#F8F0FC_55%,#FFFFFF_100%)]",
+  developer: "bg-[linear-gradient(135deg,#8A80DD_0%,#ACA8D7_50%,#8A80DD_100%)]",
+};
 
 const WholesalerMock = dynamic(() => import("./WholesalerMock"), {
   loading: () => <MockPlaceholder />,
@@ -33,7 +40,7 @@ type WayCardProps = {
   children: ReactNode;
   className?: string;
   wide?: boolean;
-  gradFlow?: GradFlowVariant;
+  background?: CardBackground;
   lightStrip?: boolean;
   mockAlign?: "center" | "bottom";
 };
@@ -67,15 +74,15 @@ function WayCard({
   children,
   className = "",
   wide = false,
-  gradFlow,
+  background,
   lightStrip = false,
   mockAlign = "center",
 }: WayCardProps) {
   const isDark = variant === "dark";
   const textClass =
-    gradFlow === "developer"
+    background === "developer"
       ? "text-[#0a143b]"
-      : gradFlow === "accent" || isDark
+      : background === "accent" || isDark
         ? "text-white"
         : "text-[#0a143b]";
 
@@ -83,8 +90,7 @@ function WayCard({
     <article
       className={`way-card-shell relative cursor-pointer overflow-hidden rounded-sm ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${textClass} ${className}`}
     >
-      <div className="way-card-body absolute inset-0 flex flex-col p-5 md:p-6">
-        {gradFlow && <WayCardGradFlow variant={gradFlow} />}
+      <div className={`way-card-body absolute inset-0 flex flex-col p-5 md:p-6 ${background ? CARD_BACKGROUNDS[background] : ""}`}>
         <div className="relative z-10 flex min-h-0 flex-1 flex-col">
           <div className={`flex items-start gap-4 ${lightStrip ? "justify-end" : "justify-between"}`}>
             {!lightStrip && (
@@ -140,14 +146,14 @@ const WAY_CARDS: WayCardConfig[] = [
     label: "Wholesalers",
     tagline: "Grow distribution efficiently",
     variant: "dark",
-    gradFlow: "accent",
+    background: "accent",
     mock: <WholesalerMock />,
   },
   {
     label: "Brokers",
     tagline: "One workflow for every producer",
     variant: "light",
-    gradFlow: "light",
+    background: "light",
     lightStrip: true,
     mock: <BrokerMockWithCardHover />,
   },
@@ -157,7 +163,7 @@ const WAY_CARDS: WayCardConfig[] = [
     taglinePosition: "left",
     variant: "dark",
     wide: true,
-    gradFlow: "developer",
+    background: "developer",
     className: "md:col-span-2",
     mockAlign: "bottom",
     mock: <DeveloperMock />,
@@ -166,7 +172,7 @@ const WAY_CARDS: WayCardConfig[] = [
     label: "Startups",
     tagline: "One workflow for every producer",
     variant: "light",
-    gradFlow: "light",
+    background: "light",
     lightStrip: true,
     mock: <BrokerMockWithCardHover />,
   },
@@ -174,7 +180,7 @@ const WAY_CARDS: WayCardConfig[] = [
     label: "Carriers",
     tagline: "Grow distribution efficiently",
     variant: "dark",
-    gradFlow: "accent",
+    background: "accent",
     mock: <WholesalerMock />,
   },
 ];

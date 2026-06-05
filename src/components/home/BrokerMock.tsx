@@ -5,7 +5,6 @@ import {
   AnimatedSixtyPercentHover,
 } from "@/components/common/AnimatedPercent";
 import MockWithCardHover from "@/components/common/MockWithCardHover";
-import TiltCard from "@/components/common/TiltCard";
 import { useInViewOnce } from "@/hooks/useInViewOnce";
 import {
   MICRO_CHART_MS,
@@ -43,11 +42,8 @@ export default function BrokerMock({ cardHovered = false }: BrokerMockProps) {
       className="relative w-full"
       style={{ height: "260px", maxWidth: "300px" }}
     >
-      <TiltCard
-        wrapperClassName="absolute top-0 -right-20 w-full"
-        className="w-full overflow-hidden rounded-2xl bg-white shadow-[0_4px_24px_rgba(0,0,0,0.10)]"
-        maxTilt={9}
-      >
+      <div className="absolute top-0 -right-20 w-full">
+        <div className="w-full overflow-hidden rounded-2xl bg-white shadow-[0_4px_24px_rgba(0,0,0,0.10)]">
         <div className="px-5 pt-4 pb-3">
           <p className="text-[9px] font-mono font-medium uppercase tracking-wide text-[#6B7280]">
             Quotes Returned Today
@@ -120,13 +116,11 @@ export default function BrokerMock({ cardHovered = false }: BrokerMockProps) {
             </div>
           </div>
         </div>
-      </TiltCard>
+        </div>
+      </div>
 
-      <TiltCard
-        wrapperClassName="absolute bottom-0 -left-20 z-10 w-full"
-        className="w-full overflow-hidden rounded-2xl bg-white shadow-[0_8px_32px_rgba(0,0,0,0.14)]"
-        maxTilt={11}
-      >
+      <div className="absolute bottom-0 -left-20 z-10 w-full">
+        <div className="w-full overflow-hidden rounded-2xl bg-white shadow-[0_8px_32px_rgba(0,0,0,0.14)]">
         <div className="flex items-center gap-3 border border-[#F3F4F6] px-4 py-2.5">
           <span className="flex size-[23px] shrink-0 items-center justify-center rounded-full bg-[#F9FAFB]">
             <RiUserFill color="#6F6F6F" size={11} />
@@ -190,7 +184,8 @@ export default function BrokerMock({ cardHovered = false }: BrokerMockProps) {
             </div>
           </div>
         </div>
-      </TiltCard>
+        </div>
+      </div>
     </div>
   );
 }
