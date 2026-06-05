@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 
 import Container from "../common/Container";
+import { RiArrowRightSLine } from "@remixicon/react";
 
 type CardBackground = "accent" | "light" | "developer";
 
@@ -88,9 +89,9 @@ function WayCard({
 
   return (
     <article
-      className={`way-card-shell relative cursor-pointer overflow-hidden rounded-sm [contain:layout_paint] ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${textClass} ${className}`}
+      className={`way-card-shell relative cursor-pointer ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${textClass} ${className}`}
     >
-      <div className={`way-card-body absolute inset-0 flex flex-col p-5 md:p-6 ${background ? CARD_BACKGROUNDS[background] : ""}`}>
+      <div className={`way-card-body absolute inset-0 overflow-hidden rounded-sm flex flex-col p-5 md:p-6 ${background ? CARD_BACKGROUNDS[background] : ""}`}>
         <div className="relative z-10 flex min-h-0 flex-1 flex-col">
           <div className={`flex items-start gap-4 ${lightStrip ? "justify-end" : "justify-between"}`}>
             {!lightStrip && (
@@ -99,15 +100,25 @@ function WayCard({
                 {label}
               </p>
             )}
-            <span className="way-card-expand-btn flex size-9 shrink-0 items-center justify-center rounded-lg">
-              <Image
-                src="/images/expandicon.svg"
-                alt=""
-                width={20}
-                height={20}
-                className="size-5"
+            <span className="way-card-expand-btn flex size-9 shrink-0 items-center justify-center rounded-sm">
+              <svg
+                className="way-card-expand-icon"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
                 aria-hidden
-              />
+              >
+                <path
+                  className="way-card-expand-tr"
+                  d="M13.75 6.75L10.25 6.75L10.25 5L15.5 5L15.5 10.25L13.75 10.25L13.75 6.75Z"
+                />
+                <path
+                  className="way-card-expand-bl"
+                  d="M6.75 10.25L5 10.25L5 15.5L10.25 15.5L10.25 13.75L6.75 13.75L6.75 10.25Z"
+                />
+              </svg>
             </span>
           </div>
           <div className="min-h-0 flex-1" aria-hidden />
@@ -207,7 +218,7 @@ export default function ThreeWays() {
             </p>
           </div>
 
-          <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 lg:mt-14">
+          <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-3 lg:mt-14">
             {WAY_CARDS.map(({ mock, ...card }) => (
               <WayCard key={card.label} {...card}>
                 {mock}
