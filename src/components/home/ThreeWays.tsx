@@ -40,8 +40,8 @@ function MockPlaceholder({ className = "max-w-[290px]" }: { className?: string }
   );
 }
 
+// Remove label, lightStrip from WayCardProps
 type WayCardProps = {
-  label: string;
   tagline: string;
   taglinePosition?: "left" | "right";
   variant: "dark" | "light";
@@ -49,36 +49,67 @@ type WayCardProps = {
   className?: string;
   wide?: boolean;
   background?: CardBackground;
-  lightStrip?: boolean;
   mockAlign?: "center" | "bottom";
   hideMock?: boolean;
   onOpen: (originRect: WayModalRect | null) => void;
 };
 
+// Remove label, lightStrip from WayCardConfig
 type WayCardConfig = Omit<WayCardProps, "children" | "onOpen"> & {
+  label: string; // keep for modal lookup only
   mock: ReactNode;
   modalPreview: ReactNode;
 };
 
-function CardBottomStrip({ label, tagline }: { label: string; tagline: string }) {
-  return (
-    <div
-      className="-mx-5 -mb-5 mt-auto flex items-center justify-between gap-4 border-t border-[#E8E0F5]/60 px-4 py-3 md:-mx-6 md:-mb-6 md:px-5 md:py-3.5"
-      style={{ background: "linear-gradient(90deg, #F8F3FF 0%, #F1F1FF 100%)" }}
-    >
-      <div className="flex min-w-0 items-center gap-2.5">
-        <span className="size-1.5 shrink-0 rounded-full bg-[#797979]" aria-hidden />
-        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#797979]">{label}</span>
-      </div>
-      <p className="max-w-48 shrink-0 text-right text-lg font-heading font-medium leading-tight tracking-tight text-[#545353]">
-        {tagline}
-      </p>
-    </div>
-  );
-}
+// Updated WAY_CARDS — remove lightStrip entries
+const WAY_CARDS: WayCardConfig[] = [
+  {
+    label: "Wholesalers",
+    tagline: "Grow distribution efficiently",
+    variant: "dark",
+    background: "accent",
+    mock: <WholesalerMock />,
+    modalPreview: <WholesalerMock />,
+  },
+  {
+    label: "Brokers",
+    tagline: "One workflow for every producer",
+    variant: "light",
+    background: "light",
+    mock: <BrokerMockWithCardHover />,
+    modalPreview: <BrokerMock />,
+  },
+  {
+    label: "Developers",
+    tagline: "Build insurance products on Coverforce APIs",
+    taglinePosition: "left",
+    variant: "dark",
+    wide: true,
+    background: "developer",
+    className: "md:col-span-2",
+    mockAlign: "bottom",
+    mock: <DeveloperMock />,
+    modalPreview: <DeveloperMock />,
+  },
+  {
+    label: "Startups",
+    tagline: "One workflow for every producer",
+    variant: "light",
+    background: "light",
+    mock: <BrokerMockWithCardHover />,
+    modalPreview: <BrokerMock />,
+  },
+  {
+    label: "Carriers",
+    tagline: "Grow distribution efficiently",
+    variant: "dark",
+    background: "accent",
+    mock: <WholesalerMock />,
+    modalPreview: <WholesalerMock />,
+  },
+];
 
 function WayCard({
-  label,
   tagline,
   taglinePosition = "right",
   variant,
@@ -86,11 +117,10 @@ function WayCard({
   className = "",
   wide = false,
   background,
-  lightStrip = false,
   mockAlign = "center",
   hideMock = false,
   onOpen,
-}: WayCardProps) {
+}: Omit<WayCardProps, "label" | "lightStrip">) {
   const [hovered, setHovered] = useState(false);
   const mockRef = useRef<HTMLDivElement>(null);
   const isDark = variant === "dark";
@@ -122,120 +152,56 @@ function WayCard({
         onKeyDown={handleKeyDown}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        aria-label={`Open ${label} details`}
+        aria-label={`Open details`}
         className={`way-card-shell relative cursor-pointer ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${textClass} ${className}`}
       >
-      <div className={`way-card-body absolute inset-0 overflow-hidden rounded-sm flex flex-col p-5 md:p-6 ${background ? CARD_BACKGROUNDS[background] : ""}`}>
-        <div className="relative z-10 flex min-h-0 flex-1 flex-col">
-          <div className={`flex items-start gap-4 ${lightStrip ? "justify-end" : "justify-between"}`}>
-            {!lightStrip && (
-              <p className="flex items-center gap-2.5 text-xs font-mono font-medium uppercase tracking-[0.14em] text-[#FFFFFF]">
-                <span className="inline-block size-2 shrink-0 rounded-full bg-[#FFFFFF]" aria-hidden />
-                {label}
+        <div className={`way-card-body absolute inset-0 overflow-hidden rounded-sm flex flex-col p-5 md:p-8 ${background ? CARD_BACKGROUNDS[background] : ""}`}>
+          <div className="relative z-10 flex min-h-0 flex-1 flex-col">
+            <div className="flex items-start justify-between gap-4">
+              <p className={`${taglinePosition === "left" ? "max-w-xs" : "max-w-[16rem]"} text-3xl font-heading font-medium leading-[1.12] tracking-tight ${variant == "light" ? "text-[#424242]" : "text-white"} md:text-4xl lg:text-[1.625rem] lg:leading-[1.12] text-left`}>
+                {tagline} 
               </p>
-            )}
-            <span className="way-card-expand-btn flex size-9 shrink-0 items-center justify-center rounded-sm">
-              <svg
-                className="way-card-expand-icon"
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden
-              >
-                <path
-                  className="way-card-expand-tr"
-                  d="M13.75 6.75L10.25 6.75L10.25 5L15.5 5L15.5 10.25L13.75 10.25L13.75 6.75Z"
-                />
-                <path
-                  className="way-card-expand-bl"
-                  d="M6.75 10.25L5 10.25L5 15.5L10.25 15.5L10.25 13.75L6.75 13.75L6.75 10.25Z"
-                />
-              </svg>
-            </span>
-          </div>
-          <div className="min-h-0 flex-1" aria-hidden />
-          {lightStrip ? (
-            <CardBottomStrip label={label} tagline={tagline} />
-          ) : (
-            <div className={`flex w-full items-center ${taglinePosition === "left" ? "justify-start" : "justify-end"}`}>
-              <p
-                className={`text-lg font-heading font-medium leading-tight tracking-tight text-white ${taglinePosition === "left" ? "max-w-xs text-left" : "max-w-48 text-right"}`}
-              >
-                {tagline}
-              </p>
+              <span className="way-card-expand-btn flex size-9 shrink-0 items-center justify-center rounded-sm">
+                <svg
+                  className="way-card-expand-icon"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden
+                >
+                  <path
+                    className="way-card-expand-tr"
+                    d="M13.75 6.75L10.25 6.75L10.25 5L15.5 5L15.5 10.25L13.75 10.25L13.75 6.75Z"
+                  />
+                  <path
+                    className="way-card-expand-bl"
+                    d="M6.25 10.25L5 10.25L5 15.5L10.25 15.5L10.25 13.75L6.75 13.75L6.75 10.25Z"
+                  />
+                </svg>
+              </span>
             </div>
-          )}
+          </div>
         </div>
-      </div>
-      <div
-        className={`way-card-mock pointer-events-none absolute inset-0 z-20 p-5 transition-opacity duration-300 md:p-6 ${hideMock ? "opacity-0" : "opacity-100"} ${mockAlign === "center" ? "flex items-center justify-center" : ""}`}
-      >
         <div
-          ref={mockRef}
-          className={
-            mockAlign === "bottom"
-              ? "relative h-full w-full"
-              : "relative flex w-full items-center justify-center"
-          }
+          className={`way-card-mock pointer-events-none absolute inset-0 z-20 p-5 transition-opacity duration-300 md:p-6 ${hideMock ? "opacity-0" : "opacity-100"} ${mockAlign === "center" ? "flex items-center justify-center" : ""}`}
         >
-          {children}
+          <div
+            ref={mockRef}
+            className={
+              mockAlign === "bottom"
+                ? "relative h-full w-full"
+                : "relative flex w-full items-center justify-center"
+            }
+          >
+            {children}
+          </div>
         </div>
-      </div>
-    </article>
+      </article>
     </WayCardHoverProvider>
   );
 }
-
-const WAY_CARDS: WayCardConfig[] = [
-  {
-    label: "Wholesalers",
-    tagline: "Grow distribution efficiently",
-    variant: "dark",
-    background: "accent",
-    mock: <WholesalerMock />,
-    modalPreview: <WholesalerMock />,
-  },
-  {
-    label: "Brokers",
-    tagline: "One workflow for every producer",
-    variant: "light",
-    background: "light",
-    lightStrip: true,
-    mock: <BrokerMockWithCardHover />,
-    modalPreview: <BrokerMock />,
-  },
-  {
-    label: "Developers",
-    tagline: "Build insurance products on Coverforce APIs",
-    taglinePosition: "left",
-    variant: "dark",
-    wide: true,
-    background: "developer",
-    className: "md:col-span-2",
-    mockAlign: "bottom",
-    mock: <DeveloperMock />,
-    modalPreview: <DeveloperMock />,
-  },
-  {
-    label: "Startups",
-    tagline: "One workflow for every producer",
-    variant: "light",
-    background: "light",
-    lightStrip: true,
-    mock: <BrokerMockWithCardHover />,
-    modalPreview: <BrokerMock />,
-  },
-  {
-    label: "Carriers",
-    tagline: "Grow distribution efficiently",
-    variant: "dark",
-    background: "accent",
-    mock: <WholesalerMock />,
-    modalPreview: <WholesalerMock />,
-  },
-];
 
 export default function ThreeWays() {
   const [activeCard, setActiveCard] = useState<string | null>(null);
