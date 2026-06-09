@@ -56,7 +56,7 @@ function PanelStep1() {
                     </div>
                 </div>
 
-                <div className="card1 relative z-0 w-full overflow-hidden rounded-2xl border border-[#CCCCCC] bg-white">
+                <div className="card1 relative z-0 w-full overflow-hidden rounded-2xl border border-[#CCCCCC] bg-white opacity-0">
                     <div className="card1-content">
                     <div className="flex items-center gap-2 border-b border-[#CCCCCC] px-4 py-3">
                         <span className="flex size-[23px] shrink-0 items-center justify-center rounded-full border border-[#F3F4F6] bg-[#F9FAFB]">
@@ -440,7 +440,8 @@ const ProcessFlow = () => {
             gsap.set(".skeleton1", { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" });
             gsap.set(".graph1", { opacity: 0, y: 12, x: -4 });
             gsap.set(".scanner1", { opacity: 0, top: "100%" });
-            gsap.set(".card1-content", { opacity: 1 });
+            gsap.set(".card1", { opacity: 0 });
+            gsap.set(".card1-content", { opacity: 1, visibility: "visible" });
             gsap.set(".card1-morph-shell", { opacity: 0 });
             gsap.set(".card1-morph-inner", { backgroundColor: "#fff" });
 
@@ -541,6 +542,7 @@ const ProcessFlow = () => {
             lo(1, 1, s1_p1off);
             hi(1, 2, s1_p2);
             tl.to(".skeleton1", { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)", duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s1_card)
+                .to(".card1", { opacity: 1, duration: FADE_DUR * 0.8, ease: EASE_REVEAL }, s1_card)
                 .to(".graph1", { opacity: 1, y: 0, x: 0, duration: FADE_DUR * 0.8, ease: EASE_REVEAL }, s1_graph);
             lo(1, 2, s1_p2off);
 
