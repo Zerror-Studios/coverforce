@@ -750,7 +750,7 @@ const ProcessFlow = () => {
                                 <p className="text-sm font-mono font-medium uppercase tracking-[0.14em] text-[#4F63E8]">
                                     {step.tag}
                                 </p>
-                                <h3 className="mt-4 text-2xl font-heading font-regular tracking-tight text-[#0a143b] md:text-3xl lg:text-3xl">
+                                <h3 className="w-md mt-4 text-2xl font-heading font-regular tracking-tight text-[#0a143b] md:text-3xl lg:text-3xl">
                                     {step.heading}
                                 </h3>
                                 <p className="mt-5 max-w-lg text-sm leading-relaxed text-[#4A5778] font-sans font-regular md:text-sm">
