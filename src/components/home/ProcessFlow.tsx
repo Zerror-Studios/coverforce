@@ -23,9 +23,9 @@ gsap.registerPlugin(ScrollTrigger);
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const POINT_ACTIVE = "#0130BE";
 const POINT_IDLE = "#424242";
-const FIELD_VALID = "#34A854";
+const FIELD_VALID = "#1c4439";
 const FIELD_IDLE_BORDER = "#D1D5DB";
-const FIELD_IDLE_TOGGLE = "#E5E7EB";
+const FIELD_IDLE_TOGGLE = "#1c4439";
 
 // ─── Step panel components ────────────────────────────────────────────────────
 
@@ -155,7 +155,7 @@ function PanelStep2() {
                 <div className="relative grid w-xs shrink-0 grid-cols-1 [&>*]:col-start-1 [&>*]:row-start-1">
                     <div className="w-full rounded-2xl border border-[#CCCCCC] bg-white">
                         <div className="flex items-center gap-2 border-b border-[#CCCCCC] px-4 py-3">
-                            <span className="font-heading text-xs font-medium text-[#269138]">CARRIER APPLICATION (PRE-FILLED)</span>
+                            <span className="font-heading text-xs font-medium text-[#1c4439]">CARRIER APPLICATION (PRE-FILLED)</span>
                         </div>
                         <div className="px-3 py-6">
                             <p className="font-sans text-[0.40rem] uppercase tracking-wider text-[#9CA3AF]">Business Details</p>
@@ -758,7 +758,7 @@ const ProcessFlow = () => {
                                 <p className="text-sm font-mono font-medium uppercase tracking-[0.14em] text-[#4F63E8]">
                                     {step.tag}
                                 </p>
-                                <h3 className="w-md mt-4 text-2xl font-heading font-regular tracking-tight text-[#0a143b] md:text-3xl lg:text-3xl">
+                                <h3 className="w-lg mt-4 text-2xl font-heading font-regular tracking-tight text-[#0a143b] md:text-3xl lg:text-3xl">
                                     {step.heading}
                                 </h3>
                                 <p className="mt-5 max-w-lg text-sm leading-relaxed text-[#4A5778] font-sans font-regular md:text-sm">

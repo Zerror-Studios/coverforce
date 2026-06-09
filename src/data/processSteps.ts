@@ -18,7 +18,7 @@ export type ProcessStep = {
 export const processSteps: ProcessStep[] = [
   {
     id: "intake-01",
-    tag: "Intake 01",
+    tag: "01 Intake",
     heading: "From email to forms to documents, every submission starts here.",
     desc: "CoverForce accepts submissions however agents already work email, ACORD PDFs, loss runs, prior policies, manual entry, or direct AMS sync.",
     points: [
@@ -42,7 +42,7 @@ export const processSteps: ProcessStep[] = [
   },
   {
     id: "step-02",
-    tag: "ACORD Automation 02",
+    tag: "02 ACORD Automation",
     heading: "The form fills itself in.",
     desc: "When a submission arrives, AI extracts ACORD data instantly insured details, FEIN, NAICS, payroll, claims, and more. NCCI codes auto-match, and carrier underwriting questions pre-fill from past submissions.",
     points: [
@@ -53,7 +53,7 @@ export const processSteps: ProcessStep[] = [
   },
   {
     id: "step-03",
-    tag: "Carrier Submission 03",
+    tag: "03 Carrier Submission",
     heading: "One submission, 40+ carriers.",
     desc: "Enter data once and CoverForce submits it to every appointed carrier at the same time using your broker codes, wholesaler relationships, and carrier appetite rules.",
     points: [
@@ -64,7 +64,7 @@ export const processSteps: ProcessStep[] = [
   },
   {
     id: "step-04",
-    tag: "Compare Quotes 04",
+    tag: "04 Compare Quotes",
     heading: "Bindable quotes, side by side.",
     desc: "Compare carrier responses in one place premiums, payment plans, deductibles, bind status, referrals, and decline reasons.",
     points: [
@@ -75,7 +75,7 @@ export const processSteps: ProcessStep[] = [
   },
   {
     id: "step-05",
-    tag: "Bind 05",
+    tag: "05 Bind",
     heading: "From quote to bound policy, in one platform.",
     desc: "Bind in one click, with admin review when needed. All policy docs, certificates, and endorsements are saved in the Document Center.",
     points: [
