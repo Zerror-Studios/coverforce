@@ -9,11 +9,13 @@ import SectionRadialGlow from "@/components/common/SectionRadialGlow";
 import CarrierResults from "@/components/home/CarrierResults";
 import Explore from "@/components/home/Explore";
 import { createPageMetadata } from "@/lib/seo";
+import Marquee from "@/components/home/Marquee";
 
 const HomePage = () => {
   return (
     <>
       <Hero />
+      <Marquee />
       <ThreeWays />
       <DistributionFlow />
       <ProcessFlow />

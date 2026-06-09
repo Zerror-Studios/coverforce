@@ -147,7 +147,7 @@ const WhyCoverforce = () => {
         }
       `}</style>
 
-      <Container borderColor="#5353531A">
+      <Container borderColor="#53535340">
         <div className="pb-16 md:pb-20 lg:pb-24">
           {/* ── Header (unchanged) ── */}
           <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-12">

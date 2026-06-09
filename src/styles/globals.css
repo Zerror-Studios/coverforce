@@ -33,6 +33,84 @@ button {
   cursor: pointer;
 }
 
+@keyframes logo-marquee-left {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes logo-marquee-right {
+  from {
+    transform: translate3d(-50%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.logo-marquee-viewport {
+  overflow: hidden;
+  width: 100%;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.logo-marquee-viewport--offset {
+  padding-left: 4.5rem;
+}
+
+.logo-marquee-track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  gap: 3.5rem;
+  animation: logo-marquee-left 42s linear infinite;
+  will-change: transform;
+}
+
+.logo-marquee-track--reverse {
+  animation-name: logo-marquee-right;
+  animation-duration: 48s;
+}
+
+.logo-marquee-item {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  min-width: 7rem;
+}
+
+@media (min-width: 768px) {
+  .logo-marquee-track {
+    gap: 5rem;
+  }
+
+  .logo-marquee-viewport--offset {
+    padding-left: 7rem;
+  }
+
+  .logo-marquee-item {
+    min-width: 9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-marquee-track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    gap: 2rem 3rem;
+  }
+
+  .logo-marquee-viewport--offset {
+    padding-left: 0;
+  }
+}
+
 .container {
   max-width: 1440px;
   margin-inline: auto;

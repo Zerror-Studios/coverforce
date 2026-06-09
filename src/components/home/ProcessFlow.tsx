@@ -745,7 +745,7 @@ const ProcessFlow = () => {
 
     return (
         <section ref={sectionRef} className="h-screen overflow-hidden">
-            <Container borderColor="#5353531A">
+            <Container borderColor="#53535340">
                 <div className="h-screen overflow-hidden grid gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
 
                     {/* ── Left: scrolling step cards ───────────────────────── */}

@@ -89,7 +89,7 @@ function FooterColumn({ title, links }: FooterColumnProps) {
 const Footer = () => {
   return (
     <footer className="relative overflow-hidden bg-white text-[#0a143b]">
-      <Container borderColor="#5353531A">
+      <Container borderColor="#53535340">
         <div className="relative z-10">
           <div className="flex flex-col gap-6 border-b border-neutral-200 pt-12 pb-5 md:flex-row md:items-start md:justify-between md:gap-8 md:pt-14 md:pb-6 lg:pt-16 lg:pb-7">
             <Link href="/" className="shrink-0">
