@@ -140,7 +140,7 @@ const Review = () => {
       <Container borderColor="#FFFFFF1A" className="border-t border-[#FFFFFF1A]">
         <div className="relative overflow-hidden py-16 md:py-20 lg:py-24">
           <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between md:mb-12">
-            <h2 className="max-w-lg text-2xl font-heading font-regular tracking-tight md:text-3xl lg:text-3xl">
+            <h2 className="max-w-md text-3xl font-heading font-medium leading-[1.12] tracking-tight md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
               Why Commercial Insurance{" "}
               <span className="text-white/40">Teams Trust CoverForce for Smarter Workflows</span>
             </h2>

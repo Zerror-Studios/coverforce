@@ -1,58 +1,33 @@
-import React, { type ReactNode } from "react";
 import Image from "next/image";
 import AnimatedCarrierBars from "@/components/common/AnimatedCarrierBar";
 import AnimatedPercent from "@/components/common/AnimatedPercent";
 import Button from "@/components/common/Button";
 import Container from "../common/Container";
 
-type EyebrowProps = {
-  children: ReactNode;
-  className?: string;
-  dotClassName?: string;
-};
-
-function Eyebrow({
-  children,
-  className = "",
-  dotClassName = "bg-linear-to-r from-[#FFFFFF] to-[#AFB3EF]",
-}: EyebrowProps) {
-  return (
-    <p
-      className={`flex items-center gap-2.5 text-xs font-mono font-medium uppercase tracking-[0.14em] ${className}`}
-    >
-      <span
-        className={`inline-block size-2 shrink-0 rounded-full ${dotClassName}`}
-        aria-hidden
-      />
-      {children}
-    </p>
-  );
-}
 
 const DataAdvantage = () => {
   return (
     <section className="bg-[#141E4B] text-white">
       <Container borderColor="#FFFFFF1A">
         <div className="flex flex-col gap-10 lg:gap-14 py-16 md:py-20 lg:py-24">
-          <div className="grid gap-8 lg:grid-cols-2 lg:items-end lg:justify-between lg:gap-12">
-            <div className="flex flex-col justify-end space-y-5">
-              <Eyebrow className="text-[#FFFFFF80]">The data advantage</Eyebrow>
-              <h2 className="max-w-md text-3xl font-heading font-regular leading-tight tracking-tight md:text-4xl lg:text-3xl lg:leading-[1.15]">
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-12">
+            <div className="flex-col items-start justify-end space-y-5">
+              <h2 className="max-w-md text-3xl font-heading font-medium leading-[1.12] tracking-tight md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
                 Intelligence Built on Data no One Else has
               </h2>
-            </div>
-
-            <div className="flex max-w-sm flex-col items-start justify-end gap-6 text-left lg:ml-auto">
-              <p className="text-sm font-sans font-regular leading-relaxed text-white/80">
-                140,000+ proprietary carrier interactions. Every transaction
-                makes the platform smarter.
-              </p>
               <Button
                 href="/"
                 variant="primary"
               >
                 Explore AI
               </Button>
+            </div>
+
+            <div className="max-w-md text-left lg:ml-auto">
+              <p className="font-sans font-regular text-sm leading-[1.4] text-white/80 md:text-[1.125rem]">
+                140,000+ proprietary carrier interactions. Every transaction
+                makes the platform smarter.
+              </p>
             </div>
           </div>
 
@@ -74,12 +49,6 @@ const DataAdvantage = () => {
 
               <div className="relative z-10 flex min-h-0 flex-1 flex-col justify-between">
                 <div className="space-y-8">
-                  <Eyebrow
-                    className="text-[#525252]"
-                    dotClassName="bg-[#525252]"
-                  >
-                    Submission intelligence
-                  </Eyebrow>
                   <div>
                     <AnimatedPercent className="text-5xl font-heading font-medium leading-none tracking-tight text-[#4F63E8]" />
                     <p className="mt-2 text-lg font-heading font-medium text-[#525252]">
@@ -116,7 +85,6 @@ const DataAdvantage = () => {
 
               <div className="relative z-10 flex min-h-0 flex-1 flex-col justify-between gap-10">
                 <div className="space-y-5">
-                  <Eyebrow className="text-white/80">Appetite intelligence</Eyebrow>
                   <div className="space-y-2">
                     <h3 className="text-3xl font-heading font-medium md:text-3xl max-w-xs">
                       Same risk, <br /> different carriers.

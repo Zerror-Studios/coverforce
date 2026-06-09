@@ -150,28 +150,27 @@ const WhyCoverforce = () => {
       <Container borderColor="#5353531A">
         <div className="pb-16 md:pb-20 lg:pb-24">
           {/* ── Header (unchanged) ── */}
-          <div className="grid gap-8 lg:grid-cols-2 lg:items-end lg:justify-between lg:gap-12">
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-12">
             <div className="flex flex-col justify-end space-y-5">
-              <Eyebrow className="text-[#797979]">Why Coverforce</Eyebrow>
-              <h2 className="max-w-md text-3xl font-heading font-regular leading-tight tracking-tight text-[#424242] md:text-4xl lg:text-3xl lg:leading-[1.15]">
+              <h2 className="max-w-md text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#424242] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
                 Infrastructure to Run Your Distribution Not a Tool to Quote One
                 Risk.
               </h2>
-            </div>
-
-            <div className="flex max-w-md flex-col items-start justify-end gap-6 text-left lg:ml-auto">
-              <p className="text-sm font-sans font-regular leading-relaxed text-[#091843]/75">
-                Insurance distribution should work like infrastructure — just
-                like Stripe for payments or Plaid for identity.
-              </p>
-              <div className="flex w-full flex-wrap items-center justify-between gap-3">
-                <Button
+              <Button
                   href="/"
                   variant="primary"
                   className="!bg-[#5B35E0] text-white"
                 >
                   Start a quote
                 </Button>
+            </div>
+
+            <div className="flex max-w-md flex-col items-end gap-6 text-left lg:ml-auto">
+              <p className="font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem]">
+                Insurance distribution should work like infrastructure — just
+                like Stripe for payments or Plaid for identity.
+              </p>
+              <div className="flex w-full flex-wrap items-center justify-end gap-3">
                 <div className="flex items-center gap-3">
                   <button
                     type="button"

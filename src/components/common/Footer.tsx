@@ -101,7 +101,7 @@ const Footer = () => {
                 className="h-10 w-auto md:h-12 lg:h-12"
               />
             </Link>
-            <p className="max-w-xs font-sans font-regular text-xs leading-relaxed text-neutral-600 md:text-left">
+            <p className="max-w-sm font-sans font-regular text-base leading-relaxed text-neutral-600 md:text-left">
               CoverForce brings smarter insurance distribution into one
               connected workflow.
             </p>

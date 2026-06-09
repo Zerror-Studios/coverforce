@@ -36,7 +36,7 @@ const Button = ({
   return (
     <Link
       href={href}
-      className={`inline-flex items-center justify-center rounded-full font-semibold uppercase transition-colors ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+      className={`inline-flex w-fit items-center justify-center rounded-full font-semibold uppercase transition-colors ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
       {...props}
     >
       {children}

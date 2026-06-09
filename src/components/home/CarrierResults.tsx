@@ -62,25 +62,7 @@ function CarrierLogo({ src, alt }: { src: string; alt: string }) {
   );
 }
 
-function Eyebrow({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <p
-      className={`flex items-center gap-2.5 text-xs font-mono font-medium uppercase tracking-[0.14em] ${className}`}
-    >
-      <span
-        className="inline-block size-2 shrink-0 rounded-full bg-linear-to-r from-[#FFFFFF] to-[#AFB3EF]"
-        aria-hidden
-      />
-      {children}
-    </p>
-  );
-}
+
 
 function CarrierCard({ result }: { result: CarrierResult }) {
   return (
@@ -123,23 +105,21 @@ const CarrierResults = () => {
             {/* Header */}
             <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-12">
               <div className="flex flex-col justify-end space-y-5">
-                <Eyebrow className="text-[#FFFFFF80]">
-                  Named carrier results
-                </Eyebrow>
                 <h2 className="max-w-md text-3xl font-heading font-regular leading-tight tracking-tight md:text-4xl lg:text-3xl lg:leading-[1.15]">
                   Carrier results that speak for themselves
                 </h2>
+                <Button href="/" variant="primary">
+                  Explore Carrier
+                </Button>
               </div>
 
               <div className="flex max-w-md flex-col items-start justify-end gap-6 text-left lg:ml-auto">
-                <p className="text-sm font-sans font-regular leading-relaxed text-[#D1D1D1]">
+                <p className="font-sans font-regular text-sm leading-[1.4] md:text-[1.125rem] text-[#D1D1D1]">
                   Named outcomes provide clear, organized quote comparisons from
                   appointed carriers, helping agents from production carrier
                   partnerships.
                 </p>
-                <Button href="/" variant="primary">
-                  Explore Carrier
-                </Button>
+              
               </div>
             </div>
 

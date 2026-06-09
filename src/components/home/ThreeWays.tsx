@@ -258,24 +258,20 @@ export default function ThreeWays() {
     <section className="relative overflow-hidden bg-white">
       <Container borderColor="#0A143B1A">
         <div className="relative z-10 py-16 md:py-20 lg:py-24">
-          <div className="grid gap-8 lg:grid-cols-2 lg:items-end lg:gap-10 xl:gap-14">
+          <div className="flex items-start justify-between">
             <div className="space-y-5 md:space-y-6">
-              <p className="flex items-center gap-2.5 text-xs font-mono font-medium uppercase tracking-[0.14em] text-[#797979]">
-                <span className="inline-block size-2 shrink-0 rounded-full bg-[#797979]" aria-hidden />
-                Built for your role
-              </p>
-              <h2 className="max-w-xl text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#424242] md:text-4xl lg:text-3xl lg:leading-[1.1]">
+              <h2 className="max-w-xl text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#424242] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
                 One platform.
                 <br />
                 Three Ways to Use It.
               </h2>
             </div>
-            <p className="max-w-sm text-sm leading-relaxed text-[#091843BF] md:text-sm lg:pt-8 xl:pt-10">
+            <p className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem]">
               Whether you&apos;re routing submissions, quoting carriers, or building on our API, CoverForce adapts to your role.
             </p>
           </div>
 
-          <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-3 lg:mt-14">
+          <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-2 lg:mt-14">
             {WAY_CARDS.map(({ mock, modalPreview, ...card }) => (
               <WayCard
                 key={card.label}
