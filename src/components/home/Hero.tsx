@@ -46,7 +46,7 @@ const Hero = () => {
   }, [activeIndex, statCount]);
 
   return (
-    <section className="relative isolate overflow-hidden bg-[#141E4B] text-white">
+    <section className="relative isolate overflow-hidden bg-[#121C49] text-white">
       <Container borderColor="#FFFFFF1A" className="px-0!">
         <div className="relative z-10 flex min-h-[calc(100svh-4.5rem)] flex-col justify-between py-16 md:py-20 lg:py-24">
           <div className="flex flex-1 flex-col items-center justify-center text-center">

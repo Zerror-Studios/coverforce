@@ -84,18 +84,26 @@ function CarrierCard({ result }: { result: CarrierResult }) {
 
 const CarrierResults = () => {
   return (
-    <section className="bg-[#141E4B] text-white">
+    <section className="bg-[#121C49] text-white">
       <Container borderColor="#FFFFFF1A" className="border-t border-b border-[#FFFFFF1A]">
         <div
-          className="absolute left-0 top-0 z-0  w-full lg:h-full"
+          className="absolute left-0 -top-20 z-0  w-full lg:h-full opacity-75"
           aria-hidden
         >
-          <Threads
+          <video
+            src="/bg.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-contain"
+          />
+          {/* <Threads
             color={[0.004, 0.188, 0.745]}
             amplitude={2.5}
             distance={0}
             enableMouseInteraction={true}
-          />
+          /> */}
         </div>
         <div className="relative py-16 md:py-20 lg:py-24 pointer-events-none">
           {/* Wave — 130% width, anchored left top inside container */}

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Color, Scene, PerspectiveCamera, Vector3, Group } from "three";
 import ThreeGlobe from "three-globe";
 import { useThree, Canvas, extend } from "@react-three/fiber";
@@ -55,11 +55,16 @@ export type GlobeConfig = {
   };
   autoRotate?: boolean;
   autoRotateSpeed?: number;
+  cameraDistance?: number;
+  lite?: boolean;
+  hexPolygonResolution?: number;
+  maxDpr?: number;
 };
 
 interface WorldProps {
   globeConfig: GlobeConfig;
   data: Position[];
+  visible?: boolean;
 }
 
 let numbersOfRings = [0];
@@ -156,9 +161,12 @@ export function Globe({ globeConfig, data }: WorldProps) {
         ) === i,
     );
 
+    const hexResolution =
+      globeConfig.hexPolygonResolution ?? (globeConfig.lite ? 2 : 3);
+
     globeRef.current
       .hexPolygonsData(countries.features)
-      .hexPolygonResolution(3)
+      .hexPolygonResolution(hexResolution)
       .hexPolygonMargin(0.7)
       .showAtmosphere(defaultProps.showAtmosphere)
       .atmosphereColor(defaultProps.atmosphereColor)
@@ -254,26 +262,46 @@ export function Globe({ globeConfig, data }: WorldProps) {
   return <group ref={groupRef} />;
 }
 
-export function WebGLRendererConfig() {
+export function WebGLRendererConfig({ maxDpr }: { maxDpr?: number }) {
   const { gl, size } = useThree();
 
   useEffect(() => {
-    gl.setPixelRatio(window.devicePixelRatio);
+    const dpr = maxDpr
+      ? Math.min(window.devicePixelRatio, maxDpr)
+      : Math.min(window.devicePixelRatio, 1.5);
+    gl.setPixelRatio(dpr);
     gl.setSize(size.width, size.height);
     gl.setClearColor(0xffaaff, 0);
-  }, []);
+  }, [gl, maxDpr, size.height, size.width]);
 
   return null;
 }
 
-export function World(props: WorldProps) {
+export function World({ visible = true, ...props }: WorldProps) {
   const { globeConfig } = props;
-  const scene = new Scene();
-  const camera = new PerspectiveCamera(50, aspect, 180, 1800);
-  camera.position.set(0, 0, cameraZ);
+  const distance = globeConfig.cameraDistance ?? cameraZ;
+  const scene = useMemo(() => new Scene(), []);
+  const camera = useMemo(() => new PerspectiveCamera(50, aspect, 180, 1800), []);
+
+  useEffect(() => {
+    camera.position.set(0, 0, distance);
+  }, [camera, distance]);
+
+  const maxDpr = globeConfig.maxDpr ?? (globeConfig.lite ? 1.25 : 1.5);
+
   return (
-    <Canvas scene={scene} camera={camera}>
-      <WebGLRendererConfig />
+    <Canvas
+      scene={scene}
+      camera={camera}
+      frameloop={visible ? "always" : "never"}
+      dpr={[1, maxDpr]}
+      gl={{
+        antialias: !globeConfig.lite,
+        alpha: true,
+        powerPreference: "high-performance",
+      }}
+    >
+      <WebGLRendererConfig maxDpr={maxDpr} />
       <ambientLight color={globeConfig.ambientLight} intensity={0.6} />
       <directionalLight
         color={globeConfig.directionalLeftLight}
@@ -293,8 +321,8 @@ export function World(props: WorldProps) {
         enableRotate={false}
         enablePan={false}
         enableZoom={false}
-        minDistance={cameraZ}
-        maxDistance={cameraZ}
+        minDistance={distance}
+        maxDistance={distance}
         autoRotate={globeConfig.autoRotate ?? true}
         autoRotateSpeed={globeConfig.autoRotateSpeed ?? 0.5}
         minPolarAngle={Math.PI / 3.5}

@@ -30,6 +30,14 @@ const BrokerMock = dynamic(() => import("./BrokerMock"), {
 const DeveloperMock = dynamic(() => import("./DeveloperMock"), {
   loading: () => <MockPlaceholder className="max-w-[420px]" />,
 });
+const GlobeScene = dynamic(() => import("@/components/home/GlobeScene"), {
+  ssr: false,
+  loading: () => null,
+});
+const GlobeDemo = dynamic(() => import("@/components/globe-demo"), {
+  ssr: false,
+  loading: () => null,
+});
 
 function MockPlaceholder({ className = "max-w-[290px]" }: { className?: string }) {
   return (
@@ -51,6 +59,8 @@ type WayCardProps = {
   background?: CardBackground;
   mockAlign?: "center" | "bottom";
   hideMock?: boolean;
+  backgroundScene?: ReactNode;
+  backgroundInteractive?: boolean;
   onOpen: (originRect: WayModalRect | null) => void;
 };
 
@@ -76,6 +86,7 @@ const WAY_CARDS: WayCardConfig[] = [
     tagline: "One workflow for every producer",
     variant: "light",
     background: "light",
+    backgroundScene: <GlobeDemo embedded className="translate-y-14" />,
     mock: <BrokerMockWithCardHover />,
     modalPreview: <BrokerMock />,
   },
@@ -96,8 +107,10 @@ const WAY_CARDS: WayCardConfig[] = [
     tagline: "One workflow for every producer",
     variant: "light",
     background: "light",
+    backgroundInteractive: true,
     mock: <BrokerMockWithCardHover />,
     modalPreview: <BrokerMock />,
+    backgroundScene: <GlobeScene interactive />,
   },
   {
     label: "Carriers",
@@ -119,6 +132,8 @@ function WayCard({
   background,
   mockAlign = "center",
   hideMock = false,
+  backgroundScene,
+  backgroundInteractive = false,
   onOpen,
 }: Omit<WayCardProps, "label" | "lightStrip">) {
   const [hovered, setHovered] = useState(false);
@@ -148,20 +163,47 @@ function WayCard({
       <article
         role="button"
         tabIndex={0}
-        onClick={handleOpen}
-        onKeyDown={handleKeyDown}
+        onClick={backgroundInteractive ? undefined : handleOpen}
+        onKeyDown={backgroundInteractive ? undefined : handleKeyDown}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         aria-label={`Open details`}
         className={`way-card-shell relative cursor-pointer ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${textClass} ${className}`}
       >
-        <div className={`way-card-body absolute inset-0 overflow-hidden rounded-sm flex flex-col p-5 md:p-8 ${background ? CARD_BACKGROUNDS[background] : ""}`}>
-          <div className="relative z-10 flex min-h-0 flex-1 flex-col">
+        <div
+          className={`way-card-body absolute inset-0 overflow-hidden rounded-sm flex flex-col p-5 md:p-8 ${background ? CARD_BACKGROUNDS[background] : ""}`}
+        >
+          {backgroundScene ? (
+            <div
+              className={`absolute inset-0 ${backgroundInteractive ? "z-[5] pointer-events-auto" : "z-[1] pointer-events-none"}`}
+              aria-hidden={!backgroundInteractive}
+              onPointerDown={backgroundInteractive ? (e) => e.stopPropagation() : undefined}
+              onClick={backgroundInteractive ? (e) => e.stopPropagation() : undefined}
+            >
+              {backgroundScene}
+            </div>
+          ) : null}
+          <div className="relative z-10 flex min-h-0 flex-1 flex-col pointer-events-none">
             <div className="flex items-start justify-between gap-4">
               <p className={`${taglinePosition === "left" ? "max-w-xs" : "max-w-[16rem]"} text-3xl font-heading font-medium leading-[1.12] tracking-tight ${variant == "light" ? "text-[#424242]" : "text-white"} md:text-4xl lg:text-[1.625rem] lg:leading-[1.12] text-left`}>
                 {tagline} 
               </p>
-              <span className="way-card-expand-btn flex size-9 shrink-0 items-center justify-center rounded-sm">
+              <span
+                className="way-card-expand-btn pointer-events-auto relative z-20 flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-sm"
+                role="button"
+                tabIndex={0}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpen();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleOpen();
+                  }
+                }}
+              >
                 <svg
                   className="way-card-expand-icon"
                   width="20"
@@ -242,7 +284,7 @@ export default function ThreeWays() {
               <WayCard
                 key={card.label}
                 {...card}
-                hideMock={activeCard === card.label}
+                hideMock={(card.hideMock ?? false) || activeCard === card.label}
                 onOpen={(rect) => openModal(card.label, rect)}
               >
                 {mock}

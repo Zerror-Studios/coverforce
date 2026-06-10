@@ -7,7 +7,7 @@ import Container from "../common/Container";
 
 const DataAdvantage = () => {
   return (
-    <section className="bg-[#141E4B] text-white">
+    <section className="bg-[#121C49] text-white">
       <Container borderColor="#FFFFFF1A">
         <div className="flex flex-col gap-10 lg:gap-14 py-16 md:py-20 lg:py-24">
           <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-12">
@@ -69,13 +69,13 @@ const DataAdvantage = () => {
             </article>
 
             <article className="relative flex aspect-[556/586] w-full flex-col justify-between overflow-hidden rounded-sm p-6 md:p-8 lg:p-10">
-              <Image
-                src="/images/cardbg.png"
-                alt=""
-                fill
-                className="object-cover object-center"
-                sizes="(max-width: 768px) 100vw, 50vw"
-                priority={false}
+              <video
+                src="/carrier.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 h-full w-full object-cover object-center"
                 aria-hidden
               />
               <div

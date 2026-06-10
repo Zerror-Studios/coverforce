@@ -7,7 +7,12 @@ const World = dynamic(() => import("@/components/ui/globe").then((m) => m.World)
   ssr: false,
 });
 
-export default function GlobeDemo() {
+type GlobeDemoProps = {
+  embedded?: boolean;
+  className?: string;
+};
+
+export default function GlobeDemo({ embedded = false, className = "" }: GlobeDemoProps) {
   const globeConfig = {
     pointSize: 0.8,
     globeColor: "#000000",
@@ -29,6 +34,7 @@ export default function GlobeDemo() {
     initialPosition: { lat: 22.3193, lng: 114.1694 },
     autoRotate: true,
     autoRotateSpeed: 0.5,
+    ...(embedded ? { cameraDistance: 210 } : {}),
   };
   const sampleArcs = [
     {
@@ -360,7 +366,9 @@ export default function GlobeDemo() {
   }));
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-white">
+    <div
+      className={`relative w-full overflow-hidden ${embedded ? "h-full bg-transparent" : "h-screen bg-white"} ${className}`}
+    >
       <World data={sampleArcs} globeConfig={globeConfig} />
     </div>
   );

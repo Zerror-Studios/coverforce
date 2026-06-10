@@ -136,7 +136,7 @@ const Review = () => {
   }, []);
 
   return (
-    <section className="bg-[#141E4B] text-white">
+    <section className="bg-[#121C49] text-white">
       <Container borderColor="#FFFFFF1A" className="border-t border-[#FFFFFF1A]">
         <div className="relative overflow-hidden py-16 md:py-20 lg:py-24">
           <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between md:mb-12">

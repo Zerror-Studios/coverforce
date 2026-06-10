@@ -5,7 +5,7 @@ import SectionRadialGlow from "../common/SectionRadialGlow";
 
 const Explore = () => {
   return (
-    <section className="relative overflow-hidden  bg-[#141E4B] text-white">
+    <section className="relative overflow-hidden  bg-[#121C49] text-white">
       <Container borderColor="#FFFFFF1A" className="relative">
         <SectionRadialGlow className="absolute left-1/2 top-[10%] z-0 -translate-x-1/2 md:top-[12%]" />
 

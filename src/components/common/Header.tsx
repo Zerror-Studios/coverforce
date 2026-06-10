@@ -20,7 +20,7 @@ const navItems: NavItem[] = [
 
 const Header = () => {
   return (
-    <nav className="w-full bg-[#141E4B] text-white border-b border-[#FFFFFF1A]">
+    <nav className="w-full bg-[#121C49] text-white border-b border-[#FFFFFF1A]">
       <Container>
         <div className="relative flex items-center justify-between py-4">
           <Link href="/" className="relative z-10 shrink-0">

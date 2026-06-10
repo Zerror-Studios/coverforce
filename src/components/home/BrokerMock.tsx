@@ -24,7 +24,7 @@ export default function BrokerMock({ cardHovered = false }: BrokerMockProps) {
 
   return (
     <div
-      className="relative w-full"
+      className="relative w-full pointer-events-none"
       style={{ height: "260px", maxWidth: "300px" }}
     >
       <div className="absolute top-0 -right-20 w-full">

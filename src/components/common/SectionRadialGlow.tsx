@@ -4,7 +4,7 @@ type SectionRadialGlowProps = {
   className?: string;
 };
 
-const SectionRadialGlow = ({ className = "" }: SectionRadialGlowProps) => {
+const   SectionRadialGlow = ({ className = "" }: SectionRadialGlowProps) => {
   return (
     <div
       className={`pointer-events-none aspect-square w-[100vw] rounded-full blur-[5rem] opacity-85 ${className}`}
