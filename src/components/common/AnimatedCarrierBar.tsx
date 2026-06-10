@@ -10,6 +10,7 @@ import {
   microEaseOut,
 } from "@/lib/motion";
 
+
 type AnimatedCarrierBarProps = {
   logo: string;
   logoAlt: string;
