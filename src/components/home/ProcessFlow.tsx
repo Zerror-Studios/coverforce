@@ -10,7 +10,6 @@ import {
     RiFileTextFill,
     RiHashtag,
     RiLineChartLine,
-    RiMailLine,
     RiSparkling2Fill,
 } from "@remixicon/react";
 import { useGSAP } from "@gsap/react";
@@ -24,6 +23,18 @@ gsap.registerPlugin(ScrollTrigger);
 const POINT_ACTIVE = "#0130BE";
 const POINT_IDLE = "#424242";
 const FIELD_VALID = "#1c4439";
+
+function ProcessPointText({ text }: { text: string }) {
+    return (
+        <p className="point-text max-w-sm text-sm leading-relaxed font-heading font-regular md:text-sm">
+            {text.split("").map((char, i) => (
+                <span key={`${char}-${i}`} className="point-char inline-block text-[#424242]">
+                    {char === " " ? "\u00A0" : char}
+                </span>
+            ))}
+        </p>
+    );
+}
 const FIELD_IDLE_BORDER = "#D1D5DB";
 const FIELD_IDLE_TOGGLE = "#1c4439";
 
@@ -424,16 +435,19 @@ const ProcessFlow = () => {
             const EASE_REVEAL = "power3.out";
             const EASE_SOFT = "sine.inOut";
 
-            const FADE_DUR = 6;
-            const POINT_DUR = 5;
-            const SCROLL_DUR = 24;
-            const SCAN_RISE = 4;
-            const SCAN_TRAVEL = 12;
-            const VALID_DUR = 1.2;
-            const VALID_STAG = 2.0;
+            const S = 1.75;
+            const T = (n: number) => n * S;
 
-            const TOTAL_SCROLL_UNITS = 330;
-            const VH_PER_UNIT = 2.8;
+            const FADE_DUR = T(6);
+            const POINT_DUR = T(5);
+            const SCROLL_DUR = T(24);
+            const SCAN_RISE = T(4);
+            const SCAN_TRAVEL = T(12);
+            const VALID_DUR = T(1.2);
+            const VALID_STAG = T(2.0);
+
+            const TOTAL_SCROLL_UNITS = T(420);
+            const VH_PER_UNIT = 3.5;
             const scrollDistance = `+=${TOTAL_SCROLL_UNITS * VH_PER_UNIT}vh`;
 
             gsap.set(".panel-step2, .panel-step3, .panel-step4, .panel-step5", { opacity: 0 });
@@ -483,32 +497,50 @@ const ProcessFlow = () => {
                 });
             }
 
-            ScrollTrigger.create({
-                trigger: section,
-                start: "top top",
-                end: scrollDistance,
-                pin: true,
-                pinSpacing: true,
-            });
-
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: section,
                     start: "top top",
                     end: scrollDistance,
-                    scrub: 1.5,
+                    pin: true,
+                    pinSpacing: true,
+                    scrub: true,
                 },
             });
 
+            const CHAR_STAG = T(0.14);
+
             const hi = (step: number, pt: number, t: number) => {
                 const b = `.step${step} .point${pt}`;
-                tl.to(`${b} p`, { color: POINT_ACTIVE, duration: POINT_DUR, ease: EASE_SOFT }, t)
-                    .to(`${b} span`, { backgroundColor: POINT_ACTIVE, color: "#fff", borderColor: POINT_ACTIVE, duration: POINT_DUR, ease: EASE_SOFT }, t);
+                tl.to(`${b} .point-char`, {
+                    color: POINT_ACTIVE,
+                    duration: POINT_DUR * 0.65,
+                    stagger: { each: CHAR_STAG, from: "start" },
+                    ease: EASE_SOFT,
+                }, t)
+                    .to(`${b} .point-icon`, {
+                        backgroundColor: POINT_ACTIVE,
+                        color: "#fff",
+                        borderColor: POINT_ACTIVE,
+                        duration: POINT_DUR * 0.55,
+                        ease: EASE_SOFT,
+                    }, t);
             };
             const lo = (step: number, pt: number, t: number) => {
                 const b = `.step${step} .point${pt}`;
-                tl.to(`${b} p`, { color: POINT_IDLE, duration: POINT_DUR, ease: EASE_SOFT }, t)
-                    .to(`${b} span`, { backgroundColor: "transparent", color: POINT_IDLE, borderColor: POINT_IDLE, duration: POINT_DUR, ease: EASE_SOFT }, t);
+                tl.to(`${b} .point-char`, {
+                    color: POINT_IDLE,
+                    duration: POINT_DUR * 0.45,
+                    stagger: { each: CHAR_STAG * 0.7, from: "start" },
+                    ease: EASE_SOFT,
+                }, t)
+                    .to(`${b} .point-icon`, {
+                        backgroundColor: "transparent",
+                        color: POINT_IDLE,
+                        borderColor: POINT_IDLE,
+                        duration: POINT_DUR * 0.4,
+                        ease: EASE_SOFT,
+                    }, t);
             };
 
             const crossFade = (fromPanel: string, toPanel: string, t: number) => {
@@ -520,20 +552,20 @@ const ProcessFlow = () => {
             // STEP 1
             // ═══════════════════════════════════════════════════════════════
             const s1_enter = 0;
-            const s1_p1 = 3;
-            const s1_p1off = 16;
-            const s1_p2 = 14;
-            const s1_card = s1_p2 + 2;
-            const s1_graph = s1_p2 + 5;
-            const s1_p2off = 28;
-            const s1_p3 = 26;
-            const s1_scan = 29;
-            const s1_p3off = 46;
-            const s1_outro = 50;
-            const s1_contentFade = s1_outro + 1;
-            const s1_morph = s1_contentFade + 5;
-            const s1_swap = s1_morph + 7;
-            const s2_scroll = s1_swap + 4;
+            const s1_p1 = T(3);
+            const s1_p1off = T(16);
+            const s1_p2 = T(14);
+            const s1_card = s1_p2 + T(2);
+            const s1_graph = s1_p2 + T(5);
+            const s1_p2off = T(28);
+            const s1_p3 = T(26);
+            const s1_scan = T(29);
+            const s1_p3off = T(46);
+            const s1_outro = T(50);
+            const s1_contentFade = s1_outro + T(1);
+            const s1_morph = s1_contentFade + T(5);
+            const s1_swap = s1_morph + T(7);
+            const s2_scroll = s1_swap + T(4);
 
             gsap.set(".panel-step1", { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)", });
             tl.to(".panel-step1", { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)", duration: FADE_DUR * 1.2, ease: EASE_ENTER }, s1_enter);
@@ -549,7 +581,7 @@ const ProcessFlow = () => {
             hi(1, 3, s1_p3);
             tl.to(".scanner1", { opacity: 1, top: "10%", duration: SCAN_RISE, ease: EASE_ENTER }, s1_scan)
                 .to(".scanner1", { top: "100%", duration: SCAN_TRAVEL, ease: "none" }, s1_scan + SCAN_RISE)
-                .to(".scanner1", { opacity: 0, duration: 2.5, ease: "power2.in" }, s1_scan + SCAN_RISE + SCAN_TRAVEL - 1.5);
+                .to(".scanner1", { opacity: 0, duration: T(2.5), ease: "power2.in" }, s1_scan + SCAN_RISE + SCAN_TRAVEL - T(1.5));
             lo(1, 3, s1_p3off);
 
             gsap.set(".panel-step2", { y: 0, opacity: 0 });
@@ -597,20 +629,20 @@ const ProcessFlow = () => {
             // ═══════════════════════════════════════════════════════════════
             const s2_stick = s2_scroll + SCROLL_DUR;
 
-            const s2_p1 = s2_stick + 2;
-            const s2_fill = s2_p1 + 2;
-            const s2_cursor = s2_p1 + 10;
-            const s2_click = s2_p1 + 15;
-            const s2_afterCl = s2_click + 2;
-            const s2_p1off = s2_afterCl + 4;
-            const s2_p2 = s2_p1off - 2;
-            const s2_form = s2_p2 + 2;
-            const s2_p2off = s2_p2 + 16;
-            const s2_p3 = s2_p2off - 2;
-            const s2_valid = s2_p3 + FADE_DUR + 1;
-            const s2_p3off = s2_valid + VALID_STAG * 4 + 8;
-            const s2_outro = s2_p3off + 4;
-            const s3_scroll = s2_outro + 5;
+            const s2_p1 = s2_stick + T(2);
+            const s2_fill = s2_p1 + T(2);
+            const s2_cursor = s2_p1 + T(10);
+            const s2_click = s2_p1 + T(15);
+            const s2_afterCl = s2_click + T(2);
+            const s2_p1off = s2_afterCl + T(4);
+            const s2_p2 = s2_p1off - T(2);
+            const s2_form = s2_p2 + T(2);
+            const s2_p2off = s2_p2 + T(16);
+            const s2_p3 = s2_p2off - T(2);
+            const s2_valid = s2_p3 + FADE_DUR + T(1);
+            const s2_p3off = s2_valid + VALID_STAG * 4 + T(8);
+            const s2_outro = s2_p3off + T(4);
+            const s3_scroll = s2_outro + T(5);
 
             hi(2, 1, s2_p1);
             tl.to(".ai-btn", { width: "11rem", duration: FADE_DUR * 1.1, ease: "power2.out" }, s2_fill)
@@ -618,19 +650,19 @@ const ProcessFlow = () => {
                 .to(".ai-btn-gradient", { opacity: 1, duration: FADE_DUR, ease: EASE_SOFT }, s2_fill)
                 .to(".ai-btn-text", { width: "4.85rem", duration: FADE_DUR * 1.1, ease: "power2.out" }, s2_fill)
                 .to(".ai-btn-icon", { color: POINT_ACTIVE, duration: FADE_DUR, ease: EASE_SOFT }, s2_fill)
-                .to(".ai-btn-label", { opacity: 1, duration: FADE_DUR, ease: EASE_SOFT }, s2_fill + 1.5);
+                .to(".ai-btn-label", { opacity: 1, duration: FADE_DUR, ease: EASE_SOFT }, s2_fill + T(1.5));
             tl.to(".cursor2", { opacity: 1, x: 0, y: 0, duration: FADE_DUR * 1.3, ease: "power2.out" }, s2_cursor);
-            tl.to(".cursor2", { scale: 0.85, duration: 0.3, ease: "power2.in" }, s2_click)
-                .to(".ai-btn", { scale: 0.93, duration: 0.3, ease: "power2.in" }, s2_click)
-                .to(".cursor2", { scale: 1, duration: 0.7, ease: "back.out(2)" }, s2_click + 0.3)
-                .to(".ai-btn", { scale: 1, duration: 0.7, ease: "back.out(2)" }, s2_click + 0.35);
+            tl.to(".cursor2", { scale: 0.85, duration: T(0.3), ease: "power2.in" }, s2_click)
+                .to(".ai-btn", { scale: 0.93, duration: T(0.3), ease: "power2.in" }, s2_click)
+                .to(".cursor2", { scale: 1, duration: T(0.7), ease: "back.out(2)" }, s2_click + T(0.3))
+                .to(".ai-btn", { scale: 1, duration: T(0.7), ease: "back.out(2)" }, s2_click + T(0.35));
             tl.to(".cursor2", { opacity: 0, x: -12, duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s2_afterCl)
                 .to(".ai-btn", { opacity: 0, y: -8, duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s2_afterCl);
 
             lo(2, 1, s2_p1off);
             hi(2, 2, s2_p2);
             tl.to(".form-wrap2", { opacity: 1, duration: FADE_DUR, ease: EASE_ENTER }, s2_form)
-                .to(".skeleton2", { opacity: 0, duration: FADE_DUR * 0.9, ease: EASE_EXIT }, s2_form + 1.5);
+                .to(".skeleton2", { opacity: 0, duration: FADE_DUR * 0.9, ease: EASE_EXIT }, s2_form + T(1.5));
 
             lo(2, 2, s2_p2off);
             hi(2, 3, s2_p3);
@@ -638,7 +670,7 @@ const ProcessFlow = () => {
             const vld = (t: number, inputs: string[], checks: string[], icons: string[]) => {
                 inputs.forEach(sel => tl.to(sel, { borderColor: FIELD_VALID, duration: VALID_DUR * 1.3, ease: EASE_SOFT }, t));
                 checks.forEach(sel => tl.to(sel, { backgroundColor: FIELD_VALID, borderColor: FIELD_VALID, duration: VALID_DUR * 1.3, ease: EASE_SOFT }, t));
-                icons.forEach(sel => tl.to(sel, { color: "#fff", duration: VALID_DUR, ease: EASE_SOFT }, t + 0.4));
+                icons.forEach(sel => tl.to(sel, { color: "#fff", duration: VALID_DUR, ease: EASE_SOFT }, t + T(0.4)));
             };
             tl.to(".f2-toggle-no", { backgroundColor: FIELD_VALID, color: "#fff", duration: VALID_DUR * 1.5, ease: EASE_SOFT }, s2_valid);
             vld(s2_valid + VALID_STAG, [], [".f2-check-np"], [".f2-icon-np"]);
@@ -658,15 +690,15 @@ const ProcessFlow = () => {
             gsap.set(".panel-step3", { y: 18, opacity: 0 });
             tl.to(".panel-step3", { opacity: 1, y: 0, duration: SCROLL_DUR * 0.65, ease: EASE_ENTER }, s3_scroll + SCROLL_DUR * 0.18);
 
-            const s3_p1 = s3_stick + 2;
-            const s3_p1off = s3_stick + 14;
-            const s3_p2 = s3_p1off - 2;
-            const s3_logos = s3_p2 + 3;
-            const s3_p2off = s3_p2 + 28;
-            const s3_p3 = s3_p2off - 2;
-            const s3_p3off = s3_p3 + 22;
-            const s3_outro = s3_p3off + 4;
-            const s4_scroll = s3_outro + 5;
+            const s3_p1 = s3_stick + T(2);
+            const s3_p1off = s3_stick + T(14);
+            const s3_p2 = s3_p1off - T(2);
+            const s3_logos = s3_p2 + T(3);
+            const s3_p2off = s3_p2 + T(28);
+            const s3_p3 = s3_p2off - T(2);
+            const s3_p3off = s3_p3 + T(22);
+            const s3_outro = s3_p3off + T(4);
+            const s4_scroll = s3_outro + T(5);
 
             hi(3, 1, s3_p1);
             lo(3, 1, s3_p1off);
@@ -683,8 +715,8 @@ const ProcessFlow = () => {
                 y: 0,
                 duration: FADE_DUR * 1.1,
                 ease: EASE_REVEAL,
-                stagger: { each: 0.55, from: "start" },
-            }, s3_logos + 2.5);
+                stagger: { each: T(0.55), from: "start" },
+            }, s3_logos + T(2.5));
             lo(3, 2, s3_p2off);
             hi(3, 3, s3_p3);
             lo(3, 3, s3_p3off);
@@ -709,18 +741,18 @@ const ProcessFlow = () => {
                 .set(".card4-success", { opacity: 0 }, s4_scroll)
                 .set(".cursor4", { opacity: 0, x: 40, y: -20 }, s4_scroll);
 
-            const s4_p1 = s4_stick + 2;
-            const s4_p1off = s4_stick + 14;
-            const s4_p2 = s4_p1off - 2;
-            const s4_cursor = s4_p2 + 6;
-            const s4_p2off = s4_p2 + 18;
-            const s4_p3 = s4_p2off - 2;
-            const s4_click = s4_p3 + 5;
-            const s4_afterCl = s4_click + 2;
-            const s4_p3off = s4_afterCl + 10;
-            const s4_rows_out = s4_p3off + 2;
+            const s4_p1 = s4_stick + T(2);
+            const s4_p1off = s4_stick + T(14);
+            const s4_p2 = s4_p1off - T(2);
+            const s4_cursor = s4_p2 + T(6);
+            const s4_p2off = s4_p2 + T(18);
+            const s4_p3 = s4_p2off - T(2);
+            const s4_click = s4_p3 + T(5);
+            const s4_afterCl = s4_click + T(2);
+            const s4_p3off = s4_afterCl + T(10);
+            const s4_rows_out = s4_p3off + T(2);
             const s4_outro = s4_rows_out + FADE_DUR;
-            const s5_scroll = s4_outro + 5;
+            const s5_scroll = s4_outro + T(5);
             const s5_morph = s5_scroll + SCROLL_DUR * 0.4;
 
             hi(4, 1, s4_p1);
@@ -728,17 +760,17 @@ const ProcessFlow = () => {
             hi(4, 2, s4_p2);
 
             tl.to(".cursor4", { opacity: 1, x: 0, y: 0, duration: FADE_DUR * 1.3, ease: "power2.out" }, s4_cursor)
-                .to(".bind-btn", { scale: 1.1, duration: FADE_DUR, ease: EASE_SOFT }, s4_cursor + 2);
+                .to(".bind-btn", { scale: 1.1, duration: FADE_DUR, ease: EASE_SOFT }, s4_cursor + T(2));
 
             lo(4, 2, s4_p2off);
             hi(4, 3, s4_p3);
 
-            tl.to(".cursor4", { scale: 0.84, duration: 0.35, ease: "power2.in" }, s4_click)
-                .to(".bind-btn", { scale: 0.91, duration: 0.35, ease: "power2.in" }, s4_click)
-                .to(".cursor4", { scale: 1, duration: 0.65, ease: "back.out(2)" }, s4_click + 0.35)
-                .to(".bind-btn", { scale: 1, duration: 0.7, ease: "back.out(2)" }, s4_click + 0.38);
+            tl.to(".cursor4", { scale: 0.84, duration: T(0.35), ease: "power2.in" }, s4_click)
+                .to(".bind-btn", { scale: 0.91, duration: T(0.35), ease: "power2.in" }, s4_click)
+                .to(".cursor4", { scale: 1, duration: T(0.65), ease: "back.out(2)" }, s4_click + T(0.35))
+                .to(".bind-btn", { scale: 1, duration: T(0.7), ease: "back.out(2)" }, s4_click + T(0.38));
 
-            tl.to(".row4-1-left", { x: "-130%", y: -8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_p3 + 1)
+            tl.to(".row4-1-left", { x: "-130%", y: -8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_p3 + T(1))
                 .to(".row4-1-right", { x: "130%", y: -8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_p3 + 1)
                 .to(".row4-3-left", { x: "-130%", y: 8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_p3 + 1)
                 .to(".row4-3-right", { x: "130%", y: 8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_p3 + 1);
@@ -771,11 +803,11 @@ const ProcessFlow = () => {
             gsap.set(".panel-step5", { y: 0 });
 
             const s5_p1 = s5_stick;
-            const s5_p1off = s5_stick + 14;
-            const s5_p2 = s5_p1off - 2;
-            const s5_p2off = s5_p2 + 14;
-            const s5_p3 = s5_p2off - 2;
-            const s5_p3off = s5_p3 + 14;
+            const s5_p1off = s5_stick + T(14);
+            const s5_p2 = s5_p1off - T(2);
+            const s5_p2off = s5_p2 + T(14);
+            const s5_p3 = s5_p2off - T(2);
+            const s5_p3off = s5_p3 + T(14);
 
             hi(5, 1, s5_p1); lo(5, 1, s5_p1off);
             hi(5, 2, s5_p2); lo(5, 2, s5_p2off);
@@ -820,14 +852,10 @@ const ProcessFlow = () => {
                                             key={feature.id}
                                             className={`point${idx + 1} flex gap-4 py-4 ${idx === step.points.length - 1 ? "" : "border-b border-black/10"}`}
                                         >
-                                            <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[#424242]">
-                                                {feature.icon === "sparkle"
-                                                    ? <RiSparkling2Fill className="size-3" />
-                                                    : <RiMailLine className="size-3" />}
+                                            <span className="point-icon flex size-6 shrink-0 items-center justify-center rounded-full border border-[#424242] text-[#424242]">
+                                                <RiArrowRightLine className="size-3" />
                                             </span>
-                                            <p className="max-w-sm text-sm text-[#424242] leading-relaxed font-heading font-regular md:text-sm">
-                                                {feature.text}
-                                            </p>
+                                            <ProcessPointText text={feature.text} />
                                         </li>
                                     ))}
                                 </ul>
