@@ -526,23 +526,6 @@ const ProcessFlow = () => {
                         ease: EASE_SOFT,
                     }, t);
             };
-            const lo = (step: number, pt: number, t: number) => {
-                const b = `.step${step} .point${pt}`;
-                tl.to(`${b} .point-char`, {
-                    color: POINT_IDLE,
-                    duration: POINT_DUR * 0.45,
-                    stagger: { each: CHAR_STAG * 0.7, from: "start" },
-                    ease: EASE_SOFT,
-                }, t)
-                    .to(`${b} .point-icon`, {
-                        backgroundColor: "transparent",
-                        color: POINT_IDLE,
-                        borderColor: POINT_IDLE,
-                        duration: POINT_DUR * 0.4,
-                        ease: EASE_SOFT,
-                    }, t);
-            };
-
             const crossFade = (fromPanel: string, toPanel: string, t: number) => {
                 tl.to(fromPanel, { opacity: 0, y: -10, duration: FADE_DUR, ease: EASE_EXIT }, t);
                 tl.to(toPanel, { opacity: 1, y: 0, duration: FADE_DUR * 1.1, ease: EASE_ENTER }, t + FADE_DUR * 0.35);
@@ -571,19 +554,14 @@ const ProcessFlow = () => {
             tl.to(".panel-step1", { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)", duration: FADE_DUR * 1.2, ease: EASE_ENTER }, s1_enter);
 
             hi(1, 1, s1_p1);
-            lo(1, 1, s1_p1off);
             hi(1, 2, s1_p2);
             tl.to(".skeleton1", { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)", duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s1_card)
                 .to(".card1", { opacity: 1, duration: FADE_DUR * 0.8, ease: EASE_REVEAL }, s1_card)
                 .to(".graph1", { opacity: 1, y: 0, x: 0, duration: FADE_DUR * 0.8, ease: EASE_REVEAL }, s1_graph);
-            lo(1, 2, s1_p2off);
-
             hi(1, 3, s1_p3);
             tl.to(".scanner1", { opacity: 1, top: "10%", duration: SCAN_RISE, ease: EASE_ENTER }, s1_scan)
                 .to(".scanner1", { top: "100%", duration: SCAN_TRAVEL, ease: "none" }, s1_scan + SCAN_RISE)
                 .to(".scanner1", { opacity: 0, duration: T(2.5), ease: "power2.in" }, s1_scan + SCAN_RISE + SCAN_TRAVEL - T(1.5));
-            lo(1, 3, s1_p3off);
-
             gsap.set(".panel-step2", { y: 0, opacity: 0 });
 
             // Step 1 → 2: after scan + last point, card1 morphs into AI button
@@ -659,12 +637,10 @@ const ProcessFlow = () => {
             tl.to(".cursor2", { opacity: 0, x: -12, duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s2_afterCl)
                 .to(".ai-btn", { opacity: 0, y: -8, duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s2_afterCl);
 
-            lo(2, 1, s2_p1off);
             hi(2, 2, s2_p2);
             tl.to(".form-wrap2", { opacity: 1, duration: FADE_DUR, ease: EASE_ENTER }, s2_form)
                 .to(".skeleton2", { opacity: 0, duration: FADE_DUR * 0.9, ease: EASE_EXIT }, s2_form + T(1.5));
 
-            lo(2, 2, s2_p2off);
             hi(2, 3, s2_p3);
 
             const vld = (t: number, inputs: string[], checks: string[], icons: string[]) => {
@@ -678,7 +654,6 @@ const ProcessFlow = () => {
             vld(s2_valid + VALID_STAG * 3, [".f2-inp-ent"], [".f2-check-ent"], [".f2-icon-ent"]);
             vld(s2_valid + VALID_STAG * 4, [".f2-inp-yr"], [".f2-check-yr"], [".f2-icon-yr"]);
 
-            lo(2, 3, s2_p3off);
             tl.to(".panel-step2", { opacity: 0, y: -14, duration: FADE_DUR, ease: EASE_EXIT }, s2_outro);
             tl.to(".leftScroll", { yPercent: -40, duration: SCROLL_DUR, ease: "none" }, s3_scroll);
 
@@ -701,7 +676,6 @@ const ProcessFlow = () => {
             const s4_scroll = s3_outro + T(5);
 
             hi(3, 1, s3_p1);
-            lo(3, 1, s3_p1off);
             hi(3, 2, s3_p2);
             tl.to(".logos-grid3", {
                 height: "12.5rem",
@@ -717,9 +691,7 @@ const ProcessFlow = () => {
                 ease: EASE_REVEAL,
                 stagger: { each: T(0.55), from: "start" },
             }, s3_logos + T(2.5));
-            lo(3, 2, s3_p2off);
             hi(3, 3, s3_p3);
-            lo(3, 3, s3_p3off);
 
             tl.to(".panel-step3", { opacity: 0, y: -14, duration: FADE_DUR, ease: EASE_EXIT }, s3_outro);
             tl.to(".leftScroll", { yPercent: -60, duration: SCROLL_DUR, ease: "none" }, s4_scroll);
@@ -756,13 +728,11 @@ const ProcessFlow = () => {
             const s5_morph = s5_scroll + SCROLL_DUR * 0.4;
 
             hi(4, 1, s4_p1);
-            lo(4, 1, s4_p1off);
             hi(4, 2, s4_p2);
 
             tl.to(".cursor4", { opacity: 1, x: 0, y: 0, duration: FADE_DUR * 1.3, ease: "power2.out" }, s4_cursor)
                 .to(".bind-btn", { scale: 1.1, duration: FADE_DUR, ease: EASE_SOFT }, s4_cursor + T(2));
 
-            lo(4, 2, s4_p2off);
             hi(4, 3, s4_p3);
 
             tl.to(".cursor4", { scale: 0.84, duration: T(0.35), ease: "power2.in" }, s4_click)
@@ -776,8 +746,6 @@ const ProcessFlow = () => {
                 .to(".row4-3-right", { x: "130%", y: 8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_p3 + 1);
 
             tl.to(".cursor4", { opacity: 0, x: 16, duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s4_afterCl);
-
-            lo(4, 3, s4_p3off);
 
             tl.to(".row4-2-left", { x: "-130%", opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_rows_out)
                 .to(".row4-2-right", { x: "130%", opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_rows_out)
@@ -809,9 +777,9 @@ const ProcessFlow = () => {
             const s5_p3 = s5_p2off - T(2);
             const s5_p3off = s5_p3 + T(14);
 
-            hi(5, 1, s5_p1); lo(5, 1, s5_p1off);
-            hi(5, 2, s5_p2); lo(5, 2, s5_p2off);
-            hi(5, 3, s5_p3); lo(5, 3, s5_p3off);
+            hi(5, 1, s5_p1);
+            hi(5, 2, s5_p2);
+            hi(5, 3, s5_p3);
 
             const lenis = (window as any).lenis;
             const onLenisScroll = () => ScrollTrigger.update();
@@ -850,7 +818,7 @@ const ProcessFlow = () => {
                                     {step.points.map((feature, idx) => (
                                         <li
                                             key={feature.id}
-                                            className={`point${idx + 1} flex gap-4 py-4 ${idx === step.points.length - 1 ? "" : "border-b border-black/10"}`}
+                                            className={`point${idx + 1} flex gap-4 py-4 border-b border-black/10`}
                                         >
                                             <span className="point-icon flex size-6 shrink-0 items-center justify-center rounded-full border border-[#424242] text-[#424242]">
                                                 <RiArrowRightLine className="size-3" />
