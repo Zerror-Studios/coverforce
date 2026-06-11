@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { positionToSpectrumColor } from "@/lib/globe-colors";
 
@@ -13,6 +13,34 @@ type GlobeDemoProps = {
 };
 
 export default function GlobeDemo({ embedded = false, className = "" }: GlobeDemoProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(true);
+  const [playKey, setPlayKey] = useState(0);
+  const hasLeftViewRef = useRef(false);
+
+  useEffect(() => {
+    if (!embedded) return;
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const inView = entry.isIntersecting;
+        setVisible(inView);
+        if (inView && hasLeftViewRef.current) {
+          setPlayKey((k) => k + 1);
+          hasLeftViewRef.current = false;
+        } else if (!inView) {
+          hasLeftViewRef.current = true;
+        }
+      },
+      { threshold: 0.2 },
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [embedded]);
+
   const globeConfig = {
     pointSize: 0.8,
     globeColor: "#000000",
@@ -34,7 +62,7 @@ export default function GlobeDemo({ embedded = false, className = "" }: GlobeDem
     initialPosition: { lat: 22.3193, lng: 114.1694 },
     autoRotate: true,
     autoRotateSpeed: 0.5,
-    ...(embedded ? { cameraDistance: 210 } : {}),
+    ...(embedded ? { cameraDistance: 285 } : {}),
   };
   const sampleArcs = [
     {
@@ -367,9 +395,15 @@ export default function GlobeDemo({ embedded = false, className = "" }: GlobeDem
 
   return (
     <div
+      ref={containerRef}
       className={`relative w-full overflow-hidden ${embedded ? "h-full bg-transparent" : "h-screen bg-white"} ${className}`}
     >
-      <World data={sampleArcs} globeConfig={globeConfig} />
+      <World
+        key={embedded ? playKey : "full"}
+        visible={visible}
+        data={sampleArcs}
+        globeConfig={globeConfig}
+      />
     </div>
   );
 }

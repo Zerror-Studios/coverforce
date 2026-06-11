@@ -5,11 +5,11 @@ import * as THREE from "three";
 
 // ─── constants ────────────────────────────────────────────────────────────────
 const COUNT_FULL = 1400;
-const COUNT_LITE = 800;
+const COUNT_LITE = 880;
 const ATTRACT_DIST_SQ = 0.88 * 0.88;
 const RING_R = 0.9;
-const RING_CORE = 0.18;       // thin ring spine — fewer particles
-const CORE_SPREAD = 0.018;      // very narrow band on the circle
+const RING_CORE = 0.22;       // thin ring spine — denser particle band
+const CORE_SPREAD = 0.014;      // tighter band on the circle
 const HALO_MIN = 0.05;       // closest halo distance from ring (not on spine)
 const HALO_MAX = 0.26;       // farthest halo distance from ring
 const SPRING_K = 0.055;

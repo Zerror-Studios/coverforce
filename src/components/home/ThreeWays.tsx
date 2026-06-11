@@ -30,6 +30,10 @@ const BrokerMock = dynamic(() => import("./BrokerMock"), {
 const DeveloperMock = dynamic(() => import("./DeveloperMock"), {
   loading: () => <MockPlaceholder className="max-w-[420px]" />,
 });
+const DeveloperTerminalBg = dynamic(() => import("./DeveloperTerminalBg"), {
+  ssr: false,
+  loading: () => null,
+});
 const GlobeScene = dynamic(() => import("@/components/home/GlobeScene"), {
   ssr: false,
   loading: () => null,
@@ -86,7 +90,7 @@ const WAY_CARDS: WayCardConfig[] = [
     tagline: "One workflow for every producer",
     variant: "light",
     background: "light",
-    backgroundScene: <GlobeDemo embedded className="translate-y-14" />,
+    backgroundScene: <GlobeDemo embedded className="translate-y-16 scale-[0.92] origin-center" />,
     mock: <BrokerMockWithCardHover />,
     modalPreview: <BrokerMock />,
   },
@@ -99,6 +103,7 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "developer",
     className: "md:col-span-2",
     mockAlign: "bottom",
+    backgroundScene: <DeveloperTerminalBg />,
     mock: <DeveloperMock />,
     modalPreview: <DeveloperMock />,
   },
@@ -140,7 +145,7 @@ function WayCard({
   const mockRef = useRef<HTMLDivElement>(null);
   const isDark = variant === "dark";
   const textClass =
-    background === "developer"
+    background === "developer" && !backgroundScene
       ? "text-[#0a143b]"
       : background === "accent" || isDark
         ? "text-white"
