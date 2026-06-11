@@ -58,6 +58,25 @@ function MockPlaceholder({ className = "max-w-[290px]" }: { className?: string }
   );
 }
 
+function WayCardDotGrid({
+  variant,
+  active,
+}: {
+  variant: "dark" | "light";
+  active: boolean;
+}) {
+  return (
+    <div
+      aria-hidden
+      className={[
+        "way-card-dot-grid",
+        variant === "dark" ? "way-card-dot-grid--dark" : "way-card-dot-grid--light",
+        active ? "way-card-dot-grid--active" : "",
+      ].join(" ")}
+    />
+  );
+}
+
 // Remove label, lightStrip from WayCardProps
 type WayCardProps = {
   tagline: string;
@@ -71,6 +90,7 @@ type WayCardProps = {
   hideMock?: boolean;
   backgroundScene?: ReactNode;
   backgroundInteractive?: boolean;
+  dotGrid?: boolean;
   onOpen: (originRect: WayModalRect | null) => void;
 };
 
@@ -88,6 +108,7 @@ const WAY_CARDS: WayCardConfig[] = [
     tagline: "Grow distribution efficiently",
     variant: "dark",
     background: "accent",
+    dotGrid: true,
     mock: <WholesalerMock />,
     modalPreview: <WholesalerMock />,
   },
@@ -128,6 +149,7 @@ const WAY_CARDS: WayCardConfig[] = [
     tagline: "Grow distribution efficiently",
     variant: "dark",
     background: "accent",
+    dotGrid: true,
     mock: <WholesalerMock />,
     modalPreview: <WholesalerMock />,
   },
@@ -145,6 +167,7 @@ function WayCard({
   hideMock = false,
   backgroundScene,
   backgroundInteractive = false,
+  dotGrid = false,
   onOpen,
 }: Omit<WayCardProps, "label" | "lightStrip">) {
   const [hovered, setHovered] = useState(false);
@@ -179,11 +202,12 @@ function WayCard({
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         aria-label={`Open details`}
-        className={`way-card-shell relative cursor-pointer ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${textClass} ${className}`}
+        className={`way-card-shell relative cursor-pointer ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${hovered ? "way-card-shell--hovered" : ""} ${textClass} ${className}`}
       >
         <div
           className={`way-card-body absolute inset-0 overflow-hidden rounded-sm flex flex-col p-5 md:p-8 ${background ? CARD_BACKGROUNDS[background] : ""}`}
         >
+          {dotGrid ? <WayCardDotGrid variant={variant} active={hovered} /> : null}
           {backgroundScene ? (
             <div
               className={`absolute inset-0 ${backgroundInteractive ? "z-[5] pointer-events-auto" : "z-[1] pointer-events-none"}`}
@@ -194,7 +218,7 @@ function WayCard({
               {backgroundScene}
             </div>
           ) : null}
-          <div className="relative z-10 flex min-h-0 flex-1 flex-col pointer-events-none">
+          <div className="relative z-[2] flex min-h-0 flex-1 flex-col pointer-events-none">
             <div className="flex items-start justify-between gap-4">
               <p
                 className={`${taglinePosition === "left" ? "max-w-xs" : "max-w-[16rem]"} text-3xl font-heading font-medium leading-[1.12] tracking-tight ${variant == "light" ? "text-[#424242]" : "text-white"} md:text-4xl lg:text-[1.625rem] lg:leading-[1.12] text-left`}

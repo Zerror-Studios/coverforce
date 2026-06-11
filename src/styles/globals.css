@@ -146,6 +146,50 @@ button {
   transition: clip-path 800ms cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
+@keyframes way-card-dot-grid-scroll {
+  from {
+    background-position: 0 24px;
+  }
+
+  to {
+    background-position: 0 0;
+  }
+}
+
+.way-card-body {
+  isolation: isolate;
+}
+
+.way-card-dot-grid {
+  position: absolute;
+  top: 36%;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+  opacity: 0;
+  background-repeat: repeat;
+  background-size: 24px 24px;
+  background-position: 0 0;
+  pointer-events: none;
+  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, background-position;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / 0.35) 22%, #000 40%);
+  mask-image: linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / 0.35) 22%, #000 40%);
+}
+
+.way-card-dot-grid--dark {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='2' cy='2' r='1' fill='rgba(255,255,255,0.48)'/%3E%3C/svg%3E");
+}
+
+.way-card-dot-grid--light {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='2' cy='2' r='1' fill='rgba(91,53,224,0.07)'/%3E%3C/svg%3E");
+}
+
+.way-card-dot-grid--active {
+  opacity: 1;
+}
+
 
 
 @media (prefers-reduced-motion: no-preference) {
@@ -161,6 +205,10 @@ button {
 
     .way-card-shell:hover .way-card-mock {
       transform: translate3d(0, 0, 0) scale(calc(1 / var(--way-card-hover-scale)));
+    }
+
+    .way-card-dot-grid--active {
+      animation: way-card-dot-grid-scroll 5s linear infinite;
     }
   }
 }
