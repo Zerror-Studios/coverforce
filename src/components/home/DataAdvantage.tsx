@@ -17,7 +17,7 @@ const DataAdvantage = () => {
   useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef, descRef });
 
   return (
-    <section ref={sectionRef} className="bg-[#121C49] text-white">
+    <section ref={sectionRef} className="z-20 bg-[#121C49] text-white">
       <Container borderColor="#FFFFFF33">
         <div className="flex flex-col gap-10 py-16 md:py-20 lg:gap-14 lg:py-24">
           <div

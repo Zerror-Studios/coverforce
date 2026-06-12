@@ -1,7 +1,14 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useRef, type ReactNode } from "react";
 import Container from "./Container";
 import Link from "next/link";
 import Image from "next/image";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 type FooterColumnData = {
   title: string;
@@ -43,7 +50,7 @@ const legalLinks: LegalLink[] = [
 function FooterBullet() {
   return (
     <span
-      className="absolute left-0 top-1/2 size-2 -translate-y-1/2 origin-left scale-0 rounded-full bg-[#5B35E0] transition-transform duration-200 ease-out group-hover:scale-100"
+      className="absolute left-0 top-1/2 size-2 -translate-y-1/2 origin-left scale-0 rounded-full bg-[#5B35E0] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-100"
       aria-hidden
     />
   );
@@ -59,7 +66,7 @@ function FooterLink({ href, children, className = "" }: FooterLinkProps) {
   return (
     <Link
       href={href}
-      className={`group relative inline-flex pl-0 font-heading text-xs leading-0 font-medium  tracking-wider text-[#3F3F3F] transition-[padding-left,color] duration-200 ease-out hover:pl-3.5 hover:text-[#5B35E0] ${className}`}
+      className={`group relative inline-flex pl-0 font-heading text-xs leading-0 font-medium tracking-wider text-[#3F3F3F] transition-[padding-left,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:pl-3.5 hover:text-[#5B35E0] ${className}`}
     >
       <FooterBullet />
       {children}
@@ -87,10 +94,63 @@ function FooterColumn({ title, links }: FooterColumnProps) {
 }
 
 const Footer = () => {
+
+  const sectionRef = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    const section = sectionRef.current;
+    const content = contentRef.current;
+  
+    if (!section || !content) return;
+  
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      gsap.set(content, {
+        yPercent: 0,
+        opacity: 1,
+        clearProps: "transform",
+      });
+      return;
+    }
+  
+    gsap.set(content, {
+      yPercent: -20, // smaller travel feels more premium
+      opacity: 0.95,
+      willChange: "transform, opacity",
+      force3D: true,
+    });
+  
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: "top bottom",
+        end: "top 60%",
+        scrub: 2, // smoother interpolation
+        invalidateOnRefresh: true,
+        fastScrollEnd: true,
+      },
+    });
+  
+    tl.to(content, {
+      yPercent: 0,
+      opacity: 1,
+      force3D: true,
+    });
+  
+    const lenis = window.lenis;
+    const onLenisScroll = ScrollTrigger.update;
+  
+    lenis?.on("scroll", onLenisScroll);
+  
+    return () => {
+      lenis?.off("scroll", onLenisScroll);
+      tl.kill();
+    };
+  }, { scope: sectionRef });
   return (
-    <footer className="relative overflow-hidden bg-white text-[#0a143b]">
+    <footer ref={sectionRef} className="relative overflow-hidden bg-white text-[#0a143b]">
       <Container borderColor="#53535380">
-        <div className="relative z-10">
+        <div ref={contentRef} className="relative z-10 will-change-transform">
           <div className="flex flex-col gap-6 border-b border-neutral-200 pt-12 pb-5 md:flex-row md:items-start md:justify-between md:gap-8 md:pt-14 md:pb-6 lg:pt-16 lg:pb-7">
             <Link href="/" className="shrink-0">
               <Image
