@@ -439,16 +439,14 @@ const ProcessFlow = () => {
             const T = (n: number) => n * S;
 
             const FADE_DUR = T(6);
-            const POINT_DUR = T(5);
             const SCROLL_DUR = T(24);
             const SCAN_RISE = T(4);
             const SCAN_TRAVEL = T(12);
             const VALID_DUR = T(1.2);
             const VALID_STAG = T(2.0);
 
-            const TOTAL_SCROLL_UNITS = T(420);
             const VH_PER_UNIT = 3.5;
-            const scrollDistance = `+=${TOTAL_SCROLL_UNITS * VH_PER_UNIT}vh`;
+            const POINT_GAP = T(2);
 
             gsap.set(".panel-step2, .panel-step3, .panel-step4, .panel-step5", { opacity: 0 });
             gsap.set(".skeleton1", { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" });
@@ -501,67 +499,75 @@ const ProcessFlow = () => {
                 scrollTrigger: {
                     trigger: section,
                     start: "top top",
-                    end: scrollDistance,
+                    end: () => `+=${Math.max(tl.duration(), T(100)) * VH_PER_UNIT}vh`,
                     pin: true,
                     pinSpacing: true,
                     scrub: true,
+                    invalidateOnRefresh: true,
                 },
             });
 
-            const CHAR_STAG = T(0.14);
+            const CHAR_STAG = T(0.48);
+            const CHAR_DUR = T(0.34);
+
+            const pointText = (step: number, pt: number) => processSteps[step - 1].points[pt - 1].text;
+            const pointFillDur = (text: string) => {
+                const n = text.length;
+                if (n <= 1) return CHAR_DUR;
+                return CHAR_DUR + (n - 1) * CHAR_STAG;
+            };
+            const afterPoint = (start: number, text: string, rightEnd: number) =>
+                Math.max(start + pointFillDur(text), rightEnd) + POINT_GAP;
 
             const hi = (step: number, pt: number, t: number) => {
                 const b = `.step${step} .point${pt}`;
                 tl.to(`${b} .point-char`, {
                     color: POINT_ACTIVE,
-                    duration: POINT_DUR * 0.65,
+                    duration: CHAR_DUR,
                     stagger: { each: CHAR_STAG, from: "start" },
-                    ease: EASE_SOFT,
+                    ease: "power2.out",
                 }, t)
                     .to(`${b} .point-icon`, {
                         backgroundColor: POINT_ACTIVE,
                         color: "#fff",
                         borderColor: POINT_ACTIVE,
-                        duration: POINT_DUR * 0.55,
-                        ease: EASE_SOFT,
+                        duration: CHAR_DUR * 1.2,
+                        ease: "power2.out",
                     }, t);
             };
-            const crossFade = (fromPanel: string, toPanel: string, t: number) => {
-                tl.to(fromPanel, { opacity: 0, y: -10, duration: FADE_DUR, ease: EASE_EXIT }, t);
-                tl.to(toPanel, { opacity: 1, y: 0, duration: FADE_DUR * 1.1, ease: EASE_ENTER }, t + FADE_DUR * 0.35);
-            };
-
             // ═══════════════════════════════════════════════════════════════
             // STEP 1
             // ═══════════════════════════════════════════════════════════════
             const s1_enter = 0;
-            const s1_p1 = T(3);
-            const s1_p1off = T(16);
-            const s1_p2 = T(14);
-            const s1_card = s1_p2 + T(2);
-            const s1_graph = s1_p2 + T(5);
-            const s1_p2off = T(28);
-            const s1_p3 = T(26);
-            const s1_scan = T(29);
-            const s1_p3off = T(46);
-            const s1_outro = T(50);
-            const s1_contentFade = s1_outro + T(1);
-            const s1_morph = s1_contentFade + T(5);
-            const s1_swap = s1_morph + T(7);
-            const s2_scroll = s1_swap + T(4);
 
             gsap.set(".panel-step1", { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)", });
             tl.to(".panel-step1", { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)", duration: FADE_DUR * 1.2, ease: EASE_ENTER }, s1_enter);
 
-            hi(1, 1, s1_p1);
-            hi(1, 2, s1_p2);
+            let s1_t = s1_enter + FADE_DUR * 1.2 + T(1);
+
+            hi(1, 1, s1_t);
+            s1_t = afterPoint(s1_t, pointText(1, 1), s1_t);
+
+            hi(1, 2, s1_t);
+            const s1_card = s1_t + T(1);
+            const s1_graph = s1_t + T(4);
             tl.to(".skeleton1", { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)", duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s1_card)
                 .to(".card1", { opacity: 1, duration: FADE_DUR * 0.8, ease: EASE_REVEAL }, s1_card)
                 .to(".graph1", { opacity: 1, y: 0, x: 0, duration: FADE_DUR * 0.8, ease: EASE_REVEAL }, s1_graph);
-            hi(1, 3, s1_p3);
+            s1_t = afterPoint(s1_t, pointText(1, 2), s1_graph + FADE_DUR * 0.8);
+
+            hi(1, 3, s1_t);
+            const s1_scan = s1_t + T(1);
             tl.to(".scanner1", { opacity: 1, top: "10%", duration: SCAN_RISE, ease: EASE_ENTER }, s1_scan)
                 .to(".scanner1", { top: "100%", duration: SCAN_TRAVEL, ease: "none" }, s1_scan + SCAN_RISE)
                 .to(".scanner1", { opacity: 0, duration: T(2.5), ease: "power2.in" }, s1_scan + SCAN_RISE + SCAN_TRAVEL - T(1.5));
+            s1_t = afterPoint(s1_t, pointText(1, 3), s1_scan + SCAN_RISE + SCAN_TRAVEL + T(1));
+
+            const s1_outro = s1_t + T(2);
+            const s1_contentFade = s1_outro + T(1);
+            const s1_morph = s1_contentFade + T(5);
+            const s1_swap = s1_morph + T(7);
+            const s2_scroll = s1_swap + T(4);
             gsap.set(".panel-step2", { y: 0, opacity: 0 });
 
             // Step 1 → 2: after scan + last point, card1 morphs into AI button
@@ -607,22 +613,13 @@ const ProcessFlow = () => {
             // ═══════════════════════════════════════════════════════════════
             const s2_stick = s2_scroll + SCROLL_DUR;
 
-            const s2_p1 = s2_stick + T(2);
-            const s2_fill = s2_p1 + T(2);
-            const s2_cursor = s2_p1 + T(10);
-            const s2_click = s2_p1 + T(15);
-            const s2_afterCl = s2_click + T(2);
-            const s2_p1off = s2_afterCl + T(4);
-            const s2_p2 = s2_p1off - T(2);
-            const s2_form = s2_p2 + T(2);
-            const s2_p2off = s2_p2 + T(16);
-            const s2_p3 = s2_p2off - T(2);
-            const s2_valid = s2_p3 + FADE_DUR + T(1);
-            const s2_p3off = s2_valid + VALID_STAG * 4 + T(8);
-            const s2_outro = s2_p3off + T(4);
-            const s3_scroll = s2_outro + T(5);
+            let s2_t = s2_stick + T(2);
 
-            hi(2, 1, s2_p1);
+            hi(2, 1, s2_t);
+            const s2_fill = s2_t + T(1);
+            const s2_cursor = s2_fill + FADE_DUR * 1.1 + T(2);
+            const s2_click = s2_cursor + FADE_DUR * 1.3 + T(2);
+            const s2_afterCl = s2_click + T(2);
             tl.to(".ai-btn", { width: "11rem", duration: FADE_DUR * 1.1, ease: "power2.out" }, s2_fill)
                 .to(".ai-btn-inner", { backgroundColor: "#E1E9FF", gap: "0.5rem", paddingLeft: "1.25rem", paddingRight: "1.25rem", paddingTop: "1rem", paddingBottom: "1rem", duration: FADE_DUR, ease: EASE_SOFT }, s2_fill)
                 .to(".ai-btn-gradient", { opacity: 1, duration: FADE_DUR, ease: EASE_SOFT }, s2_fill)
@@ -636,12 +633,16 @@ const ProcessFlow = () => {
                 .to(".ai-btn", { scale: 1, duration: T(0.7), ease: "back.out(2)" }, s2_click + T(0.35));
             tl.to(".cursor2", { opacity: 0, x: -12, duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s2_afterCl)
                 .to(".ai-btn", { opacity: 0, y: -8, duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s2_afterCl);
+            s2_t = afterPoint(s2_t, pointText(2, 1), s2_afterCl + FADE_DUR * 0.8);
 
-            hi(2, 2, s2_p2);
+            hi(2, 2, s2_t);
+            const s2_form = s2_t + T(1);
             tl.to(".form-wrap2", { opacity: 1, duration: FADE_DUR, ease: EASE_ENTER }, s2_form)
                 .to(".skeleton2", { opacity: 0, duration: FADE_DUR * 0.9, ease: EASE_EXIT }, s2_form + T(1.5));
+            s2_t = afterPoint(s2_t, pointText(2, 2), s2_form + FADE_DUR + T(1.5));
 
-            hi(2, 3, s2_p3);
+            hi(2, 3, s2_t);
+            const s2_valid = s2_t + T(2);
 
             const vld = (t: number, inputs: string[], checks: string[], icons: string[]) => {
                 inputs.forEach(sel => tl.to(sel, { borderColor: FIELD_VALID, duration: VALID_DUR * 1.3, ease: EASE_SOFT }, t));
@@ -653,6 +654,10 @@ const ProcessFlow = () => {
             vld(s2_valid + VALID_STAG * 2, [".f2-inp-fein"], [".f2-check-fein"], [".f2-icon-fein"]);
             vld(s2_valid + VALID_STAG * 3, [".f2-inp-ent"], [".f2-check-ent"], [".f2-icon-ent"]);
             vld(s2_valid + VALID_STAG * 4, [".f2-inp-yr"], [".f2-check-yr"], [".f2-icon-yr"]);
+            s2_t = afterPoint(s2_t, pointText(2, 3), s2_valid + VALID_STAG * 4 + VALID_DUR * 1.5 + T(2));
+
+            const s2_outro = s2_t + T(2);
+            const s3_scroll = s2_outro + T(5);
 
             tl.to(".panel-step2", { opacity: 0, y: -14, duration: FADE_DUR, ease: EASE_EXIT }, s2_outro);
             tl.to(".leftScroll", { yPercent: -40, duration: SCROLL_DUR, ease: "none" }, s3_scroll);
@@ -665,18 +670,13 @@ const ProcessFlow = () => {
             gsap.set(".panel-step3", { y: 18, opacity: 0 });
             tl.to(".panel-step3", { opacity: 1, y: 0, duration: SCROLL_DUR * 0.65, ease: EASE_ENTER }, s3_scroll + SCROLL_DUR * 0.18);
 
-            const s3_p1 = s3_stick + T(2);
-            const s3_p1off = s3_stick + T(14);
-            const s3_p2 = s3_p1off - T(2);
-            const s3_logos = s3_p2 + T(3);
-            const s3_p2off = s3_p2 + T(28);
-            const s3_p3 = s3_p2off - T(2);
-            const s3_p3off = s3_p3 + T(22);
-            const s3_outro = s3_p3off + T(4);
-            const s4_scroll = s3_outro + T(5);
+            let s3_t = s3_stick + T(2);
 
-            hi(3, 1, s3_p1);
-            hi(3, 2, s3_p2);
+            hi(3, 1, s3_t);
+            s3_t = afterPoint(s3_t, pointText(3, 1), s3_t);
+
+            hi(3, 2, s3_t);
+            const s3_logos = s3_t + T(1);
             tl.to(".logos-grid3", {
                 height: "12.5rem",
                 paddingBottom: 20,
@@ -691,7 +691,17 @@ const ProcessFlow = () => {
                 ease: EASE_REVEAL,
                 stagger: { each: T(0.55), from: "start" },
             }, s3_logos + T(2.5));
-            hi(3, 3, s3_p3);
+            const s3_logosEnd = Math.max(
+                s3_logos + FADE_DUR * 2.8,
+                s3_logos + T(2.5) + FADE_DUR * 1.1 + T(0.55) * (CARRIER_LOGOS.length - 1),
+            );
+            s3_t = afterPoint(s3_t, pointText(3, 2), s3_logosEnd);
+
+            hi(3, 3, s3_t);
+            s3_t = afterPoint(s3_t, pointText(3, 3), s3_t);
+
+            const s3_outro = s3_t + T(2);
+            const s4_scroll = s3_outro + T(5);
 
             tl.to(".panel-step3", { opacity: 0, y: -14, duration: FADE_DUR, ease: EASE_EXIT }, s3_outro);
             tl.to(".leftScroll", { yPercent: -60, duration: SCROLL_DUR, ease: "none" }, s4_scroll);
@@ -713,43 +723,42 @@ const ProcessFlow = () => {
                 .set(".card4-success", { opacity: 0 }, s4_scroll)
                 .set(".cursor4", { opacity: 0, x: 40, y: -20 }, s4_scroll);
 
-            const s4_p1 = s4_stick + T(2);
-            const s4_p1off = s4_stick + T(14);
-            const s4_p2 = s4_p1off - T(2);
-            const s4_cursor = s4_p2 + T(6);
-            const s4_p2off = s4_p2 + T(18);
-            const s4_p3 = s4_p2off - T(2);
-            const s4_click = s4_p3 + T(5);
-            const s4_afterCl = s4_click + T(2);
-            const s4_p3off = s4_afterCl + T(10);
-            const s4_rows_out = s4_p3off + T(2);
-            const s4_outro = s4_rows_out + FADE_DUR;
-            const s5_scroll = s4_outro + T(5);
-            const s5_morph = s5_scroll + SCROLL_DUR * 0.4;
+            let s4_t = s4_stick + T(2);
 
-            hi(4, 1, s4_p1);
-            hi(4, 2, s4_p2);
+            hi(4, 1, s4_t);
+            s4_t = afterPoint(s4_t, pointText(4, 1), s4_t);
 
+            hi(4, 2, s4_t);
+            const s4_cursor = s4_t + T(1);
             tl.to(".cursor4", { opacity: 1, x: 0, y: 0, duration: FADE_DUR * 1.3, ease: "power2.out" }, s4_cursor)
                 .to(".bind-btn", { scale: 1.1, duration: FADE_DUR, ease: EASE_SOFT }, s4_cursor + T(2));
+            s4_t = afterPoint(s4_t, pointText(4, 2), s4_cursor + FADE_DUR * 1.3 + FADE_DUR + T(2));
 
-            hi(4, 3, s4_p3);
+            hi(4, 3, s4_t);
+            const s4_click = s4_t + T(2);
+            const s4_afterCl = s4_click + T(2);
+            const s4_rows_out = s4_afterCl + FADE_DUR * 0.8 + T(2);
 
             tl.to(".cursor4", { scale: 0.84, duration: T(0.35), ease: "power2.in" }, s4_click)
                 .to(".bind-btn", { scale: 0.91, duration: T(0.35), ease: "power2.in" }, s4_click)
                 .to(".cursor4", { scale: 1, duration: T(0.65), ease: "back.out(2)" }, s4_click + T(0.35))
                 .to(".bind-btn", { scale: 1, duration: T(0.7), ease: "back.out(2)" }, s4_click + T(0.38));
 
-            tl.to(".row4-1-left", { x: "-130%", y: -8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_p3 + T(1))
-                .to(".row4-1-right", { x: "130%", y: -8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_p3 + 1)
-                .to(".row4-3-left", { x: "-130%", y: 8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_p3 + 1)
-                .to(".row4-3-right", { x: "130%", y: 8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_p3 + 1);
+            tl.to(".row4-1-left", { x: "-130%", y: -8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_click + T(1))
+                .to(".row4-1-right", { x: "130%", y: -8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_click + 1)
+                .to(".row4-3-left", { x: "-130%", y: 8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_click + 1)
+                .to(".row4-3-right", { x: "130%", y: 8, opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_click + 1);
 
             tl.to(".cursor4", { opacity: 0, x: 16, duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s4_afterCl);
 
             tl.to(".row4-2-left", { x: "-130%", opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_rows_out)
                 .to(".row4-2-right", { x: "130%", opacity: 0, duration: FADE_DUR * 1.1, ease: EASE_EXIT }, s4_rows_out)
                 .to(".row4-2-track", { x: 0, duration: FADE_DUR, ease: EASE_SOFT }, s4_rows_out);
+            s4_t = afterPoint(s4_t, pointText(4, 3), s4_rows_out + FADE_DUR * 1.1);
+
+            const s4_outro = s4_t + T(2);
+            const s5_scroll = s4_outro + T(5);
+            const s5_morph = s5_scroll + SCROLL_DUR * 0.4;
 
             tl.to(".leftScroll", { yPercent: -80, duration: SCROLL_DUR, ease: "none" }, s5_scroll);
 
@@ -770,16 +779,15 @@ const ProcessFlow = () => {
 
             gsap.set(".panel-step5", { y: 0 });
 
-            const s5_p1 = s5_stick;
-            const s5_p1off = s5_stick + T(14);
-            const s5_p2 = s5_p1off - T(2);
-            const s5_p2off = s5_p2 + T(14);
-            const s5_p3 = s5_p2off - T(2);
-            const s5_p3off = s5_p3 + T(14);
+            let s5_t = s5_stick + T(1);
 
-            hi(5, 1, s5_p1);
-            hi(5, 2, s5_p2);
-            hi(5, 3, s5_p3);
+            hi(5, 1, s5_t);
+            s5_t = afterPoint(s5_t, pointText(5, 1), s5_t);
+
+            hi(5, 2, s5_t);
+            s5_t = afterPoint(s5_t, pointText(5, 2), s5_t);
+
+            hi(5, 3, s5_t);
 
             const lenis = (window as any).lenis;
             const onLenisScroll = () => ScrollTrigger.update();
