@@ -35,7 +35,7 @@ function MarqueeRow({ reverse = false, offset = false }: MarqueeRowProps) {
                             alt=""
                             width={207}
                             height={74}
-                            className="h-7 w-auto object-contain opacity-80 md:h-9 lg:h-14"
+                            className="h-7 w-auto object-contain grayscale contrast-200 brightness-0 md:h-9 lg:h-14"
                             draggable={false}
                         />
                     </div>
@@ -68,10 +68,7 @@ const Marquee = () => {
                         className="max-w-xl text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#424242] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
                     >
                         <span data-split className="font-medium text-[#424242]">
-                            Commercial insurance{" "}
-                        </span>
-                        <span data-split className="font-regular text-[#9CA3AF]">
-                            distribution that gets smarter with every transaction
+                            Commercial insurance distribution that gets smarter with every transaction
                         </span>
                     </h2>
                 </div>

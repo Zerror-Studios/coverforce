@@ -59,7 +59,7 @@ function FooterLink({ href, children, className = "" }: FooterLinkProps) {
   return (
     <Link
       href={href}
-      className={`group relative inline-flex pl-0 font-mono text-xs leading-0 font-medium uppercase tracking-wider text-[#3F3F3F] transition-[padding-left,color] duration-200 ease-out hover:pl-3.5 hover:text-[#5B35E0] ${className}`}
+      className={`group relative inline-flex pl-0 font-heading text-xs leading-0 font-medium  tracking-wider text-[#3F3F3F] transition-[padding-left,color] duration-200 ease-out hover:pl-3.5 hover:text-[#5B35E0] ${className}`}
     >
       <FooterBullet />
       {children}
@@ -72,7 +72,7 @@ type FooterColumnProps = FooterColumnData;
 function FooterColumn({ title, links }: FooterColumnProps) {
   return (
     <div>
-      <h3 className="mb-5 flex items-center gap-2.5 font-mono text-xs font-medium uppercase tracking-[0.14em] text-[#5B35E0]">
+      <h3 className="mb-5 flex items-center gap-2.5 font-heading text-xs font-medium  tracking-[0.14em] text-[#5B35E0]">
         {title}
       </h3>
       <ul className="space-y-3.5">
@@ -101,7 +101,7 @@ const Footer = () => {
                 className="h-10 w-auto md:h-12 lg:h-12"
               />
             </Link>
-            <p className="max-w-sm font-sans font-regular text-base leading-relaxed text-neutral-600 md:text-left">
+            <p className="max-w-xs font-heading font-regular text-sm leading-relaxed text-neutral-600 md:text-left">
               CoverForce brings smarter insurance distribution into one
               connected workflow.
             </p>
@@ -125,7 +125,7 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 py-8 font-mono text-xs font-medium uppercase tracking-wider text-[#3F3F3F] sm:flex-row sm:items-center sm:justify-between md:py-10">
+          <div className="flex flex-col gap-4 py-8 font-heading text-xs font-medium  tracking-wider text-[#3F3F3F] sm:flex-row sm:items-center sm:justify-between md:py-10">
             <ul className="flex flex-wrap gap-6 sm:gap-8">
               {legalLinks.map(({ label, href }) => (
                 <li key={label}>
@@ -133,7 +133,7 @@ const Footer = () => {
                 </li>
               ))}
             </ul>
-            <p className="font-mono text-xs font-medium text-[#3F3F3F] sm:text-right">
+            <p className="font-heading text-xs font-medium text-[#3F3F3F] sm:text-right">
               © {new Date().getFullYear()} — Copyright Insuredge Technologies
             </p>
           </div>

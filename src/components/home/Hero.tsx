@@ -61,6 +61,9 @@ const Hero = () => {
               <Button href="/" variant="primary">
                 Request demo
               </Button>
+              <Button href="/" variant="secondary">
+                Start a quote
+              </Button>
             </div>
           </div>
 

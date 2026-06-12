@@ -31,7 +31,7 @@ const DistributionFlow = () => {
               <Button
                 href="/"
                 variant="primary"
-                className="!bg-[#5B35E0] text-white mt-6"
+                className="!bg-[#0032C9] text-white mt-6"
               >
                 start a quote
               </Button>

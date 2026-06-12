@@ -40,7 +40,7 @@ const Header = () => {
                 <li key={label}>
                   <Link
                     href={href}
-                    className="flex items-center gap-1 font-mono text-xs font-regular uppercase tracking-[0.12em] text-white/95 transition-colors hover:text-white"
+                    className="flex items-center gap-1 font-heading text-xs font-regular  tracking-[0.12em] text-white/95 transition-colors hover:text-white"
                   >
                     {label}
                     {hasDropdown && (
@@ -58,7 +58,7 @@ const Header = () => {
           <div className="relative z-10 hidden items-center gap-6 lg:flex xl:gap-8">
             <Link
               href="/"
-              className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-white/95 transition-colors hover:text-white"
+              className="font-heading text-xs font-medium  tracking-[0.12em] text-white/95 transition-colors hover:text-white"
             >
               Login
             </Link>

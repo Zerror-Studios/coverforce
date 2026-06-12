@@ -21,8 +21,8 @@ const variantStyles: Record<ButtonVariant, string> = {
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: "px-5 py-2.5 font-mono text-xs font-medium tracking-[0.08em]",
-  md: "px-6 py-2.5 font-mono text-xs font-medium tracking-[0.08em]",
+  sm: "px-5 py-2.5 font-heading text-xs font-medium tracking-[0.08em]",
+  md: "px-6 py-2.5 font-heading text-xs font-medium tracking-[0.08em]",
 };
 
 const Button = ({
@@ -36,7 +36,7 @@ const Button = ({
   return (
     <Link
       href={href}
-      className={`inline-flex w-fit items-center justify-center rounded-full font-semibold uppercase transition-colors ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+      className={`inline-flex w-fit items-center capitalize justify-center rounded-full font-semibold  transition-colors ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
       {...props}
     >
       {children}
