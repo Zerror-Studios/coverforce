@@ -1,10 +1,18 @@
 "use client";
 
-import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import gsap from "gsap";
 import Button from "@/components/common/Button";
 import Container from "../common/Container";
 import SectionRadialGlow from "../common/SectionRadialGlow";
 import Image from "next/image";
+import { SplitText } from "@/lib/SplitText";
+import {
+  HOME_INTRO_EASE,
+  HOME_INTRO_NAV_MS,
+  HOME_INTRO_NETWORK_MS,
+  useHomeIntro,
+} from "@/contexts/HomeIntroContext";
 
 type StatItem = {
   value: string;
@@ -19,12 +27,114 @@ const stats: StatItem[] = [
 ];
 
 const Hero = () => {
+  const { enabled: introEnabled, phase: introPhase } = useHomeIntro();
+  const introComplete = !introEnabled || introPhase === "done";
+  const networkVisible = !introEnabled || introPhase === "network" || introPhase === "done";
+
   const listRef = useRef<HTMLUListElement | null>(null);
   const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
+  const headingRef = useRef<HTMLDivElement | null>(null);
+  const buttonsRef = useRef<HTMLDivElement | null>(null);
+  const textAnimatedRef = useRef(false);
+  const splitsRef = useRef<SplitText[]>([]);
+  const borderAnimatedRef = useRef(false);
+  const [borderOpacity, setBorderOpacity] = useState(introEnabled ? 0 : 1);
+
   const [activeIndex, setActiveIndex] = useState(1);
   const [indicator, setIndicator] = useState({ left: 0, width: 0 });
 
   const statCount = useMemo(() => stats.length, []);
+
+  useEffect(() => {
+    if (!introEnabled) {
+      setBorderOpacity(1);
+      return;
+    }
+
+    if (introPhase === "nav" && !borderAnimatedRef.current) {
+      borderAnimatedRef.current = true;
+      const borderProxy = { value: 0 };
+      gsap.fromTo(
+        borderProxy,
+        { value: 0 },
+        {
+          value: 1,
+          duration: HOME_INTRO_NAV_MS / 1000,
+          ease: "power3.out",
+          onUpdate: () => setBorderOpacity(borderProxy.value),
+        },
+      );
+    }
+  }, [introEnabled, introPhase]);
+
+  useEffect(() => {
+    if (introPhase !== "text" || textAnimatedRef.current || !headingRef.current) return;
+    textAnimatedRef.current = true;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    const lines = headingRef.current.querySelectorAll<HTMLElement>("[data-split]");
+    const splits: SplitText[] = [];
+    const chars: HTMLSpanElement[] = [];
+
+    lines.forEach((el) => {
+      const split = new SplitText(el, {
+        type: "chars",
+        charsClass: "hero-split-char",
+        wordsClass: "hero-split-word",
+      });
+      splits.push(split);
+      chars.push(...split.chars);
+    });
+
+    if (!chars.length) return;
+
+    splits.forEach((split) => {
+      split.words.forEach((word) => {
+        word.style.display = "inline";
+        word.style.whiteSpace = "normal";
+      });
+    });
+
+    splitsRef.current = splits;
+
+    gsap.set(chars, { opacity: 0, y: 14, force3D: true });
+    gsap.to(chars, {
+      opacity: 1,
+      y: 0,
+      duration: 0.45,
+      stagger: 0.028,
+      ease: "power2.out",
+      onComplete: () => {
+        gsap.set(chars, { clearProps: "transform" });
+      },
+    });
+
+    if (buttonsRef.current) {
+      gsap.set(buttonsRef.current, { opacity: 0, y: 18 });
+      gsap.to(buttonsRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.55,
+        delay: 0.35,
+        ease: "power2.out",
+        onComplete: () => {
+          if (buttonsRef.current) {
+            gsap.set(buttonsRef.current, { clearProps: "transform" });
+          }
+        },
+      });
+    }
+  }, [introPhase]);
+
+  useEffect(() => {
+    return () => {
+      splitsRef.current.forEach((split) => split.revert());
+      splitsRef.current = [];
+    };
+  }, []);
 
   useLayoutEffect(() => {
     const update = () => {
@@ -47,17 +157,31 @@ const Hero = () => {
 
   return (
     <section className="relative isolate overflow-hidden bg-[#121C49] text-white">
-      <Container borderColor="#FFFFFF33" className="px-0! pb-10">
+      <Container borderColor="#FFFFFF33" borderOpacity={borderOpacity} className="px-0! pb-10">
 
         {/* ── 100vh block: heading + button + network ── */}
         <div className="relative z-10 flex h-screen flex-col justify-between pt-16 md:pt-20 lg:pt-20">
 
           {/* Heading + CTA */}
-          <div className="flex flex-1 flex-col items-center justify-center text-center">
-            <h1 className="mt-6 max-w-4xl text-3xl font-heading font-regular leading-[1.1] tracking-tight md:text-4xl lg:text-5xl xl:text-5xl">
-              AI-Native Insurance <br /> Distribution Platform
+          <div
+            ref={headingRef}
+            className="flex flex-1 flex-col items-center justify-center text-center"
+          >
+            <h1
+              className={`mt-6 max-w-4xl text-3xl font-heading font-regular leading-[1.1] tracking-tight md:text-4xl lg:text-5xl xl:text-5xl ${
+                introEnabled && (introPhase === "idle" || introPhase === "nav") ? "opacity-0" : "opacity-100"
+              }`}
+            >
+              <span data-split>AI-Native Insurance</span>
+              <br />
+              <span data-split>Distribution Platform</span>
             </h1>
-            <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center">
+            <div
+              ref={buttonsRef}
+              className={`mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center ${
+                introEnabled && !introComplete ? "opacity-0" : "opacity-100"
+              }`}
+            >
               <Button href="/" variant="primary">
                 Request demo
               </Button>
@@ -68,13 +192,22 @@ const Hero = () => {
           </div>
 
           {/* Network image — inside 100vh, pushed to bottom via justify-between */}
-          <div className="relative h-[min(420px,55vw)] overflow-hidden w-full md:h-[480px] lg:h-[380px]">
-            <div className="relative z-10 h-full w-full" aria-label="Partner network">
+          <div className="relative h-[min(420px,55vw)] w-full overflow-hidden md:h-[480px] lg:h-[380px]">
+            <div
+              className={`relative z-10 h-full w-full motion-reduce:translate-y-0 motion-reduce:opacity-100 ${
+                networkVisible ? "translate-y-0 opacity-100" : "translate-y-[22%] opacity-0"
+              }`}
+              style={{
+                transition: `transform ${HOME_INTRO_NETWORK_MS}ms ${HOME_INTRO_EASE}, opacity ${HOME_INTRO_NETWORK_MS}ms ${HOME_INTRO_EASE}`,
+              }}
+              aria-label="Partner network"
+            >
               <Image
                 src="/images/network.svg"
                 alt="Hero background"
                 width={100}
                 height={100}
+                priority
                 className="h-full w-full object-contain object-bottom"
               />
             </div>
@@ -82,7 +215,14 @@ const Hero = () => {
         </div>
 
         {/* ── Stats — below the fold ── */}
-        <div className="relative">
+        <div
+          className={`relative motion-reduce:opacity-100 ${
+            introComplete ? "opacity-100" : "opacity-0"
+          }`}
+          style={{
+            transition: `opacity 500ms ${HOME_INTRO_EASE}`,
+          }}
+        >
         <SectionRadialGlow className="absolute left-1/2 top-20 z-0 -translate-x-1/2 -translate-y-1/3 md:top-20" />
           <ul
             ref={listRef}

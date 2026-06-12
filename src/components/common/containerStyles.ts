@@ -14,11 +14,17 @@ function borderDashGradient(color: string, angle: number): string {
 
 export function getSideBorderStyle(
   color: string = DEFAULT_BORDER_COLOR,
+  opacity = 1,
 ): CSSProperties {
+  const resolvedColor =
+    opacity < 1
+      ? `color-mix(in srgb, ${color} ${Math.round(opacity * 100)}%, transparent)`
+      : color;
+
   return {
     borderLeft: `${BORDER_WIDTH} solid transparent`,
     borderRight: `${BORDER_WIDTH} solid transparent`,
-    borderImage: `${borderDashGradient(color, 180)} 1`,
+    borderImage: `${borderDashGradient(resolvedColor, 180)} 1`,
   };
 }
 

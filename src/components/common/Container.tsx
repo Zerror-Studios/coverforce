@@ -13,6 +13,8 @@ type ContainerProps = {
   borderColor?: string;
   /** Dotted bottom border using the same color as the sides. */
   borderBottom?: boolean;
+  /** Fades dotted side borders without affecting children. */
+  borderOpacity?: number;
 };
 
 const Container = ({
@@ -20,6 +22,7 @@ const Container = ({
   className = "",
   borderColor,
   borderBottom = false,
+  borderOpacity = 1,
 }: ContainerProps) => {
   const resolvedColor = borderColor ?? DEFAULT_BORDER_COLOR;
 
@@ -27,7 +30,9 @@ const Container = ({
     <div
       className={`relative z-10 mx-auto w-full max-w-7xl ${containerPadding} ${className}`}
       style={
-        borderColor !== undefined ? getSideBorderStyle(resolvedColor) : undefined
+        borderColor !== undefined
+          ? getSideBorderStyle(resolvedColor, borderOpacity)
+          : undefined
       }
     >
       {borderBottom && borderColor !== undefined ? (

@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import gsap from "gsap";
 import Container from "./Container";
 import Button from "./Button";
 import MegaMenu from "./MegaMenu";
@@ -8,6 +9,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { RiArrowDownSLine } from "@remixicon/react";
 import { MEGA_MENUS } from "@/data/megaMenu";
+import { HOME_INTRO_NAV_MS, useHomeIntro } from "@/contexts/HomeIntroContext";
 
 type NavItem = {
   label: string;
@@ -37,6 +39,9 @@ function NavLinkLabel({ label }: { label: string }) {
 }
 
 const Header = () => {
+  const { enabled: introEnabled, phase: introPhase } = useHomeIntro();
+  const navBarRef = useRef<HTMLDivElement>(null);
+
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [renderedMenu, setRenderedMenu] = useState<string | null>(null);
   const [clipOpen, setClipOpen] = useState(false);
@@ -48,6 +53,42 @@ const Header = () => {
 
   activeMenuRef.current = activeMenu;
   renderedMenuRef.current = renderedMenu;
+
+  useLayoutEffect(() => {
+    const navBar = navBarRef.current;
+    if (!navBar) return;
+
+    if (!introEnabled) {
+      gsap.set(navBar, { clearProps: "all" });
+      return;
+    }
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      gsap.set(navBar, { clearProps: "all" });
+      return;
+    }
+
+    gsap.set(navBar, { yPercent: -100, opacity: 0 });
+  }, [introEnabled]);
+
+  useEffect(() => {
+    const navBar = navBarRef.current;
+    if (!navBar || !introEnabled) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      gsap.set(navBar, { clearProps: "all" });
+      return;
+    }
+
+    if (introPhase === "nav") {
+      gsap.to(navBar, {
+        yPercent: 0,
+        opacity: 1,
+        duration: HOME_INTRO_NAV_MS / 1000,
+        ease: "power3.out",
+      });
+    }
+  }, [introEnabled, introPhase]);
 
   const clearCloseTimer = useCallback(() => {
     if (closeTimerRef.current) {
@@ -117,10 +158,14 @@ const Header = () => {
   const renderedConfig = renderedMenu ? MEGA_MENUS[renderedMenu] : null;
 
   return (
-    <nav className="relative w-full border-b border-[#FFFFFF1A] bg-[#121C49] text-white">
+    <nav className="relative w-full text-white">
       <div onMouseLeave={scheduleClose}>
-      <Container>
-        <div className="relative flex items-center justify-between py-4">
+        <div
+          ref={navBarRef}
+          className="overflow-hidden border-b border-[#FFFFFF1A] bg-[#121C49] will-change-transform"
+        >
+          <Container>
+            <div className="relative flex items-center justify-between py-4">
           <Link href="/" className="relative z-10 shrink-0">
             <Image
               src="/logo.svg"
@@ -185,18 +230,19 @@ const Header = () => {
               Book a call
             </Button>
           </div>
+            </div>
+          </Container>
         </div>
-      </Container>
 
-      {renderedConfig ? (
-        <MegaMenu
-          open={clipOpen}
-          enterKey={enterKey}
-          config={renderedConfig}
-          onMouseEnter={clearCloseTimer}
-          onClipClosed={handleClipClosed}
-        />
-      ) : null}
+        {renderedConfig ? (
+          <MegaMenu
+            open={clipOpen}
+            enterKey={enterKey}
+            config={renderedConfig}
+            onMouseEnter={clearCloseTimer}
+            onClipClosed={handleClipClosed}
+          />
+        ) : null}
       </div>
     </nav>
   );

@@ -3,6 +3,7 @@
 import Header from "@/components/common/Header";
 import Footer from "@/components/common/Footer";
 import LenisScroll from "@/components/common/LenisScroll";
+import { HomeIntroProvider } from "@/contexts/HomeIntroContext";
 import { usePathname } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import gsap from "gsap";
@@ -17,6 +18,7 @@ type SiteLayoutProps = {
 
 export default function SiteLayout({ children }: SiteLayoutProps) {
   const pathname = usePathname();
+  const isHome = pathname === "/";
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -30,19 +32,21 @@ export default function SiteLayout({ children }: SiteLayoutProps) {
   return (
     <ViewTransitions>
       <LenisScroll>
-        <div className="relative w-full">
-          <header className="fixed top-0 z-50 w-full">
-            <Header />
-          </header>
+        <HomeIntroProvider enabled={isHome}>
+          <div className="relative w-full">
+            <header className="fixed top-0 z-50 w-full">
+              <Header />
+            </header>
 
-          <div className="relative w-full flex-1">
-            <main className="relative z-10 w-full">{children}</main>
+            <div className="relative w-full flex-1">
+              <main className="relative z-10 w-full">{children}</main>
 
-            <footer className="relative z-10 w-full">
-              <Footer />
-            </footer>
+              <footer className="relative z-10 w-full">
+                <Footer />
+              </footer>
+            </div>
           </div>
-        </div>
+        </HomeIntroProvider>
       </LenisScroll>
     </ViewTransitions>
   );
