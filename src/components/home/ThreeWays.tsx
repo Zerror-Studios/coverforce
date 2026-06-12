@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState, type ReactNode } from "react";
+import { memo, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -155,7 +155,32 @@ const WAY_CARDS: WayCardConfig[] = [
   },
 ];
 
-function WayCard({
+function useLazyInView<T extends HTMLElement>(rootMargin = "240px 0px") {
+  const ref = useRef<T>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || visible) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin },
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [rootMargin, visible]);
+
+  return { ref, visible };
+}
+
+const WayCard = memo(function WayCard({
   tagline,
   taglinePosition = "right",
   variant,
@@ -172,6 +197,7 @@ function WayCard({
 }: Omit<WayCardProps, "label" | "lightStrip">) {
   const [hovered, setHovered] = useState(false);
   const mockRef = useRef<HTMLDivElement>(null);
+  const { ref: cardRef, visible: inView } = useLazyInView<HTMLElement>();
   const isDark = variant === "dark";
   const textClass =
     background === "developer" && !backgroundScene
@@ -195,6 +221,7 @@ function WayCard({
   return (
     <WayCardHoverProvider hovered={hovered}>
       <article
+        ref={cardRef}
         role="button"
         tabIndex={0}
         onClick={backgroundInteractive ? undefined : handleOpen}
@@ -202,13 +229,13 @@ function WayCard({
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         aria-label={`Open details`}
-        className={`way-card-shell relative cursor-pointer ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${hovered ? "way-card-shell--hovered" : ""} ${textClass} ${className}`}
+        className={`way-card-shell relative cursor-pointer [content-visibility:auto] [contain-intrinsic-size:auto_530px] ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${hovered ? "way-card-shell--hovered" : ""} ${textClass} ${className}`}
       >
         <div
           className={`way-card-body absolute inset-0 overflow-hidden rounded-sm flex flex-col p-5 md:p-8 ${background ? CARD_BACKGROUNDS[background] : ""}`}
         >
           {dotGrid ? <WayCardDotGrid variant={variant} active={hovered} /> : null}
-          {backgroundScene ? (
+          {backgroundScene && inView ? (
             <div
               className={`absolute inset-0 ${backgroundInteractive ? "z-[5] pointer-events-auto" : "z-[1] pointer-events-none"}`}
               aria-hidden={!backgroundInteractive}
@@ -274,13 +301,13 @@ function WayCard({
                 : "relative flex w-full items-center justify-center"
             }
           >
-            {children}
+            {inView ? children : <MockPlaceholder />}
           </div>
         </div>
       </article>
     </WayCardHoverProvider>
   );
-}
+});
 
 export default function ThreeWays() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -323,7 +350,15 @@ export default function ThreeWays() {
           fadeTl.to(desc, { opacity: 1, duration: 0.8, ease: "power2.out" });
 
           const lenis = window.lenis;
-          const onLenisScroll = () => ScrollTrigger.update();
+          let scrollPending = false;
+          const onLenisScroll = () => {
+            if (scrollPending) return;
+            scrollPending = true;
+            requestAnimationFrame(() => {
+              ScrollTrigger.update();
+              scrollPending = false;
+            });
+          };
           lenis?.on("scroll", onLenisScroll);
 
           cleanups.push(() => {

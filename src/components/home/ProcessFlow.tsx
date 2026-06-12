@@ -492,6 +492,13 @@ const ProcessFlow = () => {
                     duration: 6,
                     ease: "none",
                     repeat: -1,
+                    paused: true,
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top bottom",
+                        end: "bottom top",
+                        toggleActions: "play pause resume pause",
+                    },
                 });
             }
 
@@ -503,6 +510,7 @@ const ProcessFlow = () => {
                     pin: true,
                     pinSpacing: true,
                     scrub: true,
+                    fastScrollEnd: true,
                     invalidateOnRefresh: true,
                 },
             });
@@ -519,21 +527,49 @@ const ProcessFlow = () => {
             const afterPoint = (start: number, text: string, rightEnd: number) =>
                 Math.max(start + pointFillDur(text), rightEnd) + POINT_GAP;
 
+            const idleRgb = gsap.utils.splitColor(POINT_IDLE) as number[];
+            const activeRgb = gsap.utils.splitColor(POINT_ACTIVE) as number[];
+            const letterEase = gsap.parseEase("power2.out");
+
             const hi = (step: number, pt: number, t: number) => {
                 const b = `.step${step} .point${pt}`;
-                tl.to(`${b} .point-char`, {
-                    color: POINT_ACTIVE,
-                    duration: CHAR_DUR,
-                    stagger: { each: CHAR_STAG, from: "start" },
-                    ease: "power2.out",
-                }, t)
-                    .to(`${b} .point-icon`, {
+                const chars = section.querySelectorAll<HTMLElement>(`${b} .point-char`);
+                const icon = section.querySelector<HTMLElement>(`${b} .point-icon`);
+                const totalDur = pointFillDur(pointText(step, pt));
+                const setters = Array.from(chars, (el) => gsap.quickSetter(el, "color"));
+                const prog = { v: 0 };
+
+                tl.to(prog, {
+                    v: 1,
+                    duration: totalDur,
+                    ease: "none",
+                    onUpdate: () => {
+                        const elapsed = prog.v * totalDur;
+                        for (let i = 0; i < setters.length; i++) {
+                            const letterT = gsap.utils.clamp(0, 1, (elapsed - i * CHAR_STAG) / CHAR_DUR);
+                            const blend = letterEase(letterT);
+                            if (blend <= 0) {
+                                setters[i](POINT_IDLE);
+                            } else if (blend >= 1) {
+                                setters[i](POINT_ACTIVE);
+                            } else {
+                                setters[i](
+                                    `rgb(${idleRgb[0] + (activeRgb[0] - idleRgb[0]) * blend},${idleRgb[1] + (activeRgb[1] - idleRgb[1]) * blend},${idleRgb[2] + (activeRgb[2] - idleRgb[2]) * blend})`,
+                                );
+                            }
+                        }
+                    },
+                }, t);
+
+                if (icon) {
+                    tl.to(icon, {
                         backgroundColor: POINT_ACTIVE,
                         color: "#fff",
                         borderColor: POINT_ACTIVE,
                         duration: CHAR_DUR * 1.2,
                         ease: "power2.out",
                     }, t);
+                }
             };
             // ═══════════════════════════════════════════════════════════════
             // STEP 1
@@ -790,7 +826,15 @@ const ProcessFlow = () => {
             hi(5, 3, s5_t);
 
             const lenis = (window as any).lenis;
-            const onLenisScroll = () => ScrollTrigger.update();
+            let scrollPending = false;
+            const onLenisScroll = () => {
+                if (scrollPending) return;
+                scrollPending = true;
+                requestAnimationFrame(() => {
+                    ScrollTrigger.update();
+                    scrollPending = false;
+                });
+            };
             lenis?.on("scroll", onLenisScroll);
             ScrollTrigger.refresh();
 
@@ -802,7 +846,7 @@ const ProcessFlow = () => {
     );
 
     return (
-        <section ref={sectionRef} className="h-screen overflow-hidden">
+        <section ref={sectionRef} className="h-screen overflow-hidden [contain:layout_paint]">
             <Container borderColor="#53535380">
                 <div className="h-screen overflow-hidden grid gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
 
