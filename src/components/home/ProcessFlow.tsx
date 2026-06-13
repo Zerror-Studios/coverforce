@@ -21,14 +21,14 @@ gsap.registerPlugin(ScrollTrigger);
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const POINT_ACTIVE = "#0130BE";
-const POINT_IDLE = "#424242";
+const POINT_IDLE = "#CCCCCC";
 const FIELD_VALID = "#1c4439";
 
 function ProcessPointText({ text }: { text: string }) {
     return (
         <p className="point-text max-w-sm text-sm leading-relaxed font-heading font-regular md:text-sm">
             {text.split("").map((char, i) => (
-                <span key={`${char}-${i}`} className="point-char inline-block text-[#424242]">
+                <span key={`${char}-${i}`} className="point-char inline-block text-[#CCCCCC]">
                     {char === " " ? "\u00A0" : char}
                 </span>
             ))}
@@ -872,7 +872,7 @@ const ProcessFlow = () => {
                                             key={feature.id}
                                             className={`point${idx + 1} flex gap-4 py-4 border-b border-black/10`}
                                         >
-                                            <span className="point-icon flex size-6 shrink-0 items-center justify-center rounded-full border border-[#424242] text-[#424242]">
+                                            <span className="point-icon flex size-6 shrink-0 items-center justify-center rounded-full border border-[#CCCCCC] text-[#CCCCCC]">
                                                 <RiArrowRightLine className="size-3" />
                                             </span>
                                             <ProcessPointText text={feature.text} />
