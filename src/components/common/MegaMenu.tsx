@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import Container from "./Container";
 import type { MegaMenuConfig } from "@/data/megaMenu";
@@ -64,11 +63,19 @@ function Reveal({
   );
 }
 
-/**
- * A single card-style menu item matching the screenshot:
- * [icon]  Title
- *         Short description text
- */
+/* ── Default icon ────────────────────────────────────────────── */
+function DefaultIcon() {
+  return (
+    <svg className="size-4 text-[#0032C9]" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1.2" fill="currentColor" opacity="0.75" />
+      <rect x="9"   y="1.5" width="5.5" height="5.5" rx="1.2" fill="currentColor" opacity="0.35" />
+      <rect x="1.5" y="9"   width="5.5" height="5.5" rx="1.2" fill="currentColor" opacity="0.35" />
+      <rect x="9"   y="9"   width="5.5" height="5.5" rx="1.2" fill="currentColor" opacity="0.75" />
+    </svg>
+  );
+}
+
+/* ── Single card item ────────────────────────────────────────── */
 function MegaMenuCard({
   link,
   enter,
@@ -84,39 +91,17 @@ function MegaMenuCard({
     <Reveal enter={enter} enterKey={enterKey} delay={delay}>
       <Link
         href={link.href}
-        className="group flex items-center gap-3 rounded-lg p-3 transition-colors duration-200 hover:bg-[#dceaff]"
+        className="group flex items-center gap-3 rounded-lg p-3 transition-colors duration-200 hover:bg-[#EEF4FF]"
       >
-        {/* Icon placeholder — swap for link.icon if your data shape includes it */}
-        {link.icon ? (
-          <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md border border-[#E8ECF0] bg-white text-[#0032C9]">
-            <link.icon className="size-4" aria-hidden />
-          </div>
-        ) : (
-          <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md border border-[#E8ECF0] bg-white">
-            <svg
-              className="size-4 text-[#0032C9]"
-              viewBox="0 0 16 16"
-              fill="none"
-              aria-hidden
-            >
-              <rect x="2" y="2" width="5" height="5" rx="1" fill="currentColor" opacity="0.7" />
-              <rect x="9" y="2" width="5" height="5" rx="1" fill="currentColor" opacity="0.4" />
-              <rect x="2" y="9" width="5" height="5" rx="1" fill="currentColor" opacity="0.4" />
-              <rect x="9" y="9" width="5" height="5" rx="1" fill="currentColor" opacity="0.7" />
-            </svg>
-          </div>
-        )}
-
-        <div className="min-w-0">
-          <p className="font-heading text-sm font-medium text-[#0a143b] transition-colors group-hover:text-[#0032C9]">
-            {link.label}
-          </p>
-          {link.description ? (
-            <p className="mt-0.5 font-sans text-xs leading-relaxed text-[#6B7A99]">
-              {link.description}
-            </p>
-          ) : null}
+        {/* Icon box */}
+        <div className="flex size-8 shrink-0 items-center justify-center rounded-md border border-[#E4EAF4] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+          <DefaultIcon />
         </div>
+
+        {/* Label */}
+        <p className="font-heading text-[0.8125rem] font-medium text-[#0a143b] transition-colors duration-200 group-hover:text-[#0032C9]">
+          {link.label}
+        </p>
       </Link>
     </Reveal>
   );
@@ -154,12 +139,9 @@ export default function MegaMenu({
     return () => window.clearTimeout(timer);
   }, [open, onClipClosed]);
 
-  // Flatten all links from all columns into one array for the grid
-  const allLinks = config.columns.flatMap((col) => col.links);
-
   return (
     <div
-      className="absolute inset-x-0 top-full  z-40 w-fit left-1/2 -translate-x-1/2 -mt-px border-t border-[#E8ECF0] bg-white shadow-[0_24px_48px_-12px_rgba(10,20,59,0.14)] will-change-[clip-path] motion-reduce:transition-none"
+      className="absolute w-fit left-1/2 -translate-x-1/2 inset-x-0 top-full z-40 -mt-px border-t border-[#E8ECF0] bg-white shadow-[0_24px_48px_-12px_rgba(10,20,59,0.14)] will-change-[clip-path] motion-reduce:transition-none"
       style={{
         clipPath: clipShown ? MEGA_MENU_CLIP_OPEN : MEGA_MENU_CLIP_CLOSED,
         WebkitClipPath: clipShown ? MEGA_MENU_CLIP_OPEN : MEGA_MENU_CLIP_CLOSED,
@@ -168,21 +150,32 @@ export default function MegaMenu({
       }}
       onMouseEnter={onMouseEnter}
     >
-      <Container className="py-6 md:py-8">
-        {/*
-          Two-column card grid matching the screenshot.
-          Each cell: icon | title + description
-        */}
-        <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:max-w-2xl">
-          {allLinks.map((link, index) => (
-            <MegaMenuCard
-              key={link.label}
-              link={link}
-              enter={contentEnter}
-              enterKey={enterKey}
-              delay={CONTENT_BASE_DELAY + CONTENT_STAG * index}
-            />
-          ))}
+      <Container className="py-5 md:py-6">
+        <div className="grid gap-x-6" style={{ gridTemplateColumns: `repeat(${config.columns.length}, minmax(0, 1fr))` }}>
+          {config.columns.map((column, colIndex) => {
+            const colBaseDelay = CONTENT_BASE_DELAY + colIndex * CONTENT_STAG * (column.links.length + 2);
+            return (
+              <div key={column.title} className="flex flex-col gap-0.5">
+                {/* Column title */}
+                <Reveal enter={contentEnter} enterKey={enterKey} delay={colBaseDelay}>
+                  <p className="mb-1 px-3 font-heading text-[0.6rem] font-semibold tracking-[0.14em] text-[#9DAABF]">
+                    {column.title}
+                  </p>
+                </Reveal>
+
+                {/* Link cards */}
+                {column.links.map((link, linkIndex) => (
+                  <MegaMenuCard
+                    key={link.label}
+                    link={link}
+                    enter={contentEnter}
+                    enterKey={enterKey}
+                    delay={colBaseDelay + CONTENT_STAG + CONTENT_STAG * linkIndex}
+                  />
+                ))}
+              </div>
+            );
+          })}
         </div>
       </Container>
     </div>
