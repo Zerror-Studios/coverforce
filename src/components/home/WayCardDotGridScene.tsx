@@ -214,7 +214,8 @@ export default function WayCardDotGridScene({
       };
     };
 
-    const onMove = (event: MouseEvent) => {
+    const onMove = (event: Event) => {
+      if (!(event instanceof MouseEvent)) return;
       updateMouse(event.clientX, event.clientY);
     };
 
@@ -230,7 +231,8 @@ export default function WayCardDotGridScene({
       card?.removeEventListener("mousemove", onMove);
     };
 
-    const onEnter = (event: MouseEvent) => {
+    const onEnter = (event: Event) => {
+      if (!(event instanceof MouseEvent)) return;
       updateMouse(event.clientX, event.clientY);
       startMouseTracking();
       rebuildGrid();

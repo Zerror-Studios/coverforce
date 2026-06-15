@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import {
   MICRO_EASE,
   MICRO_ROLL_MS,
@@ -140,7 +140,7 @@ export function ReplayableAnimatedStat({
     setRoll(false);
     const id = window.setTimeout(() => setRoll(true), 40);
     return () => window.clearTimeout(id);
-  }, [animationKey, columns]);
+  }, [animationKey]);
 
   return (
     <AnimatedStat
@@ -233,10 +233,13 @@ export function PeriodicIncrementalStat({
     return () => window.clearTimeout(id);
   }, [animationKey, value]);
 
-  const columns =
-    animationKey === 0
-      ? staticDigitColumns(value)
-      : buildDigitColumns(prevRef.current, value);
+  const columns = useMemo(
+    () =>
+      animationKey === 0
+        ? staticDigitColumns(value)
+        : buildDigitColumns(prevRef.current, value),
+    [animationKey, value],
+  );
 
   return (
     <ReplayableAnimatedStat

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode, type TransitionEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode, type TransitionEvent } from "react";
 import { RiAttachmentLine, RiFileTextFill, RiLineChartLine, RiMailFill } from "@remixicon/react";
 import Image from "next/image";
 import { MICRO_EASE } from "@/lib/motion";
@@ -153,7 +153,32 @@ function SlidingPanel<T>({
 }) {
   const [index, setIndex] = useState(0);
   const [animating, setAnimating] = useState(false);
+  const animatingRef = useRef(false);
+  const slideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const nextIndex = (index + 1) % items.length;
+
+  const finishSlide = useCallback(() => {
+    if (!animatingRef.current) return;
+
+    animatingRef.current = false;
+    setAnimating(false);
+    setIndex((current) => (current + 1) % items.length);
+
+    if (slideTimerRef.current) {
+      clearTimeout(slideTimerRef.current);
+      slideTimerRef.current = null;
+    }
+  }, [items.length]);
+
+  const startSlide = useCallback(() => {
+    if (animatingRef.current || items.length <= 1) return;
+
+    animatingRef.current = true;
+    setAnimating(true);
+
+    if (slideTimerRef.current) clearTimeout(slideTimerRef.current);
+    slideTimerRef.current = setTimeout(finishSlide, SLIDE_MS + 150);
+  }, [finishSlide, items.length]);
 
   useEffect(() => {
     if (items.length <= 1) return;
@@ -161,14 +186,17 @@ function SlidingPanel<T>({
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion) return;
 
-    const interval = setInterval(() => setAnimating(true), intervalMs);
-    return () => clearInterval(interval);
-  }, [items.length, intervalMs]);
+    const interval = setInterval(startSlide, intervalMs);
+    return () => {
+      clearInterval(interval);
+      if (slideTimerRef.current) clearTimeout(slideTimerRef.current);
+    };
+  }, [items.length, intervalMs, startSlide]);
 
   const handleTransitionEnd = (event: TransitionEvent<HTMLDivElement>) => {
-    if (event.target !== event.currentTarget || !animating) return;
-    setAnimating(false);
-    setIndex((current) => (current + 1) % items.length);
+    if (event.propertyName !== "transform") return;
+    if (event.target !== event.currentTarget) return;
+    finishSlide();
   };
 
   return (
@@ -247,7 +275,7 @@ export default function WholesalerMock({ liveStats = false }: { liveStats?: bool
                     label={field.label}
                     value={field.value}
                     liveValue={
-                      liveStats && field.label === "Coverage" ? (
+                      liveStats && rowIndex === 0 && field.label === "Coverage" ? (
                         <span className="inline-flex items-baseline">
                           <PeriodicIncrementalStat
                             start={5}

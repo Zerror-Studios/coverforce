@@ -91,7 +91,7 @@ function MegaMenuCard({
     <Reveal enter={enter} enterKey={enterKey} delay={delay}>
       <Link
         href={link.href}
-        className="group flex items-center gap-3 rounded-lg p-3 transition-colors duration-200 hover:bg-[#EEF4FF]"
+        className="group flex items-center gap-3  p-2 transition-colors duration-200 hover:bg-[#EEF4FF]"
       >
         {/* Icon box */}
         <div className="flex size-8 shrink-0 items-center justify-center rounded-md border border-[#E4EAF4] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
