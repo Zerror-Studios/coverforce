@@ -65,10 +65,7 @@ const Hero = () => {
     }
 
     gsap.set(section, {
-      y: "100vh",
-      scale: 0.5,
-      opacity: 1,
-      transformOrigin: "center bottom",
+      opacity: 0,
       force3D: true,
     });
   }, [introEnabled]);
@@ -86,13 +83,11 @@ const Hero = () => {
 
     heroRiseStartedRef.current = true;
     gsap.to(section, {
-      y: 0,
-      scale: 1,
       opacity: 1,
       duration: HOME_INTRO_HERO_RISE_MS / 1000,
       ease: "power3.out",
       onComplete: () => {
-        gsap.set(section, { clearProps: "transform" });
+        gsap.set(section, { clearProps: "opacity" });
       },
     });
   }, [introEnabled, introPhase]);
@@ -210,7 +205,7 @@ const Hero = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative isolate overflow-hidden bg-[#121C49] text-white will-change-transform"
+      className="relative isolate overflow-hidden bg-[#121C49] text-white"
     >
       <Container borderColor="#FFFFFF33" borderOpacity={borderOpacity} className="px-0! pb-10">
 

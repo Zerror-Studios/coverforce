@@ -22,9 +22,9 @@ const HomeIntroContext = createContext<HomeIntroContextValue>({
   phase: "done",
 });
 
-export const HOME_INTRO_LOADER_IN_MS = 2000;
+export const HOME_INTRO_LOADER_IN_MS = 350;
 export const HOME_INTRO_LOADER_WAVE_MS = 2000;
-export const HOME_INTRO_LOADER_OUT_MS = 1300;
+export const HOME_INTRO_LOADER_OUT_MS = 0;
 export const HOME_INTRO_HERO_RISE_MS = 1000;
 export const HOME_INTRO_NAV_MS = 1200;
 export const HOME_INTRO_TEXT_MS = 1000;

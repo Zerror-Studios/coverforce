@@ -10,7 +10,7 @@ import {
 } from "@/contexts/HomeIntroContext";
 import { animateLoaderWordsWave } from "@/lib/animateSplitTextReveal";
 
-const LOADER_WORDS = ["Instant", "Digital", "Twin", "of", "Everything"] as const;
+const LOADER_WORDS = ["The", "AI", "Distribution", "Flow"] as const;
 const WORD_DONE_COLOR = "#000000";
 
 export default function HomePageLoader() {
@@ -19,16 +19,19 @@ export default function HomePageLoader() {
   const wordsWrapRef = useRef<HTMLParagraphElement>(null);
   const waveCleanupRef = useRef<(() => void) | null>(null);
   const [textHidden, setTextHidden] = useState(false);
-  const ranInRef = useRef(false);
   const ranWaveRef = useRef(false);
   const ranOutRef = useRef(false);
   const ranRevealRef = useRef(false);
 
   useLayoutEffect(() => {
     const overlay = overlayRef.current;
+    const words = wordsWrapRef.current?.querySelectorAll<HTMLElement>("[data-loader-word-inner]");
     if (!overlay || !enabled) return;
 
-    gsap.set(overlay, { yPercent: 0, opacity: 1 });
+    gsap.set(overlay, { opacity: 1, autoAlpha: 1 });
+    if (words?.length) {
+      gsap.set(words, { yPercent: 0, autoAlpha: 1 });
+    }
   }, [enabled]);
 
   useEffect(() => {
@@ -37,25 +40,6 @@ export default function HomePageLoader() {
       waveCleanupRef.current = null;
     };
   }, []);
-
-  useEffect(() => {
-    if (!enabled || phase !== "loader-in" || ranInRef.current) return;
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    ranInRef.current = true;
-    const words = wordsWrapRef.current?.querySelectorAll<HTMLElement>("[data-loader-word-inner]");
-    if (!words?.length) return;
-
-    gsap.set(words, { yPercent: 110, autoAlpha: 1 });
-    gsap.to(words, {
-      yPercent: 0,
-      duration: 0.58,
-      stagger: 0.12,
-      ease: "power3.out",
-      delay: 0.08,
-    });
-  }, [enabled, phase]);
 
   useEffect(() => {
     if (!enabled || phase !== "loader-wave" || ranWaveRef.current) return;
@@ -90,24 +74,8 @@ export default function HomePageLoader() {
     const line = wordsWrapRef.current;
     if (!line) return;
 
-    requestAnimationFrame(() => {
-      const words = line.querySelectorAll<HTMLElement>("[data-loader-word-inner]");
-      if (!words.length) return;
-
-      gsap.set(words, { yPercent: 0, autoAlpha: 1, color: WORD_DONE_COLOR });
-
-      gsap.to(words, {
-        yPercent: -115,
-        duration: 0.5,
-        stagger: 0.12,
-        ease: "power3.in",
-        onComplete: () => {
-          gsap.set(words, { autoAlpha: 0 });
-          gsap.set(line, { autoAlpha: 0 });
-          setTextHidden(true);
-        },
-      });
-    });
+    gsap.set(line, { color: WORD_DONE_COLOR, autoAlpha: 0 });
+    setTextHidden(true);
   }, [enabled, phase]);
 
   useEffect(() => {
@@ -122,13 +90,13 @@ export default function HomePageLoader() {
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       overlay.style.pointerEvents = "none";
-      gsap.set(overlay, { yPercent: -100 });
+      gsap.set(overlay, { autoAlpha: 0 });
       return;
     }
 
     ranRevealRef.current = true;
     gsap.to(overlay, {
-      yPercent: -100,
+      autoAlpha: 0,
       duration: HOME_INTRO_HERO_RISE_MS / 1000,
       ease: HOME_INTRO_EASE,
       onComplete: () => {
@@ -149,7 +117,7 @@ export default function HomePageLoader() {
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-white will-change-transform"
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-white"
       aria-live="polite"
       aria-busy={phase !== "hero-rise"}
     >
