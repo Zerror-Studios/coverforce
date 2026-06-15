@@ -24,29 +24,29 @@ const navStyles: Record<
   light: {
     prev: {
       root: "border border-black",
-      incoming: "bg-[#0032C9] text-white",
+      incoming: "bg-[#121C49] text-white",
       outgoing: "bg-transparent text-black",
       iconShift:
         "translate-x-px group-hover:-translate-x-[calc(2.25rem-2px)]",
     },
     next: {
-      root: "",
-      incoming: "bg-black text-white",
-      outgoing: "bg-[#0032C9] text-white",
+      root: "border border-black",
+      incoming: "bg-white text-[#121C49]",
+      outgoing: "bg-[#121C49] text-white",
       iconShift: "-translate-x-1/2 group-hover:translate-x-0",
     },
   },
   dark: {
     prev: {
       root: "border border-white",
-      incoming: "bg-white text-[#0032C9]",
+      incoming: "bg-white text-[#121C49]",
       outgoing: "bg-transparent text-white",
       iconShift:
         "translate-x-px group-hover:-translate-x-[calc(2.25rem-2px)]",
     },
     next: {
       root: "",
-      incoming: "bg-[#0032C9] text-white",
+      incoming: "bg-[#121C49] text-white",
       outgoing: "bg-white text-[#0a143b]",
       iconShift: "-translate-x-1/2 group-hover:translate-x-0",
     },

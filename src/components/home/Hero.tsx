@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Button from "@/components/common/Button";
 import Container from "../common/Container";
 import SectionRadialGlow from "../common/SectionRadialGlow";
@@ -22,8 +20,6 @@ import {
   useHomeIntro,
 } from "@/contexts/HomeIntroContext";
 
-gsap.registerPlugin(ScrollTrigger);
-
 type StatItem = {
   value: string;
   label: string;
@@ -38,7 +34,6 @@ const stats: StatItem[] = [
 
 const Hero = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const { enabled: introEnabled, phase: introPhase } = useHomeIntro();
   const introComplete = !introEnabled || introPhase === "done";
   const headingVisible =
@@ -212,73 +207,11 @@ const Hero = () => {
     return () => window.removeEventListener("resize", update);
   }, [activeIndex, statCount]);
 
-  useGSAP(
-    () => {
-      const container = containerRef.current;
-      const section = sectionRef.current;
-      if (!container || !section) return;
-
-      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reducedMotion) return;
-
-      const getShift = () => container.offsetHeight;
-
-      gsap.set(container, {
-        y: 0,
-        force3D: true,
-        backfaceVisibility: "hidden",
-      });
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: "bottom bottom",
-          end: "bottom -180%",
-          scrub: 0.35,
-          invalidateOnRefresh: true,
-          fastScrollEnd: true,
-        },
-      });
-
-      tl.to(
-        container,
-        {
-          y: getShift,
-          ease: "none",
-          force3D: true,
-        },
-        0,
-      );
-
-      const lenis = window.lenis;
-      let scrollPending = false;
-      const onLenisScroll = () => {
-        if (scrollPending) return;
-        scrollPending = true;
-        requestAnimationFrame(() => {
-          ScrollTrigger.update();
-          scrollPending = false;
-        });
-      };
-      lenis?.on("scroll", onLenisScroll);
-
-      ScrollTrigger.refresh();
-
-      return () => {
-        lenis?.off("scroll", onLenisScroll);
-        tl.scrollTrigger?.kill();
-        tl.kill();
-      };
-    },
-    { scope: sectionRef },
-  );
-
   return (
     <section
       ref={sectionRef}
       className="relative isolate overflow-hidden bg-[#121C49] text-white will-change-transform"
     >
-      <div ref={containerRef} className="relative z-10 overflow-hidden will-change-transform">
       <Container borderColor="#FFFFFF33" borderOpacity={borderOpacity} className="px-0! pb-10">
 
         {/* ── 100vh block: heading + button + network ── */}
@@ -408,7 +341,6 @@ const Hero = () => {
         </div>
 
       </Container>
-      </div>
     </section>
   );
 };

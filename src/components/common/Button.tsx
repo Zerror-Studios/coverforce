@@ -21,25 +21,25 @@ const variantStyles: Record<
   { root: string; label: string; iconWrap: string; iconIncoming: string; iconOutgoing: string }
 > = {
   primary: {
-    root: "",
-    label: "bg-white text-black",
-    iconWrap: "",
-    iconIncoming: `bg-transparent text-transparent transition-colors ${HOVER_EASE} group-hover:bg-[#0032C9] group-hover:text-white`,
+    root: `border border-white transition-colors ${HOVER_EASE} group-hover:border-white`,
+    label: `bg-white text-black transition-colors ${HOVER_EASE} group-hover:bg-[#121C49] group-hover:text-white`,
+    iconWrap: `border-l border-white transition-colors ${HOVER_EASE} group-hover:border-white`,
+    iconIncoming: `bg-transparent text-transparent transition-colors ${HOVER_EASE} group-hover:bg-[#3834A4] group-hover:text-white`,
     iconOutgoing: "bg-white text-black",
   },
   secondary: {
-    root: "border border-white",
-    label: `bg-transparent text-white transition-colors ${HOVER_EASE} group-hover:bg-[#0032C9] group-hover:text-white`,
-    iconWrap: "border-l border-white",
-    iconIncoming: `bg-transparent text-transparent transition-colors ${HOVER_EASE} group-hover:bg-white group-hover:text-[#0032C9]`,
+    root: `border border-white transition-colors ${HOVER_EASE} group-hover:border-white`,
+    label: `bg-transparent text-white transition-colors ${HOVER_EASE} group-hover:bg-[#3834A4] group-hover:text-white`,
+    iconWrap: `border-l border-white transition-colors ${HOVER_EASE} group-hover:border-white`,
+    iconIncoming: `bg-transparent text-transparent transition-colors ${HOVER_EASE} group-hover:bg-white group-hover:text-[#121C49]`,
     iconOutgoing: "bg-transparent text-white",
   },
   outline: {
-    root: "border border-black",
-    label: `bg-transparent text-black transition-colors ${HOVER_EASE} group-hover:bg-black group-hover:text-white`,
-    iconWrap: "border-l border-black",
-    iconIncoming: `bg-transparent text-transparent transition-colors ${HOVER_EASE} group-hover:bg-[#0032C9] group-hover:text-white`,
-    iconOutgoing: "bg-transparent text-black",
+    root: "border border-[#121C49]",
+    label: `bg-transparent text-black transition-colors ${HOVER_EASE} group-hover:bg-[#121C49] group-hover:text-white`,
+    iconWrap: "border-l border-[#121C49]",
+    iconIncoming: `bg-transparent text-transparent transition-colors ${HOVER_EASE} group-hover:bg-white group-hover:text-[#121C49]`,
+    iconOutgoing: "bg-[#3834A4] text-white",
   },
 };
 
