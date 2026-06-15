@@ -50,12 +50,12 @@ const GlobeScene = dynamic(() => import("@/components/home/GlobeScene"), {
   loading: () => null,
 });
 
-function BrokersGlobeVideo() {
+function BrokersCardBgVideo() {
   return (
-    <div className="h-full w-full overflow-hidden bg-[#E8E4F8]">
+    <div className="h-full w-full overflow-hidden">
       <video
-        className="block h-full w-full min-h-full min-w-full scale-[1.04] object-cover object-center"
-        src="/videos/globevideo.mp4"
+        className="block h-full w-full opacity-85 scale-120 min-h-full min-w-full object-cover object-center"
+        src="/videos/cardbg.mp4"
         autoPlay
         loop
         muted
@@ -129,7 +129,7 @@ const WAY_CARDS: WayCardConfig[] = [
     tagline: "One workflow for every producer",
     variant: "light",
     background: "light",
-    backgroundScene: <BrokersGlobeVideo />,
+    backgroundScene: <BrokersCardBgVideo />,
     mock: <BrokerMockWithCardHover />,
     modalPreview: <BrokerMock />,
   },
