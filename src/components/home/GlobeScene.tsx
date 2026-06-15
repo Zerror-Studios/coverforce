@@ -8,19 +8,19 @@ const COUNT_FULL = 1400;
 const COUNT_LITE = 880;
 const ATTRACT_DIST_SQ = 0.88 * 0.88;
 const RING_R = 0.9;
-const RING_CORE = 0.22;       // thin ring spine — denser particle band
-const CORE_SPREAD = 0.014;      // tighter band on the circle
-const HALO_MIN = 0.05;       // closest halo distance from ring (not on spine)
-const HALO_MAX = 0.26;       // farthest halo distance from ring
-const SPRING_K = 0.055;
-const DAMPING = 0.78;
+const RING_CORE = 0.38;       // more particles on the ring spine
+const CORE_SPREAD = 0.008;      // tighter band on the circle
+const HALO_MIN = 0.03;       // closest halo distance from ring
+const HALO_MAX = 0.14;       // tighter halo — more concentrated
+const SPRING_K = 0.065;
+const DAMPING = 0.8;
 const NOISE_SPEED = 0.00018;
 const NOISE_AMP = 0.04;
 const PULSE_SPEED = 1.5;
-const PULSE_AMP = 0.034;
-const TANGENT_SPREAD = 0.3;      // scatter along ring — breaks orbit rings
-const JITTER_SPREAD = 0.13;     // extra random XY scatter
-const DRIFT_AMP = 0.022;
+const PULSE_AMP = 0.02;
+const TANGENT_SPREAD = 0.14;      // less scatter along ring
+const JITTER_SPREAD = 0.06;     // tighter random scatter
+const DRIFT_AMP = 0.012;
 
 // ─── tiny fast simplex-like hash noise (no external dep) ─────────────────────
 function hash(n: number): number {
@@ -51,7 +51,7 @@ const vertexShader = /* glsl */ `
     vAlpha = aAlpha;
     vColor = aColor;
     vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
-    gl_PointSize = aSize * (560.0 / -mvPos.z);
+    gl_PointSize = aSize * (640.0 / -mvPos.z);
     gl_Position  = projectionMatrix * mvPos;
   }
 `;
@@ -138,11 +138,11 @@ function Particles({ count }: { count: number }) {
       positions[i * 3 + 2] = 0;
 
       sizes[i] = onRing
-        ? 0.058 + Math.random() * 0.03
-        : 0.048 + Math.random() * 0.042;
+        ? 0.088 + Math.random() * 0.038
+        : 0.072 + Math.random() * 0.048;
       alphas[i] = onRing
-        ? 0.9 + Math.random() * 0.1
-        : 0.38 + Math.random() * 0.42;
+        ? 0.92 + Math.random() * 0.08
+        : 0.5 + Math.random() * 0.38;
 
       // pink (top) → purple (bottom) by Y position
       const gradT = THREE.MathUtils.clamp((y / (RING_R + HALO_MAX) + 1) * 0.5, 0, 1);
