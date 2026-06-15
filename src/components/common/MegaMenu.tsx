@@ -1,16 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
-import Container from "./Container";
-import type { MegaMenuConfig } from "@/data/megaMenu";
+import type { MegaMenuConfig, MegaMenuLink } from "@/data/megaMenu";
 
 export const MEGA_MENU_CLIP_CLOSED = "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)";
 export const MEGA_MENU_CLIP_OPEN = "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)";
 export const CLIP_DURATION_MS = 550;
 const CLIP_EASE = "cubic-bezier(0.76, 0, 0.24, 1)";
 const CONTENT_BASE_DELAY = 120;
-const CONTENT_STAG = 60;
+const CONTENT_STAG = 55;
 
 type MegaMenuProps = {
   open: boolean;
@@ -51,7 +50,7 @@ function Reveal({
 
   return (
     <div
-      className={`${visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"} ${className}`}
+      className={`${visible ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"} ${className}`}
       style={{
         transition: enter
           ? `opacity 480ms ${CLIP_EASE} ${delay}ms, transform 480ms ${CLIP_EASE} ${delay}ms`
@@ -63,48 +62,45 @@ function Reveal({
   );
 }
 
-/* ── Default icon ────────────────────────────────────────────── */
-function DefaultIcon() {
-  return (
-    <svg className="size-4 text-[#0032C9]" viewBox="0 0 16 16" fill="none" aria-hidden>
-      <rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1.2" fill="currentColor" opacity="0.75" />
-      <rect x="9"   y="1.5" width="5.5" height="5.5" rx="1.2" fill="currentColor" opacity="0.35" />
-      <rect x="1.5" y="9"   width="5.5" height="5.5" rx="1.2" fill="currentColor" opacity="0.35" />
-      <rect x="9"   y="9"   width="5.5" height="5.5" rx="1.2" fill="currentColor" opacity="0.75" />
-    </svg>
-  );
-}
-
-/* ── Single card item ────────────────────────────────────────── */
-function MegaMenuCard({
+function MegaMenuItem({
   link,
   enter,
   enterKey,
   delay,
 }: {
-  link: MegaMenuConfig["columns"][number]["links"][number];
+  link: MegaMenuLink;
   enter: boolean;
   enterKey: number;
   delay: number;
 }) {
-  return (
-    <Reveal enter={enter} enterKey={enterKey} delay={delay}>
-      <Link
-        href={link.href}
-        className="group flex items-center gap-3  p-2 transition-colors duration-200 hover:bg-[#EEF4FF]"
-      >
-        {/* Icon box */}
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-md border border-[#E4EAF4] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
-          <DefaultIcon />
-        </div>
+  const Icon = link.icon;
 
-        {/* Label */}
-        <p className="font-heading text-[0.8125rem] font-medium text-[#0a143b] transition-colors duration-200 group-hover:text-[#0032C9]">
-          {link.label}
-        </p>
-      </Link>
-    </Reveal>
+  return (
+    <div className="h-full bg-white">
+      <Reveal enter={enter} enterKey={enterKey} delay={delay} className="h-full">
+        <Link
+          href={link.href}
+          className="group flex h-full flex-col gap-2.5 bg-white px-6 py-6 transition-colors duration-200 hover:bg-[#F7F9FC] lg:px-8 lg:py-7"
+        >
+          <Icon className="size-4 shrink-0 text-[#0032C9]" aria-hidden />
+          <div className="space-y-1">
+            <p className="font-heading text-sm font-medium text-[#0a143b] transition-colors duration-200 group-hover:text-[#0032C9]">
+              {link.label}
+            </p>
+            {link.description ? (
+              <p className="font-sans text-xs leading-relaxed text-[#6B7280]">
+                {link.description}
+              </p>
+            ) : null}
+          </div>
+        </Link>
+      </Reveal>
+    </div>
   );
+}
+
+function flattenLinks(config: MegaMenuConfig): MegaMenuLink[] {
+  return config.columns.flatMap((column) => column.links);
 }
 
 export default function MegaMenu({
@@ -116,6 +112,7 @@ export default function MegaMenu({
 }: MegaMenuProps) {
   const [clipShown, setClipShown] = useState(false);
   const [contentEnter, setContentEnter] = useState(false);
+  const links = useMemo(() => flattenLinks(config), [config]);
 
   useEffect(() => {
     if (open) {
@@ -141,7 +138,7 @@ export default function MegaMenu({
 
   return (
     <div
-      className="absolute w-fit left-1/2 -translate-x-1/2 inset-x-0 top-full z-40 -mt-px border-t border-[#E8ECF0] bg-white shadow-[0_24px_48px_-12px_rgba(10,20,59,0.14)] will-change-[clip-path] motion-reduce:transition-none"
+      className="absolute inset-x-0 top-full z-20 -mt-px w-full border-t border-[#E8ECF0] bg-white shadow-[0_24px_48px_-12px_rgba(10,20,59,0.14)] will-change-[clip-path] motion-reduce:transition-none"
       style={{
         clipPath: clipShown ? MEGA_MENU_CLIP_OPEN : MEGA_MENU_CLIP_CLOSED,
         WebkitClipPath: clipShown ? MEGA_MENU_CLIP_OPEN : MEGA_MENU_CLIP_CLOSED,
@@ -150,34 +147,19 @@ export default function MegaMenu({
       }}
       onMouseEnter={onMouseEnter}
     >
-      <Container className="py-5 md:py-6">
-        <div className="grid gap-x-6" style={{ gridTemplateColumns: `repeat(${config.columns.length}, minmax(0, 1fr))` }}>
-          {config.columns.map((column, colIndex) => {
-            const colBaseDelay = CONTENT_BASE_DELAY + colIndex * CONTENT_STAG * (column.links.length + 2);
-            return (
-              <div key={column.title} className="flex flex-col gap-0.5">
-                {/* Column title */}
-                <Reveal enter={contentEnter} enterKey={enterKey} delay={colBaseDelay}>
-                  <p className="mb-1 px-3 font-heading text-[0.6rem] font-semibold tracking-[0.14em] text-[#9DAABF]">
-                    {column.title}
-                  </p>
-                </Reveal>
-
-                {/* Link cards */}
-                {column.links.map((link, linkIndex) => (
-                  <MegaMenuCard
-                    key={link.label}
-                    link={link}
-                    enter={contentEnter}
-                    enterKey={enterKey}
-                    delay={colBaseDelay + CONTENT_STAG + CONTENT_STAG * linkIndex}
-                  />
-                ))}
-              </div>
-            );
-          })}
+      <div className="relative mx-auto w-full max-w-7xl px-2 py-6 md:px-4 md:py-8 lg:px-6 xl:px-6">
+        <div className="grid grid-cols-1 divide-y divide-[#E5E7EB] bg-white sm:grid-cols-2 sm:divide-x lg:grid-cols-3">
+          {links.map((link, index) => (
+            <MegaMenuItem
+              key={link.label}
+              link={link}
+              enter={contentEnter}
+              enterKey={enterKey}
+              delay={CONTENT_BASE_DELAY + CONTENT_STAG * index}
+            />
+          ))}
         </div>
-      </Container>
+      </div>
     </div>
   );
 }

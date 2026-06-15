@@ -156,10 +156,29 @@ const Header = () => {
   }, [revealClip]);
 
   const renderedConfig = renderedMenu ? MEGA_MENUS[renderedMenu] : null;
+  const menuVisible = clipOpen && Boolean(renderedConfig);
+
+  useEffect(() => {
+    if (!menuVisible) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [menuVisible]);
 
   return (
     <nav className="relative w-full text-white">
-      <div onMouseLeave={scheduleClose}>
+      {menuVisible ? (
+        <button
+          type="button"
+          className="fixed inset-0 z-0 bg-[#0a143b]/50 motion-reduce:transition-none"
+          aria-label="Close menu"
+          onClick={closeMenu}
+        />
+      ) : null}
+
+      <div className="relative z-10" onMouseLeave={scheduleClose}>
         <div
           ref={navBarRef}
           className="overflow-hidden border-b border-[#FFFFFF1A] bg-[#121C49] will-change-transform"
