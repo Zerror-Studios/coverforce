@@ -47,15 +47,17 @@ const GlobeScene = dynamic(() => import("@/components/home/GlobeScene"), {
 
 function BrokersGlobeVideo() {
   return (
-    <video
-      className="h-full w-full object-cover"
-      src="/videos/globevideo.mp4"
-      autoPlay
-      loop
-      muted
-      playsInline
-      aria-hidden
-    />
+    <div className="h-full w-full overflow-hidden bg-[#E8E4F8]">
+      <video
+        className="block h-full w-full min-h-full min-w-full scale-[1.04] object-cover object-center"
+        src="/videos/globevideo.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        aria-hidden
+      />
+    </div>
   );
 }
 
@@ -247,7 +249,7 @@ const WayCard = memo(function WayCard({
           {dotGrid ? <WayCardDotGrid variant={variant} active={hovered} /> : null}
           {backgroundScene && inView ? (
             <div
-              className={`absolute inset-0 z-[1] ${backgroundInteractive ? "pointer-events-auto" : "pointer-events-none"}`}
+              className={`absolute inset-0 z-[1] overflow-hidden ${backgroundInteractive ? "pointer-events-auto" : "pointer-events-none"}`}
               aria-hidden={!backgroundInteractive}
               onPointerDown={backgroundInteractive ? (e) => e.stopPropagation() : undefined}
               onClick={backgroundInteractive ? (e) => e.stopPropagation() : undefined}
