@@ -32,14 +32,14 @@ export default function Tabs({ results }: Props) {
 
   return (
     <div className="flex-1 w-full">
-      <div className="flex flex-wrap gap-2 mb-6">
+      <div className="flex flex-wrap gap-2 mb-6 print:hidden">
         {TABS.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${activeTab === tab.id
-                ? 'bg-sky-50 text-sky-700 border border-sky-200'
-                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:text-gray-900'
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-heading font-semibold tracking-tight transition-colors border rounded-lg ${activeTab === tab.id
+              ? 'bg-[#3834a4] text-white border-[#3834a4] shadow-sm'
+              : 'bg-white text-[#121C49] border-[#3834a4] hover:bg-gray-50 hover:text-[#0a143b]'
               }`}
           >
             {tab.icon}
