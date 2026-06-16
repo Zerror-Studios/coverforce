@@ -44,10 +44,6 @@ export default function CalculationPage() {
           <Tabs results={results} />
         </div>
       </main>
-
-      <div className="print:hidden">
-        <Footer />
-      </div>
     </div>
   );
 }
