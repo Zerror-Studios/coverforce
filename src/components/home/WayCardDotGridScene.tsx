@@ -12,6 +12,8 @@ const MAX_PIXEL_RATIO = 1.25;
 type WayCardDotGridSceneProps = {
   variant: "dark" | "light";
   active: boolean;
+  tone?: "default" | "blueLight";
+  track?: "card" | "window";
 };
 
 const vertexShader = /* glsl */ `
@@ -84,6 +86,8 @@ function readSize(root: HTMLElement, card: Element | null) {
 export default function WayCardDotGridScene({
   variant,
   active,
+  tone = "default",
+  track = "card",
 }: WayCardDotGridSceneProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(active);
@@ -118,7 +122,9 @@ export default function WayCardDotGridScene({
     const dotColor =
       variant === "dark"
         ? new THREE.Color(1, 1, 1)
-        : new THREE.Color(91 / 255, 53 / 255, 224 / 255);
+        : tone === "blueLight"
+          ? new THREE.Color(37 / 255, 48 / 255, 190 / 255) // #2530BE (darker brand blue)
+          : new THREE.Color(91 / 255, 53 / 255, 224 / 255);
 
     const material = new THREE.ShaderMaterial({
       transparent: true,
@@ -133,7 +139,7 @@ export default function WayCardDotGridScene({
         uHeight: { value: 1 },
         uPointSize: { value: POINT_SIZE },
         uColor: { value: dotColor },
-        uBaseAlpha: { value: variant === "dark" ? 0.55 : 0.6 },
+        uBaseAlpha: { value: variant === "dark" ? 0.55 : tone === "blueLight" ? 0.55 : 0.6 },
       },
       vertexShader,
       fragmentShader,
@@ -222,13 +228,21 @@ export default function WayCardDotGridScene({
     const startMouseTracking = () => {
       if (trackingMouse) return;
       trackingMouse = true;
-      card?.addEventListener("mousemove", onMove, { passive: true });
+      if (track === "window") {
+        window.addEventListener("mousemove", onMove, { passive: true });
+      } else {
+        card?.addEventListener("mousemove", onMove, { passive: true });
+      }
     };
 
     const stopMouseTracking = () => {
       if (!trackingMouse) return;
       trackingMouse = false;
-      card?.removeEventListener("mousemove", onMove);
+      if (track === "window") {
+        window.removeEventListener("mousemove", onMove);
+      } else {
+        card?.removeEventListener("mousemove", onMove);
+      }
     };
 
     const onEnter = (event: Event) => {
@@ -242,8 +256,13 @@ export default function WayCardDotGridScene({
       stopMouseTracking();
     };
 
-    card?.addEventListener("mouseenter", onEnter);
-    card?.addEventListener("mouseleave", onLeave);
+    if (track === "window") {
+      startMouseTracking();
+      rebuildGrid();
+    } else {
+      card?.addEventListener("mouseenter", onEnter);
+      card?.addEventListener("mouseleave", onLeave);
+    }
 
     const resizeObserver = new ResizeObserver(scheduleRebuild);
     resizeObserver.observe(root);
@@ -323,14 +342,16 @@ export default function WayCardDotGridScene({
       resizeObserver.disconnect();
       visibilityObserver.disconnect();
       stopMouseTracking();
-      card?.removeEventListener("mouseenter", onEnter);
-      card?.removeEventListener("mouseleave", onLeave);
+      if (track !== "window") {
+        card?.removeEventListener("mouseenter", onEnter);
+        card?.removeEventListener("mouseleave", onLeave);
+      }
       geometry.dispose();
       material.dispose();
       renderer.dispose();
       root.removeChild(renderer.domElement);
     };
-  }, [variant]);
+  }, [variant, track, tone]);
 
   return <div ref={rootRef} aria-hidden className="way-card-dot-grid-three" />;
 }

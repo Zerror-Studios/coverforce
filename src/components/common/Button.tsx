@@ -11,7 +11,7 @@ type ButtonProps = {
   variant?: ButtonVariant;
   size?: ButtonSize;
   children: React.ReactNode;
-  icon?: React.ElementType<{ className?: string }>;
+  icon?: React.ComponentType<{ className?: string }>;
   className?: string;
 } & Omit<ComponentProps<typeof Link>, "href" | "className" | "children">;
 
