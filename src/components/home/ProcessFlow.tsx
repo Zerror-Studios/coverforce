@@ -469,6 +469,45 @@ const ProcessFlow = () => {
 
             const VH_PER_UNIT = 3.5;
             const POINT_GAP = T(2);
+            const PROGRESS_FILL_DUR = T(5.5);
+
+            let trackHeight = 1;
+
+            const measurePointHeights = () => {
+                const track = section.querySelector<HTMLElement>(".process-progress-fill");
+                if (!track) return [] as number[];
+
+                const trackRect = track.getBoundingClientRect();
+                trackHeight = trackRect.height || 1;
+                const trackTop = trackRect.top;
+
+                return processSteps.flatMap((step, stepIndex) =>
+                    step.points.map((_, pointIndex) => {
+                        const icon = section.querySelector<HTMLElement>(
+                            `.step${stepIndex + 1} .point${pointIndex + 1} .point-icon`,
+                        );
+                        if (!icon) return 0;
+
+                        const iconRect = icon.getBoundingClientRect();
+                        return iconRect.top + iconRect.height / 2 - trackTop;
+                    }),
+                );
+            };
+
+            let pointHeights: number[] = [];
+            const progressFill = section.querySelector<HTMLElement>(".progress-fill-inner");
+            const progress = { scale: 0 };
+            const setProgressScale = progressFill
+                ? gsap.quickSetter(progressFill, "scaleY")
+                : null;
+            const resetProgress = () => {
+                progress.scale = 0;
+                setProgressScale?.(0);
+            };
+            const syncProgressHeights = () => {
+                pointHeights = measurePointHeights();
+            };
+            ScrollTrigger.addEventListener("refreshInit", syncProgressHeights);
 
             gsap.set(".panel-step2, .panel-step3, .panel-step4, .panel-step5", { opacity: 0 });
             gsap.set(".skeleton1", { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" });
@@ -534,9 +573,13 @@ const ProcessFlow = () => {
                     end: () => `+=${Math.max(tl.duration(), T(100)) * VH_PER_UNIT}vh`,
                     pin: true,
                     pinSpacing: true,
-                    scrub: true,
+                    scrub: 1,
                     fastScrollEnd: true,
                     invalidateOnRefresh: true,
+                    onLeaveBack: resetProgress,
+                    onRefresh: (self) => {
+                        if (self.progress <= 0) resetProgress();
+                    },
                 },
             });
 
@@ -549,12 +592,43 @@ const ProcessFlow = () => {
                 if (n <= 1) return CHAR_DUR;
                 return CHAR_DUR + (n - 1) * CHAR_STAG;
             };
-            const afterPoint = (start: number, text: string, rightEnd: number) =>
-                Math.max(start + pointFillDur(text), rightEnd) + POINT_GAP;
+            const pointAnimDur = (text: string) => CHAR_DUR * 0.35 + pointFillDur(text);
+            const afterPoint = (fillStart: number, text: string, rightEnd: number) =>
+                Math.max(fillStart + PROGRESS_FILL_DUR + pointAnimDur(text), rightEnd) + POINT_GAP;
+            const afterPointAnim = (animStart: number, text: string, rightEnd: number) =>
+                Math.max(animStart + pointAnimDur(text), rightEnd) + POINT_GAP;
 
             const pointWaveColors = COLOR_THEMES.light;
+            let progressPoint = 0;
 
-            const hi = (step: number, pt: number, t: number) => {
+            syncProgressHeights();
+            if (progressFill) {
+                gsap.set(progressFill, { scaleY: 0, transformOrigin: "top center" });
+            }
+            resetProgress();
+
+            const pointIndexFrom = (step: number, pt: number) => (step - 1) * 3 + (pt - 1);
+            const pointScale = (pointIndex: number) => (pointHeights[pointIndex] ?? 0) / trackHeight;
+
+            const fillProgress = (pointIndex: number, t: number, duration = PROGRESS_FILL_DUR) => {
+                const startScale = pointIndex === 0 ? 0 : pointScale(pointIndex - 1);
+                const endScale = pointScale(pointIndex);
+
+                tl.fromTo(
+                    progress,
+                    { scale: startScale },
+                    {
+                        scale: endScale,
+                        duration,
+                        ease: "none",
+                        immediateRender: false,
+                        onUpdate: () => setProgressScale?.(progress.scale),
+                    },
+                    t,
+                );
+            };
+
+            const playPoint = (step: number, pt: number, t: number) => {
                 const b = `.step${step} .point${pt}`;
                 const chars = Array.from(
                     section.querySelectorAll<HTMLSpanElement>(`${b} .point-char`),
@@ -563,7 +637,6 @@ const ProcessFlow = () => {
                 const totalDur = pointFillDur(pointText(step, pt));
                 const prog = { v: 0 };
 
-                // Fill the arrow first, then animate the text reveal.
                 if (icon) {
                     tl.to(icon, {
                         backgroundColor: POINT_ACTIVE,
@@ -581,6 +654,18 @@ const ProcessFlow = () => {
                     onUpdate: () => applyWaveToChars(chars, prog.v, pointWaveColors),
                     onComplete: () => applyWaveToChars(chars, 1, pointWaveColors),
                 }, t + CHAR_DUR * 0.35);
+            };
+
+            const hi = (step: number, pt: number, t: number) => {
+                const pointIndex = progressPoint++;
+                fillProgress(pointIndex, t);
+                playPoint(step, pt, t + PROGRESS_FILL_DUR);
+            };
+
+            const crossStepFill = (step: number, pt: number, scrollStart: number) => {
+                const pointIndex = pointIndexFrom(step, pt);
+                fillProgress(pointIndex, scrollStart, SCROLL_DUR);
+                progressPoint = pointIndex + 1;
             };
             // ═══════════════════════════════════════════════════════════════
             // STEP 1
@@ -656,6 +741,7 @@ const ProcessFlow = () => {
                 .set(".card1", { opacity: 0 }, s1_swap + FADE_DUR * 0.35)
                 .set(".ai-btn", { opacity: 1, scale: 1 }, s1_swap + FADE_DUR * 0.35);
 
+            crossStepFill(2, 1, s2_scroll);
             tl.to(".leftScroll", { yPercent: -20, duration: SCROLL_DUR, ease: "none" }, s2_scroll);
 
             // ═══════════════════════════════════════════════════════════════
@@ -663,9 +749,9 @@ const ProcessFlow = () => {
             // ═══════════════════════════════════════════════════════════════
             const s2_stick = s2_scroll + SCROLL_DUR;
 
-            let s2_t = s2_stick + T(2);
+            let s2_t = s2_stick + T(1);
 
-            hi(2, 1, s2_t);
+            playPoint(2, 1, s2_t);
             const s2_fill = s2_t + T(1);
             const s2_cursor = s2_fill + FADE_DUR * 1.1 + T(2);
             const s2_click = s2_cursor + FADE_DUR * 1.3 + T(2);
@@ -683,7 +769,7 @@ const ProcessFlow = () => {
                 .to(".ai-btn", { scale: 1, duration: T(0.7), ease: "back.out(2)" }, s2_click + T(0.35));
             tl.to(".cursor2", { opacity: 0, x: -12, duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s2_afterCl)
                 .to(".ai-btn", { opacity: 0, y: -8, duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s2_afterCl);
-            s2_t = afterPoint(s2_t, pointText(2, 1), s2_afterCl + FADE_DUR * 0.8);
+            s2_t = afterPointAnim(s2_t, pointText(2, 1), s2_afterCl + FADE_DUR * 0.8);
 
             hi(2, 2, s2_t);
             const s2_form = s2_t + T(1);
@@ -792,6 +878,7 @@ const ProcessFlow = () => {
                 .set(".form-card2", { height: "auto" }, s2_morphEnd);
             const s3_scroll = s2_morphEnd + T(3);
 
+            crossStepFill(3, 1, s3_scroll);
             tl.to(".leftScroll", { yPercent: -40, duration: SCROLL_DUR, ease: "none" }, s3_scroll);
 
             // ═══════════════════════════════════════════════════════════════
@@ -799,10 +886,10 @@ const ProcessFlow = () => {
             // ═══════════════════════════════════════════════════════════════
             const s3_stick = s3_scroll + SCROLL_DUR;
 
-            let s3_t = s3_stick + T(2);
+            let s3_t = s3_stick + T(1);
 
-            hi(3, 1, s3_t);
-            s3_t = afterPoint(s3_t, pointText(3, 1), s3_t);
+            playPoint(3, 1, s3_t);
+            s3_t = afterPointAnim(s3_t, pointText(3, 1), s3_t);
 
             hi(3, 2, s3_t);
             const s3_logos = s3_t + T(1);
@@ -833,6 +920,7 @@ const ProcessFlow = () => {
             const s4_scroll = s3_outro + T(5);
 
             tl.to(".panel-step2", { opacity: 0, y: -14, duration: FADE_DUR, ease: EASE_EXIT }, s3_outro);
+            crossStepFill(4, 1, s4_scroll);
             tl.to(".leftScroll", { yPercent: -60, duration: SCROLL_DUR, ease: "none" }, s4_scroll);
 
             // ═══════════════════════════════════════════════════════════════
@@ -852,10 +940,10 @@ const ProcessFlow = () => {
                 .set(".card4-success", { opacity: 0 }, s4_scroll)
                 .set(".cursor4", { opacity: 0, x: 40, y: -20 }, s4_scroll);
 
-            let s4_t = s4_stick + T(2);
+            let s4_t = s4_stick + T(1);
 
-            hi(4, 1, s4_t);
-            s4_t = afterPoint(s4_t, pointText(4, 1), s4_t);
+            playPoint(4, 1, s4_t);
+            s4_t = afterPointAnim(s4_t, pointText(4, 1), s4_t);
 
             hi(4, 2, s4_t);
             const s4_cursor = s4_t + T(1);
@@ -889,6 +977,7 @@ const ProcessFlow = () => {
             const s5_scroll = s4_outro + T(5);
             const s5_morph = s5_scroll + SCROLL_DUR * 0.4;
 
+            crossStepFill(5, 1, s5_scroll);
             tl.to(".leftScroll", { yPercent: -80, duration: SCROLL_DUR, ease: "none" }, s5_scroll);
 
             // ═══════════════════════════════════════════════════════════════
@@ -910,13 +999,15 @@ const ProcessFlow = () => {
 
             let s5_t = s5_stick + T(1);
 
-            hi(5, 1, s5_t);
-            s5_t = afterPoint(s5_t, pointText(5, 1), s5_t);
+            playPoint(5, 1, s5_t);
+            s5_t = afterPointAnim(s5_t, pointText(5, 1), s5_t);
 
             hi(5, 2, s5_t);
             s5_t = afterPoint(s5_t, pointText(5, 2), s5_t);
 
             hi(5, 3, s5_t);
+
+            tl.call(resetProgress, [], 0);
 
             const lenis = (window as any).lenis;
             let scrollPending = false;
@@ -929,10 +1020,13 @@ const ProcessFlow = () => {
                 });
             };
             lenis?.on("scroll", onLenisScroll);
+            syncProgressHeights();
             ScrollTrigger.refresh();
+            resetProgress();
 
             return () => {
                 lenis?.off("scroll", onLenisScroll);
+                ScrollTrigger.removeEventListener("refreshInit", syncProgressHeights);
             };
         },
         { scope: sectionRef, revertOnUpdate: true },
@@ -941,10 +1035,10 @@ const ProcessFlow = () => {
     return (
         <section ref={sectionRef} className="h-screen overflow-hidden [contain:layout_paint]">
             <Container borderColor="#53535380">
-                <div className="h-screen overflow-hidden grid gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
+                <div className="h-screen grid gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
 
                     {/* ── Left: scrolling step cards ───────────────────────── */}
-                    <div className="leftScroll flex flex-col will-change-transform">
+                    <div className="leftScroll relative flex flex-col will-change-transform">
                         {processSteps.map((step, index) => (
                             <div
                                 key={index}
@@ -974,6 +1068,9 @@ const ProcessFlow = () => {
                                 </ul>
                             </div>
                         ))}
+                        <div className="process-progress-fill pointer-events-none absolute -left-6 top-0 h-full w-[2px] overflow-hidden">
+                            <div className="progress-fill-inner absolute top-0 left-0 h-full w-full origin-top bg-gradient-to-b from-[#5B35E0] via-[#B87AFF] to-[#5B35E0] will-change-transform" />
+                        </div>
                     </div>
 
                     {/* ── Right: single sticky visualization panel ─────────── */}
