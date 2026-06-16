@@ -159,6 +159,18 @@ function PanelStep1() {
     );
 }
 
+const CARRIER_LOGOS = [
+    { src: "/images/process/logo1.svg", alt: "AmTrust", highlighted: true },
+    { src: "/images/process/logo2.svg", alt: "AccidentFund", highlighted: true },
+    { src: "/images/process/logo4.svg", alt: "Chubb" },
+    { src: "/images/process/logo3.svg", alt: "CompWest" },
+    { src: "/images/process/logo5.svg", alt: "Coalition", highlighted: true },
+    { src: "/images/process/logo6.svg", alt: "Cowbell" },
+    { src: "/images/process/logo7.svg", alt: "Liberty Mutual" },
+    { src: "/images/process/logo8.svg", alt: "Merchants" },
+    { src: "/images/process/logo9.svg", alt: "Markel" },
+] as const;
+
 function PanelStep2() {
     return (
         <div className="panel-step2 absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none">
@@ -181,7 +193,8 @@ function PanelStep2() {
 
             <div className="form-wrap2 opacity-0 absolute inset-0 flex items-center justify-center">
                 <div className="relative grid w-xs shrink-0 grid-cols-1 [&>*]:col-start-1 [&>*]:row-start-1">
-                    <div className="w-full rounded-2xl border border-[#CCCCCC] bg-white">
+                    <div className="form-card2 relative w-full overflow-hidden rounded-2xl border border-[#CCCCCC] bg-white">
+                        <div className="form-card2-content">
                         <div className="flex items-center gap-2 border-b border-[#CCCCCC] px-4 py-3">
                             <span className="font-heading text-xs font-medium text-[#6DAB4E]">CARRIER APPLICATION (PRE-FILLED)</span>
                         </div>
@@ -239,6 +252,44 @@ function PanelStep2() {
                                 </div>
                             </div>
                         </div>
+                        </div>
+
+                        <div className="form-card2-naics pointer-events-none absolute inset-0 opacity-0">
+                            <div className="flex items-center gap-2 border-b border-[#CCCCCC] px-4 py-3">
+                                <span className="flex size-[23px] shrink-0 items-center justify-center rounded-full border border-[#F3F4F6] bg-[#F9FAFB]">
+                                    <RiHashtag color="#6F6F6F" size={11} />
+                                </span>
+                                <div>
+                                    <p className="font-heading text-xs font-medium text-[#3C3B3B]">Select NAICS Code</p>
+                                    <p className="font-heading text-[0.55rem] text-[#3C3B3B]">Choose the business industry code.</p>
+                                </div>
+                            </div>
+                            <div className="px-3 pb-4">
+                                <div className="mt-0.5 w-full flex items-start justify-between gap-1 py-4">
+                                    <div>
+                                        <p className="font-sans text-[0.50rem] uppercase tracking-wider text-[#9CA3AF]">NAICS Code</p>
+                                        <p className="font-heading text-[0.50rem] flex items-center justify-center rounded-full px-2 py-px mt-1 font-medium bg-[#D8EFFF] text-[#7299B4]">445110</p>
+                                    </div>
+                                    <RiArrowDownSLine className="size-5 shrink-0 text-[#6B7280]" />
+                                </div>
+                                <div className="w-full flex items-start justify-between gap-1">
+                                    <div>
+                                        <p className="font-sans text-[0.50rem] uppercase tracking-wider text-[#9CA3AF]">Description</p>
+                                        <p className="font-heading text-[0.70rem] font-medium leading-tight text-[#2E2E2E] uppercase">Supermarkets and Other Grocery Stores</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="logos-grid3 grid grid-cols-3 gap-2 overflow-hidden px-3 pb-0" style={{ height: 0 }}>
+                                {CARRIER_LOGOS.map((logo) => (
+                                    <div
+                                        key={logo.src}
+                                        className={`logo3 col-span-1 flex items-center justify-center rounded-sm border py-1 shadow-[0_1px_4px_rgba(0,0,0,0.06)] opacity-0 scale-90 ${"highlighted" in logo && logo.highlighted ? "border-[#B1B9FF]" : "border-[#F3F2F3]"}`}
+                                    >
+                                        <Image src={logo.src} alt={logo.alt} width={100} height={100} className="size-12 object-contain" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
 
                     <div className="skeleton2 absolute inset-0 z-10 flex w-full flex-col rounded-2xl border border-[#CED2D2] bg-white p-[3px]">
@@ -259,58 +310,9 @@ function PanelStep2() {
     );
 }
 
-const CARRIER_LOGOS = [
-    { src: "/images/process/logo1.svg", alt: "AmTrust", highlighted: true },
-    { src: "/images/process/logo2.svg", alt: "AccidentFund", highlighted: true },
-    { src: "/images/process/logo4.svg", alt: "Chubb" },
-    { src: "/images/process/logo3.svg", alt: "CompWest" },
-    { src: "/images/process/logo5.svg", alt: "Coalition", highlighted: true },
-    { src: "/images/process/logo6.svg", alt: "Cowbell" },
-    { src: "/images/process/logo7.svg", alt: "Liberty Mutual" },
-    { src: "/images/process/logo8.svg", alt: "Merchants" },
-    { src: "/images/process/logo9.svg", alt: "Markel" },
-] as const;
-
 function PanelStep3() {
     return (
-        <div className="panel-step3 absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none">
-            <div className="w-xs shrink-0 overflow-hidden rounded-2xl border border-[#CCCCCC] bg-white">
-                <div className="flex items-center gap-2 border-b border-[#CCCCCC] px-4 py-3">
-                    <span className="flex size-[23px] shrink-0 items-center justify-center rounded-full border border-[#F3F4F6] bg-[#F9FAFB]">
-                        <RiHashtag color="#6F6F6F" size={11} />
-                    </span>
-                    <div>
-                        <p className="font-heading text-xs font-medium text-[#3C3B3B]">Select NAICS Code</p>
-                        <p className="font-heading text-[0.55rem] text-[#3C3B3B]">Choose the business industry code.</p>
-                    </div>
-                </div>
-                <div className="px-3 pb-4">
-                    <div className="mt-0.5 w-full flex items-start justify-between gap-1 py-4">
-                        <div>
-                            <p className="font-sans text-[0.50rem] uppercase tracking-wider text-[#9CA3AF]">NAICS Code</p>
-                            <p className="font-heading text-[0.50rem] flex items-center justify-center rounded-full px-2 py-px mt-1 font-medium bg-[#D8EFFF] text-[#7299B4]">445110</p>
-                        </div>
-                        <RiArrowDownSLine className="size-5 shrink-0 text-[#6B7280]" />
-                    </div>
-                    <div className="w-full flex items-start justify-between gap-1">
-                        <div>
-                            <p className="font-sans text-[0.50rem] uppercase tracking-wider text-[#9CA3AF]">Description</p>
-                            <p className="font-heading text-[0.70rem] font-medium leading-tight text-[#2E2E2E] uppercase">Supermarkets and Other Grocery Stores</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="logos-grid3 grid grid-cols-3 gap-2 overflow-hidden px-3 pb-0" style={{ height: 0 }}>
-                    {CARRIER_LOGOS.map((logo) => (
-                        <div
-                            key={logo.src}
-                            className={`logo3 col-span-1 flex items-center justify-center rounded-sm border py-1 shadow-[0_1px_4px_rgba(0,0,0,0.06)] opacity-0 scale-90 ${"highlighted" in logo && logo.highlighted ? "border-[#B1B9FF]" : "border-[#F3F2F3]"}`}
-                        >
-                            <Image src={logo.src} alt={logo.alt} width={100} height={100} className="size-12 object-contain" />
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
+        <div className="panel-step3 absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none" />
     );
 }
 
@@ -484,6 +486,8 @@ const ProcessFlow = () => {
             gsap.set(".ai-btn-inner", { backgroundColor: "#fff", gap: 0, paddingLeft: 0, paddingRight: 0 });
             gsap.set(".cursor2", { opacity: 0, x: 48, y: 36 });
             gsap.set(".form-wrap2", { opacity: 0 });
+            gsap.set(".form-card2-content", { opacity: 1, visibility: "visible", display: "block" });
+            gsap.set(".form-card2-naics", { opacity: 0 });
             gsap.set(".skeleton2", { opacity: 1 });
             gsap.set(".f2-toggle-no", { backgroundColor: FIELD_IDLE_TOGGLE, color: "#111827" });
             gsap.set(".f2-check-np, .f2-check-fein, .f2-check-ent, .f2-check-yr",
@@ -741,18 +745,59 @@ const ProcessFlow = () => {
             s2_t = afterPoint(s2_t, pointText(2, 3), s2_validEnd);
 
             const s2_outro = s2_t + T(2);
-            const s3_scroll = s2_outro + T(5);
 
-            tl.to(".panel-step2", { opacity: 0, y: -14, duration: FADE_DUR, ease: EASE_EXIT }, s2_outro);
+            // Step 2 → 3: same card morphs — carrier application content fades, card resizes, NAICS content appears.
+            const s2_morph = s2_outro + T(0.3);
+            const s2_contentFade = s2_morph;
+            // Slow + smooth morph timing
+            const s2_resize = s2_morph + FADE_DUR * 0.75;
+            const s2_naicsIn = s2_morph + FADE_DUR * 0.95;
+
+            tl.to(".form-card2-content", { opacity: 0, duration: FADE_DUR * 0.95, ease: EASE_SOFT }, s2_contentFade);
+
+            tl.call(() => {
+                const card = section.querySelector<HTMLElement>(".form-card2");
+                const naics = section.querySelector<HTMLElement>(".form-card2-naics");
+                if (!card || !naics) return;
+
+                const fromH = card.offsetHeight;
+                naics.style.visibility = "hidden";
+                naics.style.position = "static";
+                naics.style.opacity = "1";
+                const toH = naics.offsetHeight;
+                naics.style.position = "absolute";
+                naics.style.inset = "0";
+                naics.style.visibility = "visible";
+                naics.style.opacity = "0";
+
+                gsap.set(card, { height: fromH, overflow: "hidden", transformOrigin: "50% 50%" });
+                card.dataset.morphTargetH = String(toH);
+            }, [], s2_contentFade + FADE_DUR * 0.45);
+
+            tl.to(".form-card2", {
+                height: () => {
+                    const card = section.querySelector<HTMLElement>(".form-card2");
+                    const target = card?.dataset.morphTargetH;
+                    return target ? `${target}px` : "auto";
+                },
+                duration: FADE_DUR * 1.65,
+                ease: EASE_SOFT,
+            }, s2_resize);
+
+            tl.to(".form-card2-naics", { opacity: 1, duration: FADE_DUR * 1.25, ease: EASE_SOFT }, s2_naicsIn)
+                .set(".form-card2-content", { visibility: "hidden", display: "none" }, s2_naicsIn);
+
+            const s2_morphEnd = s2_naicsIn + FADE_DUR * 1.25 + T(1.2);
+            tl.set(".form-card2-naics", { position: "static", clearProps: "inset" }, s2_morphEnd)
+                .set(".form-card2", { height: "auto" }, s2_morphEnd);
+            const s3_scroll = s2_morphEnd + T(3);
+
             tl.to(".leftScroll", { yPercent: -40, duration: SCROLL_DUR, ease: "none" }, s3_scroll);
 
             // ═══════════════════════════════════════════════════════════════
             // STEP 3
             // ═══════════════════════════════════════════════════════════════
             const s3_stick = s3_scroll + SCROLL_DUR;
-
-            gsap.set(".panel-step3", { y: 18, opacity: 0 });
-            tl.to(".panel-step3", { opacity: 1, y: 0, duration: SCROLL_DUR * 0.65, ease: EASE_ENTER }, s3_scroll + SCROLL_DUR * 0.18);
 
             let s3_t = s3_stick + T(2);
 
@@ -787,7 +832,7 @@ const ProcessFlow = () => {
             const s3_outro = s3_t + T(2);
             const s4_scroll = s3_outro + T(5);
 
-            tl.to(".panel-step3", { opacity: 0, y: -14, duration: FADE_DUR, ease: EASE_EXIT }, s3_outro);
+            tl.to(".panel-step2", { opacity: 0, y: -14, duration: FADE_DUR, ease: EASE_EXIT }, s3_outro);
             tl.to(".leftScroll", { yPercent: -60, duration: SCROLL_DUR, ease: "none" }, s4_scroll);
 
             // ═══════════════════════════════════════════════════════════════
