@@ -559,14 +559,7 @@ const ProcessFlow = () => {
                 const totalDur = pointFillDur(pointText(step, pt));
                 const prog = { v: 0 };
 
-                tl.to(prog, {
-                    v: 1,
-                    duration: totalDur,
-                    ease: "none",
-                    onUpdate: () => applyWaveToChars(chars, prog.v, pointWaveColors),
-                    onComplete: () => applyWaveToChars(chars, 1, pointWaveColors),
-                }, t);
-
+                // Fill the arrow first, then animate the text reveal.
                 if (icon) {
                     tl.to(icon, {
                         backgroundColor: POINT_ACTIVE,
@@ -574,8 +567,16 @@ const ProcessFlow = () => {
                         borderColor: POINT_ACTIVE,
                         duration: CHAR_DUR * 1.2,
                         ease: "power2.out",
-                    }, t + totalDur * 0.72);
+                    }, t);
                 }
+
+                tl.to(prog, {
+                    v: 1,
+                    duration: totalDur,
+                    ease: "none",
+                    onUpdate: () => applyWaveToChars(chars, prog.v, pointWaveColors),
+                    onComplete: () => applyWaveToChars(chars, 1, pointWaveColors),
+                }, t + CHAR_DUR * 0.35);
             };
             // ═══════════════════════════════════════════════════════════════
             // STEP 1
@@ -593,17 +594,20 @@ const ProcessFlow = () => {
             hi(1, 2, s1_t);
             const s1_card = s1_t + T(1);
             const s1_graph = s1_t + T(4);
-            tl.to(".skeleton1", { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)", duration: FADE_DUR * 0.8, ease: EASE_EXIT }, s1_card)
-                .to(".card1", { opacity: 1, duration: FADE_DUR * 0.8, ease: EASE_REVEAL }, s1_card)
-                .to(".graph1", { opacity: 1, y: 0, x: 0, duration: FADE_DUR * 0.8, ease: EASE_REVEAL }, s1_graph);
-            s1_t = afterPoint(s1_t, pointText(1, 2), s1_graph + FADE_DUR * 0.8);
+            // Slow the reveal so it's noticeable (clip-path + card fade).
+            tl.to(".skeleton1", { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)", duration: FADE_DUR * 1.35, ease: EASE_EXIT }, s1_card)
+                .to(".card1", { opacity: 1, duration: FADE_DUR * 1.35, ease: EASE_REVEAL }, s1_card + T(0.25))
+                .to(".graph1", { opacity: 1, y: 0, x: 0, duration: FADE_DUR * 1.1, ease: EASE_REVEAL }, s1_graph);
+            s1_t = afterPoint(s1_t, pointText(1, 2), s1_graph + FADE_DUR * 1.1);
 
             hi(1, 3, s1_t);
             const s1_scan = s1_t + T(1);
             tl.to(".scanner1", { opacity: 1, top: "10%", duration: SCAN_RISE, ease: EASE_ENTER }, s1_scan)
                 .to(".scanner1", { top: "100%", duration: SCAN_TRAVEL, ease: "none" }, s1_scan + SCAN_RISE)
-                .to(".scanner1", { opacity: 0, duration: T(2.5), ease: "power2.in" }, s1_scan + SCAN_RISE + SCAN_TRAVEL - T(1.5));
-            s1_t = afterPoint(s1_t, pointText(1, 3), s1_scan + SCAN_RISE + SCAN_TRAVEL + T(1));
+                .to(".scanner1", { top: "10%", duration: SCAN_TRAVEL * 0.85, ease: "none" }, s1_scan + SCAN_RISE + SCAN_TRAVEL)
+                .to(".scanner1", { top: "100%", duration: SCAN_TRAVEL, ease: "none" }, s1_scan + SCAN_RISE + SCAN_TRAVEL + SCAN_TRAVEL * 0.85)
+                .to(".scanner1", { opacity: 0, duration: T(2.5), ease: "power2.in" }, s1_scan + SCAN_RISE + SCAN_TRAVEL * 2.85 - T(1.5));
+            s1_t = afterPoint(s1_t, pointText(1, 3), s1_scan + SCAN_RISE + SCAN_TRAVEL * 2.85 + T(1));
 
             const s1_outro = s1_t + T(2);
             const s1_contentFade = s1_outro + T(1);

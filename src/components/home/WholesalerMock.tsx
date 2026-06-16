@@ -3,28 +3,22 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode, type TransitionEvent } from "react";
 import { RiAttachmentLine, RiFileTextFill, RiLineChartLine, RiMailFill } from "@remixicon/react";
 import Image from "next/image";
-import { MICRO_EASE } from "@/lib/motion";
+import { MICRO_EASE, MICRO_ROLL_MS, MICRO_ROLL_STAGGER_MS } from "@/lib/motion";
 import { PeriodicIncrementalStat } from "@/components/common/AnimatedPercent";
 
-const SLIDE_MS = 1100;
+const SLIDE_MS = 1700;
 const ROTATE_MS = 8000;
 
-const LIMIT_SUMMARIES = [
-  [
-    { label: "General Liability", value: "$1,000,000" },
-    { label: "Automobile Liability", value: "$500,000" },
-    { label: "Umbrella Liability", value: "$5,000,000" },
-  ],
-  [
-    { label: "Workers Compensation", value: "$2,000,000" },
-    { label: "Professional Liability", value: "$1,000,000" },
-    { label: "Cyber Liability", value: "$3,000,000" },
-  ],
-  [
-    { label: "Commercial Property", value: "$10,000,000" },
-    { label: "Equipment Floater", value: "$750,000" },
-    { label: "Business Income", value: "$2,500,000" },
-  ],
+const LIMIT_LABELS = [
+  "General Liability",
+  "Automobile Liability",
+  "Umbrella Liability",
+] as const;
+
+const LIMIT_VALUE_SETS = [
+  ["$1,000,000", "$500,000", "$5,000,000"],
+  ["$1,250,000", "$750,000", "$7,500,000"],
+  ["$2,000,000", "$1,000,000", "$10,000,000"],
 ] as const;
 
 const EMAIL_INTAKES = [
@@ -44,7 +38,162 @@ const AVATARS = [
   { label: "B", className: "bg-blue-400", image: "/images/avatar2.png" },
 ] as const;
 
-type LimitRow = { label: string; value: string };
+function AnimatedLimitsList() {
+  const [index, setIndex] = useState(0);
+  const [animationKey, setAnimationKey] = useState(0);
+  const prevIndexRef = useRef(0);
+
+  useEffect(() => {
+    if (LIMIT_VALUE_SETS.length <= 1) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) return;
+
+    const interval = setInterval(() => {
+      setIndex((current) => (current + 1) % LIMIT_VALUE_SETS.length);
+      setAnimationKey((key) => key + 1);
+    }, ROTATE_MS);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (animationKey === 0) return;
+    const settleMs = MICRO_ROLL_MS * 0.75 + MICRO_ROLL_STAGGER_MS * 8 + 120;
+    const id = window.setTimeout(() => {
+      prevIndexRef.current = index;
+    }, settleMs);
+    return () => window.clearTimeout(id);
+  }, [animationKey, index]);
+
+  const prevValues = LIMIT_VALUE_SETS[prevIndexRef.current];
+  const nextValues = LIMIT_VALUE_SETS[index];
+
+  return (
+    <div className="divide-y divide-neutral-100 px-4">
+      {LIMIT_LABELS.map((label, rowIndex) => (
+        <div key={label} className="flex items-center justify-between py-2">
+          <span className="text-[0.60rem] font-heading font-medium text-[#3C3B3B]">{label}</span>
+          <RollingText
+            prev={prevValues[rowIndex]}
+            next={nextValues[rowIndex]}
+            animationKey={animationKey}
+            className="text-xs font-heading font-medium leading-tight text-[#3C3B3B]"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DigitRoller({
+  sequence,
+  animate,
+  duration = MICRO_ROLL_MS,
+  delay = 0,
+}: {
+  sequence: readonly number[];
+  animate: boolean;
+  duration?: number;
+  delay?: number;
+}) {
+  const endIndex = sequence.length - 1;
+
+  return (
+    <span
+      className="relative inline-block h-[1em] w-[0.62em] overflow-hidden"
+      style={{
+        maskImage:
+          "linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%)",
+        WebkitMaskImage:
+          "linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%)",
+      }}
+    >
+      <span
+        className="flex flex-col will-change-transform"
+        style={{
+          transition: animate
+            ? `transform ${duration * 0.75}ms ${MICRO_EASE} ${delay}ms`
+            : "none",
+          transform: animate
+            ? `translateY(calc(-${endIndex} * 1em))`
+            : "translateY(0)",
+        }}
+      >
+        {sequence.map((digit, i) => (
+          <span
+            key={`${digit}-${i}`}
+            className="flex h-[1em] items-center justify-center leading-none"
+          >
+            {digit}
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+}
+
+function RollingText({
+  prev,
+  next,
+  animationKey,
+  className = "",
+}: {
+  prev: string;
+  next: string;
+  animationKey: number;
+  className?: string;
+}) {
+  const [roll, setRoll] = useState(false);
+
+  useEffect(() => {
+    if (animationKey === 0) return;
+    setRoll(false);
+    const id = window.setTimeout(() => setRoll(true), 40);
+    return () => window.clearTimeout(id);
+  }, [animationKey]);
+
+  const width = Math.max(prev.length, next.length);
+  const pad = "\u00A0"; // NBSP so layout doesn't collapse
+  const paddedPrev = prev.padStart(width, pad);
+  const paddedNext = next.padStart(width, pad);
+
+  return (
+    <span
+      className={`inline-flex items-baseline tabular-nums leading-none whitespace-pre ${className}`}
+      aria-hidden
+    >
+      {paddedNext.split("").map((char, i) => {
+        const prevChar = paddedPrev[i];
+        const isDigit = char >= "0" && char <= "9";
+
+        if (!isDigit) {
+          return (
+            <span key={`${char}-${i}`} className="inline-block">
+              {char}
+            </span>
+          );
+        }
+
+        const prevDigit = prevChar >= "0" && prevChar <= "9" ? Number(prevChar) : Number(char);
+        const nextDigit = Number(char);
+        // Always roll digits, even when they don't change.
+        // For unchanged digits we roll 0→0 (or 5→5, etc) using a 2-step sequence.
+        const sequence =
+          prevDigit === nextDigit ? [nextDigit, nextDigit] : [prevDigit, nextDigit];
+
+        return (
+          <DigitRoller
+            key={`${i}-${sequence.join("-")}`}
+            sequence={sequence}
+            animate={roll}
+            delay={i > 0 ? MICRO_ROLL_STAGGER_MS : 0}
+          />
+        );
+      })}
+    </span>
+  );
+}
 
 function AcordInfoField({
   label,
@@ -68,21 +217,6 @@ function AcordInfoField({
           {liveValue ?? value}
         </p>
       </div>
-    </div>
-  );
-}
-
-function LimitsList({ rows }: { rows: readonly LimitRow[] }) {
-  return (
-    <div className="divide-y divide-neutral-100 px-4">
-      {rows.map((row) => (
-        <div key={row.label} className="flex items-center justify-between py-2">
-          <span className="text-[0.60rem] font-heading font-medium text-[#3C3B3B]">{row.label}</span>
-          <span className="text-xs font-heading font-medium leading-tight text-[#3C3B3B]">
-            {row.value}
-          </span>
-        </div>
-      ))}
     </div>
   );
 }
@@ -299,10 +433,7 @@ export default function WholesalerMock({ liveStats = false }: { liveStats?: bool
             <span className="text-[9px] font-sans text-[#4683E5]">View All</span>
           </div>
 
-          <SlidingPanel
-            items={LIMIT_SUMMARIES}
-            render={(rows) => <LimitsList rows={rows} />}
-          />
+          <AnimatedLimitsList />
 
           <div className="flex items-center justify-between border-t border-[#CCCCCC] px-4 py-3">
             <div className="flex items-center gap-1.5">

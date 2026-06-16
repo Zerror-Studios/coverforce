@@ -246,7 +246,7 @@ const Header = () => {
               <NavLinkLabel label="Login" />
             </Link>
             <Button href="/" variant="primary">
-              Book a call
+            Request demo
             </Button>
           </div>
             </div>

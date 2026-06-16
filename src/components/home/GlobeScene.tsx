@@ -137,9 +137,10 @@ function Particles({ count }: { count: number }) {
       positions[i * 3 + 1] = y;
       positions[i * 3 + 2] = 0;
 
+      // Slightly smaller point sprites → “thinner” particles.
       sizes[i] = onRing
-        ? 0.088 + Math.random() * 0.038
-        : 0.072 + Math.random() * 0.048;
+        ? 0.068 + Math.random() * 0.028
+        : 0.056 + Math.random() * 0.036;
       alphas[i] = onRing
         ? 0.92 + Math.random() * 0.08
         : 0.5 + Math.random() * 0.38;

@@ -234,11 +234,12 @@ button {
 
 :root {
   --way-modal-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --way-modal-overlay-open: 360ms;
-  --way-modal-overlay-close: 340ms;
-  --way-modal-panel-open: 520ms;
-  --way-modal-panel-close: 440ms;
-  --way-modal-content-delay: 120ms;
+  --way-modal-overlay-open: 420ms;
+  --way-modal-panel-open-delay: 260ms;
+  --way-modal-panel-open: 580ms;
+  --way-modal-panel-close: 460ms;
+  --way-modal-overlay-close-delay: 300ms;
+  --way-modal-overlay-close: 380ms;
 }
 
 @keyframes way-modal-overlay-in {
@@ -253,11 +254,11 @@ button {
 @keyframes way-modal-panel-in {
   from {
     opacity: 0;
-    transform: translate3d(0, 28px, 0) scale(0.97);
+    transform: translate3d(0, 72px, 0);
   }
   to {
     opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -273,22 +274,12 @@ button {
 @keyframes way-modal-panel-out {
   from {
     opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
+    transform: translate3d(0, 0, 0);
   }
   to {
     opacity: 0;
-    transform: translate3d(0, 20px, 0) scale(0.98);
+    transform: translate3d(0, 64px, 0);
   }
-}
-
-.way-modal-content-hidden {
-  opacity: 0;
-  transform: translate3d(0, 12px, 0);
-}
-
-.way-modal-content-visible {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
 }
 
 .way-modal-panel {
@@ -303,34 +294,25 @@ button {
 
   .way-modal-panel-enter {
     animation: way-modal-panel-in var(--way-modal-panel-open) var(--way-modal-ease) both;
-  }
-
-  .way-modal-overlay-exit {
-    animation: way-modal-overlay-out var(--way-modal-overlay-close) ease-in both;
+    animation-delay: var(--way-modal-panel-open-delay);
   }
 
   .way-modal-panel-exit {
     animation: way-modal-panel-out var(--way-modal-panel-close) var(--way-modal-ease) both;
   }
 
-  .way-modal-content-hidden,
-  .way-modal-content-visible {
-    transition:
-      opacity 380ms var(--way-modal-ease),
-      transform 380ms var(--way-modal-ease);
-  }
-
-  .way-modal-content-visible {
-    transition-delay: var(--way-modal-content-delay);
+  .way-modal-overlay-exit {
+    animation: way-modal-overlay-out var(--way-modal-overlay-close) ease-in both;
+    animation-delay: var(--way-modal-overlay-close-delay);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .way-modal-content-hidden,
-  .way-modal-content-visible {
-    opacity: 1;
-    transform: none;
-    transition: none;
+  .way-modal-overlay-enter,
+  .way-modal-overlay-exit,
+  .way-modal-panel-enter,
+  .way-modal-panel-exit {
+    animation: none;
   }
 }
 

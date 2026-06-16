@@ -7,6 +7,7 @@ import Container from "../common/Container";
 import SectionRadialGlow from "../common/SectionRadialGlow";
 import dynamic from "next/dynamic";
 import { SplitText } from "@/lib/SplitText";
+import { RiPlayFill } from "@remixicon/react";
 
 const OpticalFiber = dynamic(() => import("./OpticalFiber"), {
   ssr: false,
@@ -207,7 +208,7 @@ const Hero = () => {
       ref={sectionRef}
       className="relative isolate overflow-hidden bg-[#121C49] text-white"
     >
-      <Container borderColor="#FFFFFF33" borderOpacity={borderOpacity} className="px-0! pb-10">
+      <Container borderColor="#FFFFFF33" borderOpacity={borderOpacity} className="px-0! pb-2">
 
         {/* ── 100vh block: heading + button + network ── */}
         <div className="relative z-10 flex h-screen flex-col justify-between pt-16 md:pt-20 lg:pt-20">
@@ -233,10 +234,10 @@ const Hero = () => {
               }`}
             >
               <Button href="/" variant="primary">
-                Request demo
+                Request Demo
               </Button>
-              <Button href="/" variant="secondary">
-                Start a quote
+              <Button href="/" variant="secondary" icon={RiPlayFill}>
+                Watch Demo
               </Button>
             </div>
           </div>

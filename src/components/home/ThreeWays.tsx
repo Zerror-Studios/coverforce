@@ -4,7 +4,6 @@ import { memo, useCallback, useEffect, useRef, useState, type ReactNode } from "
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { rectFromDOM, type WayModalRect } from "@/lib/wayModalMotion";
 import { animateSplitTextReveal } from "@/lib/animateSplitTextReveal";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -103,7 +102,7 @@ type WayCardProps = {
   backgroundScene?: ReactNode;
   backgroundInteractive?: boolean;
   dotGrid?: boolean;
-  onOpen: (originRect: WayModalRect | null) => void;
+  onOpen: () => void;
 };
 
 // Remove label, lightStrip from WayCardConfig
@@ -208,7 +207,7 @@ const WayCard = memo(function WayCard({
   onOpen,
 }: Omit<WayCardProps, "label" | "lightStrip">) {
   const [hovered, setHovered] = useState(false);
-  const mockRef = useRef<HTMLDivElement>(null);
+  const interactiveTapRef = useRef<{ x: number; y: number; t: number } | null>(null);
   const { ref: cardRef, visible: inView } = useLazyInView<HTMLElement>();
   const isDark = variant === "dark";
   const textClass =
@@ -219,8 +218,7 @@ const WayCard = memo(function WayCard({
         : "text-[#0a143b]";
 
   const handleOpen = () => {
-    const rect = mockRef.current?.getBoundingClientRect();
-    onOpen(rect ? rectFromDOM(rect) : null);
+    onOpen();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -236,8 +234,8 @@ const WayCard = memo(function WayCard({
         ref={cardRef}
         role="button"
         tabIndex={0}
-        onClick={backgroundInteractive ? undefined : handleOpen}
-        onKeyDown={backgroundInteractive ? undefined : handleKeyDown}
+        onClick={handleOpen}
+        onKeyDown={handleKeyDown}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         aria-label={`Open details`}
@@ -251,7 +249,30 @@ const WayCard = memo(function WayCard({
             <div
               className={`absolute inset-0 z-[1] overflow-hidden ${backgroundInteractive ? "pointer-events-auto" : "pointer-events-none"}`}
               aria-hidden={!backgroundInteractive}
-              onPointerDown={backgroundInteractive ? (e) => e.stopPropagation() : undefined}
+              onPointerDownCapture={
+                backgroundInteractive
+                  ? (e) => {
+                      interactiveTapRef.current = { x: e.clientX, y: e.clientY, t: Date.now() };
+                    }
+                  : undefined
+              }
+              onPointerUpCapture={
+                backgroundInteractive
+                  ? (e) => {
+                      const start = interactiveTapRef.current;
+                      interactiveTapRef.current = null;
+                      if (!start) return;
+
+                      const dx = e.clientX - start.x;
+                      const dy = e.clientY - start.y;
+                      const dist = Math.hypot(dx, dy);
+                      const dt = Date.now() - start.t;
+
+                      // Allow interaction (drag), but treat a short, small movement as a tap-to-open.
+                      if (dist <= 8 && dt <= 350) handleOpen();
+                    }
+                  : undefined
+              }
               onClick={backgroundInteractive ? (e) => e.stopPropagation() : undefined}
             >
               {backgroundScene}
@@ -262,7 +283,6 @@ const WayCard = memo(function WayCard({
           className={`way-card-mock pointer-events-none absolute inset-0 z-10 p-5 transition-opacity duration-300 md:p-6 ${hideMock ? "opacity-0" : "opacity-100"} ${mockAlign === "center" ? "flex items-center justify-center" : ""}`}
         >
           <div
-            ref={mockRef}
             className={
               mockAlign === "bottom"
                 ? "relative h-full w-full"
@@ -327,7 +347,6 @@ export default function ThreeWays() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const [activeCard, setActiveCard] = useState<string | null>(null);
-  const [originRect, setOriginRect] = useState<WayModalRect | null>(null);
 
   const activeConfig = WAY_CARDS.find((c) => c.label === activeCard) ?? null;
   const modalContent = activeCard ? WAY_CARD_MODALS[activeCard] : null;
@@ -388,11 +407,9 @@ export default function ThreeWays() {
 
   const closeModal = useCallback(() => {
     setActiveCard(null);
-    setOriginRect(null);
   }, []);
 
-  const openModal = useCallback((label: string, rect: WayModalRect | null) => {
-    setOriginRect(rect);
+  const openModal = useCallback((label: string) => {
     setActiveCard(label);
   }, []);
 
@@ -424,8 +441,8 @@ export default function ThreeWays() {
               <WayCard
                 key={card.label}
                 {...card}
-                hideMock={(card.hideMock ?? false) || activeCard === card.label}
-                onOpen={(rect) => openModal(card.label, rect)}
+                hideMock={card.hideMock ?? false}
+                onOpen={() => openModal(card.label)}
               >
                 {mock}
               </WayCard>
@@ -438,7 +455,6 @@ export default function ThreeWays() {
         open={activeCard !== null}
         content={modalContent}
         preview={activeConfig?.modalPreview}
-        originRect={originRect}
         onClose={closeModal}
       />
     </section>

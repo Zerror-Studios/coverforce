@@ -41,11 +41,13 @@ function DevTabButton({
       onMouseEnter={() => onHover(label)}
       className={`flex items-center gap-1.5 rounded-full px-6 py-3 text-sm font-sans leading-tight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A483FE] ${
         active
-          ? "bg-[#A483FE] font-normal text-white shadow-[0_4px_14px_rgba(164,131,254,0.35)]"
+          ? label === "Integration"
+            ? "bg-[#121C49] font-normal text-white"
+            : "bg-[#A483FE] font-normal text-white"
           : "bg-[#F3F4F6] font-medium text-neutral-500 hover:bg-[#E8EAED] hover:text-[#374151]"
       }`}
       style={{
-        transition: `background-color ${MICRO_TAB_COLOR_MS}ms ${MICRO_EASE}, color ${MICRO_TAB_COLOR_MS}ms ${MICRO_EASE}, box-shadow ${MICRO_TAB_COLOR_MS}ms ${MICRO_EASE}`,
+        transition: `background-color ${MICRO_TAB_COLOR_MS}ms ${MICRO_EASE}, color ${MICRO_TAB_COLOR_MS}ms ${MICRO_EASE}`,
       }}
     >
       <Icon

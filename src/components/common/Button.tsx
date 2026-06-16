@@ -11,6 +11,7 @@ type ButtonProps = {
   variant?: ButtonVariant;
   size?: ButtonSize;
   children: React.ReactNode;
+  icon?: React.ElementType<{ className?: string }>;
   className?: string;
 } & Omit<ComponentProps<typeof Link>, "href" | "className" | "children">;
 
@@ -80,6 +81,7 @@ const Button = ({
   variant = "primary",
   size = "sm",
   children,
+  icon: Icon = RiArrowRightLine,
   className = "",
   ...props
 }: ButtonProps) => {
@@ -112,12 +114,12 @@ const Button = ({
           <span
             className={`flex shrink-0 items-center justify-center ${sizes.icon} ${styles.iconIncoming}`}
           >
-            <RiArrowRightLine className={sizes.arrow} />
+            <Icon className={sizes.arrow} />
           </span>
           <span
             className={`flex shrink-0 items-center justify-center ${sizes.icon} ${styles.iconOutgoing}`}
           >
-            <RiArrowRightLine className={sizes.arrow} />
+            <Icon className={sizes.arrow} />
           </span>
         </span>
       </span>
