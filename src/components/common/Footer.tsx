@@ -67,7 +67,7 @@ function FooterLink({ href, children, className = "" }: FooterLinkProps) {
   return (
     <Link
       href={href}
-      className={`group relative inline-flex pl-0 font-heading text-xs font-medium leading-none tracking-wider text-[#3F3F3F] transition-[padding-left,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:pl-3.5 hover:text-[#5B35E0] ${className}`}
+      className={`group relative inline-flex pl-0 font-heading text-xs font-medium leading-none  text-[#3F3F3F] transition-[padding-left,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:pl-3.5 hover:text-[#5B35E0] ${className}`}
     >
       <FooterBullet />
       {children}
@@ -80,10 +80,10 @@ type FooterColumnProps = FooterColumnData;
 function FooterColumn({ title, links }: FooterColumnProps) {
   return (
     <div>
-      <h3 className="mb-5 font-heading text-xs font-medium tracking-[0.14em] text-[#5B35E0]">
+      <h3 className="mb-3 font-heading text-xs font-medium  text-[#5B35E0]">
         {title}
       </h3>
-      <ul className="space-y-3.5">
+      <ul className="space-y-2.5">
         {links.map((label) => (
           <li key={label}>
             <FooterLink href="/">{label}</FooterLink>
@@ -167,13 +167,13 @@ const Footer = () => {
 
             {/* Standalone links column */}
             <div>
-              <h3 className="mb-5 font-heading text-xs font-medium tracking-[0.14em] text-[#5B35E0]">
+              <h3 className="mb-3 font-heading text-xs font-medium text-[#5B35E0]">
                 More
               </h3>
-              <ul className="space-y-3.5">
+              <ul className="space-y-2.5">
                 {standaloneLinks.map((label) => (
                   <li key={label}>
-                    <FooterLink href="/" className="tracking-[0.14em]">
+                    <FooterLink href="/">
                       {label}
                     </FooterLink>
                   </li>
@@ -214,7 +214,7 @@ const Footer = () => {
             </Link>
 
             {/* Right: legal links */}
-            <ul className="flex flex-wrap gap-6 sm:gap-8">
+            <ul className="flex flex-wrap gap-4 sm:gap-6">
               {legalLinks.map(({ label, href }) => (
                 <li key={label}>
                   <FooterLink href={href}>{label}</FooterLink>
