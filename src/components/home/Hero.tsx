@@ -12,6 +12,7 @@ const OpticalFiber = dynamic(() => import("./OpticalFiber"), {
   ssr: false,
   loading: () => <div className="h-full w-full" aria-hidden />,
 });
+import HeroDataLines from "./HeroDataLines";
 import {
   HOME_INTRO_EASE,
   HOME_INTRO_HERO_RISE_MS,
@@ -321,15 +322,17 @@ const Hero = () => {
       ref={sectionRef}
       className={`relative isolate overflow-hidden text-white ${sectionBgClass}`}
     >
-      <Container borderColor="#FFFFFF33" borderOpacity={borderOpacity} className="px-0! pb-2">
+      <Container borderColor="#FFFFFF33" borderOpacity={borderOpacity} className="px-0! pb-2 relative">
+    
 
         {/* ── 100vh block: heading + button + network ── */}
         <div className="relative z-10 flex h-screen flex-col justify-between pt-16 md:pt-20 lg:pt-20">
+          <HeroDataLines visible={networkVisible} />
 
           {/* Heading + CTA */}
           <div
             ref={headingRef}
-            className="flex flex-1 flex-col items-center justify-center text-center"
+            className="relative z-10 flex flex-1 flex-col items-center justify-center text-center"
           >
             <div ref={titleSlotRef} className="relative z-30 mt-6 flex w-full justify-center">
               <div
@@ -347,43 +350,41 @@ const Hero = () => {
               <h1
                 ref={titleLineRef}
                 data-loader-line
-                className={`absolute left-1/2 top-0 z-10 max-w-4xl -translate-x-1/2 px-6 text-3xl font-heading font-medium leading-[1.15] tracking-tight will-change-[transform,opacity] md:text-4xl lg:text-5xl xl:text-5xl ${
-                  introEnabled && introPhase === "loader-in" ? "opacity-0" : ""
-                } ${introTitleMuted ? "text-[#BCC5D6]" : "text-white"}`}
+                className={`absolute left-1/2 top-0 z-10 max-w-4xl -translate-x-1/2 px-6 text-3xl font-heading font-medium leading-[1.15] tracking-tight will-change-[transform,opacity] md:text-4xl lg:text-5xl xl:text-5xl ${introEnabled && introPhase === "loader-in" ? "opacity-0" : ""
+                  } ${introTitleMuted ? "text-[#BCC5D6]" : "text-white"}`}
               >
-              {INTRO_TITLE_LINES.map((line, lineIndex) => (
-                <React.Fragment key={lineIndex}>
-                  {lineIndex > 0 ? <br /> : null}
-                  {line.map((word, wordIndex) => (
-                    <React.Fragment key={word}>
-                      <span className="inline-block overflow-hidden align-bottom pb-0.5">
-                        <span data-loader-word-inner className="inline-block">
-                          {word}
+                {INTRO_TITLE_LINES.map((line, lineIndex) => (
+                  <React.Fragment key={lineIndex}>
+                    {lineIndex > 0 ? <br /> : null}
+                    {line.map((word, wordIndex) => (
+                      <React.Fragment key={word}>
+                        <span className="inline-block overflow-hidden align-bottom pb-0.5">
+                          <span data-loader-word-inner className="inline-block">
+                            {word}
+                          </span>
                         </span>
-                      </span>
-                      {wordIndex < line.length - 1 ? (
-                        <span aria-hidden className="inline">
-                          {" "}
-                        </span>
-                      ) : null}
-                    </React.Fragment>
-                  ))}
-                </React.Fragment>
-              ))}
-            </h1>
+                        {wordIndex < line.length - 1 ? (
+                          <span aria-hidden className="inline">
+                            {" "}
+                          </span>
+                        ) : null}
+                      </React.Fragment>
+                    ))}
+                  </React.Fragment>
+                ))}
+              </h1>
             </div>
             <div
               ref={buttonsRef}
-              className={`mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center ${
-                introEnabled &&
+              className={`mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center ${introEnabled &&
                 (introPhase === "loader-in" ||
                   introPhase === "loader-fade" ||
                   introPhase === "loader-wave" ||
                   introPhase === "hero-rise" ||
                   introPhase === "nav")
-                  ? "pointer-events-none opacity-0"
-                  : ""
-              }`}
+                ? "pointer-events-none opacity-0"
+                : ""
+                }`}
             >
               <Button href="/" variant="primary">
                 Request Demo
@@ -397,9 +398,8 @@ const Hero = () => {
           {/* Network image — inside 100vh, pushed to bottom via justify-between */}
           <div className="relative h-[min(420px,55vw)] w-full overflow-hidden md:h-[480px] lg:h-[380px]">
             <div
-              className={`relative z-10 h-full w-full motion-reduce:translate-y-0 motion-reduce:opacity-100 ${
-                networkVisible ? "translate-y-0 opacity-100" : "translate-y-[22%] opacity-0"
-              }`}
+              className={`relative z-10 h-full w-full motion-reduce:translate-y-0 motion-reduce:opacity-100 ${networkVisible ? "translate-y-0 opacity-100" : "translate-y-[22%] opacity-0"
+                }`}
               style={{
                 transition: `transform ${HOME_INTRO_NETWORK_MS}ms ${HOME_INTRO_EASE}, opacity ${HOME_INTRO_NETWORK_MS}ms ${HOME_INTRO_EASE}`,
               }}
@@ -421,14 +421,13 @@ const Hero = () => {
 
         {/* ── Stats — below the fold ── */}
         <div
-          className={`relative motion-reduce:opacity-100 ${
-            introComplete ? "opacity-100" : "opacity-0"
-          }`}
+          className={`relative motion-reduce:opacity-100 ${introComplete ? "opacity-100" : "opacity-0"
+            }`}
           style={{
             transition: `opacity 500ms ${HOME_INTRO_EASE}`,
           }}
         >
-        <SectionRadialGlow className="absolute left-1/2 top-20 z-0 -translate-x-1/2 -translate-y-1/3 md:top-20" />
+          <SectionRadialGlow className="absolute left-1/2 top-20 z-0 -translate-x-1/2 -translate-y-1/3 md:top-20" />
           <ul
             ref={listRef}
             className="relative grid grid-cols-2 gap-x-6 gap-y-10 md:flex md:py-10"
@@ -471,16 +470,14 @@ const Hero = () => {
                 className="flex flex-col items-center gap-2 md:flex-1 md:px-8"
               >
                 <p
-                  className={`text-2xl font-heading font-regular tracking-tight transition-colors md:text-3xl lg:text-4xl ${
-                    index === activeIndex ? "text-white" : "text-[#8296B0]"
-                  }`}
+                  className={`text-2xl font-heading font-regular tracking-tight transition-colors md:text-3xl lg:text-4xl ${index === activeIndex ? "text-white" : "text-[#8296B0]"
+                    }`}
                 >
                   {stat.value}
                 </p>
                 <p
-                  className={`text-xs font-sans font-regular text-center leading-relaxed transition-colors md:text-lg ${
-                    index === activeIndex ? "text-white/80" : "text-[#8296B0]"
-                  }`}
+                  className={`text-xs font-sans font-regular text-center leading-relaxed transition-colors md:text-lg ${index === activeIndex ? "text-white/80" : "text-[#8296B0]"
+                    }`}
                 >
                   {stat.label}
                 </p>

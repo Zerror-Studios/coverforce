@@ -140,6 +140,37 @@ button {
   filter: blur(0.5px);
 }
 
+@keyframes hero-data-drop {
+  0% {
+    transform: translate3d(-50%, -120%, 0);
+    opacity: 0;
+  }
+
+  8% {
+    opacity: var(--line-opacity, 0.35);
+  }
+
+  88% {
+    opacity: var(--line-opacity, 0.35);
+  }
+
+  100% {
+    transform: translate3d(-50%, calc(100vh + 120%), 0);
+    opacity: 0;
+  }
+}
+
+.hero-data-drop {
+  animation: hero-data-drop linear infinite;
+}
+
+.hero-data-line {
+  box-shadow:
+    0 0 6px 1px rgba(127, 122, 255, 0.65),
+    0 0 16px 3px rgba(80, 74, 222, 0.4);
+  filter: blur(0.6px);
+}
+
 .way-card-shell {
   isolation: isolate;
   clip-path: inset(4px 4.798048790430439px 4px 4.798048790430439px);
