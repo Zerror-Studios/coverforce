@@ -66,6 +66,7 @@ const Hero = () => {
   const waveCleanupRef = useRef<(() => void) | null>(null);
   const moveTargetRef = useRef({ x: 0, y: 0 });
 
+  const statsWrapRef = useRef<HTMLDivElement | null>(null);
   const listRef = useRef<HTMLUListElement | null>(null);
   const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
   const headingRef = useRef<HTMLDivElement | null>(null);
@@ -289,6 +290,21 @@ const Hero = () => {
         },
       });
     }
+
+    if (statsWrapRef.current) {
+      gsap.set(statsWrapRef.current, { opacity: 0, y: 18 });
+      gsap.to(statsWrapRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.55,
+        ease: "power2.out",
+        onComplete: () => {
+          if (statsWrapRef.current) {
+            gsap.set(statsWrapRef.current, { clearProps: "transform" });
+          }
+        },
+      });
+    }
   }, [introPhase]);
 
   useLayoutEffect(() => {
@@ -322,8 +338,8 @@ const Hero = () => {
       ref={sectionRef}
       className={`relative isolate overflow-hidden text-white ${sectionBgClass}`}
     >
-      <Container borderColor="#FFFFFF33" borderOpacity={borderOpacity} className="px-0! pb-2 relative">
-    
+      <Container borderColor="#FFFFFF33" borderOpacity={borderOpacity} className="px-0! relative">
+
 
         {/* ── 100vh block: heading + button + network ── */}
         <div className="relative z-10 flex h-screen flex-col justify-between pt-16 md:pt-20 lg:pt-20">
@@ -337,7 +353,7 @@ const Hero = () => {
             <div ref={titleSlotRef} className="relative z-30 mt-6 flex w-full justify-center">
               <div
                 ref={titleSpacerRef}
-                className="pointer-events-none invisible max-w-4xl px-6 text-3xl font-heading font-medium leading-[1.15] tracking-tight md:text-4xl lg:text-5xl xl:text-5xl"
+                className="pointer-events-none invisible max-w-4xl px-6 text-3xl font-heading font-regular leading-[1.15] tracking-tight md:text-4xl lg:text-5xl xl:text-5xl"
                 aria-hidden
               >
                 {INTRO_TITLE_LINES.map((line, lineIndex) => (
@@ -376,15 +392,11 @@ const Hero = () => {
             </div>
             <div
               ref={buttonsRef}
-              className={`mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center ${introEnabled &&
-                (introPhase === "loader-in" ||
-                  introPhase === "loader-fade" ||
-                  introPhase === "loader-wave" ||
-                  introPhase === "hero-rise" ||
-                  introPhase === "nav")
-                ? "pointer-events-none opacity-0"
-                : ""
-                }`}
+              className={`mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center ${
+                introEnabled && introPhase !== "text" && introPhase !== "done"
+                  ? "pointer-events-none opacity-0"
+                  : ""
+              }`}
             >
               <Button href="/" variant="primary">
                 Request Demo
@@ -394,97 +406,101 @@ const Hero = () => {
               </Button>
             </div>
           </div>
-
-          {/* Network image — inside 100vh, pushed to bottom via justify-between */}
-          <div className="relative h-[min(420px,55vw)] w-full overflow-hidden md:h-[480px] lg:h-[380px]">
-            <div
-              className={`relative z-10 h-full w-full motion-reduce:translate-y-0 motion-reduce:opacity-100 ${networkVisible ? "translate-y-0 opacity-100" : "translate-y-[22%] opacity-0"
-                }`}
-              style={{
-                transition: `transform ${HOME_INTRO_NETWORK_MS}ms ${HOME_INTRO_EASE}, opacity ${HOME_INTRO_NETWORK_MS}ms ${HOME_INTRO_EASE}`,
-              }}
-              aria-label="Partner network"
+          {/* ── Stats — below the fold ── */}
+          <div
+            ref={statsWrapRef}
+            className={`relative motion-reduce:opacity-100 ${
+              introEnabled && introPhase !== "text" && introPhase !== "done"
+                ? "pointer-events-none opacity-0"
+                : "opacity-100"
+            }`}
+            style={{
+              transition: `opacity 500ms ${HOME_INTRO_EASE}`,
+            }}
+          >
+            <SectionRadialGlow className="absolute left-1/2 top-20 z-0 -translate-x-1/2 -translate-y-1/3 md:top-20" />
+            <ul
+              ref={listRef}
+              className="relative grid grid-cols-2 gap-x-6 gap-y-10 md:flex md:py-10"
+              onMouseLeave={() => setActiveIndex(1)}
             >
-              <OpticalFiber
-                className="h-full w-full"
-                contentScale={1.5}
-                fanSpread={0.58}
-                fanReach={1.2}
-                fanHeight={0.7}
-                fanOffsetX={0.45}
-                fov={86}
-                glowVisible={fiberGlowVisible}
-              />
-            </div>
+              <div
+                className="pointer-events-none w-full absolute inset-y-0 hidden md:block"
+                aria-hidden
+              >
+                {/* Top full-width line + moving segment */}
+                <div className="absolute left-0 top-0 h-[0.05rem] w-full bg-white/5">
+                  <div
+                    className="h-full rounded-full linear-line_color transition-[transform,width] duration-300 ease-out"
+                    style={{
+                      width: `${indicator.width}px`,
+                      transform: `translateX(${indicator.left}px)`,
+                    }}
+                  />
+                </div>
+
+                {/* Bottom full-width line + moving segment */}
+                <div className="absolute left-0 bottom-0 h-[0.05rem] w-full bg-white/5">
+                  <div
+                    className="h-full rounded-full linear-line_color transition-[transform,width] duration-300 ease-out"
+                    style={{
+                      width: `${indicator.width}px`,
+                      transform: `translateX(${indicator.left}px)`,
+                    }}
+                  />
+                </div>
+              </div>
+
+              {stats.map((stat, index) => (
+                <li
+                  key={stat.label}
+                  ref={(el) => {
+                    itemRefs.current[index] = el;
+                  }}
+                  onMouseEnter={() => setActiveIndex(index)}
+                  className="flex flex-col items-center gap-2 md:flex-1 md:px-8"
+                >
+                  <p
+                    className={`text-2xl font-heading font-regular tracking-tight transition-colors md:text-3xl lg:text-4xl ${index === activeIndex ? "text-white" : "text-[#8296B0]"
+                      }`}
+                  >
+                    {stat.value}
+                  </p>
+                  <p
+                    className={`text-xs font-sans font-regular text-center leading-relaxed transition-colors md:text-lg ${index === activeIndex ? "text-white/80" : "text-[#8296B0]"
+                      }`}
+                  >
+                    {stat.label}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+        </div>
+        {/* Network image — inside 100vh, pushed to bottom via justify-between */}
+        <div className="relative h-[min(420px,55vw)] w-full overflow-hidden md:h-[480px] lg:h-[580px] pb-20">
+          <div
+            className={`relative z-10 rotate-180 h-full w-full motion-reduce:translate-y-0 motion-reduce:opacity-100 ${networkVisible ? "translate-y-0 opacity-100" : "translate-y-[22%] opacity-0"
+              }`}
+            style={{
+              transition: `transform ${HOME_INTRO_NETWORK_MS}ms ${HOME_INTRO_EASE}, opacity ${HOME_INTRO_NETWORK_MS}ms ${HOME_INTRO_EASE}`,
+            }}
+            aria-label="Partner network"
+          >
+            <OpticalFiber
+              className="h-full w-full"
+              contentScale={1.4}
+              fanSpread={0.58}
+              fanReach={1.2}
+              fanHeight={0.62}
+              fanOffsetX={0.45}
+              fov={86}
+              glowVisible={fiberGlowVisible}
+            />
           </div>
         </div>
 
-        {/* ── Stats — below the fold ── */}
-        <div
-          className={`relative motion-reduce:opacity-100 ${introComplete ? "opacity-100" : "opacity-0"
-            }`}
-          style={{
-            transition: `opacity 500ms ${HOME_INTRO_EASE}`,
-          }}
-        >
-          <SectionRadialGlow className="absolute left-1/2 top-20 z-0 -translate-x-1/2 -translate-y-1/3 md:top-20" />
-          <ul
-            ref={listRef}
-            className="relative grid grid-cols-2 gap-x-6 gap-y-10 md:flex md:py-10"
-            onMouseLeave={() => setActiveIndex(1)}
-          >
-            <div
-              className="pointer-events-none w-full absolute inset-y-0 hidden md:block"
-              aria-hidden
-            >
-              {/* Top full-width line + moving segment */}
-              <div className="absolute left-0 top-0 h-[0.05rem] w-full bg-white/5">
-                <div
-                  className="h-full rounded-full linear-line_color transition-[transform,width] duration-300 ease-out"
-                  style={{
-                    width: `${indicator.width}px`,
-                    transform: `translateX(${indicator.left}px)`,
-                  }}
-                />
-              </div>
-
-              {/* Bottom full-width line + moving segment */}
-              <div className="absolute left-0 bottom-0 h-[0.05rem] w-full bg-white/5">
-                <div
-                  className="h-full rounded-full linear-line_color transition-[transform,width] duration-300 ease-out"
-                  style={{
-                    width: `${indicator.width}px`,
-                    transform: `translateX(${indicator.left}px)`,
-                  }}
-                />
-              </div>
-            </div>
-
-            {stats.map((stat, index) => (
-              <li
-                key={stat.label}
-                ref={(el) => {
-                  itemRefs.current[index] = el;
-                }}
-                onMouseEnter={() => setActiveIndex(index)}
-                className="flex flex-col items-center gap-2 md:flex-1 md:px-8"
-              >
-                <p
-                  className={`text-2xl font-heading font-regular tracking-tight transition-colors md:text-3xl lg:text-4xl ${index === activeIndex ? "text-white" : "text-[#8296B0]"
-                    }`}
-                >
-                  {stat.value}
-                </p>
-                <p
-                  className={`text-xs font-sans font-regular text-center leading-relaxed transition-colors md:text-lg ${index === activeIndex ? "text-white/80" : "text-[#8296B0]"
-                    }`}
-                >
-                  {stat.label}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
 
       </Container>
     </section>

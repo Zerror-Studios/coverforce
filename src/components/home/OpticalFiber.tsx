@@ -400,7 +400,7 @@ export default function OpticalFiber({
       img.style.left = `${chosenPos.x}px`;
       img.style.top = `${chosenPos.y}px`;
       img.style.opacity = "0";
-      img.style.transform = "translate(-50%, -50%)";
+      img.style.transform = "translate(-50%, -50%) rotate(180deg)";
       logosLayer.appendChild(img);
 
       logoTravelers.push({
@@ -545,7 +545,7 @@ export default function OpticalFiber({
             traveler.el.style.left = `${traveler.screenX}px`;
             traveler.el.style.top = `${traveler.screenY}px`;
             traveler.el.style.opacity = String(opacity * 0.92);
-            traveler.el.style.transform = `translate(-50%, -50%) scale(${breathe})`;
+            traveler.el.style.transform = `translate(-50%, -50%) rotate(180deg) scale(${breathe})`;
           }
 
           if (traveler.life >= traveler.maxLife) {

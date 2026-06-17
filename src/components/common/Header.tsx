@@ -80,7 +80,7 @@ const Header = () => {
       return;
     }
 
-    if (introPhase === "nav") {
+    if (introPhase === "text" || introPhase === "network" || introPhase === "done") {
       gsap.to(navBar, {
         yPercent: 0,
         opacity: 1,
