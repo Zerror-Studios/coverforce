@@ -132,7 +132,7 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
           },
           {
             label: "Brokers",
-            href: "/",
+            href: "/solutions/brokers",
             description: "One workflow for every producer on your team.",
             icon: RiBriefcaseLine,
           },
@@ -144,7 +144,7 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
           },
           {
             label: "Startups",
-            href: "/",
+            href: "/solutions/startups",
             description: "Launch insurance products on modern infrastructure.",
             icon: RiRocketLine,
           },
