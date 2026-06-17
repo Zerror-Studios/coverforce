@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CalculatorInputs, SEGMENTS, CalculationResult } from '@/lib/calculations';
 import { exportToCSV, exportToPDF, copyShareText } from '@/lib/exportUtils';
 import { Copy, FileSpreadsheet, FileText, Loader2 } from 'lucide-react';
+import Button from '@/components/common/Button';
 
 interface Props {
   inputs: CalculatorInputs;
@@ -20,28 +21,30 @@ export default function CompanyBar({ inputs, updateInput, applySegment, results 
   };
 
   return (
-    <div className="flex flex-col md:flex-row items-center gap-6 px-4 md:px-10 py-5 bg-white border-b border-gray-200">
-      <div className="flex-1 w-full md:w-auto">
-        <input 
-          className="w-full text-2xl md:text-3xl font-serif text-gray-900 border-none outline-none focus:ring-0 bg-transparent placeholder-gray-300"
-          placeholder="Enter prospect name…"
-          value={inputs.companyName}
-          onChange={(e) => updateInput('companyName', e.target.value)}
-        />
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 md:px-10 mt-20">
+      <div className="flex-1">
+        <div className="flex items-center gap-3">
+          <input
+            type="text"
+            className="bg-transparent border-b border-gray-200 outline-none text-xl md:text-2xl font-bold text-[#0a143b] placeholder-gray-400 focus:border-[#3834a4] transition-colors pb-1 max-w-[300px]"
+            placeholder="Company Name"
+            value={inputs.companyName}
+            onChange={e => updateInput('companyName', e.target.value)}
+          />
+        </div>
       </div>
-      
+
       <div className="flex items-center gap-3">
-        <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Company Size</div>
-        <div className="flex bg-gray-100 p-1 rounded-lg">
+        <div className="text-xs font-semibold text-[#50617a] uppercase tracking-widest font-heading">Company Size</div>
+        <div className="flex bg-gray-100 p-1 rounded-lg border border-gray-200/50">
           {(['startup', 'mid', 'enterprise'] as const).map(seg => (
             <button
               key={seg}
               onClick={() => handleSegmentClick(seg)}
-              className={`px-3 py-1.5 text-[11.5px] font-semibold rounded-md transition-all ${
-                activeSegment === seg 
-                  ? 'bg-white text-gray-900 shadow-sm' 
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
+              className={`px-3 py-1.5 text-[11.5px] font-semibold rounded-md transition-all ${activeSegment === seg
+                ? 'bg-white text-[#0a143b] shadow-sm'
+                : 'text-[#50617a] hover:text-[#0a143b] hover:bg-gray-200/50'
+                }`}
             >
               {seg === 'startup' ? 'Startup' : seg === 'mid' ? 'Mid-Market' : 'Enterprise'}
             </button>
@@ -50,17 +53,16 @@ export default function CompanyBar({ inputs, updateInput, applySegment, results 
       </div>
 
       <div className="flex items-center gap-3">
-        <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Projection</div>
-        <div className="flex bg-gray-100 p-1 rounded-lg">
+        <div className="text-xs font-semibold text-[#50617a] uppercase tracking-widest font-heading">Projection</div>
+        <div className="flex bg-gray-100 p-1 rounded-lg border border-gray-200/50">
           {[3, 5].map(years => (
             <button
               key={years}
               onClick={() => updateInput('projYears', years)}
-              className={`px-3 py-1.5 text-[11.5px] font-semibold rounded-md transition-all ${
-                inputs.projYears === years 
-                  ? 'bg-white text-gray-900 shadow-sm' 
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
+              className={`px-3 py-1.5 text-[11.5px] font-semibold rounded-md transition-all ${inputs.projYears === years
+                ? 'bg-white text-[#0a143b] shadow-sm'
+                : 'text-[#50617a] hover:text-[#0a143b] hover:bg-gray-200/50'
+                }`}
             >
               {years} Years
             </button>
@@ -68,28 +70,35 @@ export default function CompanyBar({ inputs, updateInput, applySegment, results 
         </div>
       </div>
 
-      <div className="flex items-center gap-2 border-l border-gray-200 pl-4 md:pl-6 ml-2">
-        <button 
+      <div className="flex items-center gap-4 border-l border-gray-200 pl-4 md:pl-6 ml-2">
+        <Button
           onClick={() => copyShareText(results, inputs.companyName)}
-          className="flex items-center gap-1.5 px-3 py-2 text-[11.5px] font-bold text-gray-600 bg-gray-50 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors border border-gray-200"
+          variant="outline"
+          size="sm"
+          icon={Copy}
           title="Copy Executive Summary to Clipboard"
         >
-          <Copy className="w-3.5 h-3.5" /> Copy
-        </button>
-        <button 
+          Copy
+        </Button>
+        <Button
           onClick={() => exportToCSV(results, inputs.companyName)}
-          className="flex items-center gap-1.5 px-3 py-2 text-[11.5px] font-bold text-gray-600 bg-gray-50 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors border border-gray-200"
+          variant="outline"
+          size="sm"
+          icon={FileSpreadsheet}
           title="Export Model to CSV"
         >
-          <FileSpreadsheet className="w-3.5 h-3.5" /> CSV
-        </button>
-        <button 
+          CSV
+        </Button>
+        <Button
           onClick={() => exportToPDF('calculator-main-view', inputs.companyName)}
-          className="flex items-center gap-1.5 px-4 py-2 text-[11.5px] font-bold text-white bg-sky-600 hover:bg-sky-700 disabled:bg-sky-400 rounded-lg transition-colors shadow-sm print:hidden"
+          variant="outline"
+          size="sm"
+          icon={FileText}
           title="Print or Save as PDF"
+          className="print:hidden"
         >
-          <FileText className="w-3.5 h-3.5" /> PDF
-        </button>
+          PDF
+        </Button>
       </div>
     </div>
   );

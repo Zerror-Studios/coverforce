@@ -2,6 +2,7 @@ import React from 'react';
 import { CalculationResult } from '@/lib/calculations';
 import { fmtM, pct } from '@/lib/formatters';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { Lightbulb } from 'lucide-react';
 
 export default function CompoundingTab({ results }: { results: CalculationResult }) {
   const { years, commTotal, inputs } = results;
@@ -23,15 +24,15 @@ export default function CompoundingTab({ results }: { results: CalculationResult
     if (active && payload && payload.length) {
       const total = payload[0].value + payload[1].value;
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg text-sm">
-          <p className="font-bold text-gray-900 mb-2">{label}</p>
+        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-sm text-sm">
+          <p className="font-bold text-[#0a143b] mb-2">{label}</p>
           {payload.map((entry: any, index: number) => (
             <div key={index} className="flex justify-between gap-4 mb-1">
               <span style={{ color: entry.color }}>{entry.name}</span>
-              <span className="font-semibold text-gray-900">{fmtM(entry.value)}</span>
+              <span className="font-semibold text-[#0a143b]">{fmtM(entry.value)}</span>
             </div>
           ))}
-          <div className="border-t border-gray-100 mt-2 pt-2 flex justify-between gap-4 font-bold text-gray-900">
+          <div className="border-t border-gray-200 mt-2 pt-2 flex justify-between gap-4 font-bold text-[#0a143b]">
             <span>Total Incremental</span>
             <span>{fmtM(total)}</span>
           </div>
@@ -45,39 +46,39 @@ export default function CompoundingTab({ results }: { results: CalculationResult
     <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-gray-900 mb-1">The Compounding Renewal Engine</h3>
-        <p className="text-sm text-gray-500 mb-6">Every policy written this year renews next year. That renewal stacks on top of next year's new business. This is the structural value of acting now vs. waiting — the compounding clock starts on day one.</p>
+        <h3 className="text-lg font-bold text-[#0a143b] mb-1 font-heading">The Compounding Renewal Engine</h3>
+        <p className="text-sm text-[#50617a] mb-6 font-sans">Every policy written this year renews next year. That renewal stacks on top of next year's new business. This is the structural value of acting now vs. waiting — the compounding clock starts on day one.</p>
         
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[600px]">
+          <table className="w-full text-left border-collapse min-w-[600px] font-sans">
             <thead>
               <tr>
-                <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50 rounded-tl-lg">Year</th>
-                <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right border-b-2 border-gray-200 bg-gray-50">New Business Added</th>
-                <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right border-b-2 border-gray-200 bg-gray-50">Renewals from Prior</th>
-                <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right border-b-2 border-gray-200 bg-gray-50">Total Incremental Premium</th>
-                <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right border-b-2 border-gray-200 bg-gray-50">Commission at {inputs.commissionRate}%</th>
-                <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right border-b-2 border-gray-200 bg-gray-50 rounded-tr-lg">Cumulative New Book</th>
+                <th className="py-3 px-4 text-xs font-bold text-[#50617a] uppercase tracking-wider border-b border-gray-200 bg-gray-50 rounded-tl-lg">Year</th>
+                <th className="py-3 px-4 text-xs font-bold text-[#50617a] uppercase tracking-wider text-right border-b border-gray-200 bg-gray-50">New Business Added</th>
+                <th className="py-3 px-4 text-xs font-bold text-[#50617a] uppercase tracking-wider text-right border-b border-gray-200 bg-gray-50">Renewals from Prior</th>
+                <th className="py-3 px-4 text-xs font-bold text-[#50617a] uppercase tracking-wider text-right border-b border-gray-200 bg-gray-50">Total Incremental Premium</th>
+                <th className="py-3 px-4 text-xs font-bold text-[#50617a] uppercase tracking-wider text-right border-b border-gray-200 bg-gray-50">Commission at {inputs.commissionRate}%</th>
+                <th className="py-3 px-4 text-xs font-bold text-[#50617a] uppercase tracking-wider text-right border-b border-gray-200 bg-gray-50 rounded-tr-lg">Cumulative New Book</th>
               </tr>
             </thead>
             <tbody>
               {years.map(y => (
                 <tr key={y.year} className="hover:bg-gray-50 border-b border-gray-100 transition-colors">
-                  <td className="py-3 px-4 text-sm font-semibold text-gray-900">Year {y.year}</td>
-                  <td className="py-3 px-4 text-sm text-gray-900 text-right">{fmtM(y.newBizThisYear)}</td>
-                  <td className="py-3 px-4 text-sm font-bold text-emerald-600 text-right">{fmtM(y.renewalsThisYear)}</td>
-                  <td className="py-3 px-4 text-sm font-bold text-sky-700 text-right">{fmtM(y.incrementalPremium)}</td>
-                  <td className="py-3 px-4 text-sm font-bold text-emerald-600 text-right">{fmtM(y.commOnIncremental)}</td>
-                  <td className="py-3 px-4 text-sm font-bold text-amber-600 text-right">{fmtM(y.cumNewPremium)}</td>
+                  <td className="py-3 px-4 text-sm font-semibold text-[#0a143b]">Year {y.year}</td>
+                  <td className="py-3 px-4 text-sm text-[#50617a] text-right">{fmtM(y.newBizThisYear)}</td>
+                  <td className="py-3 px-4 text-sm font-bold text-[#3834a4] text-right">{fmtM(y.renewalsThisYear)}</td>
+                  <td className="py-3 px-4 text-sm font-bold text-[#3834a4] text-right">{fmtM(y.incrementalPremium)}</td>
+                  <td className="py-3 px-4 text-sm font-bold text-[#3834a4] text-right">{fmtM(y.commOnIncremental)}</td>
+                  <td className="py-3 px-4 text-sm font-bold text-[#0a143b] text-right">{fmtM(y.cumNewPremium)}</td>
                 </tr>
               ))}
-              <tr className="bg-gray-50 border-t-2 border-gray-200 font-bold">
-                <td className="py-3 px-4 text-sm text-gray-900 rounded-bl-lg">Total</td>
-                <td className="py-3 px-4 text-sm text-gray-900 text-right">{fmtM(totNewBiz)}</td>
-                <td className="py-3 px-4 text-sm text-emerald-600 text-right">{fmtM(totRenew)}</td>
-                <td className="py-3 px-4 text-sm text-sky-700 text-right">{fmtM(totIncr)}</td>
-                <td className="py-3 px-4 text-sm text-emerald-600 text-right">{fmtM(commTotal)}</td>
-                <td className="py-3 px-4 text-sm text-amber-600 text-right rounded-br-lg">{fmtM(finalYr?.cumNewPremium)}</td>
+              <tr className="bg-gray-100 border-t border-gray-200 font-bold text-[#0a143b]">
+                <td className="py-3 px-4 text-sm rounded-bl-lg">Total</td>
+                <td className="py-3 px-4 text-sm text-right">{fmtM(totNewBiz)}</td>
+                <td className="py-3 px-4 text-sm text-[#3834a4] text-right">{fmtM(totRenew)}</td>
+                <td className="py-3 px-4 text-sm text-[#3834a4] text-right">{fmtM(totIncr)}</td>
+                <td className="py-3 px-4 text-sm text-[#3834a4] text-right">{fmtM(commTotal)}</td>
+                <td className="py-3 px-4 text-sm text-[#0a143b] text-right rounded-br-lg">{fmtM(finalYr?.cumNewPremium)}</td>
               </tr>
             </tbody>
           </table>
@@ -85,25 +86,31 @@ export default function CompoundingTab({ results }: { results: CalculationResult
       </div>
 
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-gray-900 mb-1">New Business vs. Renewal Stack — Growing Annuity</h3>
-        <p className="text-sm text-gray-500 mb-6">The green (renewals) band expands every year, demonstrating the annuity effect of acting now.</p>
+        <h3 className="text-lg font-bold text-[#0a143b] mb-1 font-heading">New Business vs. Renewal Stack — Growing Annuity</h3>
+        <p className="text-sm text-[#50617a] mb-6 font-sans">The green (renewals) band expands every year, demonstrating the annuity effect of acting now.</p>
         
-        <div className="h-[280px] w-full">
+        <div className="h-[280px] w-full font-sans">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
               <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} dy={10} />
               <YAxis tickFormatter={(val) => fmtM(val)} tickLine={false} axisLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} />
-              <Tooltip cursor={{ fill: 'transparent' }} content={<CustomTooltip />} />
-              <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
-              <Bar dataKey="renewalsThisYear" name="Renewals from Prior Years" stackId="a" fill="#10B981" radius={[0, 0, 4, 4]} />
-              <Bar dataKey="newBizThisYear" name="Net New Business This Year" stackId="a" fill="#0EA5E9" radius={[4, 4, 0, 0]} />
+              <Tooltip cursor={{ fill: '#F3F4F6' }} content={<CustomTooltip />} />
+              <Legend wrapperStyle={{ paddingTop: '20px', color: '#374151' }} iconType="circle" />
+              <Bar dataKey="renewalsThisYear" name="Renewals from Prior Years" stackId="a" fill="#293B73" radius={[0, 0, 4, 4]} />
+              <Bar dataKey="newBizThisYear" name="Net New Business This Year" stackId="a" fill="#3834a4" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      <div className="bg-emerald-50 border-l-4 border-emerald-500 rounded-r-xl p-5 text-sm text-gray-800 leading-relaxed shadow-sm">
-        <strong>Key Insight:</strong> By Year {inputs.projYears}, the renewal book represents <strong>{pct(renewalPercentage)}</strong> of total incremental premium — meaning growth is increasingly automatic. The total {inputs.projYears}-year commission on compounding new premium is <strong>{fmtM(commTotal)}</strong>.
+      <div className="bg-[#f0f4ff] border-l-4 border-[#3834a4] rounded-r-xl p-6 text-sm text-[#0a143b] leading-relaxed shadow-sm font-sans flex gap-4 items-start group hover:shadow-md transition-shadow duration-300">
+        <div className="p-2 bg-white rounded-full text-[#3834a4] shadow-sm group-hover:scale-110 transition-transform duration-300 shrink-0">
+          <Lightbulb className="w-5 h-5" />
+        </div>
+        <div>
+          <strong className="text-[#0a143b] block mb-1">Key Insight:</strong> 
+          By Year {inputs.projYears}, the renewal book represents <strong className="text-[#3834a4]">{pct(renewalPercentage)}</strong> of total incremental premium — meaning growth is increasingly automatic. The total {inputs.projYears}-year commission on compounding new premium is <strong className="text-[#3834a4]">{fmtM(commTotal)}</strong>.
+        </div>
       </div>
 
     </div>

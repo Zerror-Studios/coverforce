@@ -445,3 +445,25 @@ button {
 .marquee-heading {
   transform-style: preserve-3d;
 }
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  body {
+    @apply bg-white;
+  }
+
+  .print\:hidden {
+    display: none !important;
+  }
+  
+  /* Avoid breaking inside cards */
+  .bg-white.rounded-2xl, .bg-white.rounded-xl, .bg-\[\#f0f4ff\] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

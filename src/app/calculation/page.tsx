@@ -1,8 +1,6 @@
 'use client';
 
 import React from 'react';
-import Header from '@/components/common/Header';
-import Footer from '@/components/common/Footer';
 import CompanyBar from '@/components/calculator/CompanyBar';
 import Sidebar from '@/components/calculator/Sidebar';
 import Tabs from '@/components/calculator/Tabs';
@@ -20,30 +18,24 @@ export default function CalculationPage() {
   } = useCalculator();
 
   return (
-    <div className="min-h-screen bg-gray-50/50 flex flex-col font-sans">
-      <div className="print:hidden">
-        <Header />
-      </div>
-      
-      <main className="flex-1 flex flex-col">
-        <CompanyBar 
-          inputs={inputs} 
-          updateInput={updateInput} 
-          applySegment={applySegment} 
-          results={results}
+    <>
+      <CompanyBar
+        inputs={inputs}
+        updateInput={updateInput}
+        applySegment={applySegment}
+        results={results}
+      />
+
+      <div id="calculator-main-view" className="max-w-[1440px] w-full mx-auto px-5 md:px-10 flex flex-col md:flex-row print:flex-col gap-8 print:gap-4 print:py-4">
+        <Sidebar
+          inputs={inputs}
+          updateInput={updateInput}
+          toggleCommercialLob={toggleCommercialLob}
+          setCommercialLobPct={setCommercialLobPct}
+          setPersonalLobPct={setPersonalLobPct}
         />
-        
-        <div id="calculator-main-view" className="max-w-[1440px] w-full mx-auto p-5 md:p-10 flex flex-col md:flex-row gap-8">
-          <Sidebar 
-            inputs={inputs}
-            updateInput={updateInput}
-            toggleCommercialLob={toggleCommercialLob}
-            setCommercialLobPct={setCommercialLobPct}
-            setPersonalLobPct={setPersonalLobPct}
-          />
-          <Tabs results={results} />
-        </div>
-      </main>
-    </div>
+        <Tabs results={results} />
+      </div>
+    </>
   );
 }

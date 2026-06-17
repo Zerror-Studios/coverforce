@@ -6,14 +6,24 @@ import type { ComponentProps } from "react";
 export type ButtonVariant = "primary" | "secondary" | "outline";
 export type ButtonSize = "sm" | "md";
 
-type ButtonProps = {
-  href: string;
+type BaseButtonProps = {
   variant?: ButtonVariant;
   size?: ButtonSize;
   children: React.ReactNode;
   icon?: React.ComponentType<{ className?: string }>;
   className?: string;
-} & Omit<ComponentProps<typeof Link>, "href" | "className" | "children">;
+  onClick?: React.MouseEventHandler<HTMLButtonElement | HTMLAnchorElement>;
+};
+
+type ButtonAsLinkProps = BaseButtonProps & Omit<ComponentProps<typeof Link>, "href" | "className" | "children" | "onClick"> & {
+  href: string;
+};
+
+type ButtonAsButtonProps = BaseButtonProps & Omit<ComponentProps<"button">, "className" | "children" | "onClick"> & {
+  href?: never;
+};
+
+type ButtonProps = ButtonAsLinkProps | ButtonAsButtonProps;
 
 const HOVER_EASE = "duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]";
 
@@ -88,12 +98,10 @@ const Button = ({
   const styles = variantStyles[variant];
   const sizes = sizeStyles[size];
 
-  return (
-    <Link
-      href={href}
-      className={`group inline-flex w-fit items-stretch overflow-hidden leading-none ${styles.root} ${className}`}
-      {...props}
-    >
+  const commonClasses = `group inline-flex w-fit items-stretch overflow-hidden leading-none ${styles.root} ${className}`;
+
+  const innerContent = (
+    <>
       <span className={`flex items-center ${styles.label} ${sizes.label}`}>
         <span className={`block overflow-hidden ${sizes.textClip}`}>
           <span
@@ -123,7 +131,21 @@ const Button = ({
           </span>
         </span>
       </span>
-    </Link>
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link href={href} className={commonClasses} {...(props as any)}>
+        {innerContent}
+      </Link>
+    );
+  }
+
+  return (
+    <button className={commonClasses} {...(props as any)}>
+      {innerContent}
+    </button>
   );
 };
 
