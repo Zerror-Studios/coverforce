@@ -1069,7 +1069,7 @@ const ProcessFlow = () => {
                             </div>
                         ))}
                         <div className="process-progress-fill pointer-events-none absolute -left-6 top-0 h-full w-[2px] overflow-hidden">
-                            <div className="progress-fill-inner absolute top-0 left-0 h-full w-full origin-top bg-gradient-to-b from-[#5B35E0] via-[#B87AFF] to-[#5B35E0] will-change-transform" />
+                            <div className="progress-fill-inner absolute top-0 left-0 h-full w-full opacity-0 origin-top bg-gradient-to-b from-[#5B35E0] via-[#B87AFF] to-[#5B35E0] will-change-transform" />
                         </div>
                     </div>
 
