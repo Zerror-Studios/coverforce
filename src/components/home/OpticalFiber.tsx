@@ -21,6 +21,27 @@ type OpticalFiberProps = {
   glowVisible?: boolean;
 };
 
+const HERO_LOGOS = Array.from({ length: 7 }, (_, i) => `/images/hero/logo${i + 1}.svg`);
+const MAX_TIP_LOGOS = 7;
+const LOGO_SIZE_MIN = 60;
+const LOGO_SIZE_MAX = 80;
+const MIN_FIBER_INDEX_GAP = 10;
+const MIN_SCREEN_GAP = 1.12;
+const MIN_TIP_LENGTH = 0.42;
+
+type LogoTraveler = {
+  el: HTMLImageElement;
+  fiberIndex: number;
+  logoSrc: string;
+  life: number;
+  maxLife: number;
+  fadeIn: number;
+  fadeOut: number;
+  size: number;
+  screenX: number;
+  screenY: number;
+};
+
 export default function OpticalFiber({
   className = "",
   contentScale = 1,
@@ -33,11 +54,13 @@ export default function OpticalFiber({
 }: OpticalFiberProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const logosLayerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
     const canvas = canvasRef.current;
-    if (!container || !canvas) return;
+    const logosLayer = logosLayerRef.current;
+    if (!container || !canvas || !logosLayer) return;
 
     const scene = new THREE.Scene();
 
@@ -287,11 +310,123 @@ export default function OpticalFiber({
     visibilityObserver.observe(container);
 
     const _end = new THREE.Vector3();
+    const _tipWorld = new THREE.Vector3();
+    const logoTravelers: LogoTraveler[] = [];
+    let spawnCooldown = 0.35;
+
+    const projectFiberTip = (fiberIndex: number, width: number, height: number) => {
+      _tipWorld.set(
+        dotPositions[fiberIndex * 3],
+        dotPositions[fiberIndex * 3 + 1],
+        dotPositions[fiberIndex * 3 + 2],
+      );
+      content.localToWorld(_tipWorld);
+      _tipWorld.project(camera);
+      if (_tipWorld.z > 1 || width === 0 || height === 0) return null;
+      return {
+        x: (_tipWorld.x * 0.5 + 0.5) * width,
+        y: (-_tipWorld.y * 0.5 + 0.5) * height,
+      };
+    };
+
+    const pickTipFiber = () => {
+      const pool: number[] = [];
+      for (let i = 0; i < LINE_COUNT; i++) {
+        if (fibers[i].lengthT < MIN_TIP_LENGTH) continue;
+        const weight = 1 + Math.floor(fibers[i].lengthT * 4);
+        for (let w = 0; w < weight; w++) pool.push(i);
+      }
+      if (!pool.length) return Math.floor(Math.random() * LINE_COUNT);
+      return pool[Math.floor(Math.random() * pool.length)];
+    };
+
+    const isSpawnSlotClear = (
+      fiberIndex: number,
+      size: number,
+      screenPos: { x: number; y: number },
+    ) => {
+      for (const traveler of logoTravelers) {
+        if (traveler.fiberIndex === fiberIndex) return false;
+        if (Math.abs(traveler.fiberIndex - fiberIndex) < MIN_FIBER_INDEX_GAP) return false;
+
+        const minDist = ((traveler.size + size) / 2) * MIN_SCREEN_GAP;
+        if (Math.hypot(screenPos.x - traveler.screenX, screenPos.y - traveler.screenY) < minDist) {
+          return false;
+        }
+      }
+      return true;
+    };
+
+    const pickLogoSrc = () => {
+      const active = new Set(logoTravelers.map((t) => t.logoSrc));
+      const available = HERO_LOGOS.filter((src) => !active.has(src));
+      const pool = available.length ? available : HERO_LOGOS;
+      return pool[Math.floor(Math.random() * pool.length)];
+    };
+
+    const spawnLogoTraveler = () => {
+      if (logoTravelers.length >= MAX_TIP_LOGOS) return;
+
+      content.updateMatrixWorld(true);
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      if (!width || !height) return;
+
+      const size = LOGO_SIZE_MIN + Math.random() * (LOGO_SIZE_MAX - LOGO_SIZE_MIN);
+
+      let chosenFiber = -1;
+      let chosenPos: { x: number; y: number } | null = null;
+
+      for (let attempt = 0; attempt < 28; attempt++) {
+        const fiberIndex = pickTipFiber();
+        const screenPos = projectFiberTip(fiberIndex, width, height);
+        if (!screenPos || !isSpawnSlotClear(fiberIndex, size, screenPos)) continue;
+        chosenFiber = fiberIndex;
+        chosenPos = screenPos;
+        break;
+      }
+
+      if (chosenFiber < 0 || !chosenPos) return;
+
+      const logoSrc = pickLogoSrc();
+      const img = document.createElement("img");
+      img.src = logoSrc;
+      img.alt = "";
+      img.draggable = false;
+      img.className =
+        "pointer-events-none absolute select-none will-change-[left,top,opacity,transform]";
+      img.style.width = `${size}px`;
+      img.style.height = "auto";
+      img.style.left = `${chosenPos.x}px`;
+      img.style.top = `${chosenPos.y}px`;
+      img.style.opacity = "0";
+      img.style.transform = "translate(-50%, -50%)";
+      logosLayer.appendChild(img);
+
+      logoTravelers.push({
+        el: img,
+        fiberIndex: chosenFiber,
+        logoSrc,
+        life: 0,
+        maxLife: 4.8 + Math.random() * 2.4,
+        fadeIn: 0.38 + Math.random() * 0.18,
+        fadeOut: 0.75 + Math.random() * 0.35,
+        size,
+        screenX: chosenPos.x,
+        screenY: chosenPos.y,
+      });
+    };
+
+    if (!reducedMotion) {
+      spawnLogoTraveler();
+      spawnLogoTraveler();
+    }
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
       if (!visible) return;
 
+      const delta = clock.getDelta();
       const t = clock.getElapsedTime();
 
       raycaster.setFromCamera(mouse, camera);
@@ -371,6 +506,55 @@ export default function OpticalFiber({
 
       dotGeo.attributes.position.needsUpdate = true;
 
+      if (!reducedMotion) {
+        spawnCooldown -= delta;
+        if (spawnCooldown <= 0) {
+          spawnCooldown = 0.55 + Math.random() * 1.1;
+          if (Math.random() > 0.2) spawnLogoTraveler();
+        }
+
+        content.updateMatrixWorld(true);
+
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+
+        for (let j = logoTravelers.length - 1; j >= 0; j--) {
+          const traveler = logoTravelers[j];
+          traveler.life += delta;
+
+          const projected = projectFiberTip(traveler.fiberIndex, width, height);
+
+          if (!projected) {
+            traveler.el.style.opacity = "0";
+          } else {
+            traveler.screenX = projected.x;
+            traveler.screenY = projected.y;
+
+            let opacity = 0;
+            if (traveler.life < traveler.fadeIn) {
+              opacity = traveler.life / traveler.fadeIn;
+            } else if (traveler.life > traveler.maxLife - traveler.fadeOut) {
+              opacity = Math.max(0, (traveler.maxLife - traveler.life) / traveler.fadeOut);
+            } else {
+              opacity = 1;
+            }
+
+            const breathe =
+              0.94 + Math.sin(t * 2.4 + traveler.fiberIndex * 0.35) * 0.06;
+
+            traveler.el.style.left = `${traveler.screenX}px`;
+            traveler.el.style.top = `${traveler.screenY}px`;
+            traveler.el.style.opacity = String(opacity * 0.92);
+            traveler.el.style.transform = `translate(-50%, -50%) scale(${breathe})`;
+          }
+
+          if (traveler.life >= traveler.maxLife) {
+            traveler.el.remove();
+            logoTravelers.splice(j, 1);
+          }
+        }
+      }
+
       const pulse = 0.9 + Math.sin(t * 1.4) * 0.1;
       glowSprite.scale.set(5 * pulse, 5 * pulse, 1);
       innerSprite.material.opacity = 0.85 + Math.sin(t * 2.1) * 0.15;
@@ -387,6 +571,8 @@ export default function OpticalFiber({
       container.removeEventListener("mouseleave", onMouseLeave);
       resizeObserver.disconnect();
       visibilityObserver.disconnect();
+      logoTravelers.forEach((traveler) => traveler.el.remove());
+      logoTravelers.length = 0;
       renderer.dispose();
     };
   }, [contentScale, fanSpread, fanReach, fov, fanHeight, fanOffsetX]);
@@ -404,6 +590,11 @@ export default function OpticalFiber({
         aria-hidden
       />
       <canvas ref={canvasRef} className="relative z-10 block h-full w-full" aria-hidden />
+      <div
+        ref={logosLayerRef}
+        className="pointer-events-none absolute inset-0 z-20 overflow-hidden"
+        aria-hidden
+      />
     </div>
   );
 }
