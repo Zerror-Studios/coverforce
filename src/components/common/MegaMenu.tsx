@@ -17,6 +17,7 @@ type MegaMenuProps = {
   config: MegaMenuConfig;
   onMouseEnter: () => void;
   onClipClosed?: () => void;
+  onLinkClick?: () => void;
 };
 
 function Reveal({
@@ -67,11 +68,13 @@ function MegaMenuItem({
   enter,
   enterKey,
   delay,
+  onLinkClick,
 }: {
   link: MegaMenuLink;
   enter: boolean;
   enterKey: number;
   delay: number;
+  onLinkClick?: () => void;
 }) {
   const Icon = link.icon;
 
@@ -80,6 +83,7 @@ function MegaMenuItem({
       <Reveal enter={enter} enterKey={enterKey} delay={delay} className="h-full">
         <Link
           href={link.href}
+          onClick={onLinkClick}
           className="group flex h-full flex-col gap-2.5 bg-white px-6 py-6 transition-colors duration-200 hover:bg-[#F7F9FC] lg:px-8 lg:py-7"
         >
           <Icon className="size-4 shrink-0 text-[#0032C9]" aria-hidden />
@@ -109,6 +113,7 @@ export default function MegaMenu({
   config,
   onMouseEnter,
   onClipClosed,
+  onLinkClick,
 }: MegaMenuProps) {
   const [clipShown, setClipShown] = useState(false);
   const [contentEnter, setContentEnter] = useState(false);
@@ -156,6 +161,7 @@ export default function MegaMenu({
               enter={contentEnter}
               enterKey={enterKey}
               delay={CONTENT_BASE_DELAY + CONTENT_STAG * index}
+              onLinkClick={onLinkClick}
             />
           ))}
         </div>

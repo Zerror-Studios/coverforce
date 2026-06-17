@@ -6,6 +6,7 @@ import Container from "./Container";
 import Button from "./Button";
 import MegaMenu from "./MegaMenu";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { RiArrowDownSLine } from "@remixicon/react";
 import { MEGA_MENUS } from "@/data/megaMenu";
@@ -39,6 +40,7 @@ function NavLinkLabel({ label }: { label: string }) {
 }
 
 const Header = () => {
+  const pathname = usePathname();
   const { enabled: introEnabled, phase: introPhase } = useHomeIntro();
   const navBarRef = useRef<HTMLDivElement>(null);
 
@@ -155,6 +157,10 @@ const Header = () => {
     }
   }, [revealClip]);
 
+  useEffect(() => {
+    closeMenu();
+  }, [pathname, closeMenu]);
+
   const renderedConfig = renderedMenu ? MEGA_MENUS[renderedMenu] : null;
   const menuVisible = clipOpen && Boolean(renderedConfig);
 
@@ -185,7 +191,7 @@ const Header = () => {
         >
           <Container>
             <div className="relative flex items-center justify-between py-4">
-          <Link href="/" className="relative z-10 shrink-0">
+          <Link href="/" onClick={closeMenu} className="relative z-10 shrink-0">
             <Image
               src="/logo.svg"
               alt="CoverForce"
@@ -215,6 +221,7 @@ const Header = () => {
                     >
                       <Link
                         href={href}
+                        onClick={closeMenu}
                         className={`group flex items-center gap-1 font-heading text-xs font-regular tracking-[0.12em] transition-colors ${
                           isActive ? "text-white" : "text-white/80 hover:text-white"
                         }`}
@@ -241,6 +248,7 @@ const Header = () => {
           <div className="relative z-10 hidden items-center gap-6 lg:flex xl:gap-8">
             <Link
               href="/"
+              onClick={closeMenu}
               className="group font-heading text-xs font-medium tracking-[0.12em] text-white/95 transition-colors hover:text-white"
             >
               <NavLinkLabel label="Login" />
@@ -260,6 +268,7 @@ const Header = () => {
             config={renderedConfig}
             onMouseEnter={clearCloseTimer}
             onClipClosed={handleClipClosed}
+            onLinkClick={closeMenu}
           />
         ) : null}
       </div>
