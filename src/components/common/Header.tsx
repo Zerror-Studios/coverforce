@@ -28,6 +28,47 @@ const navItems: NavItem[] = [
 
 const HOVER_CLOSE_DELAY = 120;
 
+type HeaderTheme = "dark" | "light";
+
+function getHeaderTheme(pathname: string): HeaderTheme {
+  if (
+    pathname.startsWith("/solutions/brokers") ||
+    pathname.startsWith("/solutions/startups")
+  ) {
+    return "light";
+  }
+  return "dark";
+}
+
+const headerThemes = {
+  dark: {
+    bar: "border-b border-[#FFFFFF1A] bg-[#121C49]",
+    logo: "/logo.svg",
+    linkActive: "text-white",
+    linkIdle: "text-white/80 hover:text-white",
+    login: "text-white/95 hover:text-white",
+    buttonVariant: "primary" as const,
+  },
+  light: {
+    bar: "border-b border-[#E8ECF0] bg-white",
+    logo: "/ft-logo.svg",
+    linkActive: "text-[#0a143b]",
+    linkIdle: "text-[#0a143b]/75 hover:text-[#0a143b]",
+    login: "text-[#0a143b]/90 hover:text-[#0a143b]",
+    buttonVariant: "outline" as const,
+  },
+} satisfies Record<
+  HeaderTheme,
+  {
+    bar: string;
+    logo: string;
+    linkActive: string;
+    linkIdle: string;
+    login: string;
+    buttonVariant: "primary" | "outline";
+  }
+>;
+
 function NavLinkLabel({ label }: { label: string }) {
   return (
     <span className="inline-block h-4 overflow-hidden leading-none">
@@ -41,6 +82,8 @@ function NavLinkLabel({ label }: { label: string }) {
 
 const Header = () => {
   const pathname = usePathname();
+  const theme = getHeaderTheme(pathname);
+  const styles = headerThemes[theme];
   const { enabled: introEnabled, phase: introPhase } = useHomeIntro();
   const navBarRef = useRef<HTMLDivElement>(null);
 
@@ -174,7 +217,7 @@ const Header = () => {
   }, [menuVisible]);
 
   return (
-    <nav className="relative w-full text-white">
+    <nav className={`relative w-full ${theme === "light" ? "text-[#0a143b]" : "text-white"}`}>
       {menuVisible ? (
         <button
           type="button"
@@ -187,13 +230,13 @@ const Header = () => {
       <div className="relative z-10" onMouseLeave={scheduleClose}>
         <div
           ref={navBarRef}
-          className="overflow-hidden border-b border-[#FFFFFF1A] bg-[#121C49] will-change-transform"
+          className={`overflow-hidden will-change-transform ${styles.bar}`}
         >
           <Container>
             <div className="relative flex items-center justify-between py-4">
           <Link href="/" onClick={closeMenu} className="relative z-10 shrink-0">
             <Image
-              src="/logo.svg"
+              src={styles.logo}
               alt="CoverForce"
               width={180}
               height={34}
@@ -223,7 +266,7 @@ const Header = () => {
                         href={href}
                         onClick={closeMenu}
                         className={`group flex items-center gap-1 font-heading text-xs font-regular tracking-[0.12em] transition-colors ${
-                          isActive ? "text-white" : "text-white/80 hover:text-white"
+                          isActive ? styles.linkActive : styles.linkIdle
                         }`}
                         aria-expanded={hasDropdown ? isActive : undefined}
                         aria-haspopup={hasDropdown ? "true" : undefined}
@@ -249,12 +292,12 @@ const Header = () => {
             <Link
               href="/"
               onClick={closeMenu}
-              className="group font-heading text-xs font-medium tracking-[0.12em] text-white/95 transition-colors hover:text-white"
+              className={`group font-heading text-xs font-medium tracking-[0.12em] transition-colors ${styles.login}`}
             >
               <NavLinkLabel label="Login" />
             </Link>
-            <Button href="/" variant="primary">
-            Request demo
+            <Button href="/" variant={styles.buttonVariant}>
+              Request demo
             </Button>
           </div>
             </div>
