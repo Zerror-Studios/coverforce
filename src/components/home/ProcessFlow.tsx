@@ -1047,13 +1047,10 @@ const ProcessFlow = () => {
                                 <p className="text-sm font-mono font-medium uppercase tracking-[0.14em] text-[#4F63E8]">
                                     {step.tag}
                                 </p>
-                                <h3 className="w-lg mt-4 text-2xl font-heading font-regular tracking-tight text-[#0a143b] md:text-3xl lg:text-3xl">
+                                <h3 className="mt-4 max-w-lg text-2xl font-heading font-regular leading-[1.2] tracking-tight text-[#0a143b] md:text-3xl lg:max-w-md lg:text-[1.75rem] lg:leading-[1.25]">
                                     {step.heading}
                                 </h3>
-                                <p className="mt-5 max-w-lg text-sm leading-relaxed text-[#4A5778] font-sans font-regular md:text-sm">
-                                    {step.desc}
-                                </p>
-                                <ul className="mt-10 space-y-3">
+                                <ul className="mt-8 space-y-3 md:mt-10">
                                     {step.points.map((feature, idx) => (
                                         <li
                                             key={feature.id}

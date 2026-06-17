@@ -8,7 +8,6 @@ export type ProcessStep = {
   id: string;
   tag: string;
   heading: string;
-  desc: string;
   points: ProcessStepPoint[];
 };
 
@@ -16,8 +15,7 @@ export const processSteps: ProcessStep[] = [
   {
     id: "intake-01",
     tag: "01 Intake",
-    heading: "From email to forms to documents, every submission starts here.",
-    desc: "CoverForce accepts submissions however agents already work email, ACORD PDFs, loss runs, prior policies, manual entry, or direct AMS sync.",
+    heading: "Every submission starts here, however your team works today.",
     points: [
       {
         id: "accept",
@@ -37,8 +35,7 @@ export const processSteps: ProcessStep[] = [
   {
     id: "step-02",
     tag: "02 ACORD Automation",
-    heading: "The form fills itself in.",
-    desc: "When a submission arrives, AI extracts ACORD data instantly insured details, FEIN, NAICS, payroll, claims, and more. NCCI codes auto-match, and carrier underwriting questions pre-fill from past submissions.",
+    heading: "The form fills itself in the moment a submission arrives.",
     points: [
       { id: "p1", text: "AI extracts data from ACORD forms and fills missing application fields." },
       { id: "p2", text: "Classification codes and underwriting answers are mapped automatically." },
@@ -48,8 +45,7 @@ export const processSteps: ProcessStep[] = [
   {
     id: "step-03",
     tag: "03 Carrier Submission",
-    heading: "One submission, 40+ carriers.",
-    desc: "Enter data once and CoverForce submits it to every appointed carrier at the same time using your broker codes, wholesaler relationships, and carrier appetite rules.",
+    heading: "One submission reaches every appointed carrier at once.",
     points: [
       { id: "p1", text: "One completed application is sent to 40+ carriers at the same time." },
       { id: "p2", text: "Carrier-specific questions and requirements are handled automatically." },
@@ -59,8 +55,7 @@ export const processSteps: ProcessStep[] = [
   {
     id: "step-04",
     tag: "04 Compare Quotes",
-    heading: "Bindable quotes, side by side.",
-    desc: "Compare carrier responses in one place premiums, payment plans, deductibles, bind status, referrals, and decline reasons.",
+    heading: "Bindable quotes, compared side by side in one view.",
     points: [
       { id: "p1", text: "View bindable quotes from multiple carriers side by side." },
       { id: "p2", text: "Compare premium, deductible, limits, coverage, and quote status clearly." },
@@ -70,8 +65,7 @@ export const processSteps: ProcessStep[] = [
   {
     id: "step-05",
     tag: "05 Bind",
-    heading: "From quote to bound policy, in one platform.",
-    desc: "Bind in one click, with admin review when needed. All policy docs, certificates, and endorsements are saved in the Document Center.",
+    heading: "From quote to bound policy — in one click.",
     points: [
       { id: "p1", text: "Select the best quote and bind the policy in one click." },
       { id: "p2", text: "Complete payment and premium finance inside the same workflow." },
