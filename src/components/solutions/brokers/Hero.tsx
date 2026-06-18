@@ -1,14 +1,38 @@
-import Container from '@/components/common/Container'
-import React from 'react'
+import Image from "next/image";
+import Container from "@/components/common/Container";
+import Button from "@/components/common/Button";
 
 const Hero = () => {
   return (
-    <section className='bg-[#121C49] text-white h-screen'>
-        <Container borderColor="#FFFFFF33" >
-            <div className='flex flex-col items-center justify-center h-full'>
-                <h1 className='text-4xl font-bold'>Brokers</h1>
+    <section className="h-screen bg-white text-[#0a143b]">
+      <Container borderColor="#53535380">
+        <div className="grid h-screen grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
+          <div className="flex flex-col justify-center space-y-8">
+            <h1 className="max-w-xl text-3xl font-heading font-normal leading-[1.12] tracking-tight text-[#0a143b] md:text-4xl lg:text-5xl lg:leading-[1.1]">
+              Standardise <br/> <span className="text-[#7E54F2]">commercial</span> lines <br/> everywhere.
+            </h1>
+            <div className="flex flex-wrap gap-4">
+              <Button href="/solutions/startups" variant="outline">
+                Apply to Start Up Program
+              </Button>
+              <Button href="#program-overview" variant="outline">
+                How Program Works
+              </Button>
             </div>
-        </Container>
+          </div>
+
+          <div className="relative flex items-center justify-center">
+            <Image
+              src="/images/startups/startuphero.png"
+              alt="CoverForce startups program"
+              width={1200}
+              height={900}
+              className="h-auto w-full object-contain object-bottom"
+              priority
+            />
+          </div>
+        </div>
+      </Container>
     </section>
   );
 };

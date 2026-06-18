@@ -432,7 +432,7 @@ const Hero = () => {
               <h1
                 ref={titleLineRef}
                 data-loader-line
-                className={`absolute left-1/2 top-0 z-10 max-w-4xl -translate-x-1/2 px-6 text-3xl font-heading font-medium leading-[1.15] tracking-tight will-change-[transform,opacity] md:text-4xl lg:text-5xl xl:text-5xl ${introEnabled && introPhase === "loader-in" ? "opacity-0" : ""
+                className={`absolute left-1/2 top-0 z-10 max-w-4xl -translate-x-1/2 px-6 text-3xl font-heading font-normal leading-[1.15] tracking-tight will-change-[transform,opacity] md:text-4xl lg:text-5xl xl:text-5xl ${introEnabled && introPhase === "loader-in" ? "opacity-0" : ""
                   } ${introTitleMuted ? "text-[#BCC5D6]" : "text-white"}`}
               >
                 {INTRO_TITLE_LINES.map((line, lineIndex) => (
