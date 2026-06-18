@@ -86,7 +86,7 @@ function AnimatedLimitRow({
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion) return;
 
-    let intervalId: ReturnType<typeof setInterval> | undefined;
+    let intervalId: number | undefined;
 
     const startId = window.setTimeout(() => {
       intervalId = window.setInterval(() => {
