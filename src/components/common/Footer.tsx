@@ -150,13 +150,24 @@ const Footer = () => {
       <Container borderColor="#53535380">
         <div ref={contentRef} className="relative z-10 will-change-transform">
 
-          {/* ── Top: tagline (mirrors "Global Organization and Leadership Advisory") ── */}
+          {/* ── Top: logo left, tagline right ── */}
           <div className="border-b border-neutral-200 pt-12 pb-8 md:pt-14 lg:pt-16">
-            <p className="max-w-2xl font-heading text-2xl font-semibold leading-snug tracking-tight text-[#0a143b] md:text-3xl lg:text-4xl">
-              Smarter insurance distribution,
-              <br />
-              one connected workflow.
-            </p>
+            <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+              <Link href="/" className="shrink-0">
+                <Image
+                  src="/Coverforce_logo_blue.svg"
+                  alt="CoverForce"
+                  width={180}
+                  height={34}
+                  className="h-7 w-auto md:h-8"
+                />
+              </Link>
+              <p className="max-w-xl font-heading text-xl font-semibold leading-snug tracking-tight text-[#0a143b] sm:text-right md:text-2xl lg:max-w-2xl lg:text-3xl">
+                Smarter insurance distribution,
+                <br />
+                one connected workflow.
+              </p>
+            </div>
           </div>
 
           {/* ── Nav columns + Get a demo pill (mirrors Lumena nav + JOIN THE NEWSLETTER) ── */}
@@ -187,17 +198,6 @@ const Footer = () => {
                 Get a demo
               </Button>
             </div>
-          </div>
-
-          {/* ── Large logo row (mirrors Lumena icon + "Lumena" wordmark) ── */}
-          <div className="flex items-center gap-6 pt-8 pb-2 lg:pt-10">
-            <Image
-              src="/ft-logo.svg"
-              alt="CoverForce"
-              width={250}
-              height={50}
-              className="h-16 w-auto md:h-20 lg:h-24"
-            />
           </div>
 
           {/* ── Bottom bar (mirrors Lumena bottom bar) ── */}

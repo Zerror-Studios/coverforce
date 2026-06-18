@@ -43,7 +43,7 @@ function getHeaderTheme(pathname: string): HeaderTheme {
 const headerThemes = {
   dark: {
     bar: "border-b border-[#FFFFFF1A] bg-[#121C49]",
-    logo: "/logo.svg",
+    logo: "/Coverforce_logo_white.svg",
     linkActive: "text-white",
     linkIdle: "text-white/80 hover:text-white",
     login: "text-white/95 hover:text-white",
@@ -51,7 +51,7 @@ const headerThemes = {
   },
   light: {
     bar: "border-b border-[#E8ECF0] bg-white",
-    logo: "/ft-logo.svg",
+    logo: "/Coverforce_logo_blue.svg",
     linkActive: "text-[#0a143b]",
     linkIdle: "text-[#0a143b]/75 hover:text-[#0a143b]",
     login: "text-[#0a143b]/90 hover:text-[#0a143b]",
@@ -241,7 +241,7 @@ const Header = () => {
               width={180}
               height={34}
               priority
-              className="h-7 w-auto md:h-8"
+              className="h-5 w-auto md:h-6"
             />
           </Link>
 
