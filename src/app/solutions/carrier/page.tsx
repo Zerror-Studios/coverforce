@@ -5,7 +5,7 @@ import Explore from '@/components/home/Explore'
 import OperatingSystem from '@/components/solutions/brokers/OperatingSystem'
 import Workflow from '@/components/solutions/brokers/workflow'
 import CarrierResults from '@/components/home/CarrierResults'
-import Hero from '@/components/solutions/brokers/Hero'
+import Hero from '@/components/solutions/carrier/Hero'
 
 const page = () => {
   return (
