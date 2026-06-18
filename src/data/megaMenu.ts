@@ -126,7 +126,7 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
         links: [
           {
             label: "Wholesalers",
-            href: "/",
+            href: "/solutions/wholesalers",
             description: "Grow distribution efficiently across your network.",
             icon: RiBuilding2Line,
           },
@@ -138,7 +138,7 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
           },
           {
             label: "Carriers",
-            href: "/",
+            href: "/solutions/carrier",
             description: "Receive cleaner submissions at scale.",
             icon: RiShieldLine,
           },
@@ -147,6 +147,12 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
             href: "/solutions/startups",
             description: "Launch insurance products on modern infrastructure.",
             icon: RiRocketLine,
+          },
+          {
+            label: "Developers",
+            href: "/solutions/developers",
+            description: "Build insurance products on Coverforce APIs.",
+            icon: RiCodeSSlashLine,
           },
         ],
       },

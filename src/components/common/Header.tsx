@@ -31,10 +31,7 @@ const HOVER_CLOSE_DELAY = 120;
 type HeaderTheme = "dark" | "light";
 
 function getHeaderTheme(pathname: string): HeaderTheme {
-  if (
-    pathname.startsWith("/solutions/brokers") ||
-    pathname.startsWith("/solutions/startups")
-  ) {
+  if (pathname.startsWith("/solutions")) {
     return "light";
   }
   return "dark";

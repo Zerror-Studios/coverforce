@@ -5,7 +5,7 @@ import Button from "@/components/common/Button";
 const Hero = () => {
   return (
     <section className="h-screen bg-white text-[#0a143b]">
-      <Container borderColor="#53535380">
+      <Container borderColor="#53535380" borderBottom={true}>
         <div className="grid h-screen grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <div className="flex flex-col justify-center space-y-8">
             <h1 className="max-w-xl text-3xl font-heading font-normal leading-[1.12] tracking-tight text-[#0a143b] md:text-4xl lg:text-5xl lg:leading-[1.1]">

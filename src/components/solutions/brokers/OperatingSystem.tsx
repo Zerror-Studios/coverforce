@@ -4,6 +4,9 @@ import { useRef } from "react";
 import Container from "@/components/common/Container";
 import Button from "@/components/common/Button";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
+import OperatingPlatformMock from "@/components/solutions/brokers/OperatingPlatformMock";
+import OperatingAiMock from "@/components/solutions/brokers/OperatingAiMock";
+import OperatingVisibilityMock from "@/components/solutions/brokers/OperatingVisibilityMock";
 
 type OperatingRow = {
   id: string;
@@ -55,11 +58,11 @@ const OperatingSystem = () => {
 
   return (
     <section ref={sectionRef} className="min-h-screen bg-white text-[#0a143b]">
-      <Container borderColor="#53535380">
+      <Container borderColor="#53535380" borderBottom={true}>
         <div className="py-16 md:py-20 lg:py-24">
           <div
             ref={headerRef}
-            className="grid gap-8 lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-12 mb-12"
+            className="grid gap-8 lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-12 mb-24"
           >
             <div className="flex flex-col justify-end space-y-5">
               <h2
@@ -86,10 +89,11 @@ const OperatingSystem = () => {
             </div>
           </div>
 
-          {operatingRows.map((row) => (
+        <div className="space-y-36">
+        {operatingRows.map((row) => (
             <div
               key={row.id}
-              className="py-24 grid gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20"
+              className="grid gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20"
             >
               <div className="flex flex-col justify-center">
                 <h3 className="max-w-lg text-2xl font-heading font-regular leading-[1.2] tracking-tight text-[#444444] md:text-3xl lg:max-w-md lg:text-[1.75rem] lg:leading-[1.25]">
@@ -110,9 +114,18 @@ const OperatingSystem = () => {
                 </div>
               </div>
 
-              <div />
+              <div className="flex items-center justify-center">
+                {row.id === "platform" ? (
+                  <OperatingPlatformMock />
+                ) : row.id === "ai" ? (
+                  <OperatingAiMock />
+                ) : row.id === "visibility" ? (
+                  <OperatingVisibilityMock />
+                ) : null}
+              </div>
             </div>
           ))}
+        </div>
         </div>
       </Container>
     </section>

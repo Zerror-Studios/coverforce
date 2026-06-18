@@ -162,7 +162,7 @@ const Workflow = () => {
 
   return (
     <section ref={sectionRef} className=" bg-white text-[#0a143b]">
-      <Container borderColor="#53535380">
+      <Container borderColor="#53535380" borderBottom={true}>
         <div className="py-16  md:py-20 lg:py-24 lg:pb-12 flex flex-col justify-between h-screen">
           <div
             ref={headerRef}

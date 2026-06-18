@@ -52,7 +52,7 @@ const whySlides: WhySlide[] = [
 
 const SLIDE_TRANSITION_MS = 600;
 
-const WhyCoverforce = () => {
+const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -228,7 +228,7 @@ const WhyCoverforce = () => {
       `}</style>
       <div ref={containerRef} className="relative z-10 overflow-hidden will-change-transform">
         <Container borderColor="#53535380">
-          <div className="pb-16 md:pb-20 lg:pb-24">
+          <div className={`pb-16 md:pb-20 lg:pb-24 ${paddingTop ? "pt-24" : ""}`}>
             {/* ── Header (unchanged) ── */}
             <div
               ref={headerRef}
