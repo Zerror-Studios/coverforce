@@ -7,9 +7,26 @@ import {
   RiGlobalLine,
   RiLayoutGridLine,
   RiSparkling2Line,
+  type RemixiconComponentType,
 } from "@remixicon/react";
 
-const SOURCE_ROWS = [
+type IconSourceRow = {
+  name: string;
+  count: string;
+  icon: RemixiconComponentType;
+  iconBg: string;
+  iconColor: string;
+};
+
+type ExcelSourceRow = {
+  name: string;
+  count: string;
+  excel: true;
+};
+
+type SourceRow = IconSourceRow | ExcelSourceRow;
+
+const SOURCE_ROWS: SourceRow[] = [
   {
     name: "Clarion Door",
     count: "45+",
@@ -20,7 +37,6 @@ const SOURCE_ROWS = [
   {
     name: "Excel Sheet",
     count: "62+",
-    icon: null,
     excel: true,
   },
   {
@@ -30,7 +46,7 @@ const SOURCE_ROWS = [
     iconBg: "#EFF6FF",
     iconColor: "#4683E5",
   },
-] as const;
+];
 
 const AVATARS = [
   "/images/avatar1.png",
@@ -126,7 +142,7 @@ export default function ConnectedSourcesMock() {
               key={row.name}
               className="flex items-center gap-2 border-b border-dashed border-[#E5E7EB] py-3 last:border-b-0 md:gap-3 md:py-3.5"
             >
-              {"excel" in row && row.excel ? (
+              {"excel" in row ? (
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#ECFDF3] font-heading text-xs font-bold text-[#7CB518] md:size-9">
                   X
                 </span>
@@ -138,7 +154,7 @@ export default function ConnectedSourcesMock() {
                     color: row.iconColor,
                   }}
                 >
-                  {row.icon ? <row.icon size={16} /> : null}
+                  <row.icon size={16} />
                 </span>
               )}
 
