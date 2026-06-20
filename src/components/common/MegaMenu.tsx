@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import type { MegaMenuConfig, MegaMenuLink } from "@/data/megaMenu";
+import Button from "./Button";
+import type { MegaMenuColumn, MegaMenuConfig, MegaMenuLink } from "@/data/megaMenu";
 
 export const MEGA_MENU_CLIP_CLOSED = "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)";
 export const MEGA_MENU_CLIP_OPEN = "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)";
 export const CLIP_DURATION_MS = 550;
 const CLIP_EASE = "cubic-bezier(0.76, 0, 0.24, 1)";
-const CONTENT_BASE_DELAY = 120;
-const CONTENT_STAG = 55;
+const CONTENT_BASE_DELAY = 100;
+const CONTENT_STAG = 45;
 
 type MegaMenuProps = {
   open: boolean;
@@ -63,48 +65,58 @@ function Reveal({
   );
 }
 
-function MegaMenuItem({
+function MegaMenuLinkItem({
   link,
+  onLinkClick,
+}: {
+  link: MegaMenuLink;
+  onLinkClick?: () => void;
+}) {
+  return (
+    <li className="border-t border-[#E5E7EB] first:border-t-0">
+      <Link
+        href={link.href}
+        onClick={onLinkClick}
+        className="group flex items-center gap-2 py-3.5 font-heading text-[0.9375rem] font-regular leading-none text-[#0a143b] transition-colors duration-200 hover:text-[#0032C9]"
+      >
+        <span>{link.label}</span>
+        {link.badge ? (
+          <span className="rounded-full border border-[#D1D5DB] px-2 py-0.5 font-mono text-[0.625rem] font-medium uppercase tracking-[0.08em] text-[#6B7280]">
+            {link.badge}
+          </span>
+        ) : null}
+      </Link>
+    </li>
+  );
+}
+
+function MegaMenuColumnBlock({
+  column,
   enter,
   enterKey,
   delay,
   onLinkClick,
 }: {
-  link: MegaMenuLink;
+  column: MegaMenuColumn;
   enter: boolean;
   enterKey: number;
   delay: number;
   onLinkClick?: () => void;
 }) {
-  const Icon = link.icon;
-
   return (
-    <div className="h-full bg-white">
-      <Reveal enter={enter} enterKey={enterKey} delay={delay} className="h-full">
-        <Link
-          href={link.href}
-          onClick={onLinkClick}
-          className="group flex h-full flex-col gap-2.5 bg-white px-6 py-6 transition-colors duration-200 hover:bg-[#F7F9FC] lg:px-8 lg:py-7"
-        >
-          <Icon className="size-4 shrink-0 text-[#0032C9]" aria-hidden />
-          <div className="space-y-1">
-            <p className="font-heading text-sm font-medium text-[#0a143b] transition-colors duration-200 group-hover:text-[#0032C9]">
-              {link.label}
-            </p>
-            {link.description ? (
-              <p className="font-sans text-xs leading-relaxed text-[#6B7280]">
-                {link.description}
-              </p>
-            ) : null}
-          </div>
-        </Link>
-      </Reveal>
-    </div>
+    <Reveal enter={enter} enterKey={enterKey} delay={delay}>
+      <div>
+        <p className="mb-1 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[#9CA3AF]">
+          {column.title}
+        </p>
+        <ul>
+          {column.links.map((link) => (
+            <MegaMenuLinkItem key={link.label} link={link} onLinkClick={onLinkClick} />
+          ))}
+        </ul>
+      </div>
+    </Reveal>
   );
-}
-
-function flattenLinks(config: MegaMenuConfig): MegaMenuLink[] {
-  return config.columns.flatMap((column) => column.links);
 }
 
 export default function MegaMenu({
@@ -117,7 +129,6 @@ export default function MegaMenu({
 }: MegaMenuProps) {
   const [clipShown, setClipShown] = useState(false);
   const [contentEnter, setContentEnter] = useState(false);
-  const links = useMemo(() => flattenLinks(config), [config]);
 
   useEffect(() => {
     if (open) {
@@ -141,9 +152,12 @@ export default function MegaMenu({
     return () => window.clearTimeout(timer);
   }, [open, onClipClosed]);
 
+  const featuredDelay = CONTENT_BASE_DELAY + CONTENT_STAG * config.columns.length;
+  const footerDelay = featuredDelay + CONTENT_STAG;
+
   return (
     <div
-      className="absolute inset-x-0 top-full z-20 -mt-px w-full border-t border-[#E8ECF0] bg-white shadow-[0_24px_48px_-12px_rgba(10,20,59,0.14)] will-change-[clip-path] motion-reduce:transition-none"
+      className="absolute inset-x-0 top-full z-20 -mt-px w-full border-t border-[#E8ECF0] bg-white shadow-[0_24px_48px_-12px_rgba(10,20,59,0.1)] will-change-[clip-path] motion-reduce:transition-none"
       style={{
         clipPath: clipShown ? MEGA_MENU_CLIP_OPEN : MEGA_MENU_CLIP_CLOSED,
         WebkitClipPath: clipShown ? MEGA_MENU_CLIP_OPEN : MEGA_MENU_CLIP_CLOSED,
@@ -152,18 +166,59 @@ export default function MegaMenu({
       }}
       onMouseEnter={onMouseEnter}
     >
-      <div className="relative mx-auto w-full max-w-7xl px-2 py-6 md:px-4 md:py-8 lg:px-6 xl:px-6">
-        <div className="grid grid-cols-1 divide-y divide-[#E5E7EB] bg-white sm:grid-cols-2 sm:divide-x lg:grid-cols-3">
-          {links.map((link, index) => (
-            <MegaMenuItem
-              key={link.label}
-              link={link}
+      <div className="relative mx-auto w-full max-w-7xl px-6 py-8 md:px-8 md:py-10 lg:px-10">
+        <div className="flex flex-col gap-8 md:flex-row md:items-stretch md:gap-10 lg:gap-14">
+          <div className="min-w-0 flex-1">
+            <div className="grid gap-8 sm:grid-cols-2 lg:gap-x-14">
+              {config.columns.map((column, index) => (
+                <MegaMenuColumnBlock
+                  key={column.title}
+                  column={column}
+                  enter={contentEnter}
+                  enterKey={enterKey}
+                  delay={CONTENT_BASE_DELAY + CONTENT_STAG * index}
+                  onLinkClick={onLinkClick}
+                />
+              ))}
+            </div>
+
+            <Reveal
               enter={contentEnter}
               enterKey={enterKey}
-              delay={CONTENT_BASE_DELAY + CONTENT_STAG * index}
-              onLinkClick={onLinkClick}
-            />
-          ))}
+              delay={footerDelay}
+              className="mt-8 border-t border-[#E5E7EB] pt-6"
+            >
+              <Button href={config.cta.href} balanced className="min-w-[14rem] px-9" onClick={onLinkClick}>
+                {config.cta.label}
+              </Button>
+            </Reveal>
+          </div>
+
+          <Reveal
+            enter={contentEnter}
+            enterKey={enterKey}
+            delay={featuredDelay}
+            className="w-full shrink-0 md:w-[240px] lg:w-[260px] xl:w-[280px]"
+          >
+            <Link
+              href={config.featured.href}
+              onClick={onLinkClick}
+              className="group flex flex-col overflow-hidden rounded-xl bg-white p-3 transition-colors duration-200 hover:bg-[#FAFAFA]"
+            >
+              <div className="overflow-hidden rounded-lg">
+                <Image
+                  src={config.featured.image}
+                  alt={config.featured.imageAlt ?? config.featured.title}
+                  width={280}
+                  height={260}
+                  className="h-auto w-full transition-transform duration-300 group-hover:scale-[1.02]"
+                />
+              </div>
+              <p className="mt-3 px-0.5 font-heading text-sm font-regular leading-snug text-[#0a143b] transition-colors duration-200 group-hover:text-[#0032C9]">
+                {config.featured.title}
+              </p>
+            </Link>
+          </Reveal>
         </div>
       </div>
     </div>

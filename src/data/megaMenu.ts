@@ -25,6 +25,7 @@ export type MegaMenuLink = {
   label: string;
   href: string;
   description?: string;
+  badge?: string;
   icon: RemixiconComponentType;
 };
 
@@ -35,7 +36,14 @@ export type MegaMenuColumn = {
 
 export type MegaMenuFeatured = {
   title: string;
-  subtitle: string;
+  href: string;
+  image: string;
+  imageAlt?: string;
+  subtitle?: string;
+};
+
+export type MegaMenuCta = {
+  label: string;
   href: string;
 };
 
@@ -49,14 +57,20 @@ export type MegaMenuPromo = {
 export type MegaMenuConfig = {
   featured: MegaMenuFeatured;
   columns: MegaMenuColumn[];
+  cta: MegaMenuCta;
   promo?: MegaMenuPromo;
 };
 
 export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
   Product: {
     featured: {
-      title: "Product Overview",
-      subtitle: "One platform for the full policy lifecycle",
+      title: "Announcing AI AutoFill",
+      href: "/",
+      image: "/images/mega-menu-promo.png",
+      imageAlt: "AI AutoFill product preview",
+    },
+    cta: {
+      label: "Explore Product",
       href: "/",
     },
     columns: [
@@ -78,6 +92,7 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
           {
             label: "Intelligence",
             href: "/",
+            badge: "NEW",
             description: "Turn submission data into underwriting-ready insight.",
             icon: RiLineChartLine,
           },
@@ -116,9 +131,14 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
   },
   Solutions: {
     featured: {
-      title: "Solutions Hub",
-      subtitle: "Built for every role in distribution",
-      href: "/",
+      title: "Compare Quotes Side by Side",
+      href: "/solutions/startups",
+      image: "/images/mega-menu-promo.png",
+      imageAlt: "Quote comparison preview",
+    },
+    cta: {
+      label: "Explore Solutions",
+      href: "/solutions/startups",
     },
     columns: [
       {
@@ -189,8 +209,13 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
   },
   Company: {
     featured: {
-      title: "Resource Center",
-      subtitle: "Latest insights and news",
+      title: "Announcing Business Pre-Fill",
+      href: "/",
+      image: "/images/mega-menu-promo.png",
+      imageAlt: "Business Pre-Fill preview",
+    },
+    cta: {
+      label: "Explore Company",
       href: "/",
     },
     columns: [
