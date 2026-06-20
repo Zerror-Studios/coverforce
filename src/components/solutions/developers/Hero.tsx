@@ -7,10 +7,12 @@ const Hero = () => {
     <section className="h-screen bg-white text-[#0a143b]">
       <Container borderColor="#53535380" borderBottom={true}>
         <div className="grid h-screen grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          <div className="flex flex-col justify-center space-y-8">
-            <h1 className="max-w-xl text-3xl font-heading font-normal leading-[1.12] tracking-tight text-[#0a143b] md:text-4xl lg:text-5xl lg:leading-[1.1]">
-              Standardise <br/> <span className="text-[#7E54F2]">commercial</span> lines <br/> everywhere.
+        <div className="flex h-full flex-col justify-center space-y-8">
+            <h1 className="max-w-xl text-3xl font-heading font-normal tracking-normal text-[#0a143b] md:text-4xl lg:text-[3.5rem] lg:leading-none">
+            Embed commercial insurance into any product
             </h1>
+            <p className="max-w-sm font-heading text-sm font-regular leading-relaxed text-[#444444]  md:text-sm">One API for 40+ carriers, AI-powered quoting, binding, and policy management so you can add commercial insurance without becoming an insurance company.</p>
+
             <div className="flex flex-wrap gap-4">
               <Button href="/solutions/startups" balanced>
                 Apply to Start Up Program
