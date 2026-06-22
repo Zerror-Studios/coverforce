@@ -61,33 +61,33 @@ const DELEGATION_ITEMS = [
 function ControlDelegationCard() {
   return (
     <div className="overflow-hidden rounded-2xl border border-[#E8EAEF] bg-white shadow-[0_12px_48px_rgba(0,0,0,0.12)]">
-      <div className="flex items-center justify-between gap-3 border-b border-[#F3F4F6] px-4 py-3">
-        <p className="font-heading text-sm font-semibold text-[#3C3B3B] md:text-base">
+      <div className="flex items-center justify-between gap-3 border-b border-dashed border-[#E5E7EB] px-4 py-4">
+        <p className="font-heading text-sm font-semibold text-[#3C3B3B] md:text-xs">
           Control & delegation
         </p>
-        <span className="inline-flex shrink-0 items-center gap-1 font-heading text-xs font-semibold text-[#5B35E0] md:text-sm">
+        <span className="inline-flex shrink-0 items-center gap-1 font-heading text-xs font-semibold text-[#5B35E0] md:text-xs">
           <RiCodeSSlashLine size={14} />
           200+
         </span>
       </div>
 
-      <div className="divide-y divide-[#F3F4F6] px-3 py-1 md:px-4">
+      <div className="px-3 py-1 md:px-4">
         {DELEGATION_ITEMS.map((item) => {
           const Icon = item.icon;
 
           return (
-            <div key={item.title} className="flex items-start gap-3 py-3 md:py-3.5">
+            <div key={item.title} className="flex items-start gap-3 py-3 md:py-2">
               <span
-                className="flex size-9 shrink-0 items-center justify-center rounded-full md:size-10"
+                className="flex size-9 shrink-0 items-center justify-center rounded-full md:size-8"
                 style={{ backgroundColor: item.bg, color: item.color }}
               >
-                <Icon size={16} />
+                <Icon size={14} />
               </span>
               <div className="min-w-0 pt-0.5">
-                <p className="font-heading text-xs font-medium text-[#3C3B3B] md:text-sm">
+                <p className="font-heading text-xs font-medium text-[#3C3B3B] md:text-xs">
                   {item.title}
                 </p>
-                <p className="mt-0.5 font-heading text-[0.6rem] font-normal text-[#9CA3AF] md:text-xs">
+                <p className="mt-0.5 font-heading text-[0.6rem] font-normal text-[#9CA3AF] md:text-[0.6rem]">
                   {item.subtitle}
                 </p>
               </div>
@@ -99,9 +99,21 @@ function ControlDelegationCard() {
   );
 }
 
-export default function BrokerCodeControlsMock() {
+type BrokerCodeControlsMockProps = {
+  showDelegationCard?: boolean;
+};
+
+export default function BrokerCodeControlsMock({
+  showDelegationCard = false,
+}: BrokerCodeControlsMockProps) {
   return (
-    <div className="relative mx-auto w-full max-w-[440px] min-h-[360px] overflow-visible pb-6 md:min-h-[380px] md:pb-8">
+    <div
+      className={`relative mx-auto w-full max-w-[440px] ${
+        showDelegationCard
+          ? "min-h-[360px] overflow-visible pb-6 md:min-h-[380px] md:pb-8"
+          : ""
+      }`}
+    >
       {/* Broker card — back layer */}
       <div className="relative z-0 w-full max-w-[420px] overflow-hidden rounded-2xl border border-[#E8EAEF] bg-white px-4 shadow-[0_8px_40px_rgba(0,0,0,0.08)]">
         <div className="flex items-center justify-between gap-3 border-b border-dashed border-[#000000]/10 py-4">
@@ -123,7 +135,7 @@ export default function BrokerCodeControlsMock() {
           {BROKER_ROWS.map((row) => (
             <div
               key={row.name}
-              className="grid grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-3 py-3.5 md:py-4"
+              className="grid grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-3 py-3.5 md:py-2"
             >
               <span className="flex size-8 shrink-0 items-center justify-center rounded-full md:size-10">
                 <Image
@@ -180,10 +192,11 @@ export default function BrokerCodeControlsMock() {
         </div>
       </div>
 
-      {/* Control & delegation — bottom-right overlap */}
-      <div className="absolute right-0 top-[10.5rem] z-10 w-[78%] md:top-[11.25rem] md:w-[76%]">
-        <ControlDelegationCard />
-      </div>
+      {showDelegationCard ? (
+        <div className="absolute -right-4 -bottom-10 z-10 w-[78%] md:-right-6 md:w-[65%]">
+          <ControlDelegationCard />
+        </div>
+      ) : null}
     </div>
   );
 }

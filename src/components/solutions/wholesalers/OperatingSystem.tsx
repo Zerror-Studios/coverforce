@@ -6,6 +6,10 @@ import AiAppetiteEngineMock from "@/components/solutions/wholesalers/AiAppetiteE
 import AiDocumentReaderMock from "@/components/solutions/wholesalers/AiDocumentReaderMock";
 import BrokerCodeControlsMock from "@/components/solutions/wholesalers/BrokerCodeControlsMock";
 
+function BrokerCodeControlsSectionMock() {
+  return <BrokerCodeControlsMock showDelegationCard />;
+}
+
 const operatingRows = [
   {
     id: "inbox",
@@ -32,7 +36,7 @@ const operatingRows = [
       "Manage broker codes, agency access, and producer permissions from one dashboard with full control and a clear audit trail.",
     stat: "200+",
     statLabelLines: ["Broker Codes", "Managed"] as [string, string],
-    Mock: BrokerCodeControlsMock,
+    Mock: BrokerCodeControlsSectionMock,
   },
   {
     id: "digitization",
