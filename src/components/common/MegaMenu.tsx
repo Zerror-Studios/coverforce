@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Button from "./Button";
 import ButtonArrowIcon from "./ButtonArrowIcon";
+import AnimatedLinkText from "./AnimatedLinkText";
 import type { MegaMenuColumn, MegaMenuConfig, MegaMenuLink } from "@/data/megaMenu";
 
 export const MEGA_MENU_CLIP_CLOSED = "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)";
@@ -75,15 +76,25 @@ function MegaMenuLinkItem({
   link: MegaMenuLink;
   onLinkClick?: () => void;
 }) {
+  const [hovered, setHovered] = useState(false);
+
   return (
     <li className="border-t border-[#E5E7EB] first:border-t-0">
       <Link
         href={link.href}
         onClick={onLinkClick}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         className="group flex w-full items-center justify-between gap-3 py-3.5 font-heading text-[0.9375rem] font-regular leading-none text-[#0a143b] transition-colors duration-200 hover:text-[#413CC0]"
       >
         <span className="flex min-w-0 items-center gap-2">
-          <span>{link.label}</span>
+          <AnimatedLinkText
+            hovered={hovered}
+            textClip="h-[0.9375rem]"
+            textLine="h-[0.9375rem] leading-none"
+          >
+            {link.label}
+          </AnimatedLinkText>
           {link.badge ? (
             <span className="rounded-full border border-[#D1D5DB] px-2 py-0.5 font-mono text-[0.625rem] font-medium uppercase tracking-[0.08em] text-[#6B7280]">
               {link.badge}

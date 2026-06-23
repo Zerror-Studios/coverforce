@@ -1,18 +1,15 @@
-import React from 'react'
-import WhyCoverforce from '@/components/home/WhyCoverforce'
-import Review from '@/components/home/Review'
-import Explore from '@/components/home/Explore'
-import CarrierResults from '@/components/home/CarrierResults'
+import Explore from "@/components/home/Explore";
+import Hero from "@/components/pricing/Hero";
+import PricingPlans from "@/components/pricing/PricingPlans";
 
 const PricingPage = () => {
-    return (
-        <>
-            <WhyCoverforce paddingTop={true} />
-            <Review />
-            <CarrierResults />
-            <Explore />
-        </>
-    )
-}
+  return (
+    <>
+      <Hero />
+      <PricingPlans />
+      <Explore />
+    </>
+  );
+};
 
-export default PricingPage
+export default PricingPage;

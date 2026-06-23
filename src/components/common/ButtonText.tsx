@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useEffect, useLayoutEffect, useRef } from "react";
-import gsap from "gsap";
-import { SplitText } from "@/lib/SplitText";
 
 type ButtonTextProps = {
   children: React.ReactNode;
@@ -11,90 +9,109 @@ type ButtonTextProps = {
   hovered: boolean;
 };
 
-const WAVE_WIDTH = 5;
-const WAVE_PEAK = 2;
-const WAVE_SPREAD = 1.4;
-const MAX_BLUR = 2.5;
+const TOTAL_MS    = 650;
+const WAVE_HALF   = 0.28;  // wave radius in normalized [0..1] pixel-space
+const BLUR_MAX    = 2.0;
+const OPACITY_MIN = 0.20;
+const SCALE_MIN   = 0.85;
 
-function smootherstep(t: number): number {
-  const x = Math.max(0, Math.min(1, t));
-  return x * x * x * (x * (x * 6 - 15) + 10);
+function bellCurve(dist: number): number {
+  if (dist >= WAVE_HALF) return 0;
+  const t = dist / WAVE_HALF;
+  return Math.pow(1 - t * t, 2);
 }
 
-function waveBlur(dist: number): number {
-  if (dist <= 0 || dist >= WAVE_WIDTH) return 0;
-
-  const bell = Math.exp(-0.5 * Math.pow((dist - WAVE_PEAK) / WAVE_SPREAD, 2));
-  return bell * MAX_BLUR;
+// Measure each char's center-x normalized to [0..1] across total text width
+function measureOffsets(chars: HTMLSpanElement[]): number[] {
+  const rects = chars.map((c) => c.getBoundingClientRect());
+  const left  = rects[0].left;
+  const right  = rects[rects.length - 1].right;
+  const total = right - left;
+  return rects.map((r) => (r.left + r.width / 2 - left) / total);
 }
 
-function applyBlurWave(chars: HTMLSpanElement[], progress: number) {
-  const waveSpan = chars.length + WAVE_WIDTH;
-  const head = smootherstep(progress) * waveSpan;
-
-  chars.forEach((char, index) => {
-    const blur = waveBlur(head - index);
-    char.style.filter = blur > 0.04 ? `blur(${blur.toFixed(2)}px)` : "";
-  });
+function clearChar(c: HTMLSpanElement) {
+  c.style.scale   = "";
+  c.style.filter  = "";
+  c.style.opacity = "";
 }
 
 const ButtonText = ({ children, textClip, textLine, hovered }: ButtonTextProps) => {
-  const textRef = useRef<HTMLSpanElement>(null);
-  const splitRef = useRef<SplitText | null>(null);
-  const tweenRef = useRef<gsap.core.Tween | null>(null);
+  const textRef    = useRef<HTMLSpanElement>(null);
+  const charsRef   = useRef<HTMLSpanElement[]>([]);
+  const offsetsRef = useRef<number[] | null>(null); // pixel-based, measured lazily
+  const rafRef     = useRef<number | null>(null);
   const text = typeof children === "string" ? children : String(children);
 
   useLayoutEffect(() => {
     const el = textRef.current;
     if (!el) return;
 
-    splitRef.current?.revert();
-    el.textContent = text;
+    el.innerHTML = "";
+    offsetsRef.current = null; // reset on text change
 
-    const split = new SplitText(el, {
-      type: "chars",
-      charsClass: "button-split-char",
-      wordsClass: "button-split-word",
+    charsRef.current = [...text].map((ch) => {
+      const span = document.createElement("span");
+      span.style.display         = "inline-block";
+      span.style.transformOrigin = "center center";
+      span.style.willChange      = "transform, filter, opacity";
+      // CSS handles scale easing — JS only sets the value
+      span.style.transition      = "scale 0.15s cubic-bezier(0.4, 0, 0.2, 1)";
+      span.textContent = ch === " " ? "\u00A0" : ch;
+      el.appendChild(span);
+      return span;
     });
-
-    split.chars.forEach((char) => {
-      char.style.display = "inline-block";
-      char.style.willChange = "filter";
-    });
-
-    splitRef.current = split;
 
     return () => {
-      tweenRef.current?.kill();
-      split.revert();
-      splitRef.current = null;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, [text]);
 
   useEffect(() => {
-    const chars = splitRef.current?.chars;
-    if (!chars?.length) return;
+    const chars = charsRef.current;
+    if (!chars.length) return;
+    if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
 
     if (!hovered) {
-      tweenRef.current?.kill();
-      gsap.set(chars, { clearProps: "filter" });
+      chars.forEach(clearChar);
       return;
     }
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    tweenRef.current?.kill();
+    // Measure real pixel positions once, reuse after
+    if (!offsetsRef.current) {
+      offsetsRef.current = measureOffsets(chars);
+    }
+    const offsets = offsetsRef.current;
 
-    const progress = { value: 0 };
-    tweenRef.current = gsap.to(progress, {
-      value: 1,
-      duration: 0.65,
-      ease: "none",
-      onUpdate: () => applyBlurWave(chars, progress.value),
-      onComplete: () => {
-        gsap.set(chars, { clearProps: "filter" });
-      },
-    });
+    const start      = performance.now();
+    // front sweeps from 0-WAVE_HALF → 1+WAVE_HALF (low→high offset = left→right)
+    const frontStart = 0.0 - WAVE_HALF;
+    const frontEnd   = 1.0 + WAVE_HALF;
+
+    function frame(now: number) {
+      const t     = Math.min((now - start) / TOTAL_MS, 1);
+      const front = frontStart + (frontEnd - frontStart) * t;
+
+      chars.forEach((char, i) => {
+        const dist = Math.abs(front - offsets[i]);
+        const d    = bellCurve(dist);
+
+        char.style.scale   = d > 0.005 ? (1 - (1 - SCALE_MIN) * d).toFixed(4) : "";
+        char.style.filter  = d > 0.01  ? `blur(${(BLUR_MAX * d).toFixed(3)}px)` : "";
+        char.style.opacity = d > 0.005 ? (1 - (1 - OPACITY_MIN) * d).toFixed(4) : "";
+      });
+
+      if (t < 1) {
+        rafRef.current = requestAnimationFrame(frame);
+      } else {
+        chars.forEach(clearChar);
+      }
+    }
+
+    rafRef.current = requestAnimationFrame(frame);
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
   }, [hovered]);
 
   return (

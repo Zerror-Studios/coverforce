@@ -5,6 +5,7 @@ import gsap from "gsap";
 import Container from "./Container";
 import Button from "./Button";
 import MegaMenu from "./MegaMenu";
+import AnimatedLinkText from "./AnimatedLinkText";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -63,14 +64,71 @@ const headerThemes = {
   }
 >;
 
-function NavLinkLabel({ label }: { label: string }) {
+function HeaderNavLink({
+  label,
+  href,
+  hasDropdown,
+  isActive,
+  linkActiveClass,
+  linkIdleClass,
+  onNavigate,
+}: {
+  label: string;
+  href: string;
+  hasDropdown: boolean;
+  isActive: boolean;
+  linkActiveClass: string;
+  linkIdleClass: string;
+  onNavigate: () => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+
   return (
-    <span className="inline-block h-4 overflow-hidden leading-none">
-      <span className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] will-change-transform motion-reduce:transition-none group-hover:-translate-y-4">
-        <span className="block h-4 leading-4 whitespace-nowrap">{label}</span>
-        <span className="block h-4 leading-4 whitespace-nowrap">{label}</span>
-      </span>
-    </span>
+    <Link
+      href={href}
+      onClick={onNavigate}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className={`group flex items-center gap-1 font-heading text-xs font-regular tracking-[0.12em] transition-colors ${
+        isActive ? linkActiveClass : linkIdleClass
+      }`}
+      aria-expanded={hasDropdown ? isActive : undefined}
+      aria-haspopup={hasDropdown ? "true" : undefined}
+    >
+      <AnimatedLinkText hovered={hovered}>{label}</AnimatedLinkText>
+      {hasDropdown ? (
+        <RiArrowDownSLine
+          className={`size-4 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+            isActive ? "rotate-180 opacity-100" : "opacity-80 group-hover:rotate-180"
+          }`}
+          aria-hidden
+        />
+      ) : null}
+    </Link>
+  );
+}
+
+function LoginLink({
+  href,
+  onNavigate,
+  className,
+}: {
+  href: string;
+  onNavigate: () => void;
+  className: string;
+}) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <Link
+      href={href}
+      onClick={onNavigate}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className={className}
+    >
+      <AnimatedLinkText hovered={hovered}>Login</AnimatedLinkText>
+    </Link>
   );
 }
 
@@ -251,23 +309,15 @@ const Header = () => {
                             }
                           }}
                         >
-                          <Link
+                          <HeaderNavLink
+                            label={label}
                             href={href}
-                            onClick={closeMenu}
-                            className={`group flex items-center gap-1 font-heading text-xs font-regular tracking-[0.12em] transition-colors ${isActive ? styles.linkActive : styles.linkIdle
-                              }`}
-                            aria-expanded={hasDropdown ? isActive : undefined}
-                            aria-haspopup={hasDropdown ? "true" : undefined}
-                          >
-                            <NavLinkLabel label={label} />
-                            {hasDropdown ? (
-                              <RiArrowDownSLine
-                                className={`size-4 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${isActive ? "rotate-180 opacity-100" : "opacity-80 group-hover:rotate-180"
-                                  }`}
-                                aria-hidden
-                              />
-                            ) : null}
-                          </Link>
+                            hasDropdown={hasDropdown}
+                            isActive={isActive}
+                            linkActiveClass={styles.linkActive}
+                            linkIdleClass={styles.linkIdle}
+                            onNavigate={closeMenu}
+                          />
                         </li>
                       );
                     })}
@@ -276,13 +326,11 @@ const Header = () => {
               </div>
 
               <div className="relative z-10 hidden items-center gap-6 lg:flex xl:gap-8">
-                <Link
+                <LoginLink
                   href="/"
-                  onClick={closeMenu}
+                  onNavigate={closeMenu}
                   className={`group font-heading text-xs font-medium tracking-[0.12em] transition-colors ${styles.login}`}
-                >
-                  <NavLinkLabel label="Login" />
-                </Link>
+                />
                 <Button href="/" surface={theme === "dark" ? "on-dark" : "default"}>
                   Request demo
                 </Button>
