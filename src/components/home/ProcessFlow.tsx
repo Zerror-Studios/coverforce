@@ -1036,7 +1036,7 @@ const ProcessFlow = () => {
     );
 
     return (
-        <section ref={sectionRef} className="h-screen overflow-hidden [contain:layout_paint]">
+        <section ref={sectionRef} className="h-screen overflow-hidden bg-white [contain:layout_paint]">
             <Container borderColor="#53535380">
                 <div className="h-screen grid gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
 

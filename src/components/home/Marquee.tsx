@@ -58,7 +58,7 @@ const Marquee = () => {
     );
 
     return (
-        <section ref={sectionRef} className="relative overflow-hidden">
+        <section ref={sectionRef} className="relative overflow-hidden bg-white">
             <Container borderColor="#53535380" borderBottom>
                 <div className="relative z-10 py-16 md:py-20 lg:py-24">
                     <h2
