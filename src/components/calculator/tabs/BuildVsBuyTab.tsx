@@ -24,7 +24,7 @@ export default function BuildVsBuyTab({ results }: { results: CalculationResult 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-sm text-sm">
+        <div className="bg-white p-3 border border-[#535353]/10 rounded-lg text-sm">
           <p className="font-bold text-[#0a143b] mb-2">{label} (Cumulative Cost)</p>
           {payload.map((entry: any, index: number) => (
             <div key={index} className="flex justify-between gap-4 mb-1">
@@ -32,7 +32,7 @@ export default function BuildVsBuyTab({ results }: { results: CalculationResult 
               <span className="font-semibold text-[#0a143b]">{fmtM(entry.value)}</span>
             </div>
           ))}
-          <div className="border-t border-gray-200 mt-2 pt-2 flex justify-between gap-4 font-bold text-[#0a143b]">
+          <div className="border-t border-[#535353]/10 mt-2 pt-2 flex justify-between gap-4 font-bold text-[#0a143b]">
             <span>Cost Avoided</span>
             <span>{fmtM(payload[0].value - payload[1].value)}</span>
           </div>
@@ -47,11 +47,11 @@ export default function BuildVsBuyTab({ results }: { results: CalculationResult 
       
       {/* KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0a143b] to-[#3834a4] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div className="bg-white border border-[#535353]/10 rounded-2xl p-6 transition-all duration-300 relative overflow-hidden group">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r "></div>
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-sm font-bold text-[#50617a] uppercase tracking-wider font-heading">Total Cost of Ownership ({inputs.projYears} Yr)</h3>
-            <div className="p-2 bg-gray-50 rounded-xl text-[#0a143b] group-hover:scale-110 transition-transform duration-300">
+            <div className="p-2 bg-[#F5F7FA] rounded-xl text-[#0a143b] group-hover:scale-110 transition-transform duration-300">
               <Briefcase className="w-5 h-5" />
             </div>
           </div>
@@ -62,22 +62,22 @@ export default function BuildVsBuyTab({ results }: { results: CalculationResult 
             </div>
             <div className="text-xl font-bold text-gray-300 mb-1">vs</div>
             <div>
-              <div className="text-[10px] font-bold text-[#3834a4] uppercase tracking-widest mb-1 font-sans">CoverForce</div>
-              <div className="text-3xl font-heading font-regular tracking-tight text-[#3834a4] font-bold">{fmtM(totalCFSpend)}</div>
+              <div className="text-[10px] font-bold text-[#293B73] uppercase tracking-widest mb-1 font-sans">CoverForce</div>
+              <div className="text-3xl font-heading font-regular tracking-tight text-[#293B73] font-bold">{fmtM(totalCFSpend)}</div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0a143b] to-[#3834a4] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div className="bg-white border border-[#535353]/10 rounded-2xl p-6 transition-all duration-300 relative overflow-hidden group">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r "></div>
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-sm font-bold text-[#50617a] uppercase tracking-wider font-heading">Cost Avoidance</h3>
-            <div className="p-2 bg-[#f0f4ff] rounded-xl text-[#3834a4] group-hover:scale-110 transition-transform duration-300">
+            <div className="p-2 bg-[#F5F7FA] rounded-xl text-[#293B73] group-hover:scale-110 transition-transform duration-300">
               <PiggyBank className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-[10px] font-bold text-[#3834a4] uppercase tracking-widest mb-1 font-sans">Capital Saved by Buying</div>
-          <div className="text-4xl font-heading font-regular tracking-tight text-[#3834a4] font-bold mt-2 mb-2">{fmtM(buildTotal - totalCFSpend)}</div>
+          <div className="text-[10px] font-bold text-[#293B73] uppercase tracking-widest mb-1 font-sans">Capital Saved by Buying</div>
+          <div className="text-4xl font-heading font-regular tracking-tight text-[#293B73] font-bold mt-2 mb-2">{fmtM(buildTotal - totalCFSpend)}</div>
           <div className="text-xs text-[#50617a] font-sans">Free cash flow available for revenue-generating investments</div>
         </div>
       </div>
@@ -85,14 +85,14 @@ export default function BuildVsBuyTab({ results }: { results: CalculationResult 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         
         {/* Carrier Integrations Logic */}
-        <div className="md:col-span-1 bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+        <div className="md:col-span-1 bg-white border border-[#535353]/10 rounded-xl p-5">
           <h3 className="text-sm font-bold text-[#0a143b] mb-4 flex items-center gap-2 font-heading">
             <Plug className="w-4 h-4 text-[#50617a]" /> The Integration Trap
           </h3>
           <div className="text-xs text-[#50617a] leading-relaxed mb-4 font-sans">
             Building <strong className="text-[#0a143b]">{inputs.carrierIntegrations} carrier integrations</strong> isn't just {inputs.carrierIntegrations}x the work. Each new API exponentially increases the maintenance burden due to differing data standards, auth methods, and constant schema changes.
           </div>
-          <div className="bg-gray-50 rounded-lg p-3 border border-gray-200 font-sans">
+          <div className="bg-[#F5F7FA] rounded-lg p-3 border border-[#535353]/10 font-sans">
             <div className="flex justify-between text-[11px] mb-2">
               <span className="text-[#50617a]">Complexity Multiplier</span>
               <span className="font-bold text-[#0a143b]">{integrationComplexityMultiplier.toFixed(2)}x</span>
@@ -112,7 +112,7 @@ export default function BuildVsBuyTab({ results }: { results: CalculationResult 
         </div>
 
         {/* Chart */}
-        <div className="md:col-span-2 bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <div className="md:col-span-2 bg-white border border-[#535353]/10 rounded-xl p-6">
           <h3 className="text-lg font-bold text-[#0a143b] mb-1 font-heading">Cumulative Cash Outflow</h3>
           <p className="text-sm text-[#50617a] mb-6 font-sans">Visualizing the capital efficiency of renting infrastructure vs. building it.</p>
           
@@ -125,8 +125,8 @@ export default function BuildVsBuyTab({ results }: { results: CalculationResult 
                     <stop offset="95%" stopColor="#0A143B" stopOpacity={0}/>
                   </linearGradient>
                   <linearGradient id="colorCF" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3834a4" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#3834a4" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#293B73" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#293B73" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} dy={10} />
@@ -134,7 +134,7 @@ export default function BuildVsBuyTab({ results }: { results: CalculationResult 
                 <Tooltip cursor={{ stroke: '#E5E7EB', strokeWidth: 1, strokeDasharray: '4 4' }} content={<CustomTooltip />} />
                 <Legend wrapperStyle={{ paddingTop: '20px', color: '#374151' }} iconType="circle" />
                 <Area type="monotone" dataKey="inHouseCumulative" name="In-House Build & Maintain" stroke="#0A143B" strokeWidth={3} fillOpacity={1} fill="url(#colorInHouse)" />
-                <Area type="monotone" dataKey="cfCumulative" name="CoverForce Subscription" stroke="#3834a4" strokeWidth={3} fillOpacity={1} fill="url(#colorCF)" />
+                <Area type="monotone" dataKey="cfCumulative" name="CoverForce Subscription" stroke="#293B73" strokeWidth={3} fillOpacity={1} fill="url(#colorCF)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>

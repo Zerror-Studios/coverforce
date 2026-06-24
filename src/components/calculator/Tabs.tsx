@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { CalculationResult } from "@/lib/calculations";
+import { calcSegmentActive, calcSegmentIdle } from "./calculatorUi";
 
 import RevenueMapTab from "./tabs/RevenueMapTab";
 import OverviewTab from "./tabs/OverviewTab";
@@ -43,10 +44,10 @@ function TabButton({
       role="tab"
       aria-selected={active}
       onClick={onClick}
-      className={`flex shrink-0 items-center gap-2 rounded-lg border px-3.5 py-2 font-heading text-xs font-semibold tracking-tight transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5B35E0] md:px-4 ${
+      className={`flex shrink-0 items-center gap-2 rounded-lg border px-3.5 py-2 font-heading text-xs font-medium tracking-tight transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a143b] md:px-4 ${
         active
-          ? "border-[#3834a4] bg-[#3834a4] text-white shadow-sm [&_svg]:text-white"
-          : "border-[#3834a4] bg-white text-[#121C49] hover:bg-[#121C49]/5 [&_svg]:text-[#5B35E0]"
+          ? `${calcSegmentActive} [&_svg]:text-white`
+          : `${calcSegmentIdle} [&_svg]:text-[#50617a]`
       }`}
     >
       {icon}
@@ -59,9 +60,9 @@ export default function Tabs({ results }: Props) {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
 
   return (
-    <div className="min-w-0 flex-1 w-full">
+    <div className="min-w-0 w-full flex-1">
       <div
-        className="mb-6 border-b border-neutral-200 pb-4 print:hidden"
+        className="mb-6 border-b border-[#535353]/10 pb-4 print:hidden"
         role="tablist"
         aria-label="Calculator views"
       >

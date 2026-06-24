@@ -1,12 +1,11 @@
-'use client';
+"use client";
 
-import React from 'react';
-import CompanyBar from '@/components/calculator/CompanyBar';
-import Sidebar from '@/components/calculator/Sidebar';
-import Tabs from '@/components/calculator/Tabs';
-import { useCalculator } from '@/hooks/useCalculator';
-import Container from '@/components/common/Container';
-import PageWrapper from '@/components/PageWrapper'
+import CompanyBar from "@/components/calculator/CompanyBar";
+import Sidebar from "@/components/calculator/Sidebar";
+import Tabs from "@/components/calculator/Tabs";
+import Container from "@/components/common/Container";
+import PageWrapper from "@/components/PageWrapper";
+import { useCalculator } from "@/hooks/useCalculator";
 
 export default function CalculationPage() {
   const {
@@ -16,32 +15,35 @@ export default function CalculationPage() {
     toggleCommercialLob,
     setCommercialLobPct,
     setPersonalLobPct,
-    results
+    results,
   } = useCalculator();
 
   return (
-    <>
     <PageWrapper>
-    <Container borderColor="#53535380">
-      <CompanyBar
-        inputs={inputs}
-        updateInput={updateInput}
-        applySegment={applySegment}
-        results={results}
-      />
+      <section className="bg-white text-[#0a143b]">
+        <Container borderColor="#53535380" borderBottom>
+          <CompanyBar
+            inputs={inputs}
+            updateInput={updateInput}
+            applySegment={applySegment}
+            results={results}
+          />
 
-      <div id="calculator-main-view" className="w-full mx-auto flex flex-col md:flex-row print:flex-col gap-8 print:gap-4 py-5 print:py-4">
-        <Sidebar
-          inputs={inputs}
-          updateInput={updateInput}
-          toggleCommercialLob={toggleCommercialLob}
-          setCommercialLobPct={setCommercialLobPct}
-          setPersonalLobPct={setPersonalLobPct}
-        />
-        <Tabs results={results} />
-      </div>
-      </Container>
+          <div
+            id="calculator-main-view"
+            className="mx-auto flex w-full flex-col gap-8 py-8 print:flex-col print:gap-4 print:py-4 md:flex-row md:gap-10 lg:py-12"
+          >
+            <Sidebar
+              inputs={inputs}
+              updateInput={updateInput}
+              toggleCommercialLob={toggleCommercialLob}
+              setCommercialLobPct={setCommercialLobPct}
+              setPersonalLobPct={setPersonalLobPct}
+            />
+            <Tabs results={results} />
+          </div>
+        </Container>
+      </section>
     </PageWrapper>
-    </>
   );
 }

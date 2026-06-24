@@ -13,6 +13,12 @@ import {
   Zap,
   type LucideIcon,
 } from "lucide-react";
+import {
+  calcCard,
+  calcEyebrow,
+  calcInputWrap,
+  calcLabel,
+} from "./calculatorUi";
 
 interface Props {
   inputs: CalculatorInputs;
@@ -40,11 +46,7 @@ type InputRowProps = {
 };
 
 function ControlLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="mb-1.5 block font-heading text-xs font-medium text-[#5B35E0]">
-      {children}
-    </span>
-  );
+  return <span className={calcLabel}>{children}</span>;
 }
 
 function SidebarAccordion({
@@ -61,19 +63,19 @@ function SidebarAccordion({
   children: React.ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
+    <div className={`overflow-hidden rounded-xl ${calcCard}`}>
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={open}
-        className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left transition-colors hover:bg-[#121C49]/3"
+        className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left transition-colors hover:bg-[#F5F7FA]"
       >
-        <span className="flex items-center gap-2.5 font-heading text-sm font-semibold tracking-tight text-[#0a143b]">
-          <Icon className="size-4 shrink-0 text-[#5B35E0]" aria-hidden />
+        <span className="flex items-center gap-2.5 font-heading text-sm font-medium tracking-tight text-[#0a143b]">
+          <Icon className="size-4 shrink-0 text-[#50617a]" aria-hidden />
           {title}
         </span>
         <ChevronDown
-          className={`size-4 shrink-0 text-[#8296B0] transition-transform duration-300 ease-out ${
+          className={`size-4 shrink-0 text-[#9AA8BC] transition-transform duration-300 ease-out ${
             open ? "rotate-180" : ""
           }`}
           aria-hidden
@@ -86,7 +88,7 @@ function SidebarAccordion({
         }`}
       >
         <div className="overflow-hidden">
-          <div className="border-t border-neutral-200 px-4 pb-4 pt-3">{children}</div>
+          <div className="border-t border-[#535353]/10 px-4 pb-4 pt-3">{children}</div>
         </div>
       </div>
     </div>
@@ -117,15 +119,15 @@ export default function Sidebar({
   }: InputRowProps) => (
     <div className="mb-3.5">
       <ControlLabel>{label}</ControlLabel>
-      <div className="relative flex items-center overflow-hidden rounded-lg border border-neutral-200 bg-white transition-all focus-within:border-[#5B35E0] focus-within:ring-1 focus-within:ring-[#5B35E0]/25">
+      <div className={calcInputWrap}>
         {prefix ? (
-          <span className="pl-3 pr-1 font-heading text-sm font-semibold text-[#8296B0]">
+          <span className="pl-3 pr-1 font-heading text-sm font-medium text-[#9AA8BC]">
             {prefix}
           </span>
         ) : null}
         <input
           type={type}
-          className="w-full border-none bg-transparent px-3 py-2.5 font-heading text-sm font-semibold text-[#0a143b] outline-none"
+          className="w-full border-none bg-transparent px-3 py-2.5 font-heading text-sm font-medium text-[#0a143b] outline-none"
           value={inputs[prop] as string | number}
           onChange={(e) => {
             const val = type === "number" ? parseFloat(e.target.value) : e.target.value;
@@ -137,12 +139,12 @@ export default function Sidebar({
           step={step}
         />
         {suffix ? (
-          <span className="pr-3 pl-1 font-heading text-sm font-semibold text-[#8296B0]">
+          <span className="pl-1 pr-3 font-heading text-sm font-medium text-[#9AA8BC]">
             {suffix}
           </span>
         ) : null}
       </div>
-      {note ? <p className="mt-1 font-sans text-[10px] leading-relaxed text-[#8296B0]">{note}</p> : null}
+      {note ? <p className="mt-1 font-sans text-[10px] leading-relaxed text-[#9AA8BC]">{note}</p> : null}
     </div>
   );
 
@@ -161,18 +163,15 @@ export default function Sidebar({
   }) => (
     <div className="mb-5">
       <ControlLabel>{label}</ControlLabel>
-      <div className="mb-1 flex justify-between font-sans text-[11px] font-semibold">
+      <div className="mb-2 flex justify-between font-sans text-[11px] font-semibold">
         <span className="text-[#0a143b]">{leftLabel}</span>
-        <span className="text-[#8296B0]">{rightLabel}</span>
-      </div>
-      <div className="mb-2 h-1.5 overflow-hidden rounded-full bg-neutral-100">
-        <div className="h-full bg-[#3834a4] transition-[width] duration-150" style={{ width: `${value}%` }} />
+        <span className="text-[#9AA8BC]">{rightLabel}</span>
       </div>
       <input
         type="range"
         min={0}
         max={100}
-        className="w-full accent-[#3834a4]"
+        className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-[#F5F7FA] accent-[#0a143b] [&::-moz-range-thumb]:size-3.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-[#0a143b] [&::-webkit-slider-thumb]:size-3.5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#0a143b]"
         value={value}
         onChange={(e) => onChange(parseInt(e.target.value, 10))}
       />
@@ -180,7 +179,7 @@ export default function Sidebar({
   );
 
   return (
-    <aside className="flex w-full shrink-0 flex-col gap-3 print:w-full md:w-[340px]">
+    <aside className="flex w-full shrink-0 flex-col gap-3 print:w-full md:w-[340px] lg:w-[360px]">
       <SidebarAccordion
         title="Business Mix"
         icon={FolderGit2}
@@ -203,9 +202,9 @@ export default function Sidebar({
           rightLabel={`E&S ${100 - inputs.admittedPct}%`}
         />
 
-        <div className="my-4 border-t border-neutral-200" />
+        <div className="my-4 border-t border-[#535353]/10" />
 
-        <p className="mb-2 flex items-center font-heading text-[10px] font-semibold uppercase tracking-widest text-[#5B35E0]">
+        <p className={`mb-2 flex items-center ${calcEyebrow}`}>
           <CheckCircle2 className="mr-1.5 size-3.5" aria-hidden />
           Commercial lines — CF can help
         </p>
@@ -217,15 +216,15 @@ export default function Sidebar({
                 key={lob.id}
                 className={`flex cursor-pointer select-none items-center gap-2 rounded-md border p-1.5 transition-colors ${
                   st.on
-                    ? "border-[#3834a4]/30 bg-[#3834a4]/6"
-                    : "border-neutral-200 bg-neutral-50"
+                    ? "border-[#0a143b]/30 bg-[#0a143b]/6"
+                    : "border-[#535353]/10 bg-[#F5F7FA]"
                 }`}
               >
                 <div
                   className={`flex size-4 shrink-0 items-center justify-center rounded border transition-colors ${
                     st.on
-                      ? "border-[#3834a4] bg-[#3834a4] text-white"
-                      : "border-neutral-300 bg-white"
+                      ? "border-[#0a143b] bg-[#0a143b] text-white"
+                      : "border-[#535353]/15 bg-white"
                   }`}
                 >
                   {st.on ? <span className="text-[10px]">✓</span> : null}
@@ -241,7 +240,7 @@ export default function Sidebar({
                 >
                   {lob.label}
                 </span>
-                <div className="flex items-center gap-1 border-l border-neutral-200 pl-2">
+                <div className="flex items-center gap-1 border-l border-[#535353]/10 pl-2">
                   <input
                     type="number"
                     min={0}
@@ -258,7 +257,7 @@ export default function Sidebar({
           })}
         </div>
 
-        <p className="mb-2 mt-4 flex items-center font-heading text-[10px] font-semibold uppercase tracking-widest text-[#8296B0]">
+        <p className={`mb-2 mt-4 flex items-center ${calcEyebrow}`}>
           <BarChart3 className="mr-1.5 size-3.5" aria-hidden />
           Personal lines — quantify pain only
         </p>
@@ -269,14 +268,14 @@ export default function Sidebar({
               <label
                 key={lob.id}
                 className={`flex cursor-pointer select-none items-center gap-2 rounded-md border p-1.5 transition-colors ${
-                  st.on ? "border-[#50617a]/30 bg-neutral-100" : "border-neutral-200 bg-neutral-50"
+                  st.on ? "border-[#50617a]/30 bg-[#F5F7FA]" : "border-[#535353]/10 bg-[#F5F7FA]"
                 }`}
               >
                 <div
                   className={`flex size-4 shrink-0 items-center justify-center rounded border transition-colors ${
                     st.on
                       ? "border-[#50617a] bg-[#50617a] text-white"
-                      : "border-neutral-300 bg-white"
+                      : "border-[#535353]/15 bg-white"
                   }`}
                 >
                   {st.on ? <span className="text-[10px]">✓</span> : null}
@@ -287,7 +286,7 @@ export default function Sidebar({
                 >
                   {lob.label}
                 </span>
-                <div className="flex items-center gap-1 border-l border-neutral-300 pl-2">
+                <div className="flex items-center gap-1 border-l border-[#535353]/15 pl-2">
                   <input
                     type="number"
                     min={0}
@@ -304,7 +303,7 @@ export default function Sidebar({
           })}
         </div>
 
-        <p className="mb-2 mt-4 flex items-center font-heading text-[10px] font-semibold uppercase tracking-widest text-[#8296B0]">
+        <p className={`mb-2 mt-4 flex items-center ${calcEyebrow}`}>
           <PlusCircle className="mr-1.5 size-3.5" aria-hidden />
           Other line of business
         </p>
@@ -312,11 +311,11 @@ export default function Sidebar({
           <input
             type="text"
             placeholder="e.g. Marine Cargo..."
-            className="flex-1 rounded-lg border border-neutral-200 bg-white p-2 text-xs text-[#0a143b] outline-none transition-colors placeholder:text-[#8296B0] focus:border-[#5B35E0]"
+            className="flex-1 rounded-lg border border-[#535353]/10 bg-white p-2 text-xs text-[#0a143b] outline-none transition-colors placeholder:text-[#8296B0] focus:border-[#0a143b]"
             value={inputs.otherLobName}
             onChange={(e) => updateInput("otherLobName", e.target.value)}
           />
-          <div className="flex items-center gap-1 rounded-lg border border-neutral-200 bg-white px-2 py-1 focus-within:border-[#5B35E0]">
+          <div className="flex items-center gap-1 rounded-lg border border-[#535353]/10 bg-white px-2 py-1 focus-within:border-[#0a143b]">
             <input
               type="number"
               min={0}
@@ -332,7 +331,7 @@ export default function Sidebar({
         <label className="mt-2 flex cursor-pointer items-center gap-1.5 font-sans text-xs text-[#50617a]">
           <input
             type="checkbox"
-            className="accent-[#3834a4]"
+            className="accent-[#0a143b]"
             checked={inputs.otherLobCF}
             onChange={(e) => updateInput("otherLobCF", e.target.checked)}
           />
@@ -409,7 +408,7 @@ export default function Sidebar({
       >
         <InputRow label="CoverForce implementation fee" prop="implFee" prefix="$" step={1000} />
         <InputRow label="CoverForce monthly fee" prop="monthlyFee" prefix="$" step={500} />
-        <div className="my-4 border-t border-neutral-200" />
+        <div className="my-4 border-t border-[#535353]/10" />
         <InputRow label="In-house build cost (year 1)" prop="buildYear1" prefix="$" step={50000} />
         <InputRow label="In-house annual maintenance" prop="buildAnnual" prefix="$" step={10000} />
         <InputRow label="IT staff hourly rate" prop="itRate" prefix="$" step={5} />
@@ -419,7 +418,7 @@ export default function Sidebar({
           step={5}
           note="Ongoing hours to maintain in-house connections"
         />
-        <div className="my-4 border-t border-neutral-200" />
+        <div className="my-4 border-t border-[#535353]/10" />
         <InputRow
           label="Carrier API integrations (current)"
           prop="carrierIntegrations"

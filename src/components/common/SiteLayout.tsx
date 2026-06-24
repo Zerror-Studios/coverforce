@@ -10,7 +10,12 @@ import {
   useHomeIntro,
 } from "@/contexts/HomeIntroContext";
 import { scrollToTop } from "@/lib/scrollToTop";
-import { PAGE_TRANSITION_MS } from "@/lib/pageTransition";
+import {
+  getPageTransitionBg,
+  installPageTransitionBgSync,
+  PAGE_TRANSITION_MS,
+  setPageTransitionBg,
+} from "@/lib/pageTransition";
 import { usePathname } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import gsap from "gsap";
@@ -23,8 +28,10 @@ type SiteLayoutProps = {
 };
 
 function SiteLayoutInner({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const { enabled: introEnabled, phase } = useHomeIntro();
   const hideChrome = introEnabled && isPreNavIntroPhase(phase);
+  const pageBg = getPageTransitionBg(pathname);
 
   useEffect(() => {
     if (!introEnabled || phase !== "done") return;
@@ -43,19 +50,24 @@ function SiteLayoutInner({ children }: { children: ReactNode }) {
       <HomePageLoader />
 
       {!hideChrome ? (
-        <header className="fixed top-0 z-50 w-full">
+        <header className="site-view-header fixed top-0 z-50 w-full">
           <Header />
         </header>
       ) : null}
 
       <div className="relative w-full flex-1">
-        <main className="relative z-10 w-full">{children}</main>
+        <div
+          className="site-view-content min-h-screen w-full"
+          style={{ ["--page-transition-bg" as string]: pageBg }}
+        >
+          <main className="relative w-full">{children}</main>
 
-        {!hideChrome ? (
-          <footer className="relative z-10 w-full">
-            <Footer />
-          </footer>
-        ) : null}
+          {!hideChrome ? (
+            <footer className="relative w-full">
+              <Footer />
+            </footer>
+          ) : null}
+        </div>
       </div>
     </div>
   );
@@ -64,6 +76,12 @@ function SiteLayoutInner({ children }: { children: ReactNode }) {
 export default function SiteLayout({ children }: SiteLayoutProps) {
   const pathname = usePathname();
   const isHome = pathname === "/";
+
+  useEffect(() => {
+    setPageTransitionBg(pathname);
+  }, [pathname]);
+
+  useEffect(() => installPageTransitionBgSync(), []);
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {

@@ -12,7 +12,7 @@ import Image from "next/image";
 import { RiArrowDownSLine } from "@remixicon/react";
 import { MEGA_MENUS } from "@/data/megaMenu";
 import { HOME_INTRO_NAV_MS, useHomeIntro } from "@/contexts/HomeIntroContext";
-import { pageAnimation } from "@/lib/pageTransition";
+import { pageAnimation, setPageTransitionBg } from "@/lib/pageTransition";
 import { useTransitionRouter } from "next-view-transitions";
 
 type NavItem = {
@@ -34,7 +34,11 @@ const HOVER_CLOSE_DELAY = 120;
 type HeaderTheme = "dark" | "light";
 
 function getHeaderTheme(pathname: string): HeaderTheme {
-  if (pathname.startsWith("/solutions") || pathname.startsWith("/pricing")) {
+  if (
+    pathname.startsWith("/solutions") ||
+    pathname.startsWith("/pricing") ||
+    pathname.startsWith("/calculation")
+  ) {
     return "light";
   }
   return "dark";
@@ -268,6 +272,7 @@ const Header = () => {
       if (pathname === href) return;
 
       if (typeof document !== "undefined" && "startViewTransition" in document) {
+        setPageTransitionBg(href);
         router.push(href, { onTransitionReady: pageAnimation });
         return;
       }
