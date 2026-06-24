@@ -9,7 +9,6 @@ type PricingPlan = {
   description: string;
   features: string[];
   cta: { label: string; href: string };
-  ctaClassName: string;
   showViewMore?: boolean;
   cardClassName: string;
 };
@@ -31,8 +30,7 @@ const PLANS: PricingPlan[] = [
       label: "Apply to our startup program",
       href: "/solutions/startups",
     },
-    ctaClassName: "text-[#413CC0]",
-    cardClassName: "bg-[#413CC0]",
+    cardClassName: "bg-[#154AED]",
   },
   {
     id: "enterprise",
@@ -51,7 +49,6 @@ const PLANS: PricingPlan[] = [
       label: "Talk to sales",
       href: "/",
     },
-    ctaClassName: "text-[#5B35E0]",
     showViewMore: true,
     cardClassName: "bg-[#5B35E0]",
   },
@@ -60,7 +57,7 @@ const PLANS: PricingPlan[] = [
 function FeatureItem({ children }: { children: string }) {
   return (
     <li className="flex items-start gap-3">
-      <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-[#95E070] text-[#0a143b]">
+      <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-[#7CD20D] text-[#0a143b]">
         <RiCheckLine className="size-3" aria-hidden />
       </span>
       <span className="font-sans text-sm font-regular leading-relaxed text-white/95">
@@ -73,20 +70,20 @@ function FeatureItem({ children }: { children: string }) {
 function PricingCard({ plan }: { plan: PricingPlan }) {
   return (
     <article
-      className={`flex h-full flex-col rounded-2xl p-8 text-white md:p-10 ${plan.cardClassName}`}
+      className={`flex min-h-[40rem] flex-col rounded-xl p-8 text-white md:min-h-[46rem] md:p-12 lg:min-h-[50rem] lg:p-10 ${plan.cardClassName}`}
     >
       <div className="flex items-center gap-3">
         <h2 className="font-heading text-3xl font-medium tracking-tight md:text-4xl">
           {plan.title}
         </h2>
         {plan.badge ? (
-          <span className="rounded-full bg-white px-2.5 py-1 font-heading text-xs font-medium text-[#413CC0]">
+          <span className="rounded-full bg-white px-2.5 py-1 font-sans text-xs font-semibold text-[#413CC0]">
             {plan.badge}
           </span>
         ) : null}
       </div>
 
-      <p className="mt-5 font-sans text-sm font-regular leading-relaxed text-white/90">
+      <p className="mt-5 font-sans text-sm font-regular leading-relaxed text-white">
         {plan.description}
       </p>
 
@@ -94,21 +91,26 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
         {plan.features.map((feature) => (
           <FeatureItem key={feature}>{feature}</FeatureItem>
         ))}
+        {plan.showViewMore ? (
+          <div className="w-full flex justify-center">
+            <button
+              type="button"
+              className="mt-6 w-fit font-heading text-sm font-regular text-white underline underline-offset-4 transition-opacity hover:opacity-80"
+            >
+              View more
+            </button>
+          </div>
+        ) : null}
       </ul>
 
-      {plan.showViewMore ? (
-        <button
-          type="button"
-          className="mt-6 w-fit font-heading text-sm font-regular text-white underline underline-offset-4 transition-opacity hover:opacity-80"
-        >
-          View more
-        </button>
-      ) : null}
+
 
       <Button
         href={plan.cta.href}
+        variant="primary"
+        surface="on-dark"
         balanced
-        className={`mt-8 w-full justify-center border-transparent !bg-white hover:opacity-95 ${plan.ctaClassName}`}
+        className="w-full"
       >
         {plan.cta.label}
       </Button>
@@ -119,8 +121,8 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
 const PricingPlans = () => {
   return (
     <section id="plans" className="bg-white text-[#0a143b]">
-      <Container>
-        <div className="grid gap-6 py-12 md:grid-cols-2 md:gap-8 md:py-16 lg:py-20">
+      <Container borderColor="#53535333">
+        <div className="grid items-stretch gap-6 py-12 md:grid-cols-2 md:gap-8 md:py-16 lg:py-20 px-26">
           {PLANS.map((plan) => (
             <PricingCard key={plan.id} plan={plan} />
           ))}
