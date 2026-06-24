@@ -1,29 +1,51 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { RiCheckLine, RiCloseLine } from "@remixicon/react";
 
 import type { WayCardModalContent } from "@/data/wayCardModals";
+import { CARD_BACKGROUNDS, type CardBackground } from "@/data/wayCardStyles";
 import { WAY_MODAL_CLOSE_TOTAL_MS, prefersReducedMotion } from "@/lib/wayModalMotion";
 import Button from "@/components/common/Button";
+import dynamic from "next/dynamic";
+
+const WayCardDotGridScene = dynamic(() => import("./WayCardDotGridScene"), {
+  ssr: false,
+  loading: () => null,
+});
 
 type WayCardModalProps = {
   open: boolean;
   content: WayCardModalContent | null;
   preview: ReactNode;
+  label?: string;
+  background?: CardBackground;
+  variant?: "dark" | "light";
+  dotGrid?: boolean;
+  backgroundScene?: ReactNode;
   onClose: () => void;
 };
 
 type StoredModal = {
   content: WayCardModalContent;
   preview: ReactNode;
+  label?: string;
+  background?: CardBackground;
+  variant: "dark" | "light";
+  dotGrid?: boolean;
+  backgroundScene?: ReactNode;
 };
 
 export default function WayCardModal({
   open,
   content,
   preview,
+  label,
+  background,
+  variant = "light",
+  dotGrid,
+  backgroundScene,
   onClose,
 }: WayCardModalProps) {
   const [isClosing, setIsClosing] = useState(false);
@@ -32,9 +54,19 @@ export default function WayCardModal({
   const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef(content);
   const previewNodeRef = useRef(preview);
+  const labelRef = useRef(label);
+  const backgroundRef = useRef(background);
+  const variantRef = useRef(variant);
+  const dotGridRef = useRef(dotGrid);
+  const backgroundSceneRef = useRef(backgroundScene);
 
   contentRef.current = content;
   previewNodeRef.current = preview;
+  labelRef.current = label;
+  backgroundRef.current = background;
+  variantRef.current = variant;
+  dotGridRef.current = dotGrid;
+  backgroundSceneRef.current = backgroundScene;
 
   useEffect(() => {
     if (!open || !contentRef.current) return;
@@ -42,6 +74,11 @@ export default function WayCardModal({
     setStored({
       content: contentRef.current,
       preview: previewNodeRef.current,
+      label: labelRef.current,
+      background: backgroundRef.current,
+      variant: variantRef.current,
+      dotGrid: dotGridRef.current,
+      backgroundScene: backgroundSceneRef.current,
     });
     setIsClosing(false);
   }, [open]);
@@ -139,35 +176,51 @@ export default function WayCardModal({
             <RiCloseLine size={20} />
           </button>
 
-          <div className="grid gap-10 px-6 pb-8 pt-14 sm:px-10 sm:pb-10 sm:pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:px-12 lg:pb-12">
-            <div className="space-y-8">
-              <div className="space-y-5 pr-8 sm:pr-10">
-                <p className="text-sm font-mono font-medium uppercase tracking-[0.14em] text-[#4F63E8]">
-                  {stored.content.id}
-                </p>
+          <div className="px-6 pb-8 pt-14 sm:px-10 sm:pb-10 sm:pt-16 lg:px-12 lg:pb-12">
+            <div className="flex items-start justify-between gap-8 pr-8 sm:pr-10">
+              <div>
+                {stored.label ? (
+                  <p
+                    className="way-modal-reveal text-sm font-mono font-medium uppercase tracking-[0.14em] text-[#4F63E8]"
+                    style={{ "--way-modal-stagger": "0ms" } as CSSProperties}
+                  >
+                    {stored.label}
+                  </p>
+                ) : null}
                 <h2
                   id="way-card-modal-title"
-                  className="max-w-xl text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#0a143b] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+                  className="way-modal-reveal mt-5 max-w-xl text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#0a143b] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+                  style={{ "--way-modal-stagger": "60ms" } as CSSProperties}
                 >
                   {stored.content.title}
                 </h2>
-                <p className="max-w-xl font-sans text-sm font-regular leading-[1.4] text-[#50617a] md:text-[1.125rem]">
-                  {stored.content.description}
-                </p>
+                <Button
+                  href={stored.content.primaryCta.href}
+                  className="way-modal-reveal mt-6"
+                  style={{ "--way-modal-stagger": "120ms" } as CSSProperties}
+                >
+                  {stored.content.primaryCta.label}
+                </Button>
               </div>
-
-              <Button href={stored.content.primaryCta.href}>
-                {stored.content.primaryCta.label}
-              </Button>
+              <p
+                className="way-modal-reveal mt-4 max-w-md shrink-0 font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem]"
+                style={{ "--way-modal-stagger": "90ms" } as CSSProperties}
+              >
+                {stored.content.description}
+              </p>
             </div>
 
-            <ul className="space-y-4 border-t border-[#535353]/10 pt-8 lg:border-t-0 lg:pt-2">
-              {stored.content.features.map((feature) => (
-                <li key={feature} className="flex items-start gap-3">
-                  <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border border-[#4F63E8]/20 bg-[#4F63E8]/8 text-[#4F63E8]">
-                    <RiCheckLine size={14} />
+            <ul className="mt-10 space-y-3 border-t border-[#535353]/10 pt-8 sm:mt-12">
+              {stored.content.features.map((feature, index) => (
+                <li
+                  key={feature}
+                  className="way-modal-reveal flex items-start gap-2.5"
+                  style={{ "--way-modal-stagger": `${180 + index * 55}ms` } as CSSProperties}
+                >
+                  <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border border-[#4F63E8]/20 bg-[#4F63E8]/8 text-[#4F63E8]">
+                    <RiCheckLine size={11} />
                   </span>
-                  <span className="font-sans text-sm font-regular leading-[1.4] text-[#50617a] md:text-[1.0625rem]">
+                  <span className="font-sans text-xs font-regular leading-[1.45] text-[#50617a] md:text-sm">
                     {feature}
                   </span>
                 </li>
@@ -175,8 +228,20 @@ export default function WayCardModal({
             </ul>
           </div>
 
-          <div className="border-t border-[#535353]/10 bg-[#F5F7FA] px-6 py-12 sm:px-10 sm:py-14">
-            <div className="way-modal-preview-slot pointer-events-none relative mx-auto flex h-[300px] w-full max-w-[820px] items-center justify-center sm:h-[360px] [&>*]:!relative [&>*]:!top-auto [&>*]:!right-auto [&>*]:!bottom-auto [&>*]:!left-auto [&>*]:mx-auto [&>*]:scale-[1.1] sm:[&>*]:scale-[1.2]">
+          <div
+            className={`relative overflow-hidden border-t border-[#535353]/10 px-6 py-12 sm:px-10 sm:py-14 ${
+              stored.background ? CARD_BACKGROUNDS[stored.background] : "bg-[#F5F7FA]"
+            }`}
+          >
+            {stored.dotGrid ? (
+              <WayCardDotGridScene variant={stored.variant} active track="window" />
+            ) : null}
+            {stored.backgroundScene ? (
+              <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden" aria-hidden>
+                {stored.backgroundScene}
+              </div>
+            ) : null}
+            <div className="way-modal-preview-slot pointer-events-none relative z-10 mx-auto flex h-[300px] w-full max-w-[820px] items-center justify-center sm:h-[360px] [&>*]:!relative [&>*]:!top-auto [&>*]:!right-auto [&>*]:!bottom-auto [&>*]:!left-auto [&>*]:mx-auto [&>*]:scale-[1.1] sm:[&>*]:scale-[1.2]">
               {stored.preview}
             </div>
           </div>

@@ -13,15 +13,7 @@ import Container from "../common/Container";
 import WayCardModal from "./WayCardModal";
 import { WayCardHoverProvider } from "./WayCardHoverContext";
 import { WAY_CARD_MODALS } from "@/data/wayCardModals";
-
-type CardBackground = "accent" | "light" | "developer";
-
-const CARD_BACKGROUNDS: Record<CardBackground, string> = {
-  accent:
-    "bg-[linear-gradient(135deg,#4541CD_0%,#352D93_38%,#121C49_100%)]",
-  light: "bg-[linear-gradient(135deg,#DADEF5_0%,#F8F0FC_55%,#FFFFFF_100%)]",
-  developer: "bg-[linear-gradient(135deg,#8A80DD_0%,#ACA8D7_50%,#8A80DD_100%)]",
-};
+import { CARD_BACKGROUNDS, type CardBackground } from "@/data/wayCardStyles";
 
 const WholesalerMock = dynamic(() => import("./WholesalerMock"), {
   loading: () => <MockPlaceholder />,
@@ -443,6 +435,11 @@ export default function ThreeWays() {
         open={activeCard !== null}
         content={modalContent}
         preview={activeConfig?.modalPreview}
+        label={activeConfig?.label}
+        background={activeConfig?.background}
+        variant={activeConfig?.variant ?? "light"}
+        dotGrid={activeConfig?.dotGrid}
+        backgroundScene={activeConfig?.backgroundScene}
         onClose={closeModal}
       />
     </section>

@@ -283,6 +283,19 @@ button {
   --way-modal-panel-close: 460ms;
   --way-modal-overlay-close-delay: 300ms;
   --way-modal-overlay-close: 380ms;
+  --way-modal-text-base-delay: 200ms;
+  --way-modal-text-duration: 520ms;
+}
+
+@keyframes way-modal-text-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 @keyframes way-modal-overlay-in {
@@ -330,6 +343,11 @@ button {
   backface-visibility: hidden;
 }
 
+.way-modal-reveal {
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .way-modal-overlay-enter {
     animation: way-modal-overlay-in var(--way-modal-overlay-open) ease-out both;
@@ -348,6 +366,14 @@ button {
     animation: way-modal-overlay-out var(--way-modal-overlay-close) ease-in both;
     animation-delay: var(--way-modal-overlay-close-delay);
   }
+
+  .way-modal-panel-enter .way-modal-reveal {
+    animation: way-modal-text-in var(--way-modal-text-duration) var(--way-modal-ease) both;
+    animation-delay: calc(
+      var(--way-modal-panel-open-delay) + var(--way-modal-text-base-delay) +
+        var(--way-modal-stagger, 0ms)
+    );
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -356,6 +382,11 @@ button {
   .way-modal-panel-enter,
   .way-modal-panel-exit {
     animation: none;
+  }
+
+  .way-modal-reveal {
+    opacity: 1;
+    transform: none;
   }
 }
 
