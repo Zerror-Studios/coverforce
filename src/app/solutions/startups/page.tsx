@@ -8,18 +8,21 @@ import ProgramOverview from '@/components/solutions/startups/ProgramOverview'
 import Launch from '@/components/solutions/startups/Launch'
 import Enablement from '@/components/solutions/startups/Enablement'
 import Hero from '@/components/solutions/startups/Hero'
+import PageWrapper from '@/components/PageWrapper'
 const page = () => {
   return (
     <>
-    <Hero/>
-    <WhosFor/>
-    <ProgramOverview/>
-    <Launch/>
-    <Enablement/>
-    <WhyCoverforce paddingTop={true} />
-    <Review/>
-    <CarrierResults/>
-    <Explore/>
+      <PageWrapper>
+        <Hero />
+        <WhosFor />
+        <ProgramOverview />
+        <Launch />
+        <Enablement />
+        <WhyCoverforce paddingTop={true} />
+        <Review />
+        <CarrierResults />
+        <Explore />
+      </PageWrapper>
     </>
   )
 }

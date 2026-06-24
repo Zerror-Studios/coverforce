@@ -33,6 +33,13 @@ button {
   cursor: pointer;
 }
 
+@supports (view-transition-name: none) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
 @keyframes button-arrow-nudge {
   0% {
     transform: translateX(0);

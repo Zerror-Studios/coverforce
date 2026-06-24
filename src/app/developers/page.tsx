@@ -4,15 +4,18 @@ import Review from '@/components/home/Review'
 import Explore from '@/components/home/Explore'
 import WhyCoverforce from '@/components/home/WhyCoverforce'
 import React from 'react'
+import PageWrapper from '@/components/PageWrapper'
 
 const DevelopersPage = () => {
     return (
         <>
-            <Hero />
-            <WhyCoverforce paddingTop={true} />
-            <Review />
-            <CarrierResults />
-            <Explore />
+            <PageWrapper>
+                <Hero />
+                <WhyCoverforce paddingTop={true} />
+                <Review />
+                <CarrierResults />
+                <Explore />
+            </PageWrapper>
         </>
     )
 }

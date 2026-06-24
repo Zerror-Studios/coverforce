@@ -6,10 +6,12 @@ import OperatingSystem from '@/components/solutions/carrier/OperatingSystem'
 import Workflow from '@/components/solutions/brokers/workflow'
 import CarrierResults from '@/components/home/CarrierResults'
 import Hero from '@/components/solutions/carrier/Hero'
+import PageWrapper from '@/components/PageWrapper'
 
 const page = () => {
   return (
     <>
+    <PageWrapper>
     <Hero/>
     <Workflow/>
     <OperatingSystem/>
@@ -17,6 +19,7 @@ const page = () => {
     <Review/>
     <CarrierResults/>
     <Explore/>
+    </PageWrapper>
     </>
   )
 }

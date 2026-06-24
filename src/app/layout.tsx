@@ -4,6 +4,7 @@ import { createRootMetadata } from "@/lib/seo";
 import type { ReactNode } from "react";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { ViewTransitions } from "next-view-transitions";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -13,6 +14,7 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
+    <ViewTransitions>
     <html lang="en" className={cn("font-sans", geist.variable)}>
       <body suppressHydrationWarning>
         <script
@@ -23,6 +25,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <SiteLayout>{children}</SiteLayout>
       </body>
     </html>
+    </ViewTransitions>
   );
 }
 

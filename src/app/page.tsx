@@ -11,25 +11,28 @@ import CarrierResults from "@/components/home/CarrierResults";
 import Explore from "@/components/home/Explore";
 import { createPageMetadata } from "@/lib/seo";
 import Marquee from "@/components/home/Marquee";
+import PageWrapper from "@/components/PageWrapper";
 
 const HomePage = () => {
   return (
     <>
-      <Hero />
-      <HomeSectionsAfterIntro>
-      <Marquee />
-      <ThreeWays />
-      <DistributionFlow />
-      <ProcessFlow />
-      <WhyCoverforce />
-      <DataAdvantage />
-      <div className="relative z-[1] h-0 overflow-visible">
-        <SectionRadialGlow className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2" />
-      </div>
-      <Review />
-      <CarrierResults />
-      <Explore />
-      </HomeSectionsAfterIntro>
+      <PageWrapper>
+        <Hero />
+        <HomeSectionsAfterIntro>
+          <Marquee />
+          <ThreeWays />
+          <DistributionFlow />
+          <ProcessFlow />
+          <WhyCoverforce />
+          <DataAdvantage />
+          <div className="relative z-[1] h-0 overflow-visible">
+            <SectionRadialGlow className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2" />
+          </div>
+          <Review />
+          <CarrierResults />
+          <Explore />
+        </HomeSectionsAfterIntro>
+      </PageWrapper >
     </>
   );
 };

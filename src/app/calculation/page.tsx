@@ -6,6 +6,7 @@ import Sidebar from '@/components/calculator/Sidebar';
 import Tabs from '@/components/calculator/Tabs';
 import { useCalculator } from '@/hooks/useCalculator';
 import Container from '@/components/common/Container';
+import PageWrapper from '@/components/PageWrapper'
 
 export default function CalculationPage() {
   const {
@@ -20,6 +21,7 @@ export default function CalculationPage() {
 
   return (
     <>
+    <PageWrapper>
     <Container borderColor="#53535380">
       <CompanyBar
         inputs={inputs}
@@ -39,6 +41,7 @@ export default function CalculationPage() {
         <Tabs results={results} />
       </div>
       </Container>
+    </PageWrapper>
     </>
   );
 }

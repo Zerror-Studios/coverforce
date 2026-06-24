@@ -12,6 +12,8 @@ import Image from "next/image";
 import { RiArrowDownSLine } from "@remixicon/react";
 import { MEGA_MENUS } from "@/data/megaMenu";
 import { HOME_INTRO_NAV_MS, useHomeIntro } from "@/contexts/HomeIntroContext";
+import { pageAnimation } from "@/lib/pageTransition";
+import { useTransitionRouter } from "next-view-transitions";
 
 type NavItem = {
   label: string;
@@ -24,7 +26,7 @@ const navItems: NavItem[] = [
   { label: "Solutions", href: "/solutions/wholesalers", hasDropdown: true },
   { label: "Developers", href: "/developers", hasDropdown: false },
   { label: "Pricing", href: "/pricing", hasDropdown: false },
-  { label: "Company", href: "/company", hasDropdown: true },
+  { label: "Company", href: "/", hasDropdown: true },
 ];
 
 const HOVER_CLOSE_DELAY = 120;
@@ -79,14 +81,17 @@ function HeaderNavLink({
   isActive: boolean;
   linkActiveClass: string;
   linkIdleClass: string;
-  onNavigate: () => void;
+  onNavigate: (href: string) => void;
 }) {
   const [hovered, setHovered] = useState(false);
 
   return (
     <Link
       href={href}
-      onClick={onNavigate}
+      onClick={(e) => {
+        e.preventDefault();
+        onNavigate(href);
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className={`group flex items-center gap-1 font-heading text-xs font-regular tracking-[0.12em] transition-colors ${
@@ -114,7 +119,7 @@ function LoginLink({
   className,
 }: {
   href: string;
-  onNavigate: () => void;
+  onNavigate: (href: string) => void;
   className: string;
 }) {
   const [hovered, setHovered] = useState(false);
@@ -122,7 +127,10 @@ function LoginLink({
   return (
     <Link
       href={href}
-      onClick={onNavigate}
+      onClick={(e) => {
+        e.preventDefault();
+        onNavigate(href);
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className={className}
@@ -139,7 +147,7 @@ const Header = () => {
   const { enabled: introEnabled, phase: introPhase } = useHomeIntro();
   const navBarRef = useRef<HTMLDivElement>(null);
   const navRevealedRef = useRef(false);
-
+  const router = useTransitionRouter();
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [renderedMenu, setRenderedMenu] = useState<string | null>(null);
   const [clipOpen, setClipOpen] = useState(false);
@@ -236,6 +244,13 @@ const Header = () => {
     setClipOpen(false);
   }, []);
 
+  const closeMenuImmediately = useCallback(() => {
+    clearCloseTimer();
+    setActiveMenu(null);
+    setClipOpen(false);
+    setRenderedMenu(null);
+  }, [clearCloseTimer]);
+
   const scheduleClose = useCallback(() => {
     clearCloseTimer();
     closeTimerRef.current = setTimeout(closeMenu, HOVER_CLOSE_DELAY);
@@ -247,9 +262,24 @@ const Header = () => {
     }
   }, []);
 
+  const handleNavigate = useCallback(
+    (href: string) => {
+      closeMenuImmediately();
+      if (pathname === href) return;
+
+      if (typeof document !== "undefined" && "startViewTransition" in document) {
+        router.push(href, { onTransitionReady: pageAnimation });
+        return;
+      }
+
+      router.push(href);
+    },
+    [closeMenuImmediately, pathname, router],
+  );
+
   useEffect(() => {
-    closeMenu();
-  }, [pathname, closeMenu]);
+    closeMenuImmediately();
+  }, [pathname, closeMenuImmediately]);
 
   const renderedConfig = renderedMenu ? MEGA_MENUS[renderedMenu] : null;
   const menuVisible = clipOpen && Boolean(renderedConfig);
@@ -270,7 +300,7 @@ const Header = () => {
           type="button"
           className="fixed inset-0 z-0 bg-[#0a143b]/50 motion-reduce:transition-none"
           aria-label="Close menu"
-          onClick={closeMenu}
+          onClick={closeMenuImmediately}
         />
       ) : null}
 
@@ -281,7 +311,14 @@ const Header = () => {
         >
           <Container>
             <div className="relative flex items-center justify-between py-4">
-              <Link href="/" onClick={closeMenu} className="relative z-10 shrink-0">
+              <Link
+                href="/"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigate("/");
+                }}
+                className="relative z-10 shrink-0"
+              >
                 <Image
                   src={styles.logo}
                   alt="CoverForce"
@@ -316,7 +353,7 @@ const Header = () => {
                             isActive={isActive}
                             linkActiveClass={styles.linkActive}
                             linkIdleClass={styles.linkIdle}
-                            onNavigate={closeMenu}
+                            onNavigate={handleNavigate}
                           />
                         </li>
                       );
@@ -328,7 +365,7 @@ const Header = () => {
               <div className="relative z-10 hidden items-center gap-6 lg:flex xl:gap-8">
                 <LoginLink
                   href="/"
-                  onNavigate={closeMenu}
+                  onNavigate={handleNavigate}
                   className={`group font-heading text-xs font-medium tracking-[0.12em] transition-colors ${styles.login}`}
                 />
                 <Button href="/" surface={theme === "dark" ? "on-dark" : "default"}>
@@ -347,7 +384,8 @@ const Header = () => {
             config={renderedConfig}
             onMouseEnter={clearCloseTimer}
             onClipClosed={handleClipClosed}
-            onLinkClick={closeMenu}
+            onClose={closeMenuImmediately}
+            onNavigate={handleNavigate}
           />
         ) : null}
       </div>

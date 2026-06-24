@@ -5,16 +5,19 @@ import IntelligenceWorkFlow from '@/components/product/intelligence/Intelligence
 import Appetite from '@/components/product/intelligence/Appetite'
 import ExplorePlatform from '@/components/product/intelligence/ExplorePlatform'
 import CommingSoon from '@/components/product/intelligence/CommingSoon'
+import PageWrapper from '@/components/PageWrapper'
 
 const IntelligencePage = () => {
     return (
         <>
-            <Hero />
-            <IntelligenceWorkFlow />    
-            <Appetite />
-            <ExplorePlatform />
-            <WhyCoverforce paddingTop={true} />
-            <CommingSoon />
+            <PageWrapper>
+                <Hero />
+                <IntelligenceWorkFlow />
+                <Appetite />
+                <ExplorePlatform />
+                <WhyCoverforce paddingTop={true} />
+                <CommingSoon />
+            </PageWrapper>
         </>
     )
 }

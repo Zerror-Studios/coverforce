@@ -66,13 +66,13 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
   Product: {
     featured: {
       title: "Watch the demo — from intake to bind in minutes",
-      href: "/",
+      href: "/product/submission-intake",
       video: "/videos/demo.mp4",
       imageAlt: "CoverForce platform demo",
     },
     cta: {
       label: "Explore Product",
-      href: "/",
+      href: "/product/submission-intake",
     },
     columns: [
       {
@@ -104,19 +104,19 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
         links: [
           {
             label: "ACORD Automation",
-            href: "/",
+            href: "/product/submission-intake",
             description: "Extract and pre-fill ACORD data with high accuracy.",
             icon: RiFileTextLine,
           },
           {
             label: "Carrier Submission",
-            href: "/",
+            href: "/product/quote-bind",
             description: "Submit to appointed carriers from a single application.",
             icon: RiSendPlaneLine,
           },
           {
             label: "Document Center",
-            href: "/",
+            href: "/product/submission-intake",
             description: "Store policies, certificates, and endorsements in one place.",
             icon: RiFolderLine,
           },
@@ -171,7 +171,7 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
           },
           {
             label: "Developers",
-            href: "/solutions/developers",
+            href: "/developers",
             description: "Build insurance products on Coverforce APIs.",
             icon: RiCodeSSlashLine,
           },
@@ -182,13 +182,13 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
         links: [
           {
             label: "ROI Calculator",
-            href: "/",
+            href: "/calculation",
             description: "Estimate time and cost savings for your agency.",
             icon: RiCalculatorLine,
           },
           {
             label: "Appetite Checker",
-            href: "/",
+            href: "/product/intelligence",
             description: "Match risks to carrier appetite before you submit.",
             icon: RiSearchEyeLine,
           },

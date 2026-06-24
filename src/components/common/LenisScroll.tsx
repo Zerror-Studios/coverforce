@@ -1,6 +1,7 @@
 "use client";
 
 import { disableScrollRestoration, scrollToTop } from "@/lib/scrollToTop";
+import { PAGE_TRANSITION_MS } from "@/lib/pageTransition";
 import Lenis from "lenis";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
@@ -21,7 +22,8 @@ export default function LenisScroll({ children }: LenisScrollProps) {
   }, []);
 
   useEffect(() => {
-    scrollToTop();
+    const timer = window.setTimeout(() => scrollToTop(), PAGE_TRANSITION_MS);
+    return () => window.clearTimeout(timer);
   }, [pathname]);
 
   useEffect(() => {

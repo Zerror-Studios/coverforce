@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "./Button";
@@ -23,8 +23,23 @@ type MegaMenuProps = {
   config: MegaMenuConfig;
   onMouseEnter: () => void;
   onClipClosed?: () => void;
-  onLinkClick?: () => void;
+  onClose?: () => void;
+  onNavigate?: (href: string) => void;
 };
+
+function handleMenuLinkClick(
+  e: MouseEvent<HTMLElement>,
+  href: string,
+  onClose?: () => void,
+  onNavigate?: (href: string) => void,
+) {
+  onClose?.();
+
+  if (!onNavigate) return;
+
+  e.preventDefault();
+  onNavigate(href);
+}
 
 function Reveal({
   enter,
@@ -71,10 +86,12 @@ function Reveal({
 
 function MegaMenuLinkItem({
   link,
-  onLinkClick,
+  onClose,
+  onNavigate,
 }: {
   link: MegaMenuLink;
-  onLinkClick?: () => void;
+  onClose?: () => void;
+  onNavigate?: (href: string) => void;
 }) {
   const [hovered, setHovered] = useState(false);
 
@@ -82,7 +99,7 @@ function MegaMenuLinkItem({
     <li className="border-t border-[#E5E7EB] first:border-t-0">
       <Link
         href={link.href}
-        onClick={onLinkClick}
+        onClick={(e) => handleMenuLinkClick(e, link.href, onClose, onNavigate)}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         className="group flex w-full items-center justify-between gap-3 py-3.5 font-heading text-[0.9375rem] font-regular leading-none text-[#0a143b] transition-colors duration-200 hover:text-[#413CC0]"
@@ -112,13 +129,15 @@ function MegaMenuColumnBlock({
   enter,
   enterKey,
   delay,
-  onLinkClick,
+  onClose,
+  onNavigate,
 }: {
   column: MegaMenuColumn;
   enter: boolean;
   enterKey: number;
   delay: number;
-  onLinkClick?: () => void;
+  onClose?: () => void;
+  onNavigate?: (href: string) => void;
 }) {
   return (
     <Reveal enter={enter} enterKey={enterKey} delay={delay}>
@@ -128,7 +147,12 @@ function MegaMenuColumnBlock({
         </p>
         <ul>
           {column.links.map((link) => (
-            <MegaMenuLinkItem key={link.label} link={link} onLinkClick={onLinkClick} />
+            <MegaMenuLinkItem
+              key={link.label}
+              link={link}
+              onClose={onClose}
+              onNavigate={onNavigate}
+            />
           ))}
         </ul>
       </div>
@@ -143,7 +167,8 @@ export default function MegaMenu({
   config,
   onMouseEnter,
   onClipClosed,
-  onLinkClick,
+  onClose,
+  onNavigate,
 }: MegaMenuProps) {
   const [clipShown, setClipShown] = useState(false);
   const [contentEnter, setContentEnter] = useState(false);
@@ -244,7 +269,8 @@ export default function MegaMenu({
                   enter={contentEnter}
                   enterKey={enterKey}
                   delay={CONTENT_BASE_DELAY + CONTENT_STAG * index}
-                  onLinkClick={onLinkClick}
+                  onClose={onClose}
+                  onNavigate={onNavigate}
                 />
               ))}
             </div>
@@ -255,7 +281,14 @@ export default function MegaMenu({
               delay={footerDelay}
               className="mt-8 border-t border-[#E5E7EB] pt-6"
             >
-              <Button href={displayConfig.cta.href} balanced className="min-w-[14rem] px-9" onClick={onLinkClick}>
+              <Button
+                href={displayConfig.cta.href}
+                balanced
+                className="min-w-[14rem] px-9"
+                onClick={(e) =>
+                  handleMenuLinkClick(e, displayConfig.cta.href, onClose, onNavigate)
+                }
+              >
                 {displayConfig.cta.label}
               </Button>
             </Reveal>
@@ -269,7 +302,9 @@ export default function MegaMenu({
           >
             <Link
               href={displayConfig.featured.href}
-              onClick={onLinkClick}
+              onClick={(e) =>
+                handleMenuLinkClick(e, displayConfig.featured.href, onClose, onNavigate)
+              }
               className="group flex flex-col overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-3 transition-colors duration-200 hover:bg-[#FAFAFA]"
             >
               <div className="overflow-hidden rounded-lg bg-[#0a143b]">
