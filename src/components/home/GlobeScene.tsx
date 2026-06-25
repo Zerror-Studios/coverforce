@@ -220,7 +220,7 @@ function Particles({
 
   // ── per-frame update ───────────────────────────────────────────────────────
   useFrame((state) => {
-    const t = state.elapsed;
+    const t = state.clock.elapsedTime;
     const pos = meshRef.current.geometry.attributes.position as THREE.BufferAttribute;
     const arr = pos.array as Float32Array;
 
