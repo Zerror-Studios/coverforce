@@ -1,12 +1,18 @@
 "use client";
 
-import Image from "next/image";
+import dynamic from "next/dynamic";
 import Container from "@/components/common/Container";
 import {
   HeroCarouselNav,
   useHeroCarousel,
   type HeroSlide,
 } from "@/components/product/HeroCarousel";
+
+// Lazy-load – R3F must never run on the server
+const WavePlaneCanvas = dynamic(
+  () => import("@/components/product/Waveplane3d").then((m) => ({ default: m.WavePlaneCanvas })),
+  { ssr: false }
+);
 
 const SLIDES: HeroSlide[] = [
   {
@@ -22,21 +28,9 @@ const SLIDES: HeroSlide[] = [
     description:
       "Upload ACORDs, loss runs, and proposals. AI extracts every field, pre-fills 40+ carrier applications, and delivers bindable quotes in 8 minutes instead of 115.",
   },
-  {
-    type: "stat",
-    value: "4,200+",
-    label: "Submissions processed",
-  },
-  {
-    type: "stat",
-    value: "95% +",
-    label: "Extraction accuracy",
-  },
-  {
-    type: "stat",
-    value: "93%",
-    label: "Faster per submission",
-  },
+  { type: "stat", value: "4,200+", label: "Submissions processed" },
+  { type: "stat", value: "95% +",  label: "Extraction accuracy"  },
+  { type: "stat", value: "93%",    label: "Faster per submission" },
 ];
 
 const Hero = () => {
@@ -44,24 +38,24 @@ const Hero = () => {
 
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#121C49] pb-24 text-white md:pb-32">
+
+      {/* Radial gradient overlay – keeps text readable over the wave */}
       <div
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 z-[1]"
         style={{
           background:
-            "radial-gradient(ellipse 80% 70% at 50% 45%, rgba(49, 78, 155, 0.55) 0%, rgba(18, 28, 73, 0.92) 52%, #121C49 100%)",
+            "radial-gradient(ellipse 80% 70% at 50% 45%, rgba(49,78,155,0.45) 0%, rgba(18,28,73,0.80) 48%, #121C49 100%)",
         }}
         aria-hidden
       />
 
-      <Image
-        src="/images/product/porduct-bg.svg"
-        alt=""
-        width={1440}
-        height={400}
-        className="pointer-events-none absolute -bottom-16 left-0 z-[1] h-auto w-full"
-        priority
+      {/* 3-D wave plane – fills the lower portion of the hero */}
+      <div
+        className="pointer-events-none absolute bottom-0 left-0 z-[1] h-[60%] w-full"
         aria-hidden
-      />
+      >
+        <WavePlaneCanvas className="h-full w-full" />
+      </div>
 
       <Container className="relative z-10">
         <div className="mx-auto flex max-w-3xl -translate-y-6 flex-col items-center px-6 py-16 text-center md:-translate-y-10 md:py-20">
