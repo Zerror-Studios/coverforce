@@ -81,6 +81,7 @@ type WayCardProps = {
   hideMock?: boolean;
   backgroundScene?: ReactNode;
   backgroundInteractive?: boolean;
+  backgroundSceneBlendScreen?: boolean;
   dotGrid?: boolean;
   onOpen: () => void;
 };
@@ -109,6 +110,7 @@ const WAY_CARDS: WayCardConfig[] = [
     variant: "light",
     background: "light",
     backgroundScene: <BrokersCardEarth />,
+    backgroundSceneBlendScreen: true,
     mock: <BrokerMockWithCardHover />,
     modalPreview: <BrokerMock />,
   },
@@ -183,6 +185,7 @@ const WayCard = memo(function WayCard({
   hideMock = false,
   backgroundScene,
   backgroundInteractive = false,
+  backgroundSceneBlendScreen = false,
   dotGrid = false,
   onOpen,
 }: Omit<WayCardProps, "label" | "lightStrip">) {
@@ -222,35 +225,41 @@ const WayCard = memo(function WayCard({
         className={`way-card-shell relative cursor-pointer [content-visibility:auto] [contain-intrinsic-size:auto_530px] ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${hovered ? "way-card-shell--hovered" : ""} ${textClass} ${className}`}
       >
         <div
+
           className={`way-card-body absolute inset-0 overflow-hidden flex flex-col p-5 md:p-8 ${background ? CARD_BACKGROUNDS[background] : ""}`}
         >
           {dotGrid ? <WayCardDotGrid variant={variant} active={hovered} inView={inView} /> : null}
           {backgroundScene && inView ? (
             <div
+              style={
+                backgroundSceneBlendScreen
+                  ? { mixBlendMode: "difference" }
+                  : undefined
+              }
               className={`absolute inset-0 z-[1] overflow-hidden ${backgroundInteractive ? "pointer-events-auto" : "pointer-events-none"}`}
               aria-hidden={!backgroundInteractive}
               onPointerDownCapture={
                 backgroundInteractive
                   ? (e) => {
-                      interactiveTapRef.current = { x: e.clientX, y: e.clientY, t: Date.now() };
-                    }
+                    interactiveTapRef.current = { x: e.clientX, y: e.clientY, t: Date.now() };
+                  }
                   : undefined
               }
               onPointerUpCapture={
                 backgroundInteractive
                   ? (e) => {
-                      const start = interactiveTapRef.current;
-                      interactiveTapRef.current = null;
-                      if (!start) return;
+                    const start = interactiveTapRef.current;
+                    interactiveTapRef.current = null;
+                    if (!start) return;
 
-                      const dx = e.clientX - start.x;
-                      const dy = e.clientY - start.y;
-                      const dist = Math.hypot(dx, dy);
-                      const dt = Date.now() - start.t;
+                    const dx = e.clientX - start.x;
+                    const dy = e.clientY - start.y;
+                    const dist = Math.hypot(dx, dy);
+                    const dt = Date.now() - start.t;
 
-                      // Allow interaction (drag), but treat a short, small movement as a tap-to-open.
-                      if (dist <= 8 && dt <= 350) handleOpen();
-                    }
+                    // Allow interaction (drag), but treat a short, small movement as a tap-to-open.
+                    if (dist <= 8 && dt <= 350) handleOpen();
+                  }
                   : undefined
               }
               onClick={backgroundInteractive ? (e) => e.stopPropagation() : undefined}
