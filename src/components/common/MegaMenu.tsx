@@ -17,7 +17,9 @@ import {
 export const MEGA_MENU_CLIP_CLOSED = "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)";
 export const MEGA_MENU_CLIP_OPEN = "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)";
 export const CLIP_DURATION_MS = 550;
+export const CLIP_CLOSE_MS = 620;
 const CLIP_EASE = "cubic-bezier(0.76, 0, 0.24, 1)";
+const CLIP_CLOSE_EASE = "cubic-bezier(0.33, 1, 0.68, 1)";
 const CONTENT_SWAP_MS = 320;
 const CONTENT_BASE_DELAY = 100;
 const CONTENT_STAG = 45;
@@ -211,10 +213,12 @@ export default function MegaMenu({
     }
 
     prevMenuKeyRef.current = null;
-    setContentEnter(false);
     setContentOpacity(0);
     setClipShown(false);
-    const timer = window.setTimeout(() => onClipClosed?.(), CLIP_DURATION_MS);
+    const timer = window.setTimeout(() => {
+      setContentEnter(false);
+      onClipClosed?.();
+    }, CLIP_CLOSE_MS);
     return () => window.clearTimeout(timer);
   }, [open, onClipClosed]);
 
@@ -274,7 +278,9 @@ export default function MegaMenu({
       style={{
         clipPath: clipShown ? MEGA_MENU_CLIP_OPEN : MEGA_MENU_CLIP_CLOSED,
         WebkitClipPath: clipShown ? MEGA_MENU_CLIP_OPEN : MEGA_MENU_CLIP_CLOSED,
-        transition: `clip-path ${CLIP_DURATION_MS}ms ${CLIP_EASE}, -webkit-clip-path ${CLIP_DURATION_MS}ms ${CLIP_EASE}`,
+        transition: open
+          ? `clip-path ${CLIP_DURATION_MS}ms ${CLIP_EASE}, -webkit-clip-path ${CLIP_DURATION_MS}ms ${CLIP_EASE}`
+          : `clip-path ${CLIP_CLOSE_MS}ms ${CLIP_CLOSE_EASE}, -webkit-clip-path ${CLIP_CLOSE_MS}ms ${CLIP_CLOSE_EASE}`,
         pointerEvents: open ? "auto" : "none",
       }}
       onMouseEnter={onMouseEnter}
@@ -284,8 +290,11 @@ export default function MegaMenu({
         style={{ minHeight: `${MEGA_MENU_LEFT_MIN_HEIGHT_REM + 4}rem` }}
       >
         <div
-          className={`flex flex-col gap-8 transition-opacity duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] motion-reduce:transition-none md:flex-row md:items-stretch md:gap-8 lg:gap-10 ${contentEnter ? "mega-menu-enter" : ""}`}
-          style={{ opacity: contentOpacity }}
+        className={`flex flex-col gap-8 ease-[cubic-bezier(0.33,1,0.68,1)] motion-reduce:transition-none md:flex-row md:items-stretch md:gap-8 lg:gap-10 ${contentEnter ? "mega-menu-enter" : ""}`}
+        style={{
+          opacity: contentOpacity,
+          transition: open ? "opacity 300ms cubic-bezier(0.76,0,0.24,1)" : "opacity 380ms cubic-bezier(0.33,1,0.68,1)",
+        }}
         >
           <div
             className="flex min-w-0 flex-1 flex-col md:max-w-[calc(100%-20rem)] lg:max-w-[calc(100%-23rem)] xl:max-w-[calc(100%-26rem)]"

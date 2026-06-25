@@ -175,36 +175,6 @@ const HowPricingWorks = () => {
         aria-hidden
       />
 
-      {/* Decorative diagonal swoosh pattern, top-right of section */}
-      <svg
-        className="pointer-events-none absolute -right-[10%] top-0 h-[60%] w-[70%] opacity-[0.07] md:opacity-[0.09]"
-        viewBox="0 0 800 600"
-        fill="none"
-        preserveAspectRatio="xMaxYMin slice"
-        aria-hidden
-      >
-        <path
-          d="M -50 380 C 150 280, 280 480, 480 320 C 620 200, 700 260, 850 120"
-          stroke="white"
-          strokeWidth="2"
-        />
-        <path
-          d="M -50 440 C 170 340, 300 540, 500 380 C 640 260, 720 320, 870 180"
-          stroke="white"
-          strokeWidth="1.5"
-        />
-        <path
-          d="M -50 320 C 130 220, 260 420, 460 260 C 600 140, 680 200, 830 60"
-          stroke="white"
-          strokeWidth="1.5"
-        />
-        <path
-          d="M -50 500 C 190 400, 320 600, 520 440 C 660 320, 740 380, 890 240"
-          stroke="white"
-          strokeWidth="1"
-        />
-      </svg>
-
       <Container borderColor="#FFFFFF33" className="relative z-10">
         <div className="flex flex-col gap-10 py-16 md:py-20 lg:gap-14 lg:py-24">
           <div

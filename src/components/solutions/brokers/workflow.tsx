@@ -425,13 +425,15 @@ const Workflow = () => {
               <WorkflowConnector steps={steps} rawIndex={rawIndex} />
             </div>
 
-            <p
-              key={activeIndex}
-              className="max-w-2xl text-3xl font-heading font-medium leading-[1.12] tracking-tight md:text-4xl lg:text-2xl lg:leading-[1.12]"
-              style={{ opacity: paragraphOpacity, transition: "opacity 0.3s ease" }}
-            >
-              <FillText text={activeStep.text} progress={textFill} />
-            </p>
+            <div className="flex min-h-44 items-end md:min-h-52 lg:min-h-28">
+              <p
+                key={activeIndex}
+                className="max-w-2xl text-3xl font-heading font-medium leading-[1.12] tracking-tight md:text-4xl lg:text-2xl lg:leading-[1.12]"
+                style={{ opacity: paragraphOpacity, transition: "opacity 0.3s ease" }}
+              >
+                <FillText text={activeStep.text} progress={textFill} />
+              </p>
+            </div>
           </div>
         </div>
       </Container>
