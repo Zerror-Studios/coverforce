@@ -9,7 +9,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 type SectionHeaderRevealRefs = {
   scopeRef: RefObject<HTMLElement | null>;
-  headerRef: RefObject<HTMLElement | null>;
+  headerRef?: RefObject<HTMLElement | null>;
   headingRef: RefObject<HTMLElement | null>;
   descRef?: RefObject<HTMLElement | null>;
   theme?: SplitTextColorTheme;
@@ -24,8 +24,8 @@ export function useSectionHeaderReveal({
 }: SectionHeaderRevealRefs) {
   useGSAP(
     () => {
-      const header = headerRef.current;
       const heading = headingRef.current;
+      const header = headerRef?.current ?? heading;
       const desc = descRef?.current;
       if (!header || !heading) return;
 

@@ -8,6 +8,7 @@ import type { WayCardModalContent } from "@/data/wayCardModals";
 import { CARD_BACKGROUNDS, type CardBackground } from "@/data/wayCardStyles";
 import { WAY_MODAL_CLOSE_TOTAL_MS, prefersReducedMotion } from "@/lib/wayModalMotion";
 import Button from "@/components/common/Button";
+import EyebrowPill from "@/components/common/EyebrowPill";
 import dynamic from "next/dynamic";
 
 const WayCardDotGridScene = dynamic(() => import("./WayCardDotGridScene"), {
@@ -24,6 +25,7 @@ type WayCardModalProps = {
   variant?: "dark" | "light";
   dotGrid?: boolean;
   backgroundScene?: ReactNode;
+  backgroundSceneBlendScreen?: boolean;
   onClose: () => void;
 };
 
@@ -35,6 +37,7 @@ type StoredModal = {
   variant: "dark" | "light";
   dotGrid?: boolean;
   backgroundScene?: ReactNode;
+  backgroundSceneBlendScreen?: boolean;
 };
 
 export default function WayCardModal({
@@ -46,6 +49,7 @@ export default function WayCardModal({
   variant = "light",
   dotGrid,
   backgroundScene,
+  backgroundSceneBlendScreen,
   onClose,
 }: WayCardModalProps) {
   const [isClosing, setIsClosing] = useState(false);
@@ -59,6 +63,7 @@ export default function WayCardModal({
   const variantRef = useRef(variant);
   const dotGridRef = useRef(dotGrid);
   const backgroundSceneRef = useRef(backgroundScene);
+  const backgroundSceneBlendScreenRef = useRef(backgroundSceneBlendScreen);
 
   contentRef.current = content;
   previewNodeRef.current = preview;
@@ -67,6 +72,7 @@ export default function WayCardModal({
   variantRef.current = variant;
   dotGridRef.current = dotGrid;
   backgroundSceneRef.current = backgroundScene;
+  backgroundSceneBlendScreenRef.current = backgroundSceneBlendScreen;
 
   useEffect(() => {
     if (!open || !contentRef.current) return;
@@ -79,6 +85,7 @@ export default function WayCardModal({
       variant: variantRef.current,
       dotGrid: dotGridRef.current,
       backgroundScene: backgroundSceneRef.current,
+      backgroundSceneBlendScreen: backgroundSceneBlendScreenRef.current,
     });
     setIsClosing(false);
   }, [open]);
@@ -185,9 +192,9 @@ export default function WayCardModal({
                       className="way-modal-reveal"
                       style={{ "--way-modal-stagger": "0ms" } as CSSProperties}
                     >
-                      <p className="text-sm font-mono font-medium uppercase tracking-[0.14em] text-[#4F63E8]">
+                      <EyebrowPill surface="light" className="mb-0">
                         {stored.label}
-                      </p>
+                      </EyebrowPill>
                     </div>
                   </div>
                 ) : null}
@@ -252,7 +259,15 @@ export default function WayCardModal({
               <WayCardDotGridScene variant={stored.variant} active track="window" />
             ) : null}
             {stored.backgroundScene ? (
-              <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden" aria-hidden>
+              <div
+                className="pointer-events-none absolute inset-0 z-[1] overflow-hidden"
+                style={
+                  stored.backgroundSceneBlendScreen
+                    ? { mixBlendMode: "screen" }
+                    : undefined
+                }
+                aria-hidden
+              >
                 {stored.backgroundScene}
               </div>
             ) : null}

@@ -128,7 +128,7 @@ export default function DeveloperTerminalBg() {
     <div ref={rootRef} className="absolute inset-0 overflow-hidden" aria-hidden>
       <div className="absolute inset-0 bg-[linear-gradient(180deg,#33259F_0%,#000000_100%)]" />
 
-      <div className="absolute inset-0 flex flex-col px-4 pb-4 pt-[7rem] md:px-6 md:pb-6 md:pt-[8rem] lg:px-8 lg:pt-[8.5rem]">
+      <div className="absolute inset-0 flex flex-col px-4 pb-20 pt-[11rem] md:px-6 md:pb-24 md:pt-[12rem] lg:px-8 lg:pb-28 lg:pt-[12.5rem]">
         <div className="mb-3 flex items-center gap-1.5">
           <span className="size-2.5 rounded-full bg-[#FF5F57]/80" />
           <span className="size-2.5 rounded-full bg-[#FEBC2E]/80" />
@@ -138,7 +138,7 @@ export default function DeveloperTerminalBg() {
 
         <pre
           ref={preRef}
-          className="min-h-0 flex-1 overflow-y-auto font-mono text-[10px] leading-relaxed [scrollbar-width:none] md:text-[11px] lg:text-xs [&::-webkit-scrollbar]:hidden"
+          className="min-h-0 flex-1 overflow-y-auto font-mono text-[9px] leading-relaxed [scrollbar-width:none] md:text-[10px] lg:text-[11px] [&::-webkit-scrollbar]:hidden"
         >
           {completedLines.map((line, i) => (
             <div key={`${line.text}-${i}`} className={line.className || "text-[#E2E8F0]"}>

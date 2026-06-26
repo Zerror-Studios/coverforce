@@ -2,7 +2,7 @@ import Image from "next/image";
 import Container from "@/components/common/Container";
 import Button from "@/components/common/Button";
 import HeroReveal from "@/components/common/HeroReveal";
-import SolutionHeroLabel from "@/components/solutions/SolutionHeroLabel";
+import EyebrowPill from "@/components/common/EyebrowPill";
 import ApiEndpointSummaryMock from "@/components/solutions/carrier/ApiEndpointSummaryMock";
 
 const Hero = () => {
@@ -11,7 +11,7 @@ const Hero = () => {
       <Container borderColor="#53535380" borderBottom={true}>
         <div className="grid h-screen grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
         <HeroReveal className="flex flex-col justify-center space-y-8">
-            <SolutionHeroLabel>Carrier and MGAs</SolutionHeroLabel>
+            <EyebrowPill surface="light">Carrier and MGAs</EyebrowPill>
             <h1 className="max-w-xl text-3xl font-heading font-normal leading-[1.12] tracking-tight text-[#0a143b] md:text-4xl lg:text-[3.5rem] lg:leading-[1.1]">
             Be present at the moment agents quote
               </h1>

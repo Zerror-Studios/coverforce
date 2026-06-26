@@ -5,7 +5,6 @@ import Image from "next/image";
 import { CheckCircle2, ChevronDown } from "lucide-react";
 import Container from "@/components/common/Container";
 import Button from "@/components/common/Button";
-import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 
 const FORM_FIELDS = [
   {
@@ -170,33 +169,12 @@ function MatchResultsCard() {
 
 const CarrierMatch = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-
-  useSectionHeaderReveal({
-    scopeRef: sectionRef,
-    headerRef,
-    headingRef,
-  });
 
   return (
     <section ref={sectionRef} className="bg-[#F6F8F9] text-[#0a143b]">
       <Container borderColor="#53535340">
         <div className="py-16 md:py-20 lg:py-24">
-          <div ref={headerRef} className="max-w-md">
-            <h2
-              ref={headingRef}
-              className="text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#BCC5D6] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
-            >
-              <span data-split>Find the right </span>
-              <span data-split className="text-[#413CC0]">
-                carrier for your business
-              </span>
-              <span data-split> risk</span>
-            </h2>
-          </div>
-
-          <div className="mt-12 grid items-center gap-10 md:mt-14 lg:mt-16 lg:grid-cols-2 lg:gap-12 xl:gap-16">
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12 xl:gap-16">
             <div className="max-w-lg">
               <div className="mb-8">
                 <h3 className="font-heading text-xl font-semibold text-[#2A297C] md:text-2xl">

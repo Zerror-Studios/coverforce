@@ -6,6 +6,7 @@ import Container from "@/components/common/Container";
 import Button from "@/components/common/Button";
 import HeroReveal from "@/components/common/HeroReveal";
 import ApiCodeReveal from "@/components/developers/ApiCodeReveal";
+import EyebrowPill from "@/components/common/EyebrowPill";
 
 // Lazy-load – R3F must never run on the server
 const WavePlaneCanvas = dynamic(
@@ -38,12 +39,11 @@ const Hero = () => {
       <Container className="relative z-10">
         <div className="flex min-h-screen flex-col">
           <HeroReveal className="flex flex-1 flex-col items-center justify-center px-6 pt-24 text-center md:pt-28 lg:pt-32">
-            <p className="flex items-center justify-center gap-2.5 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-white md:text-xs">
-              <span className="size-2 shrink-0 rounded-full bg-white" aria-hidden />
+            <EyebrowPill surface="dark" className="mx-auto">
               Developers
-            </p>
+            </EyebrowPill>
 
-            <h1 className="mt-5 max-w-4xl text-3xl font-heading font-normal leading-[1.15] tracking-tight md:text-4xl lg:text-5xl xl:text-5xl">
+            <h1 className="max-w-4xl text-3xl font-heading font-normal leading-[1.15] tracking-tight md:text-4xl lg:text-5xl xl:text-5xl">
               Build commercial <br /> insurance into your product <br /> with one API
             </h1>
 

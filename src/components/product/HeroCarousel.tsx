@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import gsap from "gsap";
+import EyebrowPill from "@/components/common/EyebrowPill";
 
 export type CopySlide = {
   type: "copy";
@@ -131,12 +132,9 @@ function HeroSlideContent({ slide }: { slide: HeroSlide }) {
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center text-center">
-      <p className="flex items-center justify-center gap-2.5 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-white md:text-xs">
-        <span className="size-2 shrink-0 rounded-full bg-white" aria-hidden />
-        {slide.label}
-      </p>
+      <EyebrowPill surface="dark">{slide.label}</EyebrowPill>
 
-      <h1 className="mt-5 max-w-2xl text-3xl font-heading font-normal leading-[1.15] tracking-tight md:text-4xl lg:text-5xl xl:text-5xl">
+      <h1 className="max-w-2xl text-3xl font-heading font-normal leading-[1.15] tracking-tight md:text-4xl lg:text-5xl xl:text-5xl">
         {slide.title}
       </h1>
 

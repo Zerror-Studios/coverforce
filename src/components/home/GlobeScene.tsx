@@ -9,15 +9,15 @@ const COUNT_LITE = 880;
 const COUNT_AMBIENT = 680;
 const ATTRACT_DIST_SQ = 0.88 * 0.88;
 const RING_R = 0.9;
-const RING_CORE = 0.38;       // more particles on the ring spine
+const RING_CORE = 0.30;       // more particles on the ring spine
 const CORE_SPREAD = 0.008;      // tighter band on the circle
 const HALO_MIN = 0.03;       // closest halo distance from ring
 const HALO_MAX = 0.14;       // tighter halo — more concentrated
 const SPRING_K = 0.065;
 const DAMPING = 0.8;
-const NOISE_SPEED = 0.00018;
+const NOISE_SPEED = 0.00026;
 const NOISE_AMP = 0.04;
-const PULSE_SPEED = 1.5;
+const PULSE_SPEED = 2.1;
 const PULSE_AMP = 0.02;
 const TANGENT_SPREAD = 0.14;      // less scatter along ring
 const JITTER_SPREAD = 0.06;     // tighter random scatter
@@ -79,7 +79,7 @@ function Particles({
   soft = false,
 }: {
   count: number;
-  tone?: "warm" | "blue";
+  tone?: "warm" | "blue" | "white";
   soft?: boolean;
 }) {
   const meshRef = useRef<THREE.Points>(null!);
@@ -160,8 +160,10 @@ function Particles({
       const warmBottom = [0.63, 0.25, 0.82];
       const blueTop = [0.55, 0.62, 0.92];
       const blueBottom = [0.12, 0.18, 0.48];
-      const top = tone === "blue" ? blueTop : warmTop;
-      const bottom = tone === "blue" ? blueBottom : warmBottom;
+      const whiteTop = [1.0, 1.0, 1.0];
+      const whiteBottom = [0.82, 0.86, 0.95];
+      const top = tone === "blue" ? blueTop : tone === "white" ? whiteTop : warmTop;
+      const bottom = tone === "blue" ? blueBottom : tone === "white" ? whiteBottom : warmBottom;
       colors[i * 3] = bottom[0] + (top[0] - bottom[0]) * gradT;
       colors[i * 3 + 1] = bottom[1] + (top[1] - bottom[1]) * gradT;
       colors[i * 3 + 2] = bottom[2] + (top[2] - bottom[2]) * gradT;
@@ -264,8 +266,8 @@ function Particles({
 
         const wobbleR = Math.sin(t * PULSE_SPEED + wavePhase[i]) * PULSE_AMP;
         const wobbleT = Math.sin(t * PULSE_SPEED * 0.82 + wavePhase[i] * 1.6) * PULSE_AMP * 0.5;
-        const driftX = (noise2(noiseOffset[i] + t * 0.35, i * 0.02) - 0.5) * DRIFT_AMP * 2;
-        const driftY = (noise2(i * 0.02, noiseOffset[i] + t * 0.35) - 0.5) * DRIFT_AMP * 2;
+        const driftX = (noise2(noiseOffset[i] + t * 0.55, i * 0.02) - 0.5) * DRIFT_AMP * 2;
+        const driftY = (noise2(i * 0.02, noiseOffset[i] + t * 0.55) - 0.5) * DRIFT_AMP * 2;
 
         tx = haloBaseX[i] + nx * wobbleR + tangX * wobbleT + driftX;
         ty = haloBaseY[i] + ny * wobbleR + tangY * wobbleT + driftY;
@@ -316,7 +318,8 @@ type GlobeSceneProps = {
   className?: string;
   interactive?: boolean;
   ambient?: boolean;
-  tone?: "warm" | "blue";
+  tone?: "warm" | "blue" | "white";
+  transparent?: boolean;
 };
 
 const RADIAL_BG =
@@ -327,6 +330,7 @@ export default function GlobeScene({
   interactive = false,
   ambient = false,
   tone = "warm",
+  transparent = false,
 }: GlobeSceneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
@@ -347,9 +351,9 @@ export default function GlobeScene({
   return (
     <div
       ref={containerRef}
-      className={`relative h-full w-full overflow-hidden ${ambient ? "" : "bg-white"} ${interactive ? "pointer-events-auto" : ""} ${className}`}
+      className={`relative h-full w-full overflow-hidden ${ambient || transparent ? "" : "bg-white"} ${interactive ? "pointer-events-auto" : ""} ${className}`}
     >
-      {!ambient ? (
+      {!ambient && !transparent ? (
         <div
           className="pointer-events-none absolute inset-0 z-0"
           style={{ background: RADIAL_BG }}

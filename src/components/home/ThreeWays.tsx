@@ -10,6 +10,7 @@ gsap.registerPlugin(ScrollTrigger);
 import dynamic from "next/dynamic";
 
 import Container from "../common/Container";
+import EyebrowPill from "@/components/common/EyebrowPill";
 import WayCardModal from "./WayCardModal";
 import { WayCardHoverProvider } from "./WayCardHoverContext";
 import { WAY_CARD_MODALS } from "@/data/wayCardModals";
@@ -78,6 +79,7 @@ type WayCardProps = {
   wide?: boolean;
   background?: CardBackground;
   mockAlign?: "center" | "bottom";
+  mockShiftDown?: boolean;
   hideMock?: boolean;
   backgroundScene?: ReactNode;
   backgroundInteractive?: boolean;
@@ -99,16 +101,17 @@ const WAY_CARDS: WayCardConfig[] = [
     label: "Wholesalers",
     tagline: "Grow distribution efficiently",
     variant: "dark",
-    background: "accent",
+    background: "wholesaler",
     dotGrid: true,
+    mockShiftDown: true,
     mock: <WholesalerMock />,
     modalPreview: <WholesalerMock />,
   },
   {
     label: "Brokers",
     tagline: "One workflow for every producer",
-    variant: "light",
-    background: "light",
+    variant: "dark",
+    background: "broker",
     backgroundScene: <BrokersCardEarth />,
     backgroundSceneBlendScreen: true,
     mock: <BrokerMockWithCardHover />,
@@ -130,12 +133,12 @@ const WAY_CARDS: WayCardConfig[] = [
   {
     label: "Startups",
     tagline: "One workflow for every producer",
-    variant: "light",
-    background: "light",
+    variant: "dark",
+    background: "startup",
     backgroundInteractive: true,
     mock: <BrokerMockWithCardHover />,
     modalPreview: <BrokerMock />,
-    backgroundScene: <GlobeScene interactive />,
+    backgroundScene: <GlobeScene interactive transparent tone="white" />,
   },
   {
     label: "Carriers",
@@ -143,6 +146,7 @@ const WAY_CARDS: WayCardConfig[] = [
     variant: "dark",
     background: "accent",
     dotGrid: true,
+    mockShiftDown: true,
     mock: <WholesalerMock liveStats />,
     modalPreview: <WholesalerMock liveStats />,
   },
@@ -174,6 +178,7 @@ function useLazyInView<T extends HTMLElement>(rootMargin = "240px 0px") {
 }
 
 const WayCard = memo(function WayCard({
+  label,
   tagline,
   taglinePosition = "right",
   variant,
@@ -182,13 +187,14 @@ const WayCard = memo(function WayCard({
   wide = false,
   background,
   mockAlign = "center",
+  mockShiftDown = false,
   hideMock = false,
   backgroundScene,
   backgroundInteractive = false,
   backgroundSceneBlendScreen = false,
   dotGrid = false,
   onOpen,
-}: Omit<WayCardProps, "label" | "lightStrip">) {
+}: Omit<WayCardProps, "lightStrip"> & { label: string }) {
   const [hovered, setHovered] = useState(false);
   const interactiveTapRef = useRef<{ x: number; y: number; t: number } | null>(null);
   const { ref: cardRef, visible: inView } = useLazyInView<HTMLElement>();
@@ -199,6 +205,7 @@ const WayCard = memo(function WayCard({
       : background === "accent" || isDark
         ? "text-white"
         : "text-[#0a143b]";
+  const pillSurface = textClass === "text-white" ? "dark" : "light";
 
   const handleOpen = () => {
     onOpen();
@@ -233,7 +240,7 @@ const WayCard = memo(function WayCard({
             <div
               style={
                 backgroundSceneBlendScreen
-                  ? { mixBlendMode: "difference" }
+                  ? { mixBlendMode: "screen" }
                   : undefined
               }
               className={`absolute inset-0 z-[1] overflow-hidden ${backgroundInteractive ? "pointer-events-auto" : "pointer-events-none"}`}
@@ -269,7 +276,7 @@ const WayCard = memo(function WayCard({
           ) : null}
         </div>
         <div
-          className={`way-card-mock pointer-events-none absolute inset-0 z-10 p-5 transition-opacity duration-300 md:p-6 ${hideMock ? "opacity-0" : "opacity-100"} ${mockAlign === "center" ? "flex items-center justify-center" : ""}`}
+          className={`way-card-mock pointer-events-none absolute inset-0 z-10 p-5 transition-opacity duration-300 md:p-6 ${hideMock ? "opacity-0" : "opacity-100"} ${mockAlign === "center" ? "flex items-center justify-center" : ""} ${mockShiftDown ? "pt-24 md:pt-28 lg:pt-32" : ""}`}
         >
           <div
             className={
@@ -283,11 +290,14 @@ const WayCard = memo(function WayCard({
         </div>
         <div className="pointer-events-none absolute inset-x-0 top-0 z-30 p-5 md:p-8">
           <div className="flex items-start justify-between gap-4">
-            <p
-              className={`${taglinePosition === "left" ? "max-w-xs" : "max-w-[16rem]"} text-3xl font-heading font-medium leading-[1.12] tracking-tight ${variant == "light" ? "text-[#424242]" : "text-white"} md:text-4xl lg:text-[1.625rem] lg:leading-[1.12] text-left`}
-            >
-              {tagline}
-            </p>
+            <div className={taglinePosition === "left" ? "max-w-xs" : "max-w-[16rem]"}>
+              <EyebrowPill surface={pillSurface}>{label}</EyebrowPill>
+              <p
+                className={`text-3xl font-heading font-medium leading-[1.12] tracking-tight ${variant == "light" ? "text-[#424242]" : "text-white"} md:text-4xl lg:text-[1.625rem] lg:leading-[1.12] text-left`}
+              >
+                {tagline}
+              </p>
+            </div>
             <span
               className="way-card-expand-btn pointer-events-auto relative flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-sm"
               role="button"
@@ -449,6 +459,7 @@ export default function ThreeWays() {
         variant={activeConfig?.variant ?? "light"}
         dotGrid={activeConfig?.dotGrid}
         backgroundScene={activeConfig?.backgroundScene}
+        backgroundSceneBlendScreen={activeConfig?.backgroundSceneBlendScreen}
         onClose={closeModal}
       />
     </section>
