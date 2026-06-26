@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import Container from "@/components/common/Container";
 import Button from "@/components/common/Button";
 import HeroReveal from "@/components/common/HeroReveal";
+import ApiCodeReveal from "@/components/developers/ApiCodeReveal";
 
 // Lazy-load – R3F must never run on the server
 const WavePlaneCanvas = dynamic(
@@ -65,16 +66,43 @@ const Hero = () => {
             </div>
           </HeroReveal>
 
-          <div className="relative z-10 mx-auto mt-14 w-full max-w-6xl px-4 pb-16 md:mt-20 md:pb-20 lg:mt-24 lg:max-w-7xl lg:pb-24">
-            <Image
-              src="/images/developers/display.svg"
-              alt="CoverForce API request example showing POST /v1/quote"
-              width={1200}
-              height={720}
-              className="mx-auto h-auto max-h-[min(24rem,58vw)] w-full object-contain md:max-h-[32rem] lg:max-h-[38rem]"
-              priority
-            />
-          </div>
+          <HeroReveal
+            className="relative z-10 mx-auto mt-14 w-full max-w-6xl px-4 pb-16 md:mt-20 md:pb-20 lg:mt-24 lg:max-w-7xl lg:pb-24"
+            delay={0.75}
+          >
+            <div className="relative mx-auto h-[min(24rem,58vw)] w-full md:h-[32rem] lg:h-[38rem]">
+              <Image
+                src="/images/developers/display.svg"
+                alt="CoverForce API request example showing POST /v1/quote"
+                width={1200}
+                height={720}
+                className="h-full w-full object-contain"
+                priority
+              />
+
+              <div className="absolute inset-0 z-10 flex translate-y-3 flex-col items-center justify-end gap-3 px-[10%] md:gap-4">
+                <div className="w-14 md:w-16 lg:w-20">
+                  <Image
+                    src="/images/developers/display-logo.svg"
+                    alt="CoverForce logo"
+                    width={1200}
+                    height={720}
+                    className="h-auto w-full object-contain"
+                  />
+                </div>
+                <div className="relative w-full max-w-xl lg:max-w-3xl">
+                  <Image
+                    src="/images/developers/display-editor.svg"
+                    alt="CoverForce API request editor"
+                    width={1200}
+                    height={720}
+                    className="h-auto w-full object-contain"
+                  />
+                  <ApiCodeReveal className="pointer-events-none absolute inset-0 flex flex-col justify-center pl-[11%] pr-[3%] pb-[10%] pt-[2%]" />
+                </div>
+              </div>
+            </div>
+          </HeroReveal>
         </div>
       </Container>
     </section>
