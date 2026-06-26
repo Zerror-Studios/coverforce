@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import gsap from "gsap";
 
 export type CopySlide = {
@@ -171,10 +178,21 @@ export function HeroCarouselNav({
               aria-selected={isActive}
               aria-label={`Slide ${index + 1}`}
               onClick={() => onSelect(index)}
-              className={`h-1.5 rounded-full transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${
-                isActive ? "w-10 bg-white" : "w-2 bg-white/40 hover:bg-white/60"
+              className={`relative h-1.5 overflow-hidden rounded-full transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+                isActive ? "w-10 bg-white/30" : "w-2 bg-white/40 hover:bg-white/60"
               }`}
-            />
+            >
+              {isActive ? (
+                <span
+                  key={activeIndex}
+                  className="hero-nav-progress-fill absolute inset-0 rounded-full bg-white"
+                  style={
+                    { "--hero-nav-duration": `${ROTATE_MS}ms` } as CSSProperties
+                  }
+                  aria-hidden
+                />
+              ) : null}
+            </button>
           );
         })}
       </div>

@@ -791,3 +791,24 @@ button {
     transition: none;
   }
 }
+
+@keyframes hero-nav-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.hero-nav-progress-fill {
+  transform-origin: left center;
+  animation: hero-nav-progress var(--hero-nav-duration, 4800ms) linear forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-nav-progress-fill {
+    animation: none;
+    transform: scaleX(1);
+  }
+}

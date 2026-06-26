@@ -32,9 +32,7 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import { createPortal } from "react-dom";
 import { ShaderMaterial, Vector3 } from "three";
-import { Leva, useControls } from "leva";
 
 // ─── Inline shaders ─────────────────────────────────────────────────────────
 
@@ -230,8 +228,10 @@ const WavePlane: FC<{ showGrid: boolean; palette: Vector3[] }> = ({
 
   useFrame(({ clock }) => {
     if (!matRef.current) return;
-    matRef.current.uTime           = clock.elapsedTime;
-    matRef.current.uScrollProgress = scroll.current * 12; // 12 screen-heights of travel
+    matRef.current.uTime = clock.elapsedTime;
+    matRef.current.uScrollProgress = scroll.current * 12;
+    matRef.current.uColourPalette = palette;
+    matRef.current.uShowGrid = showGrid;
   });
 
   return (
@@ -276,52 +276,29 @@ const StaticCamera: FC = () => {
 
 type CanvasProps = {
   className?: string;
-  showControls?: boolean;
   colors?: string[];
+  showGrid?: boolean;
 };
 
 export const WavePlaneCanvas: FC<CanvasProps> = ({
   className,
-  showControls = true,
   colors = DEFAULT_COLOURS,
+  showGrid = true,
 }) => {
-  const { showGrid, color1, color2, color3, color4 } = useControls("Wave", {
-    showGrid: { value: true, label: "Grid" },
-    color1: { value: colors[0], label: "Color 1" },
-    color2: { value: colors[1], label: "Color 2" },
-    color3: { value: colors[2], label: "Color 3" },
-    color4: { value: colors[3], label: "Color 4" },
-  });
-
-  const palette = useMemo(
-    () => [color1, color2, color3, color4].map(hexToVec3),
-    [color1, color2, color3, color4],
-  );
+  const palette = useMemo(() => colors.map(hexToVec3), [colors]);
+  const canvasKey = colors.join("-");
 
   return (
-    <>
-      {typeof document !== "undefined" &&
-        createPortal(
-          <div className="pointer-events-auto" style={{ position: "relative", zIndex: 10000 }}>
-            <Leva
-              hidden={!showControls}
-              collapsed
-              titleBar={{ position: { x: 0, y: 80 } }}
-            />
-          </div>,
-          document.body,
-        )}
-
-      <Canvas
-        className={className}
-        camera={{ position: [0, 0, 5], fov: 60, far: 20, near: 0.001 }}
-        gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
-        style={{ background: "transparent" }}
-      >
-        <WavePlane showGrid={showGrid} palette={palette} />
-        <StaticCamera />
-      </Canvas>
-    </>
+    <Canvas
+      key={canvasKey}
+      className={className}
+      camera={{ position: [0, 0, 5], fov: 60, far: 20, near: 0.001 }}
+      gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
+      style={{ background: "transparent" }}
+    >
+      <WavePlane showGrid={showGrid} palette={palette} />
+      <StaticCamera />
+    </Canvas>
   );
 };
 
