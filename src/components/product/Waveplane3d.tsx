@@ -153,8 +153,15 @@ void main(){
 const DEFAULT_COLOURS = ["#1b2550", "#5566c4", "#b9a7e6", "#8a63e8"];
 
 function hexToVec3(hex: string): Vector3 {
-  const h = hex.replace("#", "").trim();
-  if (!/^[0-9a-fA-F]{6}$/.test(h)) return new Vector3(0, 0, 0);
+  let h = hex.replace("#", "").trim();
+  if (h.length === 3) {
+    h = h
+      .split("")
+      .map((c) => c + c)
+      .join("");
+  }
+  // Accept 8-digit RGBA hex by ignoring the alpha channel.
+  if (!/^[0-9a-fA-F]{6,8}$/.test(h)) return new Vector3(0, 0, 0);
   return new Vector3(
     parseInt(h.slice(0, 2), 16) / 255,
     parseInt(h.slice(2, 4), 16) / 255,

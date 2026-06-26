@@ -51,6 +51,9 @@ const whySlides: WhySlide[] = [
 ];
 
 const SLIDE_TRANSITION_MS = 600;
+// Small delay before a hover actually switches the active slide — absorbs
+// fast mouse passes across slide edges so it doesn't flicker between slides.
+const HOVER_SWITCH_DELAY_MS = 90;
 
 const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -62,6 +65,7 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
   const [active, setActive] = useState(0);
   const animatingRef = useRef(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const goTo = useCallback((index: number) => {
     if (index === active || animatingRef.current) return;
@@ -82,7 +86,23 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
     [active, goTo],
   );
 
-  useEffect(() => () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); }, []);
+  // Debounced hover activation: wait a beat before switching so a mouse
+  // just passing through on its way elsewhere doesn't trigger a swap.
+  const handleHoverStart = useCallback((index: number) => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => {
+      goTo(index);
+    }, HOVER_SWITCH_DELAY_MS);
+  }, [goTo]);
+
+  const handleHoverEnd = useCallback(() => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+  }, []);
+
+  useEffect(() => () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+  }, []);
 
   useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef, descRef });
 
@@ -186,18 +206,12 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
           position: relative;
           border-radius: 2px;
           overflow: hidden;
-          cursor: pointer;
           flex-shrink: 0;
           background: #E3E3E3;
-          /* Stripe-style: both hover-grow and click-expand animate off the same flex transition */
           transition: flex 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .why-slide.is-active  { flex: 5 0 0; cursor: default; }
-        .why-slide.is-inactive { flex: 1 0 0; }
-
-        /* Hover: grows a bit (Stripe-style "tease") without becoming active.
-           Doesn't fire on touch devices, which is fine — they get click-to-expand only. */
-        .why-slide.is-inactive:hover { flex: 1.8 0 0; }
+        .why-slide.is-active   { flex: 5 0 0; cursor: default; }
+        .why-slide.is-inactive { flex: 1 0 0; cursor: pointer; }
 
         .why-slide img {
           position: absolute;
@@ -205,9 +219,7 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          transition: transform 0.6s cubic-bezier(0.77, 0, 0.18, 1);
         }
-        .why-slide.is-inactive:hover img { transform: scale(1.04); }
 
         .why-slide-label {
           position: absolute;
@@ -227,14 +239,6 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
           text-overflow: ellipsis;
         }
 
-        /* Faint label peek while hovering an inactive slide */
-        .why-slide.is-inactive:hover .why-slide-label {
-          opacity: 0.7;
-          transform: translateY(0);
-          transition-delay: 0.1s;
-        }
-
-        /* Full label reveal once the slide is actually active/clicked */
         .why-slide.is-active .why-slide-label {
           opacity: 1;
           transform: translateY(0);
@@ -295,7 +299,11 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                   <div
                     key={slide.id}
                     className={`why-slide ${i === active ? "is-active" : "is-inactive"}`}
+                    onMouseEnter={() => handleHoverStart(i)}
+                    onMouseLeave={handleHoverEnd}
+                    onFocus={() => goTo(i)}
                     onClick={() => goTo(i)}
+                    tabIndex={0}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <Image

@@ -36,3 +36,12 @@ export function getBottomBorderStyle(
     borderImage: `${borderDashGradient(color, 90)} 1`,
   };
 }
+
+export function getTopBorderStyle(
+  color: string = DEFAULT_BORDER_COLOR,
+): CSSProperties {
+  return {
+    borderTop: `${BORDER_WIDTH} solid transparent`,
+    borderImage: `${borderDashGradient(color, 90)} 1`,
+  };
+}

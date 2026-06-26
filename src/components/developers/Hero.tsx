@@ -1,13 +1,25 @@
+"use client";
+
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import Container from "@/components/common/Container";
 import Button from "@/components/common/Button";
 import HeroReveal from "@/components/common/HeroReveal";
+
+// Lazy-load – R3F must never run on the server
+const WavePlaneCanvas = dynamic(
+  () => import("@/components/product/Waveplane3d").then((m) => ({ default: m.WavePlaneCanvas })),
+  { ssr: false }
+);
+
+// Purple → deep navy palette
+const DEVELOPER_COLOURS = ["#100B3C", "#154BC1", "#5100FF", "#5100FF69"];
 
 const Hero = () => {
   return (
     <section className="relative overflow-hidden bg-[#121C49] text-white">
       <div
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 z-[1]"
         style={{
           background:
             "radial-gradient(ellipse 80% 70% at 50% 38%, rgba(49, 78, 155, 0.55) 0%, rgba(18, 28, 73, 0.92) 52%, #121C49 100%)",
@@ -15,15 +27,12 @@ const Hero = () => {
         aria-hidden
       />
 
-      <Image
-        src="/images/developers/developer-bg.svg"
-        alt=""
-        width={1600}
-        height={882}
-        className="pointer-events-none absolute -bottom-16 left-0 z-[1] h-auto w-full"
-        priority
+      <div
+        className="pointer-events-none absolute bottom-0 left-0 z-[1] h-[60%] w-full"
         aria-hidden
-      />
+      >
+        <WavePlaneCanvas className="h-full w-full" colors={DEVELOPER_COLOURS} />
+      </div>
 
       <Container className="relative z-10">
         <div className="flex min-h-screen flex-col">
