@@ -408,9 +408,13 @@ const Integration = () => {
               >
                 {tab.label}
                 {typeof tab.count === "number" ? ` (${tab.count})` : ""}
-                {isActive ? (
-                  <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-[#413CC0]" />
-                ) : null}
+                {/* Always-present gray baseline */}
+                <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-[#E4E7EE]" />
+                {/* Active line fills in from the left */}
+                <span
+                  className="absolute inset-x-0 -bottom-px h-0.5 origin-left rounded-full bg-[#413CC0] transition-transform duration-500 ease-out"
+                  style={{ transform: `scaleX(${isActive ? 1 : 0})` }}
+                />
               </button>
             );
           })}
