@@ -7,9 +7,9 @@
  *    container borders (3 left, 2 right) and peel into each card's EyebrowPill,
  *    turning white and handing off to the pill dot.
  *
- *  Phase 2 (ProcessFlow): the dots reappear blue on the section's left container
- *    line and each peels in to sit just before its step's tag as that step
- *    scrolls into view.
+ *  Phase 2 (ProcessFlow): the dots fall from the top of the viewport and each
+ *    settles into its step's EyebrowPill dot (kept transparent) as that step
+ *    rises into view.
  *
  * All positions/targets are measured live every frame so the dots track the page
  * (including the pinned ProcessFlow timeline).
@@ -26,11 +26,12 @@ const PARK_GAP = 0.06;
 // ThreeWays: pill viewport position (height fractions) over which the dot travels.
 const PEEL_START = 1.12;
 const PEEL_END = 0.48;
-// ProcessFlow: step-tag viewport position over which the dot peels to the tag.
-const PF_PEEL_START = 0.8;
-const PF_PEEL_END = 0.5;
-// Gray for dots still waiting on the line; they turn blue once they reach their tag.
-const PF_INACTIVE = "#BCC5D6";
+// ProcessFlow: dots fall from above onto each step's pill dot.
+// Window (viewport height fractions) of the pill's Y over which the dot drops in.
+const PF_FALL_START = 1.0; // pill entering the lower viewport → dot starts falling
+const PF_FALL_END = 0.5; // pill near its resting spot → dot has landed
+// Colour of the dot once it sits in the EyebrowPill (matches the light pill dot).
+const PF_DOT_COLOR = "#413CC0";
 
 type DotConfig = { label: string; side: "left" | "right"; rank: number };
 
@@ -100,51 +101,35 @@ export default function HeroToCardsDots() {
         const cfg = DOTS[i];
 
         if (inPF && pfCont) {
-          // ── Phase 2: ProcessFlow — sit in the reserved dot slot before each tag ──
-          const tagRect = rectOf(`[data-step-tag="${i}"]`);
-          if (!tagRect) {
+          // ── Phase 2: ProcessFlow — fall from the top onto each step's pill dot ──
+          const target = rectOf(`[data-card-dot="step-${i}"]`);
+          if (!target) {
             dot.style.opacity = "0";
             return;
           }
-          const lineX = pfCont.left;
-          const tagCenterY = tagRect.top + tagRect.height / 2;
+          const tx = target.left + target.width / 2;
+          const ty = target.top + target.height / 2;
 
-          // All five dots stay parked on the container line, stacked and
-          // vertically centered as a group, so every point is always visible.
-          const waitY = (0.5 + (i - (DOTS.length - 1) / 2) * 0.09) * vh;
-
-          // Visible entrance: slide in onto the left line from off-screen left
-          // as the section enters (staggered). Normalised so every dot settles
-          // exactly on the line once the section is fully in view.
-          const stagger = 0.06;
-          const enterT = ease(
-            gsap.utils.clamp(
-              0,
-              1,
-              (pfEnter - i * stagger) / (1 - stagger * (DOTS.length - 1)),
-            ),
-          );
-          const lineRideX = lineX - (1 - enterT) * 90;
-
-          const peel = gsap.utils.clamp(
+          // Fall progress: 0 while the pill is low in the viewport, 1 once it
+          // reaches its resting spot — the dot drops straight down onto the pill.
+          const fall = gsap.utils.clamp(
             0,
             1,
-            (PF_PEEL_START * vh - tagCenterY) / ((PF_PEEL_START - PF_PEEL_END) * vh),
+            (PF_FALL_START * vh - ty) / ((PF_FALL_START - PF_FALL_END) * vh),
           );
+          const e = ease(fall);
 
-          // Stay on the container line, centered; never move toward the tag.
-          const x = lineRideX;
-          const y = waitY;
-
-          // Inactive dots stay gray; the dot whose step is active turns blue.
-          const activeT = gsap.utils.clamp(0, 1, (peel - 0.85) / 0.15);
+          const startY = -0.05 * vh; // just above the top edge
+          const x = tx;
+          const y = startY + (ty - startY) * e;
 
           dot.style.width = `${DOT_SIZE}px`;
           dot.style.height = `${DOT_SIZE}px`;
           dot.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-          dot.style.background = gsap.utils.interpolate(PF_INACTIVE, DOT_COLOR, activeT);
-          dot.style.boxShadow = activeT > 0 ? `0 0 ${4 * activeT}px ${DOT_COLOR}` : "none";
-          dot.style.opacity = String(Math.min(pfVis, enterT));
+          dot.style.background = PF_DOT_COLOR;
+          dot.style.boxShadow = "none";
+          // Only show once the dot has begun its fall, and fade with the section.
+          dot.style.opacity = String(fall > 0 ? pfVis : 0);
           return;
         }
 

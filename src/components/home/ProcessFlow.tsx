@@ -1,6 +1,7 @@
 "use client";
 import { useRef } from "react";
 import Container from "../common/Container";
+import EyebrowPill from "../common/EyebrowPill";
 import { processSteps } from "@/data/processSteps";
 import {
     RiArrowDownSLine,
@@ -1047,17 +1048,11 @@ const ProcessFlow = () => {
                                 key={index}
                                 className={`step${index + 1} h-screen flex flex-col justify-center`}
                             >
-                                <p
-                                    data-step-tag={index}
-                                    className="relative text-sm font-mono font-medium uppercase tracking-[0.14em] text-[#413CC0]"
-                                >
-                                    <span
-                                        data-step-dot={index}
-                                        className="absolute -left-6 top-1/2 size-1.5 -translate-y-1/2 rounded-full bg-transparent"
-                                        aria-hidden
-                                    />
-                                    {step.tag}
-                                </p>
+                                <div data-step-tag={index} className="w-fit">
+                                    <EyebrowPill surface="light" dotAttr={`step-${index}`}>
+                                        {step.tag}
+                                    </EyebrowPill>
+                                </div>
                                 <h3 className="mt-4 max-w-lg text-2xl font-heading font-regular leading-[1.2] tracking-tight text-[#0a143b] md:text-3xl lg:max-w-md lg:text-[1.75rem] lg:leading-[1.25]">
                                     {step.heading}
                                 </h3>
