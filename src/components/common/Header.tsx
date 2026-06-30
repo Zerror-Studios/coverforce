@@ -25,6 +25,7 @@ const navItems: NavItem[] = [
   { label: "Product", href: "/product/submission-intake", hasDropdown: true },
   { label: "Solutions", href: "/solutions/wholesalers", hasDropdown: true },
   { label: "Developers", href: "/developers", hasDropdown: false },
+  { label: "Integration", href: "/integration", hasDropdown: false },
   { label: "Pricing", href: "/pricing", hasDropdown: false },
   { label: "Company", href: "/", hasDropdown: true },
 ];
