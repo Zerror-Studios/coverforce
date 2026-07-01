@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { RiCheckLine, RiCloseLine } from "@remixicon/react";
 
 import type { WayCardModalContent } from "@/data/wayCardModals";
-import { CARD_BACKGROUNDS, type CardBackground } from "@/data/wayCardStyles";
+import { CARD_BACKGROUND_STYLES, type CardBackground } from "@/data/wayCardStyles";
 import { WAY_MODAL_CLOSE_TOTAL_MS, prefersReducedMotion } from "@/lib/wayModalMotion";
 import Button from "@/components/common/Button";
 import EyebrowPill from "@/components/common/EyebrowPill";
@@ -251,9 +251,12 @@ export default function WayCardModal({
           </div>
 
           <div
-            className={`relative overflow-hidden border-t border-[#535353]/10 px-6 py-12 sm:px-10 sm:py-14 ${
-              stored.background ? CARD_BACKGROUNDS[stored.background] : "bg-[#F5F7FA]"
-            }`}
+            className="relative overflow-hidden border-t border-[#535353]/10 px-6 py-12 sm:px-10 sm:py-14"
+            style={{
+              background: stored.background
+                ? CARD_BACKGROUND_STYLES[stored.background]
+                : "#F5F7FA",
+            }}
           >
             {stored.dotGrid ? (
               <WayCardDotGridScene variant={stored.variant} active track="window" />

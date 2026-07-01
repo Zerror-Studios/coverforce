@@ -13,8 +13,8 @@ const page = () => {
     <>
       <PageWrapper>
         <Hero />
-        <Workflow />
         <OperatingSystem />
+        <Workflow />
         <WhyCoverforce paddingTop={true} />
         <Review />
         <CarrierResults />

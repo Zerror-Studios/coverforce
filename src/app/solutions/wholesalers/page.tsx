@@ -12,8 +12,8 @@ import PageWrapper from '@/components/PageWrapper'
     <>
       <PageWrapper>
         <Hero />
-        <Workflow />
         <OperatingSystem />
+        <Workflow />
         <WhyCoverforce paddingTop={true} />
         <Review />
         <CarrierResults />

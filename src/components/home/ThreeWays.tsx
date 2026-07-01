@@ -14,7 +14,7 @@ import EyebrowPill from "@/components/common/EyebrowPill";
 import WayCardModal from "./WayCardModal";
 import { WayCardHoverProvider } from "./WayCardHoverContext";
 import { WAY_CARD_MODALS } from "@/data/wayCardModals";
-import { CARD_BACKGROUNDS, type CardBackground } from "@/data/wayCardStyles";
+import { CARD_BACKGROUND_STYLES, type CardBackground } from "@/data/wayCardStyles";
 
 const WholesalerMock = dynamic(() => import("./WholesalerMock"), {
   loading: () => <MockPlaceholder />,
@@ -232,8 +232,10 @@ const WayCard = memo(function WayCard({
         className={`way-card-shell relative cursor-pointer [content-visibility:auto] [contain-intrinsic-size:auto_530px] ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${hovered ? "way-card-shell--hovered" : ""} ${textClass} ${className}`}
       >
         <div
-
-          className={`way-card-body absolute inset-0 overflow-hidden flex flex-col p-5 md:p-8 ${background ? CARD_BACKGROUNDS[background] : ""}`}
+          className="way-card-body absolute inset-0 flex flex-col overflow-hidden p-5 md:p-8"
+          style={
+            background ? { background: CARD_BACKGROUND_STYLES[background] } : undefined
+          }
         >
           {dotGrid ? <WayCardDotGrid variant={variant} active={hovered} inView={inView} /> : null}
           {backgroundScene && inView ? (

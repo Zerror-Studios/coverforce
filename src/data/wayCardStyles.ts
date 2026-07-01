@@ -73,9 +73,9 @@ function hexToRgb(hex: string): GradFlowRgb {
   };
 }
 
-function buildGradientClass(stops: readonly GradientStop[]): string {
-  const body = stops.map(({ hex, pos }) => `#${hex}_${pos}%`).join(",");
-  return `bg-[linear-gradient(45deg,${body})]`;
+function buildGradientStyle(stops: readonly GradientStop[]): string {
+  const body = stops.map(({ hex, pos }) => `#${hex} ${pos}%`).join(", ");
+  return `linear-gradient(45deg, ${body})`;
 }
 
 function gradFlowFromStops(stops: readonly GradientStop[]): GradFlowColors {
@@ -96,13 +96,12 @@ export const SOLUTION_GRAD_FLOW: Record<SolutionTheme, GradFlowColors> = {
   carrier: gradFlowFromStops(SOLUTION_GRADIENT_DEFS.carrier),
 };
 
-export const CARD_BACKGROUNDS: Record<CardBackground, string> = {
-  accent:
-    "bg-[linear-gradient(135deg,#4541CD_0%,#352D93_38%,#121C49_100%)]",
-  light: "bg-[linear-gradient(135deg,#DADEF5_0%,#F8F0FC_55%,#FFFFFF_100%)]",
-  developer: buildGradientClass(SOLUTION_GRADIENT_DEFS.developer),
-  wholesaler: buildGradientClass(SOLUTION_GRADIENT_DEFS.wholesaler),
-  broker: buildGradientClass(SOLUTION_GRADIENT_DEFS.broker),
-  startup: buildGradientClass(SOLUTION_GRADIENT_DEFS.startup),
-  carrier: buildGradientClass(SOLUTION_GRADIENT_DEFS.carrier),
+export const CARD_BACKGROUND_STYLES: Record<CardBackground, string> = {
+  accent: "linear-gradient(135deg, #4541CD 0%, #352D93 38%, #121C49 100%)",
+  light: "linear-gradient(135deg, #DADEF5 0%, #F8F0FC 55%, #FFFFFF 100%)",
+  developer: buildGradientStyle(SOLUTION_GRADIENT_DEFS.developer),
+  wholesaler: buildGradientStyle(SOLUTION_GRADIENT_DEFS.wholesaler),
+  broker: buildGradientStyle(SOLUTION_GRADIENT_DEFS.broker),
+  startup: buildGradientStyle(SOLUTION_GRADIENT_DEFS.startup),
+  carrier: buildGradientStyle(SOLUTION_GRADIENT_DEFS.carrier),
 };
