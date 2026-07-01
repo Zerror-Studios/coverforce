@@ -87,7 +87,7 @@ function NavItem({
       }`}
     >
       <span
-        className={`size-1.5 shrink-0 rounded-full transition-colors duration-300 ${
+        className={`size-1.5 shrink-0 rounded-full transition-colors duration-300 lg:-translate-x-1/2 ${
           active ? "bg-[#1A1A1A]" : "bg-transparent"
         }`}
         aria-hidden
@@ -222,7 +222,7 @@ const IntelligenceWorkFlow = () => {
           </div>
 
           <div className="mt-12 grid gap-12 md:mt-14 lg:mt-16 lg:grid-cols-[minmax(16rem,22rem)_minmax(0,1fr)] lg:gap-16 xl:gap-20">
-            <aside className="lg:sticky lg:top-28 lg:self-start">
+            <aside className="lg:-ml-6 lg:sticky lg:top-28 lg:self-start">
               <nav className="flex flex-row gap-6 overflow-x-auto pb-2 lg:flex-col lg:gap-0 lg:overflow-visible lg:pb-0">
                 {WORKFLOW_STEPS.map((step, index) => (
                   <NavItem
