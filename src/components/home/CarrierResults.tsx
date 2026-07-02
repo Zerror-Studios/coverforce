@@ -65,15 +65,15 @@ function CarrierLogo({ src, alt }: { src: string; alt: string }) {
 
 function CarrierCard({ result }: { result: CarrierResult }) {
   return (
-    <article className="flex flex-col gap-10 lg:gap-12 lg:px-8 xl:px-10 first:lg:pl-0 last:lg:pr-0">
-      <div className="min-h-[2.75rem]">
+    <article className="flex flex-col gap-6 border-t border-white/10 pt-8 first:border-t-0 first:pt-0 sm:gap-8 sm:border-t-0 sm:pt-0 lg:gap-12 lg:px-8 xl:px-10 first:lg:pl-0 last:lg:pr-0">
+      <div className="min-h-[2.5rem] sm:min-h-[2.75rem]">
         <CarrierLogo src={result.logo} alt={result.logoAlt} />
       </div>
-      <div className="space-y-3">
-        <h3 className="text-xl font-heading font-regular text-white md:text-xl tracking-tight">
+      <div className="space-y-2 sm:space-y-3">
+        <h3 className="text-lg font-heading font-regular tracking-tight text-white sm:text-xl">
           {result.title}
         </h3>
-        <p className="max-w-[240px] text-sm font-sans font-regular leading-relaxed text-white/55">
+        <p className="max-w-none text-sm font-sans font-regular leading-relaxed text-white/55 sm:max-w-[240px]">
           {result.description}
         </p>
       </div>
@@ -93,7 +93,7 @@ const CarrierResults = () => {
     <section ref={sectionRef} className="bg-[#151f4d] text-white">
       <Container borderColor="#FFFFFF33" borderBottom={true}>
         <div
-          className="absolute left-0 -top-20 z-0 w-full lg:h-full opacity-75"
+          className="absolute left-0 -top-20 z-0 hidden w-full opacity-75 lg:block lg:h-full"
           aria-hidden
         >
           {/*
@@ -316,17 +316,17 @@ const CarrierResults = () => {
             </g>
           </svg>
         </div>
-        <div className="relative py-16 md:py-20 lg:py-24">
-          <div className="relative z-10 flex flex-col gap-62">
+        <div className="relative py-12 md:py-20 lg:py-24">
+          <div className="relative z-10 flex flex-col gap-10 lg:gap-62">
             {/* Header */}
             <div
               ref={headerRef}
-              className="grid gap-8 lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-12"
+              className="grid gap-6 lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-12"
             >
               <div className="flex flex-col justify-end space-y-5">
                 <h2
                   ref={headingRef}
-                  className="max-w-md text-3xl font-heading font-regular leading-tight tracking-tight text-[#9AA8BC] md:text-4xl lg:text-3xl lg:leading-[1.15]"
+                  className="max-w-md text-2xl font-heading font-regular leading-tight tracking-tight text-[#9AA8BC] md:text-3xl lg:text-3xl lg:leading-[1.15]"
                 >
                   <span data-split>Carrier results that</span>
                   <br />
@@ -357,7 +357,7 @@ const CarrierResults = () => {
             </div>
 
             {/* Carrier columns */}
-            <div className="grid gap-14 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
+            <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4 lg:gap-0">
               {carrierResults.map((result) => (
                 <CarrierCard key={result.id} result={result} />
               ))}
