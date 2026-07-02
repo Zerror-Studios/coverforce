@@ -108,6 +108,42 @@ function NavItem({
   );
 }
 
+function WorkflowStepPanel({
+  step,
+  index,
+  panelRef,
+  headlineRef,
+  className,
+}: {
+  step: (typeof WORKFLOW_STEPS)[number];
+  index: number;
+  panelRef: (el: HTMLElement | null) => void;
+  headlineRef: (el: HTMLParagraphElement | null) => void;
+  className: string;
+}) {
+  return (
+    <article ref={panelRef} data-index={index} className={className}>
+      <p
+        ref={headlineRef}
+        className="max-w-3xl text-left font-heading text-2xl font-regular leading-[1.35] tracking-tight text-[#1A1A1A] md:text-3xl lg:text-[2rem] lg:leading-[1.3]"
+      >
+        {step.headline}
+      </p>
+
+      <div className="relative mx-auto w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px]">
+        <Image
+          src={step.image}
+          alt={`${step.label} preview`}
+          width={step.width}
+          height={step.height}
+          className="h-auto w-full"
+          sizes="(max-width: 768px) 280px, 400px"
+        />
+      </div>
+    </article>
+  );
+}
+
 const FORWARD_ACTIVATION = 0.4;
 const BACKWARD_ACTIVATION = 0.52;
 
@@ -120,7 +156,9 @@ const QuoteWorkFlow = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const activeIndexRef = useRef(0);
   const panelRefs = useRef<Array<HTMLElement | null>>([]);
+  const mobilePanelRefs = useRef<Array<HTMLElement | null>>([]);
   const headlineRefs = useRef<Array<HTMLParagraphElement | null>>([]);
+  const mobileHeadlineRefs = useRef<Array<HTMLParagraphElement | null>>([]);
 
   useSectionHeaderReveal({
     scopeRef: sectionRef,
@@ -131,17 +169,20 @@ const QuoteWorkFlow = () => {
 
   useGSAP(
     () => {
-      const cleanups = headlineRefs.current
-        .filter((el): el is HTMLParagraphElement => Boolean(el))
-        .map((headline) =>
-          animateSplitTextReveal(headline, {
-            trigger: headline,
-            theme: "light",
-            splitSelf: true,
-            start: "top 80%",
-            end: "top 45%",
-          }),
-        );
+      const isLg = window.matchMedia("(min-width: 1024px)").matches;
+      const headlines = (isLg ? headlineRefs : mobileHeadlineRefs).current.filter(
+        (el): el is HTMLParagraphElement => Boolean(el),
+      );
+
+      const cleanups = headlines.map((headline) =>
+        animateSplitTextReveal(headline, {
+          trigger: headline,
+          theme: "light",
+          splitSelf: true,
+          start: "top 80%",
+          end: "top 45%",
+        }),
+      );
 
       return () => cleanups.forEach((cleanup) => cleanup());
     },
@@ -151,53 +192,108 @@ const QuoteWorkFlow = () => {
   const scrollToPanel = useCallback((index: number) => {
     activeIndexRef.current = index;
     setActiveIndex(index);
-    panelRefs.current[index]?.scrollIntoView({ behavior: "smooth", block: "center" });
+    const isLg = window.matchMedia("(min-width: 1024px)").matches;
+    const refs = isLg ? panelRefs : mobilePanelRefs;
+    refs.current[index]?.scrollIntoView({
+      behavior: "smooth",
+      block: isLg ? "center" : "start",
+    });
   }, []);
 
   useEffect(() => {
-    const panels = panelRefs.current.filter(Boolean) as HTMLElement[];
-    if (!panels.length) return;
-
     let ticking = false;
+    let scrollCleanup: (() => void) | null = null;
+    let observer: IntersectionObserver | null = null;
 
-    const updateActiveIndex = () => {
-      const vh = window.innerHeight;
-      let index = activeIndexRef.current;
+    const setup = () => {
+      scrollCleanup?.();
+      scrollCleanup = null;
+      observer?.disconnect();
+      observer = null;
 
-      while (index < panels.length - 1) {
-        const nextTop = panels[index + 1].getBoundingClientRect().top;
-        if (nextTop <= vh * FORWARD_ACTIVATION) index += 1;
-        else break;
+      const isLg = window.matchMedia("(min-width: 1024px)").matches;
+
+      if (isLg) {
+        const panels = panelRefs.current.filter(Boolean) as HTMLElement[];
+        if (!panels.length) return;
+
+        const updateActiveIndex = () => {
+          const vh = window.innerHeight;
+          let index = activeIndexRef.current;
+
+          while (index < panels.length - 1) {
+            const nextTop = panels[index + 1].getBoundingClientRect().top;
+            if (nextTop <= vh * FORWARD_ACTIVATION) index += 1;
+            else break;
+          }
+
+          while (index > 0) {
+            const currentTop = panels[index].getBoundingClientRect().top;
+            if (currentTop > vh * BACKWARD_ACTIVATION) index -= 1;
+            else break;
+          }
+
+          if (index !== activeIndexRef.current) {
+            activeIndexRef.current = index;
+            setActiveIndex(index);
+          }
+
+          ticking = false;
+        };
+
+        const onScroll = () => {
+          if (ticking) return;
+          ticking = true;
+          requestAnimationFrame(updateActiveIndex);
+        };
+
+        updateActiveIndex();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        const lenis = window.lenis;
+        lenis?.on("scroll", onScroll);
+        scrollCleanup = () => {
+          window.removeEventListener("scroll", onScroll);
+          lenis?.off("scroll", onScroll);
+        };
+        return;
       }
 
-      while (index > 0) {
-        const currentTop = panels[index].getBoundingClientRect().top;
-        if (currentTop > vh * BACKWARD_ACTIVATION) index -= 1;
-        else break;
-      }
+      const panels = mobilePanelRefs.current.filter(Boolean) as HTMLElement[];
+      if (!panels.length) return;
 
-      if (index !== activeIndexRef.current) {
-        activeIndexRef.current = index;
-        setActiveIndex(index);
-      }
+      observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
 
-      ticking = false;
+          if (!visible.length) return;
+
+          const index = Number(visible[0].target.getAttribute("data-index"));
+          if (!Number.isNaN(index) && index !== activeIndexRef.current) {
+            activeIndexRef.current = index;
+            setActiveIndex(index);
+          }
+        },
+        {
+          root: null,
+          rootMargin: "-20% 0px -45% 0px",
+          threshold: [0, 0.25, 0.5, 0.75, 1],
+        },
+      );
+
+      panels.forEach((panel) => observer?.observe(panel));
     };
 
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(updateActiveIndex);
-    };
+    setup();
 
-    updateActiveIndex();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    const lenis = window.lenis;
-    lenis?.on("scroll", onScroll);
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+    mediaQuery.addEventListener("change", setup);
 
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      lenis?.off("scroll", onScroll);
+      mediaQuery.removeEventListener("change", setup);
+      scrollCleanup?.();
+      observer?.disconnect();
     };
   }, []);
 
@@ -232,51 +328,62 @@ const QuoteWorkFlow = () => {
             </div>
           </div>
 
-          <div className="mt-12 grid gap-12 md:mt-14 lg:mt-16 lg:grid-cols-[minmax(16rem,22rem)_minmax(0,1fr)] lg:gap-16 xl:gap-20">
-            <aside className="lg:-ml-6 lg:sticky lg:top-28 lg:self-start">
-              <nav className="flex flex-row gap-6 overflow-x-auto pb-2 lg:flex-col lg:gap-0 lg:overflow-visible lg:pb-0">
-                {WORKFLOW_STEPS.map((step, index) => (
+          <div className="mt-12 md:mt-14 lg:mt-16">
+            {/* Mobile: nav item + step stacked */}
+            <div className="flex flex-col gap-12 lg:hidden">
+              {WORKFLOW_STEPS.map((step, index) => (
+                <div key={step.id}>
                   <NavItem
-                    key={step.id}
                     label={step.label}
                     active={activeIndex === index}
                     onClick={() => scrollToPanel(index)}
                   />
-                ))}
-              </nav>
-            </aside>
+                  <WorkflowStepPanel
+                    step={step}
+                    index={index}
+                    panelRef={(el) => {
+                      mobilePanelRefs.current[index] = el;
+                    }}
+                    headlineRef={(el) => {
+                      mobileHeadlineRefs.current[index] = el;
+                    }}
+                    className="mt-5 flex flex-col gap-6"
+                  />
+                </div>
+              ))}
+            </div>
 
-            <div className="min-w-0">
-              {WORKFLOW_STEPS.map((step, index) => (
-                <article
-                  key={step.id}
-                  ref={(el) => {
-                    panelRefs.current[index] = el;
-                  }}
-                  data-index={index}
-                  className="flex min-h-[70vh] flex-col justify-center gap-10 py-10 first:pt-0 last:pb-0 md:min-h-[80vh] md:gap-12 lg:min-h-screen lg:py-16"
-                >
-                  <p
-                    ref={(el) => {
+            {/* Desktop: sticky nav + scroll panels */}
+            <div className="hidden gap-12 lg:grid lg:grid-cols-[minmax(16rem,22rem)_minmax(0,1fr)] lg:gap-16 xl:gap-20">
+              <aside className="lg:-ml-6 lg:sticky lg:top-28 lg:self-start">
+                <nav className="flex flex-col gap-0">
+                  {WORKFLOW_STEPS.map((step, index) => (
+                    <NavItem
+                      key={step.id}
+                      label={step.label}
+                      active={activeIndex === index}
+                      onClick={() => scrollToPanel(index)}
+                    />
+                  ))}
+                </nav>
+              </aside>
+
+              <div className="min-w-0">
+                {WORKFLOW_STEPS.map((step, index) => (
+                  <WorkflowStepPanel
+                    key={step.id}
+                    step={step}
+                    index={index}
+                    panelRef={(el) => {
+                      panelRefs.current[index] = el;
+                    }}
+                    headlineRef={(el) => {
                       headlineRefs.current[index] = el;
                     }}
-                    className="max-w-3xl text-left font-heading text-2xl font-regular leading-[1.35] tracking-tight text-[#1A1A1A] md:text-3xl lg:text-[2rem] lg:leading-[1.3]"
-                  >
-                    {step.headline}
-                  </p>
-
-                  <div className="relative mx-auto w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px]">
-                    <Image
-                      src={step.image}
-                      alt={`${step.label} preview`}
-                      width={step.width}
-                      height={step.height}
-                      className="h-auto w-full"
-                      sizes="(max-width: 768px) 280px, 400px"
-                    />
-                  </div>
-                </article>
-              ))}
+                    className="flex min-h-screen flex-col justify-center gap-10 py-16 first:pt-0 last:pb-0 md:gap-12"
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>

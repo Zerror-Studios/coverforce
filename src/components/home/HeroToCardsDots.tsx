@@ -54,6 +54,7 @@ export default function HeroToCardsDots() {
   useEffect(() => {
     if (introEnabled && introPhase !== "done") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!window.matchMedia("(min-width: 768px)").matches) return;
 
     const layer = layerRef.current;
     if (!layer) return;

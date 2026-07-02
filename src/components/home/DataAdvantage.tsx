@@ -24,7 +24,7 @@ const DataAdvantage = () => {
             ref={headerRef}
             className="grid gap-8 lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-12"
           >
-            <div className="flex-col items-start justify-end space-y-5">
+            <div className="flex flex-col justify-end space-y-5">
               <h2
                 ref={headingRef}
                 className="max-w-md text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#9AA8BC] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
@@ -33,6 +33,13 @@ const DataAdvantage = () => {
                 <br />
                 <span data-split>no One Else has</span>
               </h2>
+              <p
+                ref={descRef}
+                className="font-sans font-regular text-sm leading-[1.4] text-white/80 md:text-[1.125rem] lg:hidden"
+              >
+                140,000+ proprietary carrier interactions. Every transaction
+                makes the platform smarter.
+              </p>
               <Button href="/" surface="on-dark">
                 Explore AI
               </Button>
@@ -40,8 +47,7 @@ const DataAdvantage = () => {
 
             <div className="max-w-md text-left lg:ml-auto">
               <p
-                ref={descRef}
-                className="font-sans font-regular text-sm leading-[1.4] text-white/80 md:text-[1.125rem]"
+                className="hidden font-sans font-regular text-sm leading-[1.4] text-white/80 md:text-[1.125rem] lg:block"
               >
                 140,000+ proprietary carrier interactions. Every transaction
                 makes the platform smarter.

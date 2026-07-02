@@ -4,11 +4,14 @@ import { useCallback, useRef, useState, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import Container from "../common/Container";
 import Button from "../common/Button";
 import ArrowNavButton from "../common/ArrowNavButton";
 import Image from "next/image";
+
+import "swiper/css";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -246,6 +249,28 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
           transform: translateY(0);
           transition-delay: 0.42s;
         }
+
+        .why-swiper-slide {
+          position: relative;
+          height: 340px;
+          overflow: hidden;
+          border-radius: 2px;
+          background: #E3E3E3;
+        }
+        @media (min-width: 640px) {
+          .why-swiper-slide { height: 380px; }
+        }
+        .why-swiper-slide-label {
+          position: absolute;
+          bottom: 0; left: 0; right: 0;
+          padding: 32px 20px 18px;
+          background: linear-gradient(to top, rgba(0,0,0,0.52) 0%, transparent 100%);
+          color: #fff;
+          font-size: 15px;
+          font-weight: 600;
+          letter-spacing: -0.01em;
+          pointer-events: none;
+        }
       `}</style>
       <div ref={containerRef} className="relative z-10 overflow-hidden will-change-transform">
         <Container borderColor="#53535380">
@@ -262,6 +287,13 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                 >
                   <span data-split>Infrastructure to Run Your Distribution Not a Tool to Quote One Risk.</span>
                 </h2>
+                <p
+                  ref={descRef}
+                  className="font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
+                >
+                  Insurance distribution should work like infrastructure — just
+                  like Stripe for payments or Plaid for identity.
+                </p>
                 <Button href="/">
                   Start a quote
                 </Button>
@@ -269,13 +301,12 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
 
               <div className="flex max-w-md flex-col items-end gap-6 text-left lg:ml-auto">
                 <p
-                  ref={descRef}
-                  className="font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem]"
+                  className="hidden font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:block"
                 >
                   Insurance distribution should work like infrastructure — just
                   like Stripe for payments or Plaid for identity.
                 </p>
-                <div className="flex w-full flex-wrap items-center justify-end gap-3">
+                <div className="hidden w-full flex-wrap items-center justify-end gap-3 lg:flex">
                   <div className="flex items-center gap-3">
                     <ArrowNavButton
                       direction="prev"
@@ -294,8 +325,35 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
               </div>
             </div>
 
-            {/* ── Expanding Slider ── */}
-            <div className="relative mt-12 md:mt-14 lg:mt-16">
+            {/* ── Mobile: normal Swiper ── */}
+            <div className="relative mt-12 md:mt-14 lg:hidden">
+              <Swiper
+                spaceBetween={12}
+                slidesPerView={1.1}
+                speed={600}
+                className="why-coverforce-swiper !overflow-visible"
+              >
+                {whySlides.map((slide) => (
+                  <SwiperSlide key={slide.id}>
+                    <div className="why-swiper-slide">
+                      <Image
+                        width={1000}
+                        height={1000}
+                        sizes="85vw"
+                        className="h-full w-full object-cover"
+                        src={slide.image}
+                        alt={slide.alt}
+                        draggable={false}
+                      />
+                      <div className="why-swiper-slide-label">{slide.label}</div>
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+
+            {/* ── Desktop: expanding slider ── */}
+            <div className="relative mt-12 hidden md:mt-14 lg:mt-16 lg:block">
               <div className="why-slider-track">
                 {whySlides.map((slide, i) => (
                   <div
@@ -307,12 +365,11 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                     onClick={() => goTo(i)}
                     tabIndex={0}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <Image
                       width={1000}
                       height={1000}
-                      sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 25vw"
-                      className="w-full h-full object-cover"
+                      sizes="25vw"
+                      className="h-full w-full object-cover"
                       src={slide.image}
                       alt={slide.alt}
                       draggable={false}

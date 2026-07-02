@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-export const containerPadding = "px-7 md:px-4 lg:px-6 xl:px-6";
+export const containerPadding = "px-5 md:px-4 lg:px-6 xl:px-6";
 
 export const DEFAULT_BORDER_COLOR = "#e5e7eb";
 
@@ -23,6 +23,36 @@ export function getSideBorderStyle(
 
   return {
     borderLeft: `${BORDER_WIDTH} solid transparent`,
+    borderRight: `${BORDER_WIDTH} solid transparent`,
+    borderImage: `${borderDashGradient(resolvedColor, 180)} 1`,
+  };
+}
+
+export function getLeftBorderStyle(
+  color: string = DEFAULT_BORDER_COLOR,
+  opacity = 1,
+): CSSProperties {
+  const resolvedColor =
+    opacity < 1
+      ? `color-mix(in srgb, ${color} ${Math.round(opacity * 100)}%, transparent)`
+      : color;
+
+  return {
+    borderLeft: `${BORDER_WIDTH} solid transparent`,
+    borderImage: `${borderDashGradient(resolvedColor, 180)} 1`,
+  };
+}
+
+export function getRightBorderStyle(
+  color: string = DEFAULT_BORDER_COLOR,
+  opacity = 1,
+): CSSProperties {
+  const resolvedColor =
+    opacity < 1
+      ? `color-mix(in srgb, ${color} ${Math.round(opacity * 100)}%, transparent)`
+      : color;
+
+  return {
     borderRight: `${BORDER_WIDTH} solid transparent`,
     borderImage: `${borderDashGradient(resolvedColor, 180)} 1`,
   };

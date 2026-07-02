@@ -3,7 +3,8 @@ import {
   containerPadding,
   DEFAULT_BORDER_COLOR,
   getBottomBorderStyle,
-  getSideBorderStyle,
+  getLeftBorderStyle,
+  getRightBorderStyle,
 } from "./containerStyles";
 
 type ContainerProps = {
@@ -33,12 +34,21 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(function Container(
     <div
       ref={ref}
       className={`relative z-10 mx-auto w-full max-w-7xl ${containerPadding} ${className}`}
-      style={
-        borderColor !== undefined
-          ? getSideBorderStyle(resolvedColor, borderOpacity)
-          : undefined
-      }
     >
+      {borderColor !== undefined ? (
+        <>
+          <span
+            className="pointer-events-none absolute bottom-0 left-0 top-0 z-20 hidden w-0 md:block"
+            style={getLeftBorderStyle(resolvedColor, borderOpacity)}
+            aria-hidden
+          />
+          <span
+            className="pointer-events-none absolute bottom-0 right-0 top-0 z-20 hidden w-0 md:block"
+            style={getRightBorderStyle(resolvedColor, borderOpacity)}
+            aria-hidden
+          />
+        </>
+      ) : null}
       {borderBottom && borderColor !== undefined ? (
         <span
           className="pointer-events-none absolute inset-x-0 bottom-0 z-20 block h-0"

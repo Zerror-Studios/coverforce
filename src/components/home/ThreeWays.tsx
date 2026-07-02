@@ -49,7 +49,7 @@ const GlobeScene = dynamic(() => import("@/components/home/GlobeScene"), {
 function MockPlaceholder({ className = "max-w-[290px]" }: { className?: string }) {
   return (
     <div
-      className={`mx-auto h-[260px] w-full animate-pulse rounded-2xl bg-white/10 ${className}`}
+      className={`mx-auto h-[220px] w-full animate-pulse rounded-2xl bg-white/10 sm:h-[260px] ${className}`}
       aria-hidden
     />
   );
@@ -229,10 +229,10 @@ const WayCard = memo(function WayCard({
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         aria-label={`Open details`}
-        className={`way-card-shell relative cursor-pointer [content-visibility:auto] [contain-intrinsic-size:auto_530px] ${wide ? "aspect-[1179/530]" : "aspect-[580/530]"} ${hovered ? "way-card-shell--hovered" : ""} ${textClass} ${className}`}
+        className={`way-card-shell relative min-h-[22rem] cursor-pointer [content-visibility:auto] [contain-intrinsic-size:auto_530px] ${wide ? "md:aspect-[1179/530]" : "md:aspect-[580/530]"} ${hovered ? "way-card-shell--hovered" : ""} ${textClass} ${className}`}
       >
         <div
-          className="way-card-body absolute inset-0 flex flex-col overflow-hidden p-5 md:p-8"
+          className="way-card-body absolute inset-0 flex flex-col overflow-hidden p-4 sm:p-5 md:p-8"
           style={
             background ? { background: CARD_BACKGROUND_STYLES[background] } : undefined
           }
@@ -278,7 +278,7 @@ const WayCard = memo(function WayCard({
           ) : null}
         </div>
         <div
-          className={`way-card-mock pointer-events-none absolute inset-0 z-10 p-5 transition-opacity duration-300 md:p-6 ${hideMock ? "opacity-0" : "opacity-100"} ${mockAlign === "center" ? "flex items-center justify-center" : ""} ${mockShiftDown ? "pt-24 md:pt-28 lg:pt-32" : ""}`}
+          className={`way-card-mock pointer-events-none absolute inset-0 z-10 p-4 transition-opacity duration-300 sm:p-5 md:p-6 ${hideMock ? "opacity-0" : "opacity-100"} ${mockAlign === "center" ? "flex items-center justify-center" : ""} ${mockShiftDown ? "pt-18 sm:pt-24 md:pt-28 lg:pt-32" : ""}`}
         >
           <div
             className={
@@ -290,18 +290,18 @@ const WayCard = memo(function WayCard({
             {inView ? children : <MockPlaceholder />}
           </div>
         </div>
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-30 p-5 md:p-8">
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-30 p-4 sm:p-5 md:p-8">
           <div className="flex items-start justify-between gap-4">
-            <div className={taglinePosition === "left" ? "max-w-xs" : "max-w-[16rem]"}>
+            <div className={taglinePosition === "left" ? "max-w-[13rem] sm:max-w-xs" : "max-w-[12rem] sm:max-w-[16rem]"}>
               <EyebrowPill surface={pillSurface} dotAttr={label}>{label}</EyebrowPill>
               <p
-                className={`text-3xl font-heading font-medium leading-[1.12] tracking-tight ${variant == "light" ? "text-[#424242]" : "text-white"} md:text-4xl lg:text-[1.625rem] lg:leading-[1.12] text-left`}
+                className={`text-[1.7rem] font-heading font-medium leading-[1.08] tracking-tight ${variant == "light" ? "text-[#424242]" : "text-white"} sm:text-3xl md:text-4xl lg:text-[1.625rem] lg:leading-[1.12] text-left`}
               >
                 {tagline}
               </p>
             </div>
             <span
-              className="way-card-expand-btn pointer-events-auto relative flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-sm"
+              className="way-card-expand-btn pointer-events-auto relative flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-sm sm:size-9"
               role="button"
               tabIndex={0}
               onClick={(e) => {
@@ -418,7 +418,7 @@ export default function ThreeWays() {
     <section ref={sectionRef} data-threeways className="relative overflow-hidden bg-white">
       <Container borderColor="#53535380">
         <div className="relative z-10 py-16 md:py-20 lg:py-24">
-          <div ref={headerRef} className="flex items-start justify-between">
+          <div ref={headerRef} className="flex flex-col gap-6 md:gap-8 lg:flex-row lg:items-start lg:justify-between">
             <div className="space-y-5 md:space-y-6">
               <h2
                 ref={headingRef}
@@ -431,13 +431,13 @@ export default function ThreeWays() {
             </div>
             <p
               ref={descRef}
-              className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem]"
+              className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:text-left"
             >
               Whether you&apos;re routing submissions, quoting carriers, or building on our API, CoverForce adapts to your role.
             </p>
           </div>
 
-          <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-2 lg:mt-14">
+          <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-2 lg:mt-14">
             {WAY_CARDS.map(({ mock, modalPreview, ...card }) => (
               <WayCard
                 key={card.label}

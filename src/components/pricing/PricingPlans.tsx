@@ -87,11 +87,13 @@ function PricingCard({
 }) {
   const cardRef = useRef<HTMLElement>(null);
   const hoverTweenRef = useRef<gsap.core.Timeline | null>(null);
+  const isEnterprise = plan.id === "enterprise";
 
   const handleMouseEnter = () => {
     const card = cardRef.current;
     if (!card) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!window.matchMedia("(min-width: 1024px)").matches) return;
 
     const points = card.querySelectorAll<HTMLElement>(".pricing-feature");
 
@@ -114,6 +116,7 @@ function PricingCard({
     const card = cardRef.current;
     if (!card) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!window.matchMedia("(min-width: 1024px)").matches) return;
 
     const points = card.querySelectorAll<HTMLElement>(".pricing-feature");
 
@@ -141,14 +144,18 @@ function PricingCard({
         transition:
           "background 0.85s cubic-bezier(0.22, 1, 0.36, 1), color 0.85s cubic-bezier(0.22, 1, 0.36, 1)",
       }}
-      className={`pricing-card group/pricing flex min-h-[40rem] flex-col rounded-xl p-8 will-change-transform transform-gpu md:min-h-[46rem] md:p-12 lg:min-h-[50rem] lg:p-10 ${
+      className={`pricing-card group/pricing flex flex-col rounded-xl p-5 will-change-transform transform-gpu sm:p-8 md:min-h-[46rem] md:p-12 lg:min-h-[50rem] lg:p-10 lg:will-change-transform ${
+        isEnterprise
+          ? "min-h-[42rem] sm:min-h-[44rem]"
+          : "min-h-[38rem] sm:min-h-[40rem]"
+      } ${plan.accentClassName} text-white ${
         settled
-          ? `bg-[#F8F8F8] text-[#1A1A1A] ${plan.hoverClassName} hover:text-white`
-          : `${plan.accentClassName} text-white`
+          ? `lg:bg-[#F8F8F8] lg:text-[#1A1A1A] ${plan.hoverClassName} lg:hover:text-white`
+          : ""
       }`}
     >
       <div className="flex items-center gap-3">
-        <h2 className="font-heading text-3xl font-medium tracking-tight text-inherit transition-colors duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/pricing:text-white md:text-4xl">
+        <h2 className="font-heading text-2xl font-medium tracking-tight text-inherit transition-colors duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/pricing:text-white sm:text-3xl md:text-4xl">
           {plan.title}
         </h2>
         {plan.badge ? (
@@ -158,11 +165,11 @@ function PricingCard({
         ) : null}
       </div>
 
-      <p className="mt-5 font-sans text-sm font-regular leading-relaxed text-inherit transition-colors duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/pricing:text-white">
+      <p className="mt-4 font-sans text-sm font-regular leading-relaxed text-inherit transition-colors duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/pricing:text-white sm:mt-5">
         {plan.description}
       </p>
 
-      <ul className="mt-8 flex flex-1 flex-col gap-4">
+      <ul className="mt-6 flex flex-1 flex-col gap-3 sm:mt-8 sm:gap-4">
         {plan.features.map((feature) => (
           <FeatureItem key={feature}>{feature}</FeatureItem>
         ))}
@@ -171,11 +178,12 @@ function PricingCard({
       <Button
         href={plan.cta.href}
         variant="primary"
+        surface="on-dark"
         balanced
-        className={`w-full border-transparent transition-colors duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`w-full border-transparent transition-colors duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] max-lg:!bg-white max-lg:!text-[#2E2E2E] ${
           settled
-            ? "bg-[#121C49] text-white group-hover/pricing:bg-white group-hover/pricing:text-[#2E2E2E]"
-            : "bg-white text-[#2E2E2E]"
+            ? "lg:bg-[#121C49] lg:text-white lg:group-hover/pricing:bg-white lg:group-hover/pricing:text-[#2E2E2E]"
+            : ""
         }`}
       >
         {plan.cta.label}
@@ -197,14 +205,20 @@ const PricingPlans = () => {
 
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         gsap.set(cards, { opacity: 1, y: 0, clearProps: "transform" });
-        setCardsSettled(true);
+        if (window.matchMedia("(min-width: 1024px)").matches) {
+          setCardsSettled(true);
+        }
         return;
       }
 
       gsap.set(cards, { opacity: 0, y: 48 });
 
       const tl = gsap.timeline({
-        onComplete: () => setCardsSettled(true),
+        onComplete: () => {
+          if (window.matchMedia("(min-width: 1024px)").matches) {
+            setCardsSettled(true);
+          }
+        },
       });
 
       tl.to(cards, {
@@ -262,7 +276,7 @@ const PricingPlans = () => {
   return (
     <section ref={sectionRef} id="plans" className="bg-white text-[#0a143b]">
       <Container borderColor="#53535333">
-        <div className="grid items-stretch gap-6 py-12 md:grid-cols-2 md:gap-8 md:py-16 lg:py-20 px-26">
+        <div className="grid grid-cols-1 items-stretch gap-4 py-12 sm:gap-6 md:grid-cols-2 md:gap-8 md:px-26 md:py-16 lg:py-20">
           {PLANS.map((plan) => (
             <PricingCard key={plan.id} plan={plan} settled={cardsSettled} />
           ))}

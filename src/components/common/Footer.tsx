@@ -147,34 +147,44 @@ const Footer = () => {
         return;
       }
 
-      gsap.set(content, {
-        yPercent: -20,
-        opacity: 0.95,
-        willChange: "transform, opacity",
-        force3D: true,
+      const mm = gsap.matchMedia();
+
+      mm.add("(max-width: 767px)", () => {
+        gsap.set(content, { yPercent: 0, opacity: 1, clearProps: "transform" });
       });
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: "top bottom",
-          end: "top 60%",
-          scrub: 2,
-          invalidateOnRefresh: true,
-          fastScrollEnd: true,
-        },
+      mm.add("(min-width: 768px)", () => {
+        gsap.set(content, {
+          yPercent: -20,
+          opacity: 0.95,
+          willChange: "transform, opacity",
+          force3D: true,
+        });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top bottom",
+            end: "top 60%",
+            scrub: 2,
+            invalidateOnRefresh: true,
+            fastScrollEnd: true,
+          },
+        });
+
+        tl.to(content, { yPercent: 0, opacity: 1, force3D: true });
+
+        const lenis = (window as any).lenis;
+        const onLenisScroll = ScrollTrigger.update;
+        lenis?.on("scroll", onLenisScroll);
+
+        return () => {
+          lenis?.off("scroll", onLenisScroll);
+          tl.kill();
+        };
       });
 
-      tl.to(content, { yPercent: 0, opacity: 1, force3D: true });
-
-      const lenis = (window as any).lenis;
-      const onLenisScroll = ScrollTrigger.update;
-      lenis?.on("scroll", onLenisScroll);
-
-      return () => {
-        lenis?.off("scroll", onLenisScroll);
-        tl.kill();
-      };
+      return () => mm.revert();
     },
     { scope: sectionRef }
   );
@@ -185,7 +195,7 @@ const Footer = () => {
       className="relative overflow-hidden bg-white text-[#0a143b]"
     >
       <Container borderColor="#53535380">
-        <div ref={contentRef} className="relative z-10 will-change-transform">
+        <div ref={contentRef} className="relative z-10 will-change-transform max-md:will-change-auto">
 
           {/* ── Top: logo left, tagline right ── */}
           <div className="border-b border-neutral-200 pt-12 pb-8 md:pt-14 lg:pt-16">
@@ -227,11 +237,9 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* Get a demo pill — mirrors "JOIN THE NEWSLETTER" button */}
-            <div className="flex justify-end">
-              <Button href="/">
-                Get a demo
-              </Button>
+            {/* Get a demo — desktop only */}
+            <div className="hidden justify-end lg:flex">
+              <Button href="/">Get a demo</Button>
             </div>
           </div>
 

@@ -49,27 +49,27 @@ const CardSection = () => {
     )
 
     return (
-        <section className="relative overflow-hidden bg-white 16 text-[#0a143b] ">
+        <section className="relative overflow-hidden bg-white text-[#0a143b]">
             <Container borderColor="#53535333">
                 <div
                     ref={gridRef}
-                    className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 py- md:py-24"
+                    className="grid grid-cols-2 gap-2 py-12 sm:gap-3 md:py-20 lg:grid-cols-4 lg:gap-3 lg:py-24"
                     style={{ perspective: '1200px' }}
                 >
                     {CARDS.map((card) => (
                         <div
                             key={card.title}
                             data-stat-card
-                            className="flex h-86 flex-col rounded-md bg-[#F8F8F8] p-6 transform-3d will-change-transform"
+                            className="flex min-h-[10.5rem] flex-col rounded-md bg-[#F8F8F8] p-4 transform-3d will-change-transform sm:min-h-[11.5rem] lg:h-86 lg:p-6"
                         >
-                            <span className="font-heading text-5xl font-regular leading-none tracking-tight text-[#4F4F4F]">
+                            <span className="font-heading text-3xl font-regular leading-none tracking-tight text-[#4F4F4F] lg:text-5xl">
                                 {card.value}
                             </span>
                             <div className="mt-auto">
-                                <p className="max-w-48 text-xl font-heading font-medium leading-snug text-[#2D3E9D]">
+                                <p className="max-w-48 text-sm font-heading font-medium leading-snug text-[#2D3E9D] lg:text-xl">
                                     {card.title}
                                 </p>
-                                <p className="mt-2 text-sm font-mono font-medium uppercase text-[#9A9A9A]">
+                                <p className="mt-1.5 text-[0.65rem] font-mono font-medium uppercase text-[#9A9A9A] lg:mt-2 lg:text-sm">
                                     {card.tag}
                                 </p>
                             </div>

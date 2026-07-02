@@ -444,6 +444,41 @@ function PanelStep5() {
     );
 }
 
+function StaticPanel({ step }: { step: number }) {
+    const panelClass =
+        "absolute inset-0! flex items-center justify-center opacity-100! pointer-events-none!";
+
+    return (
+        <div className="relative aspect-square w-full max-w-sm overflow-visible">
+            {step === 1 ? (
+                <div className={panelClass}>
+                    <PanelStep1 />
+                </div>
+            ) : null}
+            {step === 2 ? (
+                <div className={panelClass}>
+                    <PanelStep2 />
+                </div>
+            ) : null}
+            {step === 3 ? (
+                <div className={panelClass}>
+                    <PanelStep3 />
+                </div>
+            ) : null}
+            {step === 4 ? (
+                <div className={panelClass}>
+                    <PanelStep4 />
+                </div>
+            ) : null}
+            {step === 5 ? (
+                <div className={panelClass}>
+                    <PanelStep5 />
+                </div>
+            ) : null}
+        </div>
+    );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 const ProcessFlow = () => {
@@ -453,6 +488,7 @@ const ProcessFlow = () => {
         () => {
             const section = sectionRef.current;
             if (!section) return;
+            if (window.matchMedia("(max-width: 1023px)").matches) return;
 
             const EASE_ENTER = "power2.out";
             const EASE_EXIT = "power2.inOut";
@@ -1038,9 +1074,44 @@ const ProcessFlow = () => {
     );
 
     return (
-        <section ref={sectionRef} data-processflow className="h-screen overflow-hidden bg-white [contain:layout_paint]">
+        <section ref={sectionRef} data-processflow className="bg-white [contain:layout_paint] lg:h-screen lg:overflow-hidden">
             <Container borderColor="#53535380">
-                <div className="h-screen grid gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
+                <div className="space-y-16 py-16 lg:hidden">
+                    {processSteps.map((step, index) => (
+                        <div key={step.tag} className="space-y-8">
+                            <div className="flex flex-col">
+                                <div data-step-tag={index} className="w-fit">
+                                    <EyebrowPill surface="light" dotAttr={`step-${index}`}>
+                                        {step.tag}
+                                    </EyebrowPill>
+                                </div>
+                                <h3 className="mt-4 max-w-lg text-2xl font-heading font-regular leading-[1.2] tracking-tight text-[#0a143b]">
+                                    {step.heading}
+                                </h3>
+                                <ul className="mt-6 space-y-3">
+                                    {step.points.map((feature, idx) => (
+                                        <li
+                                            key={feature.id}
+                                            className="flex gap-4 border-b border-black/10 py-4"
+                                        >
+                                            <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[#151F4D] bg-[#151F4D] text-white">
+                                                <RiArrowRightLine className="size-3" />
+                                            </span>
+                                            <p className="max-w-sm text-sm leading-relaxed font-heading font-regular text-[#444444]">
+                                                {feature.text}
+                                            </p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div className="flex justify-center pt-2">
+                                <StaticPanel step={index + 1} />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="hidden h-screen gap-12 lg:grid lg:grid-cols-2 lg:gap-16 xl:gap-20">
 
                     {/* ── Left: scrolling step cards ───────────────────────── */}
                     <div className="leftScroll relative flex flex-col will-change-transform">

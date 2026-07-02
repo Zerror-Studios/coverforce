@@ -398,7 +398,7 @@ const Header = () => {
           className={`overflow-hidden will-change-transform ${styles.bar}`}
         >
           <Container>
-            <div className="relative flex items-center justify-between py-6 md:py-4">
+            <div className="relative flex items-center justify-between py-4">
               <Link
                 href="/"
                 onClick={(e) => {

@@ -52,11 +52,11 @@ function WorkflowStepCard({
   return (
     <div
       data-workflow-card
-      className="group relative flex min-h-[22rem] flex-col justify-between overflow-hidden border border-[#E9E9E9] bg-white p-5 transition-colors duration-500 ease-[cubic-bezier(0.62,0.16,0.13,1.01)] transform-3d will-change-transform hover:bg-[#CCBEFF]/10 md:min-h-[24rem] md:p-6 lg:min-h-[26rem]"
+      className="group relative flex min-h-[13rem] flex-col justify-between overflow-hidden border border-[#E9E9E9] bg-white p-4 transition-colors duration-500 ease-[cubic-bezier(0.62,0.16,0.13,1.01)] transform-3d will-change-transform hover:bg-[#CCBEFF]/10 md:min-h-[24rem] md:p-6 lg:min-h-[26rem]"
     >
       <div className="relative z-10 flex flex-1 flex-col justify-between">
         <div className="flex items-start justify-between gap-4">
-          <span className="font-heading text-3xl font-regular leading-none text-[#4F4F4F] md:text-6xl">
+          <span className="font-heading text-2xl font-regular leading-none text-[#4F4F4F] md:text-6xl">
             {step}
           </span>
           <div className="text-right">
@@ -80,9 +80,9 @@ function SavingsSummaryCard() {
   return (
     <div
       data-workflow-card
-      className="relative flex min-h-[22rem] flex-col items-end justify-end bg-[#CCBEFF]/10 p-5 transform-3d will-change-transform md:min-h-[24rem] md:p-6 lg:min-h-[26rem]"
+      className="relative flex min-h-[13rem] flex-col items-end justify-end bg-[#CCBEFF]/10 p-4 transform-3d will-change-transform md:min-h-[24rem] md:p-6 lg:min-h-[26rem]"
     >
-      <p className="font-heading text-3xl font-regular leading-none text-[#4F4F4F] md:text-6xl">
+      <p className="font-heading text-2xl font-regular leading-none text-[#4F4F4F] md:text-6xl">
         107m
       </p>
       <p className="mt-2 font-heading text-[0.65rem] font-normal text-[#4F4F4F] md:text-xs">
@@ -152,6 +152,13 @@ const RealWorkflow = () => {
                   8 Minutes
                 </span>
               </h2>
+              <p
+                ref={descRef}
+                className="font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
+              >
+                AI replaces manual insurance workflows with faster, accurate
+                submission processing.
+              </p>
               <Button href="/" variant="primary">
                 Request Demo
               </Button>
@@ -159,8 +166,7 @@ const RealWorkflow = () => {
 
             <div className="flex max-w-md flex-col items-end gap-6 text-left lg:ml-auto">
               <p
-                ref={descRef}
-                className="font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem]"
+                className="hidden font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:block"
               >
                 AI replaces manual insurance workflows with faster, accurate
                 submission processing.
@@ -170,7 +176,7 @@ const RealWorkflow = () => {
 
           <div
             ref={gridRef}
-            className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-14 lg:mt-16 lg:grid-cols-3"
+            className="mt-12 grid grid-cols-2 gap-3 md:mt-14 md:gap-4 lg:mt-16 lg:grid-cols-3"
             style={{ perspective: "1200px" }}
           >
             {WORKFLOW_STEPS.map((item) => (

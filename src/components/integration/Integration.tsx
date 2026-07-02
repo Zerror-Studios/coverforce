@@ -2,7 +2,7 @@
 
 import React, { useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { RiCheckLine, RiSearchEyeLine } from "@remixicon/react";
+import { RiCheckLine, RiSearchEyeLine, RiArrowDownSLine } from "@remixicon/react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -45,6 +45,10 @@ const TABS: Tab[] = [
   { id: "finance", label: "Finance & Compliance", count: 3 },
   { id: "ai", label: "AI & Technology", count: 3 },
 ];
+
+function getTabLabel(tab: Tab) {
+  return `${tab.label}${typeof tab.count === "number" ? ` (${tab.count})` : ""}`;
+}
 
 const LOB_FILTERS = ["All", "WC", "BOP", "GL", "Cyber", "Prof", "Auto"];
 const STATUS_FILTERS = ["All", "Live", "API available"] as const;
@@ -243,10 +247,10 @@ const CarrierCard = ({ carrier }: { carrier: Carrier }) => {
         aria-hidden
       />
 
-      <div className="relative h-full z-10 rounded-[19px] bg-white p-6">
+      <div className="relative z-10 h-full rounded-[19px] bg-white p-4 md:p-6">
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3.5">
-            <span className="flex size-11 shrink-0 items-center justify-center">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-3.5">
+            <span className="flex size-10 shrink-0 items-center justify-center sm:size-11">
               <Image
                 src={LOGO_MAP[carrier.name] ?? "/images/integration/amtrust.svg"}
                 alt={carrier.name}
@@ -264,10 +268,12 @@ const CarrierCard = ({ carrier }: { carrier: Carrier }) => {
               </p>
             </div>
           </div>
-          <StatusBadge status={carrier.status} />
+          <div className="shrink-0">
+            <StatusBadge status={carrier.status} />
+          </div>
         </div>
 
-        <div className="mt-5 flex flex-wrap gap-2.5">
+        <div className="mt-4 flex flex-wrap gap-2 md:mt-5 md:gap-2.5">
           {carrier.lobs.map((lob) => (
             <span
               key={lob}
@@ -278,7 +284,7 @@ const CarrierCard = ({ carrier }: { carrier: Carrier }) => {
           ))}
         </div>
 
-        <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2">
+        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 md:mt-5 md:gap-x-6">
           {carrier.capabilities.map((cap) => (
             <span
               key={cap}
@@ -290,7 +296,7 @@ const CarrierCard = ({ carrier }: { carrier: Carrier }) => {
           ))}
         </div>
 
-        <div className="mt-5 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap gap-2 md:mt-5">
           {carrier.products.map((product, idx) => (
             <span
               key={`${product.name}-${idx}`}
@@ -424,18 +430,50 @@ const Integration = () => {
             >
               <span data-split>One integration. The entire ecosystem.</span>
             </h2>
+            <p
+              ref={descRef}
+              className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
+            >
+              Carriers, AMS systems, premium finance, E&amp;S compliance, and AI
+              connected through CoverForce.
+            </p>
           </div>
           <p
-            ref={descRef}
-            className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:text-right"
+            className="hidden max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:block lg:text-right"
           >
             Carriers, AMS systems, premium finance, E&amp;S compliance, and AI
             connected through CoverForce.
           </p>
         </div>
 
-        {/* Tabs */}
-        <div className="mt-10 pb-10 flex flex-wrap justify-between gap-x-10 gap-y-3">
+        {/* Tabs — mobile dropdown */}
+        <div className="mt-8 pb-8 lg:hidden">
+          <label htmlFor="integration-tab" className="sr-only">
+            Integration category
+          </label>
+          <div className="relative">
+            <select
+              id="integration-tab"
+              value={activeTab}
+              onChange={(event) => setActiveTab(event.target.value)}
+              className="w-full appearance-none rounded-lg border border-[#E4E7EE] bg-white px-4 py-3 pr-10 text-sm font-medium text-[#0a143b] outline-none transition-colors focus:border-[#413CC0] focus:ring-1 focus:ring-[#413CC0]/20"
+            >
+              {TABS.map((tab) => (
+                <option key={tab.id} value={tab.id}>
+                  {getTabLabel(tab)}
+                </option>
+              ))}
+            </select>
+            <RiArrowDownSLine
+              className="pointer-events-none absolute right-3 top-1/2 size-5 -translate-y-1/2 text-[#667085]"
+              aria-hidden
+            />
+          </div>
+        </div>
+
+        {/* Tabs — desktop */}
+        <div className="mt-10 hidden pb-10 lg:block">
+          <div className="flex flex-wrap justify-between gap-x-10 gap-y-3">
           {TABS.map((tab) => {
             const isActive = tab.id === activeTab;
             return (
@@ -447,8 +485,7 @@ const Integration = () => {
                   isActive ? "text-[#413CC0]" : "text-[#667085] hover:text-[#0a143b]"
                 }`}
               >
-                {tab.label}
-                {typeof tab.count === "number" ? ` (${tab.count})` : ""}
+                {getTabLabel(tab)}
                 {/* Always-present gray baseline */}
                 <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-[#E4E7EE]" />
                 {/* Active line fills in from the left */}
@@ -459,6 +496,7 @@ const Integration = () => {
               </button>
             );
           })}
+          </div>
         </div>
        </div>
       </Container>
@@ -466,53 +504,63 @@ const Integration = () => {
 
     <section className="relative overflow-hidden text-[#0a143b] bg-[#FBFCFF]">
       <Container borderColor="#53535333">
-       <div className="pb-16 pt-12 md:pb-24">
+       <div className="pb-12 pt-8 md:pb-24 md:pt-12">
         {/* Filters */}
-        <div className="space-y-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="mr-1 text-[0.6875rem] font-mono font-medium uppercase tracking-wide text-[#4F4F4F]/80">
-              LOB :
-            </span>
-            {LOB_FILTERS.map((item) => (
-              <FilterPill
-                key={item}
-                label={item}
-                active={lob === item}
-                onClick={() => setLob(item)}
-              />
-            ))}
-            <span className="ml-20 mr-1 text-[0.6875rem] font-mono font-medium uppercase tracking-wide text-[#4F4F4F]/80">
-              Market Type :
-            </span>
-            {MARKET_FILTERS.map((m) => (
-              <FilterPill
-                key={m.id}
-                label={
-                  <span>
-                    <span className="font-semibold">{m.id}</span> | {m.label}
-                  </span>
-                }
-                active={markets.includes(m.id)}
-                onClick={() => toggleMarket(m.id)}
-                colors={m.colors}
-              />
-            ))}
+        <div className="space-y-5 lg:space-y-3">
+          <div className="flex flex-col gap-5 lg:flex-row lg:flex-wrap lg:items-center lg:gap-3">
+            <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
+              <span className="text-[0.6875rem] font-mono font-medium uppercase tracking-wide text-[#4F4F4F]/80">
+                LOB :
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {LOB_FILTERS.map((item) => (
+                  <FilterPill
+                    key={item}
+                    label={item}
+                    active={lob === item}
+                    onClick={() => setLob(item)}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 lg:ml-20 lg:flex-row lg:items-center">
+              <span className="text-[0.6875rem] font-mono font-medium uppercase tracking-wide text-[#4F4F4F]/80">
+                Market Type :
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {MARKET_FILTERS.map((m) => (
+                  <FilterPill
+                    key={m.id}
+                    label={
+                      <span>
+                        <span className="font-semibold">{m.id}</span> | {m.label}
+                      </span>
+                    }
+                    active={markets.includes(m.id)}
+                    onClick={() => toggleMarket(m.id)}
+                    colors={m.colors}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="mr-1 text-[0.6875rem] font-mono font-medium uppercase tracking-wide text-[#4F4F4F]/80">
+          <div className="flex flex-col gap-5 lg:flex-row lg:flex-wrap lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
+              <span className="text-[0.6875rem] font-mono font-medium uppercase tracking-wide text-[#4F4F4F]/80">
                 Status :
               </span>
-              {STATUS_FILTERS.map((item) => (
-                <FilterPill
-                  key={item}
-                  label={item}
-                  active={status === item}
-                  onClick={() => setStatus(item)}
-                  colors={STATUS_COLORS[item]}
-                />
-              ))}
+              <div className="flex flex-wrap gap-2">
+                {STATUS_FILTERS.map((item) => (
+                  <FilterPill
+                    key={item}
+                    label={item}
+                    active={status === item}
+                    onClick={() => setStatus(item)}
+                    colors={STATUS_COLORS[item]}
+                  />
+                ))}
+              </div>
             </div>
             <span className="text-[0.6875rem] font-medium text-[#98A2B3]">
               {filtered.length} carriers shown
@@ -524,7 +572,7 @@ const Integration = () => {
         {filtered.length > 0 ? (
           <div
             ref={gridRef}
-            className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:mt-8 lg:grid-cols-3"
           >
             {filtered.map((carrier, idx) => (
               <CarrierCard key={`${carrier.name}-${idx}`} carrier={carrier} />

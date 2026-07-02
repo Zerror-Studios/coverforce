@@ -332,6 +332,14 @@ const CarrierResults = () => {
                   <br />
                   <span data-split>speak for themselves</span>
                 </h2>
+                <p
+                  ref={descRef}
+                  className="font-sans font-regular text-sm leading-[1.4] text-[#D1D1D1] md:text-[1.125rem] lg:hidden"
+                >
+                  Named outcomes provide clear, organized quote comparisons from
+                  appointed carriers, helping agents from production carrier
+                  partnerships.
+                </p>
                 <Button href="/" surface="on-dark">
                   Explore Carrier
                 </Button>
@@ -339,8 +347,7 @@ const CarrierResults = () => {
 
               <div className="flex max-w-md flex-col items-start justify-end gap-6 text-left lg:ml-auto">
                 <p
-                  ref={descRef}
-                  className="font-sans font-regular text-sm leading-[1.4] text-[#D1D1D1] md:text-[1.125rem]"
+                  className="hidden font-sans font-regular text-sm leading-[1.4] text-[#D1D1D1] md:text-[1.125rem] lg:block"
                 >
                   Named outcomes provide clear, organized quote comparisons from
                   appointed carriers, helping agents from production carrier
