@@ -37,7 +37,7 @@ const stats: StatItem[] = [
   { value: "140K+", label: "AI-labeled Carrier Interactions" },
   { value: "40+", label: "Carrier & MGA Integrations" },
   { value: "15,000+", label: "Agencies on Platform" },
-  { value: "$500M+", label: "Gross Quoted Premium" },
+  { value: "110K+", label: "Submissions across 107,302 quotes" },
 ];
 
 const heroTheme = {
@@ -437,7 +437,7 @@ const Hero = () => {
                 className="absolute left-1/2 -top-9 z-20 -translate-x-1/2"
               >
                 <div className={`inline-flex items-center gap-2 text-xs font-sans tracking-wide ${theme.gdpText}`}>
-                  <span className="whitespace-nowrap">Global GDP running on coverforce:</span>
+                  <span className="whitespace-nowrap">Lifetime quoted premium to date:</span>
                   <GdpCounter/>
                 </div>
               </div>

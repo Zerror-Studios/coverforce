@@ -13,7 +13,7 @@ export const WAY_CARD_MODALS: Record<string, WayCardModalContent> = {
     title: "Grow distribution efficiently",
     description:
       "Route submissions, manage MGAs, and expand your carrier network from one intake workflow built for wholesale teams.",
-    primaryCta: { label: "Explore wholesaler tools", href: "/" },
+    primaryCta: { label: "Explore wholesaler tools", href: "/solutions/wholesalers" },
     secondaryCta: { label: "See pricing details", href: "/" },
     features: [
       "Centralize email and ACORD intake",
@@ -27,7 +27,7 @@ export const WAY_CARD_MODALS: Record<string, WayCardModalContent> = {
     title: "One workflow for every producer",
     description:
       "Quote multiple carriers, pre-fill applications with AI, and give every producer the same fast path from intake to bind.",
-    primaryCta: { label: "Explore broker workflow", href: "/" },
+    primaryCta: { label: "Explore broker workflow", href: "/solutions/brokers" },
     secondaryCta: { label: "See pricing details", href: "/" },
     features: [
       "AI pre-filled carrier applications",
@@ -41,7 +41,7 @@ export const WAY_CARD_MODALS: Record<string, WayCardModalContent> = {
     title: "Build insurance products on Coverforce APIs",
     description:
       "Embed quoting, binding, and policy workflows into your product with sandbox-ready APIs and developer-first documentation.",
-    primaryCta: { label: "Explore developer APIs", href: "/" },
+    primaryCta: { label: "Explore developer APIs", href: "/solutions/developers" },
     secondaryCta: { label: "View API docs", href: "/" },
     features: [
       "Sandbox and production environments",
@@ -55,7 +55,7 @@ export const WAY_CARD_MODALS: Record<string, WayCardModalContent> = {
     title: "Launch coverage without legacy overhead",
     description:
       "Move from idea to bindable quotes with a single platform that handles intake, carrier connectivity, and producer workflows.",
-    primaryCta: { label: "Explore startup tools", href: "/" },
+    primaryCta: { label: "Explore startup tools", href: "/solutions/startups" },
     secondaryCta: { label: "Request a demo", href: "/" },
     features: [
       "Go live without building carrier integrations",
@@ -69,7 +69,7 @@ export const WAY_CARD_MODALS: Record<string, WayCardModalContent> = {
     title: "Reach brokers and wholesalers at scale",
     description:
       "Put your appetite in front of the right submissions, streamline appetite matching, and grow appointed distribution digitally.",
-    primaryCta: { label: "Explore carrier distribution", href: "/" },
+    primaryCta: { label: "Explore carrier distribution", href: "/solutions/carrier" },
     secondaryCta: { label: "See pricing details", href: "/" },
     features: [
       "Receive cleaner, pre-structured submissions",
