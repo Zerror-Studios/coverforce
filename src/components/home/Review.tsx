@@ -54,20 +54,6 @@ const testimonials: Testimonial[] = [
   },
 ];
 
-function CoalitionLogo() {
-  return (
-    <div className="relative h-14 w-[220px] shrink-0 md:h-16 md:w-[264px]">
-      <Image
-        src="/images/review%20logo.png"
-        alt="Coalition"
-        fill
-        className="object-contain object-right"
-        sizes="(max-width: 768px) 220px, 264px"
-      />
-    </div>
-  );
-}
-
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
     <article
@@ -84,32 +70,30 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
         />
       </div>
 
-      <div className="relative z-10 flex h-full flex-1 flex-col justify-between">
-        <div className="size-20 shrink-0 overflow-hidden md:size-24">
-          <Image
-            src={testimonial.avatar}
-            alt={testimonial.name}
-            width={96}
-            height={96}
-            className="size-full object-cover"
-          />
-        </div>
-
-        <blockquote className="max-w-3xl text-xl font-heading font-regular tracking-tight text-[#1a1a2e] md:text-2xl lg:text-4xl">
-          &ldquo;{testimonial.quote}&rdquo;
-        </blockquote>
-
-        <div className="flex items-end justify-between gap-6">
-          <div>
-            <p className="text-xs font-mono font-medium uppercase tracking-[0.14em]  text-[#303030]">
+      <div className="relative z-10 flex h-full flex-1 flex-col">
+        <div className="flex items-start gap-4 md:gap-5">
+          <div className="size-16 shrink-0 overflow-hidden rounded-full md:size-20">
+            <Image
+              src={testimonial.avatar}
+              alt={testimonial.name}
+              width={96}
+              height={96}
+              className="size-full object-cover"
+            />
+          </div>
+          <div className="pt-1">
+            <p className="font-sans text-lg font-medium tracking-tight text-[#303030] md:text-xl">
               {testimonial.name}
             </p>
-            <p className="text-xs font-mono font-medium uppercase tracking-[0.14em] text-[#303030]">
-              {testimonial.role}
+            <p className="mt-1 font-sans text-base font-regular tracking-tight text-[#303030]/90 md:text-lg">
+              {testimonial.company}
             </p>
           </div>
-          <CoalitionLogo />
         </div>
+
+        <blockquote className="mt-auto max-w-[16ch] text-[1.65rem] font-heading font-regular leading-[1.3] tracking-tight text-[#303030] md:max-w-[17ch] md:text-[2rem] lg:max-w-[18ch] lg:text-[2.35rem]">
+          &ldquo;{testimonial.quote}&rdquo;
+        </blockquote>
       </div>
     </article>
   );
@@ -176,6 +160,11 @@ const Review = () => {
             modules={[Navigation]}
             spaceBetween={24}
             slidesPerView={1}
+            breakpoints={{
+              768: {
+                slidesPerView: 2,
+              },
+            }}
             speed={600}
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
