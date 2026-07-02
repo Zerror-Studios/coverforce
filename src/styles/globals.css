@@ -325,6 +325,32 @@ button {
   }
 }
 
+.pricing-work-card-shell {
+  isolation: isolate;
+  clip-path: inset(4px 4.798048790430439px 4px 4.798048790430439px);
+  transition: clip-path 800ms cubic-bezier(0.165, 0.84, 0.44, 1);
+  --pricing-work-card-hover-scale: 1.03;
+}
+
+.pricing-work-card-body {
+  isolation: isolate;
+  transition: transform 800ms cubic-bezier(0.165, 0.84, 0.44, 1);
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @media (hover: hover) {
+    .pricing-work-card-shell:hover {
+      z-index: 10;
+      clip-path: inset(0);
+    }
+
+    .pricing-work-card-shell:hover .pricing-work-card-body {
+      transform: translate3d(0, 0, 0) scale(var(--pricing-work-card-hover-scale));
+    }
+  }
+}
+
 .way-card-expand-btn {
   cursor: pointer;
   background-color: #dbdbe8;

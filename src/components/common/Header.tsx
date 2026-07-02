@@ -99,13 +99,19 @@ function HeaderNavLink({
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={`group flex items-center gap-1 font-heading text-xs font-regular tracking-[0.12em] transition-colors ${
+      className={`group flex items-center gap-1 font-heading text-[0.9375rem] font-regular leading-none transition-colors ${
         isActive ? linkActiveClass : linkIdleClass
       }`}
       aria-expanded={hasDropdown ? isActive : undefined}
       aria-haspopup={hasDropdown ? "true" : undefined}
     >
-      <AnimatedLinkText hovered={hovered}>{label}</AnimatedLinkText>
+      <AnimatedLinkText
+        hovered={hovered}
+        textClip="h-[0.9375rem]"
+        textLine="h-[0.9375rem] leading-none"
+      >
+        {label}
+      </AnimatedLinkText>
       {hasDropdown ? (
         <RiArrowDownSLine
           className={`size-4 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${
@@ -140,7 +146,13 @@ function LoginLink({
       onMouseLeave={() => setHovered(false)}
       className={className}
     >
-      <AnimatedLinkText hovered={hovered}>Login</AnimatedLinkText>
+      <AnimatedLinkText
+        hovered={hovered}
+        textClip="h-[0.9375rem]"
+        textLine="h-[0.9375rem] leading-none"
+      >
+        Login
+      </AnimatedLinkText>
     </Link>
   );
 }
@@ -372,7 +384,7 @@ const Header = () => {
                 <LoginLink
                   href="/"
                   onNavigate={handleNavigate}
-                  className={`group font-heading text-xs font-medium tracking-[0.12em] transition-colors ${styles.login}`}
+                  className={`group font-heading text-[0.9375rem] font-regular leading-none transition-colors ${styles.login}`}
                 />
                 <Button href="/" surface={theme === "dark" ? "on-dark" : "default"}>
                   Request demo

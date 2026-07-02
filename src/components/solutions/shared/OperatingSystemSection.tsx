@@ -28,6 +28,7 @@ export type OperatingSystemConfig = {
   ctaHref?: string;
   ctaLabel?: string;
   statColor?: string;
+  showHeader?: boolean;
   rows: OperatingRow[];
 };
 
@@ -43,6 +44,7 @@ export default function OperatingSystemSection({
   ctaHref = "/",
   ctaLabel = "Start a quote",
   statColor = "#33259F",
+  showHeader = true,
   rows,
 }: OperatingSystemConfig) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -104,32 +106,39 @@ export default function OperatingSystemSection({
   return (
     <section ref={sectionRef} className="min-h-screen bg-white text-[#0a143b]">
       <Container borderColor="#53535380" borderBottom={true}>
-        <div className="py-16 md:py-20 lg:py-24">
-          <div
-            ref={headerRef}
-            className="mb-24 grid gap-8 lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-12"
-          >
-            <div className="flex flex-col justify-end space-y-5">
-              <h2
-                ref={headingRef}
-                className="max-w-sm text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#BCC5D6] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
-              >
-                <span data-split>{sectionTitle}</span>
-              </h2>
-              <Button href={ctaHref}>
-                {ctaLabel}
-              </Button>
-            </div>
+        <div className="pt-0 pb-16 md:pb-20 lg:pb-24">
+          {showHeader ? (
+            <div
+              ref={headerRef}
+              className="mb-24 grid gap-8 lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-12"
+            >
+              <div className="flex flex-col justify-end space-y-5">
+                <h2
+                  ref={headingRef}
+                  className="max-w-sm text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#BCC5D6] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+                >
+                  <span data-split>{sectionTitle}</span>
+                </h2>
+                <Button href={ctaHref}>
+                  {ctaLabel}
+                </Button>
+              </div>
 
-            <div className="flex max-w-md flex-col items-end gap-6 text-left lg:ml-auto">
-              <p
-                ref={descRef}
-                className="font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem]"
-              >
-                {sectionDescription}
-              </p>
+              <div className="flex max-w-md flex-col items-end gap-6 text-left lg:ml-auto">
+                <p
+                  ref={descRef}
+                  className="font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem]"
+                >
+                  {sectionDescription}
+                </p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div ref={headerRef} className="sr-only">
+              <h2 ref={headingRef}>{sectionTitle}</h2>
+              <p ref={descRef}>{sectionDescription}</p>
+            </div>
+          )}
 
           <div className="space-y-36">
             {rows.map((row) => {

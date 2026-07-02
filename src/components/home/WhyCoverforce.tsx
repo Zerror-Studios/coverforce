@@ -50,7 +50,7 @@ const whySlides: WhySlide[] = [
   },
 ];
 
-const SLIDE_TRANSITION_MS = 600;
+const SLIDE_TRANSITION_MS = 1100;
 // Small delay before a hover actually switches the active slide — absorbs
 // fast mouse passes across slide edges so it doesn't flicker between slides.
 const HOVER_SWITCH_DELAY_MS = 90;
@@ -208,7 +208,7 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
           overflow: hidden;
           flex-shrink: 0;
           background: #E3E3E3;
-          transition: flex 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: flex 1.08s cubic-bezier(0.19, 1, 0.22, 1);
         }
         .why-slide.is-active   { flex: 5 0 0; cursor: default; }
         .why-slide.is-inactive { flex: 1 0 0; cursor: pointer; }
@@ -232,7 +232,9 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
           letter-spacing: -0.01em;
           opacity: 0;
           transform: translateY(6px);
-          transition: opacity 0.35s ease, transform 0.35s ease;
+          transition:
+            opacity 0.68s cubic-bezier(0.19, 1, 0.22, 1),
+            transform 0.68s cubic-bezier(0.19, 1, 0.22, 1);
           pointer-events: none;
           white-space: nowrap;
           overflow: hidden;
@@ -242,7 +244,7 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
         .why-slide.is-active .why-slide-label {
           opacity: 1;
           transform: translateY(0);
-          transition-delay: 0.25s;
+          transition-delay: 0.42s;
         }
       `}</style>
       <div ref={containerRef} className="relative z-10 overflow-hidden will-change-transform">

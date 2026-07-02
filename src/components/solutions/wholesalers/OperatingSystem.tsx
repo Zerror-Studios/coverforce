@@ -10,7 +10,7 @@ function BrokerCodeControlsSectionMock() {
   return <BrokerCodeControlsMock showDelegationCard />;
 }
 
-const operatingRows = [
+export const operatingRows = [
   {
     id: "inbox",
     heading: "AI Inbox & Document Reader",
@@ -49,18 +49,19 @@ const operatingRows = [
   },
 ];
 
+export const operatingSystemTitle = "Precision engineering for professional workflow";
+export const operatingSystemDescription =
+  "See how fragmented broker workflows compare to CoverForce — from delegated intake through bind, on one platform built to scale your wholesale operation.";
+
 export default function OperatingSystem() {
   return (
     <OperatingSystemSection
-      sectionTitle={
-        <>
-          Precision engineering for professional workflow
-        </>
-      }
-      sectionDescription="See how fragmented broker workflows compare to CoverForce — from delegated intake through bind, on one platform built to scale your wholesale operation."
+      sectionTitle={<>{operatingSystemTitle}</>}
+      sectionDescription={operatingSystemDescription}
       ctaHref="/solutions/wholesalers"
       ctaLabel="Talk to sales"
-      rows={operatingRows}
+      showHeader={false}
+      rows={operatingRows.slice(1)}
     />
   );
 }

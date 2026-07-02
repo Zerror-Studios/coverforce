@@ -16,6 +16,14 @@ import { GradFlow } from "gradflow";
 
 gsap.registerPlugin(ScrollTrigger);
 
+export type SolutionHeroFeature = {
+  readonly heading: string;
+  readonly description: string;
+  readonly stat: string;
+  readonly statLabelLines: readonly [string, string];
+  readonly statColor?: string;
+};
+
 export type SolutionListPoint = {
   readonly id: string;
   readonly text: string;
@@ -30,9 +38,14 @@ type SolutionScrollHeroProps = {
   primaryButtonLabel?: string;
   secondaryButtonHref?: string;
   secondaryButtonLabel?: string;
-  listTag: string;
-  listHeading: string;
-  listPoints: readonly SolutionListPoint[];
+  feature?: SolutionHeroFeature;
+  featureHeaderTitle?: ReactNode;
+  featureHeaderDescription?: string;
+  featureHeaderCtaHref?: string;
+  featureHeaderCtaLabel?: string;
+  listTag?: string;
+  listHeading?: string;
+  listPoints?: readonly SolutionListPoint[];
   rightCard: ReactNode;
   gradFlow: GradFlowColors;
   showMarquee?: boolean;
@@ -55,6 +68,11 @@ export default function SolutionScrollHero({
   primaryButtonLabel = "Apply to Start Up Program",
   secondaryButtonHref = "#program-overview",
   secondaryButtonLabel = "How Program Works",
+  feature,
+  featureHeaderTitle,
+  featureHeaderDescription,
+  featureHeaderCtaHref,
+  featureHeaderCtaLabel,
   listTag,
   listHeading,
   listPoints,
@@ -67,11 +85,21 @@ export default function SolutionScrollHero({
   const cardRef = useRef<HTMLDivElement>(null);
   const listHeaderRef = useRef<HTMLDivElement>(null);
   const listHeadingRef = useRef<HTMLHeadingElement>(null);
+  const featureHeaderRef = useRef<HTMLDivElement>(null);
+  const featureHeaderHeadingRef = useRef<HTMLHeadingElement>(null);
+  const featureHeaderDescRef = useRef<HTMLParagraphElement>(null);
 
   useSectionHeaderReveal({
     scopeRef: sectionRef,
     headerRef: listHeaderRef,
     headingRef: listHeadingRef,
+  });
+
+  useSectionHeaderReveal({
+    scopeRef: sectionRef,
+    headerRef: featureHeaderRef,
+    headingRef: featureHeaderHeadingRef,
+    descRef: featureHeaderDescRef,
   });
 
   useGSAP(
@@ -90,7 +118,7 @@ export default function SolutionScrollHero({
       const updateCardTransform = (progress: number) => {
         const viewportCenter = window.innerHeight / 2;
         const heroCenter = getCenterY(heroContent);
-        const listCenter = getCenterY(listHeader);
+        const listCenter = getCenterY(listHeader) + 96;
         const targetCenter = gsap.utils.interpolate(heroCenter, listCenter, progress);
         const scale = gsap.utils.interpolate(1, 0.92, progress);
 
@@ -130,7 +158,7 @@ export default function SolutionScrollHero({
 
   return (
     <section ref={sectionRef} className="relative bg-white text-[#0a143b]">
-      <Container borderColor="#53535380" borderBottom className="relative z-10">
+      <Container borderColor="#53535380" className="relative z-10">
         <div className="relative grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="flex flex-col">
             <div className="relative flex h-svh flex-col">
@@ -163,30 +191,93 @@ export default function SolutionScrollHero({
 
             <div
               ref={listHeaderRef}
-              className="flex min-h-svh flex-col justify-center py-16 md:py-20 lg:py-24"
+              className="flex min-h-svh flex-col justify-between pt-24 pb-36"
             >
-              <EyebrowPill surface="light">{listTag}</EyebrowPill>
+              {feature ? (
+                <>
+                  {featureHeaderTitle ? (
+                    <div
+                      ref={featureHeaderRef}
+                      className="mb-24 grid gap-8 lg:w-[calc(200%+4rem)] lg:max-w-none lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-12 xl:w-[calc(200%+5rem)]"
+                    >
+                      <div className="flex flex-col justify-end space-y-5">
+                        <h2
+                          ref={featureHeaderHeadingRef}
+                          className="max-w-sm text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#BCC5D6] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+                        >
+                          <span data-split>{featureHeaderTitle}</span>
+                        </h2>
+                        {featureHeaderCtaHref && featureHeaderCtaLabel ? (
+                          <Button href={featureHeaderCtaHref}>
+                            {featureHeaderCtaLabel}
+                          </Button>
+                        ) : null}
+                      </div>
+                      {featureHeaderDescription ? (
+                        <div className="flex max-w-md flex-col items-start gap-6 text-left lg:ml-auto lg:items-end">
+                          <p
+                            ref={featureHeaderDescRef}
+                            className="font-sans text-sm font-regular leading-[1.4] text-[#50617a] md:text-[1.125rem]"
+                          >
+                            {featureHeaderDescription}
+                          </p>
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : null}
+                  <div className="max-w-md">
+                    <h2
+                      ref={listHeadingRef}
+                      className="max-w-lg text-2xl font-heading font-regular leading-[1.2] tracking-tight text-[#444444] md:text-3xl lg:max-w-md lg:text-[1.75rem] lg:leading-[1.25]"
+                    >
+                      <span data-split>{feature.heading}</span>
+                    </h2>
 
-              <h2
-                ref={listHeadingRef}
-                className="mt-4 max-w-lg text-2xl font-heading font-regular leading-[1.2] tracking-tight text-[#0a143b] md:text-3xl lg:max-w-md lg:text-[1.75rem] lg:leading-tight"
-              >
-                <span data-split>{listHeading}</span>
-              </h2>
-
-              <ul className="mt-8 space-y-0 md:mt-10">
-                {listPoints.map((point) => (
-                  <li
-                    key={point.id}
-                    className="flex gap-4 border-b border-black/10 py-4"
+                    <p className="mt-8 max-w-sm font-heading text-sm font-regular leading-relaxed text-[#444444] md:mt-6 md:text-sm">
+                      {feature.description}
+                    </p>
+                    <div className="mt-10 flex items-center gap-4 md:mt-8 md:gap-5">
+                      <span
+                        className="text-2xl font-heading font-regular leading-[1.2] tracking-tight md:text-3xl lg:text-[1.75rem] lg:leading-[1.25]"
+                        style={{ color: feature.statColor ?? "#33259F" }}
+                      >
+                        {feature.stat}
+                      </span>
+                      <span
+                        className="font-heading text-sm font-medium leading-[1.2] md:text-xs"
+                        style={{ color: feature.statColor ?? "#33259F" }}
+                      >
+                        {feature.statLabelLines[0]}
+                        <br />
+                        {feature.statLabelLines[1]}
+                      </span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {listTag ? <EyebrowPill surface="light">{listTag}</EyebrowPill> : null}
+                  <h2
+                    ref={listHeadingRef}
+                    className="mt-4 max-w-lg text-2xl font-heading font-regular leading-[1.2] tracking-tight text-[#0a143b] md:text-3xl lg:max-w-md lg:text-[1.75rem] lg:leading-tight"
                   >
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[#151F4D] bg-[#151F4D] text-white">
-                      <RiArrowRightLine className="size-3" aria-hidden />
-                    </span>
-                    <PointText text={point.text} />
-                  </li>
-                ))}
-              </ul>
+                    <span data-split>{listHeading}</span>
+                  </h2>
+                  <ul className="mt-8 space-y-0 md:mt-10">
+                    {listPoints?.map((point) => (
+                      <li
+                        key={point.id}
+                        className="flex gap-4 border-b border-black/10 py-4"
+                      >
+                        <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[#151F4D] bg-[#151F4D] text-white">
+                          <RiArrowRightLine className="size-3" aria-hidden />
+                        </span>
+                        <PointText text={point.text} />
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </div>
           </div>
 

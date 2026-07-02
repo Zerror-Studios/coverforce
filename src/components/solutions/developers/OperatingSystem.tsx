@@ -5,7 +5,7 @@ import EmbeddedInsuranceMock from "@/components/solutions/developers/EmbeddedIns
 import ComplianceInfrastructureMock from "@/components/solutions/developers/ComplianceInfrastructureMock";
 import AiApiRequestsMock from "@/components/solutions/developers/AiApiRequestsMock";
 
-const operatingRows = [
+export const operatingRows = [
   {
     id: "embedded",
     heading: "Embedded Insurance",
@@ -35,18 +35,19 @@ const operatingRows = [
   },
 ];
 
+export const operatingSystemTitle = "Precision engineering for professional workflow";
+export const operatingSystemDescription =
+  "See how custom integrations compare to CoverForce — from API-first intake through bind, on infrastructure built for developers shipping commercial insurance products.";
+
 export default function OperatingSystem() {
   return (
     <OperatingSystemSection
-      sectionTitle={
-        <>
-          Precision engineering for professional workflow
-        </>
-      }
-      sectionDescription="See how custom integrations compare to CoverForce — from API-first intake through bind, on infrastructure built for developers shipping commercial insurance products."
+      sectionTitle={<>{operatingSystemTitle}</>}
+      sectionDescription={operatingSystemDescription}
       ctaHref="/solutions/developers"
       ctaLabel="View API docs"
-      rows={operatingRows}
+      showHeader={false}
+      rows={operatingRows.slice(1)}
     />
   );
 }

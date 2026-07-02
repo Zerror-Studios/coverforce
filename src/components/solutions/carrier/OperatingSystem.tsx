@@ -5,7 +5,7 @@ import AiExtractedDetailsMock from "@/components/solutions/carrier/AiExtractedDe
 import ConnectedSourcesMock from "@/components/solutions/carrier/ConnectedSourcesMock";
 import RecentActivityMock from "@/components/solutions/carrier/RecentActivityMock";
 
-const operatingRows = [
+export const operatingRows = [
   {
     id: "integration",
     heading: "One Integration, 15,000+ Agencies",
@@ -35,19 +35,20 @@ const operatingRows = [
   },
 ];
 
+export const operatingSystemTitle = "Built for Carrier Distribution at Scale";
+export const operatingSystemDescription =
+  "See how inconsistent broker submissions compare to CoverForce — from standardized intake through bind, on one platform built to receive cleaner business at scale.";
+
 export default function OperatingSystem() {
   return (
     <OperatingSystemSection
-      sectionTitle={
-        <>
-       Built for Carrier Distribution at Scale
-        </>
-      }
-      sectionDescription="See how inconsistent broker submissions compare to CoverForce — from standardized intake through bind, on one platform built to receive cleaner business at scale."
+      sectionTitle={<>{operatingSystemTitle}</>}
+      sectionDescription={operatingSystemDescription}
       ctaHref="/solutions/carrier"
       ctaLabel="Request a demo"
       statColor="#7CB518"
-      rows={operatingRows}
+      showHeader={false}
+      rows={operatingRows.slice(1)}
     />
   );
 }

@@ -2,8 +2,13 @@
 
 import { useRef } from "react";
 import Image from "next/image";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Container from "@/components/common/Container";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
+
+gsap.registerPlugin(ScrollTrigger);
 type PricingWorkCard = {
   id: string;
   label: string;
@@ -151,11 +156,22 @@ function PricingWorkCard({ card }: { card: PricingWorkCard }) {
   return <SplitLightCard card={card} />;
 }
 
+function PricingWorkCardShell({ card }: { card: PricingWorkCard }) {
+  return (
+    <div className="pricing-work-card-shell pricing-work-card h-full overflow-hidden rounded-md">
+      <div className="pricing-work-card-body h-full">
+        <PricingWorkCard card={card} />
+      </div>
+    </div>
+  );
+}
+
 const HowPricingWorks = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
+  const cardsGridRef = useRef<HTMLDivElement>(null);
 
   useSectionHeaderReveal({
     scopeRef: sectionRef,
@@ -165,11 +181,67 @@ const HowPricingWorks = () => {
     theme: "dark",
   });
 
+  useGSAP(
+    () => {
+      const grid = cardsGridRef.current;
+      if (!grid) return;
+
+      const cards = gsap.utils.toArray<HTMLElement>(".pricing-work-card", grid);
+      if (!cards.length) return;
+
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (reducedMotion) {
+        gsap.set(cards, { opacity: 1, x: 0, clearProps: "transform" });
+        return;
+      }
+
+      gsap.set(cards, { opacity: 0, x: 72 });
+
+      const revealTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: grid,
+          start: "top 78%",
+          toggleActions: "play none none none",
+          once: true,
+        },
+      });
+
+      revealTl.to(cards, {
+        opacity: 1,
+        x: 0,
+        duration: 0.95,
+        ease: "power3.out",
+        stagger: 0.14,
+        clearProps: "transform",
+      });
+
+      const lenis = window.lenis;
+      let scrollPending = false;
+      const onLenisScroll = () => {
+        if (scrollPending) return;
+        scrollPending = true;
+        requestAnimationFrame(() => {
+          ScrollTrigger.update();
+          scrollPending = false;
+        });
+      };
+      lenis?.on("scroll", onLenisScroll);
+
+      ScrollTrigger.refresh();
+
+      return () => {
+        lenis?.off("scroll", onLenisScroll);
+        revealTl.scrollTrigger?.kill();
+        revealTl.kill();
+      };
+    },
+    { scope: sectionRef },
+  );
+
   return (
-    <section ref={sectionRef} className="relative overflow-hidden bg-[#151f4d] text-white">      <div
-        className="pointer-events-none absolute inset-0"
-        aria-hidden
-      />
+    <section ref={sectionRef} className="relative overflow-hidden bg-[#151f4d] text-white">
+      <div className="pointer-events-none absolute inset-0" aria-hidden />
 
       <Container borderColor="#FFFFFF33" className="relative z-10">
         <div className="flex flex-col gap-10 py-16 md:py-20 lg:gap-14 lg:py-24">
@@ -198,8 +270,12 @@ const HowPricingWorks = () => {
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3 md:gap-12">            {CARDS.map((card) => (
-              <PricingWorkCard key={card.id} card={card} />
+          <div
+            ref={cardsGridRef}
+            className="grid gap-4 md:grid-cols-3 md:gap-12"
+          >
+            {CARDS.map((card) => (
+              <PricingWorkCardShell key={card.id} card={card} />
             ))}
           </div>
         </div>

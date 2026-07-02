@@ -2,7 +2,7 @@
 
 import OperatingSystemSection from "@/components/solutions/shared/OperatingSystemSection";
 
-const operatingRows = [
+export const operatingRows = [
   {
     id: "platform",
     heading: "One Platform for Every Carrier, Every Office",
@@ -29,6 +29,10 @@ const operatingRows = [
   },
 ];
 
+export const operatingSystemTitle = "Precision engineering for professional workflow";
+export const operatingSystemDescription =
+  "See how manual workflows compare to CoverForce — from smart intake through bind, in one connected platform built for every producer.";
+
 export default function OperatingSystem() {
   return (
     <OperatingSystemSection
@@ -38,10 +42,11 @@ export default function OperatingSystem() {
           professional workflow
         </>
       }
-      sectionDescription="See how manual workflows compare to CoverForce — from smart intake through bind, in one connected platform built for every producer."
+      sectionDescription={operatingSystemDescription}
       ctaHref="/"
       ctaLabel="Start a quote"
-      rows={operatingRows}
+      showHeader={false}
+      rows={operatingRows.slice(1)}
     />
   );
 }
