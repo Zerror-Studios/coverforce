@@ -1,10 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import gsap from "gsap";
 import Container from "./Container";
 import Button from "./Button";
-import MegaMenu from "./MegaMenu";
+import MegaMenu, {
+  CLIP_CLOSE_MS,
+  CLIP_DURATION_MS,
+  MEGA_MENU_CLIP_CLOSED,
+  MEGA_MENU_CLIP_OPEN,
+} from "./MegaMenu";
 import AnimatedLinkText from "./AnimatedLinkText";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -163,6 +168,37 @@ function LoginLink({
   );
 }
 
+const CLIP_EASE = "cubic-bezier(0.76, 0, 0.24, 1)";
+const CLIP_CLOSE_EASE = "cubic-bezier(0.33, 1, 0.68, 1)";
+const MOBILE_CONTENT_BASE_DELAY = 100;
+const MOBILE_CONTENT_STAG = 45;
+const MOBILE_PANEL_MS = 320;
+const MOBILE_PANEL_EASE = "cubic-bezier(0.76, 0, 0.24, 1)";
+
+function MobileMenuReveal({
+  enterKey,
+  delay,
+  children,
+  className = "",
+}: {
+  enterKey: number;
+  delay: number;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={`mega-menu-reveal-slot ${className}`}>
+      <div
+        key={`${enterKey}-${delay}`}
+        className="mega-menu-reveal"
+        style={{ "--mega-menu-stagger": `${delay}ms` } as CSSProperties}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 function MobileMenuLinkRow({
   label,
   onClick,
@@ -223,7 +259,13 @@ const Header = () => {
   const [clipOpen, setClipOpen] = useState(false);
   const [enterKey, setEnterKey] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileMenuRendered, setMobileMenuRendered] = useState(false);
+  const [mobileClipOpen, setMobileClipOpen] = useState(false);
+  const [mobileContentEnter, setMobileContentEnter] = useState(false);
+  const [mobileEnterKey, setMobileEnterKey] = useState(0);
   const [mobileActiveMenu, setMobileActiveMenu] = useState<string | null>(null);
+  const [renderedMobileSubMenu, setRenderedMobileSubMenu] = useState<string | null>(null);
+  const [navBarHeight, setNavBarHeight] = useState(0);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const activeMenuRef = useRef<string | null>(null);
   const renderedMenuRef = useRef<string | null>(null);
@@ -270,6 +312,75 @@ const Header = () => {
       overwrite: "auto",
     });
   }, [introEnabled, introPhase]);
+
+  useLayoutEffect(() => {
+    const navBar = navBarRef.current;
+    if (!navBar) return;
+
+    const updateHeight = () => setNavBarHeight(navBar.offsetHeight);
+    updateHeight();
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(navBar);
+    window.addEventListener("resize", updateHeight);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateHeight);
+    };
+  }, []);
+
+  const openMobileMenu = useCallback(() => {
+    setMobileActiveMenu(null);
+    setRenderedMobileSubMenu(null);
+    setMobileEnterKey((key) => key + 1);
+    setMobileMenuRendered(true);
+    setMobileMenuOpen(true);
+    setMobileClipOpen(false);
+    setMobileContentEnter(false);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setMobileClipOpen(true));
+    });
+  }, []);
+
+  const closeMobileMenu = useCallback(() => {
+    setMobileMenuOpen(false);
+    setMobileClipOpen(false);
+    setMobileContentEnter(false);
+    setMobileActiveMenu(null);
+    setRenderedMobileSubMenu(null);
+  }, []);
+
+  useEffect(() => {
+    if (mobileActiveMenu) {
+      setRenderedMobileSubMenu(mobileActiveMenu);
+      return;
+    }
+
+    const timer = window.setTimeout(() => setRenderedMobileSubMenu(null), MOBILE_PANEL_MS);
+    return () => window.clearTimeout(timer);
+  }, [mobileActiveMenu]);
+
+  useEffect(() => {
+    if (mobileMenuOpen || !mobileMenuRendered) return;
+    const timer = window.setTimeout(() => setMobileMenuRendered(false), CLIP_CLOSE_MS);
+    return () => window.clearTimeout(timer);
+  }, [mobileMenuOpen, mobileMenuRendered]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen || !mobileClipOpen) return;
+    const timer = window.setTimeout(() => setMobileContentEnter(true), 100);
+    return () => window.clearTimeout(timer);
+  }, [mobileMenuOpen, mobileClipOpen, mobileEnterKey]);
+
+  const openMobileSubMenu = useCallback((label: string) => {
+    if (!MEGA_MENUS[label]) return;
+    setMobileActiveMenu(label);
+  }, []);
+
+  const backToMobileMain = useCallback(() => {
+    setMobileActiveMenu(null);
+  }, []);
 
   const clearCloseTimer = useCallback(() => {
     if (closeTimerRef.current) {
@@ -337,8 +448,7 @@ const Header = () => {
   const handleNavigate = useCallback(
     (href: string) => {
       closeMenuImmediately();
-      setMobileMenuOpen(false);
-      setMobileActiveMenu(null);
+      closeMobileMenu();
       if (pathname === href) return;
 
       if (typeof document !== "undefined" && "startViewTransition" in document) {
@@ -349,14 +459,13 @@ const Header = () => {
 
       router.push(href);
     },
-    [closeMenuImmediately, pathname, router],
+    [closeMenuImmediately, closeMobileMenu, pathname, router],
   );
 
   useEffect(() => {
     closeMenuImmediately();
-    setMobileMenuOpen(false);
-    setMobileActiveMenu(null);
-  }, [pathname, closeMenuImmediately]);
+    closeMobileMenu();
+  }, [pathname, closeMenuImmediately, closeMobileMenu]);
 
   const renderedConfig = renderedMenu ? MEGA_MENUS[renderedMenu] : null;
   const menuVisible = clipOpen && Boolean(renderedConfig);
@@ -371,15 +480,16 @@ const Header = () => {
   }, [menuVisible]);
 
   useEffect(() => {
-    if (!mobileMenuOpen) return;
+    if (!mobileMenuRendered) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = previous;
     };
-  }, [mobileMenuOpen]);
+  }, [mobileMenuRendered]);
 
-  const activeMobileConfig = mobileActiveMenu ? MEGA_MENUS[mobileActiveMenu] : null;
+  const activeMobileConfig = renderedMobileSubMenu ? MEGA_MENUS[renderedMobileSubMenu] : null;
+  const mobileBarStyles = mobileMenuOpen ? headerThemes.light : styles;
 
   return (
     <nav className={`relative w-full ${theme === "light" ? "text-[#0a143b]" : "text-white"}`}>
@@ -395,7 +505,7 @@ const Header = () => {
       <div className="relative z-10" onMouseLeave={scheduleClose}>
         <div
           ref={navBarRef}
-          className={`overflow-hidden will-change-transform ${styles.bar}`}
+          className={`relative z-20 overflow-hidden will-change-transform ${mobileBarStyles.bar}`}
         >
           <Container>
             <div className="relative flex items-center justify-between py-4">
@@ -408,7 +518,7 @@ const Header = () => {
                 className="relative z-10 shrink-0"
               >
                 <Image
-                  src={styles.logo}
+                  src={mobileMenuOpen ? headerThemes.light.logo : styles.logo}
                   alt="CoverForce"
                   width={180}
                   height={34}
@@ -419,11 +529,25 @@ const Header = () => {
 
               <button
                 type="button"
-                onClick={() => setMobileMenuOpen(true)}
-                className="relative z-10 flex size-10 items-center justify-center lg:hidden"
-                aria-label="Open menu"
+                onClick={() => {
+                  if (mobileMenuOpen) closeMobileMenu();
+                  else openMobileMenu();
+                }}
+                className={`relative z-10 flex size-10 items-center justify-center lg:hidden ${
+                  mobileMenuOpen
+                    ? "text-[#0a143b]"
+                    : theme === "dark"
+                      ? "text-white"
+                      : "text-[#0a143b]"
+                }`}
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={mobileMenuOpen}
               >
-                <RiMenuLine className="size-6" aria-hidden />
+                {mobileMenuOpen ? (
+                  <RiCloseLine className="size-6" aria-hidden />
+                ) : (
+                  <RiMenuLine className="size-6" aria-hidden />
+                )}
               </button>
 
               <div className="pointer-events-none absolute inset-0 hidden items-center justify-center lg:flex">
@@ -487,101 +611,158 @@ const Header = () => {
         ) : null}
       </div>
 
-      {mobileMenuOpen ? (
-        <div className="fixed inset-0 z-[120] bg-white text-[#0a143b] lg:hidden">
-          <div className="flex h-full flex-col">
-            <div className="flex items-center justify-between border-b border-[#E8ECF0] px-6 py-5">
-              <Link
-                href="/"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavigate("/");
-                }}
-                className="shrink-0"
-              >
-                <Image
-                  src="/Coverforce_logo_blue.svg"
-                  alt="CoverForce"
-                  width={180}
-                  height={34}
-                  className="h-5 w-auto"
-                />
-              </Link>
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setMobileActiveMenu(null);
-                }}
-                className="flex size-10 items-center justify-center"
-                aria-label="Close menu"
-              >
-                <RiCloseLine className="size-6" aria-hidden />
-              </button>
-            </div>
+      {mobileMenuRendered ? (
+        <>
+          <button
+            type="button"
+            className="fixed inset-x-0 bottom-0 z-[118] bg-[#0a143b]/50 motion-reduce:transition-none lg:hidden"
+            style={{ top: navBarHeight }}
+            aria-label="Close menu"
+            onClick={closeMobileMenu}
+          />
 
-            <div className="flex-1 overflow-y-auto">
-              {activeMobileConfig ? (
-                <div className="px-6 pb-6 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setMobileActiveMenu(null)}
-                    className="mb-6 flex items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.08em] text-[#0a143b]"
+          <div
+            className="fixed inset-x-0 z-[119] overflow-hidden border-t border-[#E8ECF0] bg-white text-[#0a143b] shadow-[0_24px_48px_-12px_rgba(10,20,59,0.1)] will-change-[clip-path] motion-reduce:transition-none lg:hidden"
+            style={{
+              top: navBarHeight,
+              bottom: 0,
+              clipPath: mobileClipOpen ? MEGA_MENU_CLIP_OPEN : MEGA_MENU_CLIP_CLOSED,
+              WebkitClipPath: mobileClipOpen ? MEGA_MENU_CLIP_OPEN : MEGA_MENU_CLIP_CLOSED,
+              transition: mobileMenuOpen
+                ? `clip-path ${CLIP_DURATION_MS}ms ${CLIP_EASE}, -webkit-clip-path ${CLIP_DURATION_MS}ms ${CLIP_EASE}`
+                : `clip-path ${CLIP_CLOSE_MS}ms ${CLIP_CLOSE_EASE}, -webkit-clip-path ${CLIP_CLOSE_MS}ms ${CLIP_CLOSE_EASE}`,
+              pointerEvents: mobileMenuOpen ? "auto" : "none",
+            }}
+          >
+            <div
+              className="flex h-full flex-col"
+              style={{
+                opacity: mobileClipOpen ? 1 : 0,
+                transition: mobileMenuOpen
+                  ? "opacity 300ms cubic-bezier(0.76, 0, 0.24, 1)"
+                  : "opacity 380ms cubic-bezier(0.33, 1, 0.68, 1)",
+              }}
+            >
+              <div className="relative min-h-0 flex-1 overflow-hidden">
+                <div
+                  className={`absolute inset-0 flex flex-col transition-transform motion-reduce:transition-none ${
+                    mobileActiveMenu ? "-translate-x-full" : "translate-x-0"
+                  }`}
+                  style={{
+                    transitionDuration: `${MOBILE_PANEL_MS}ms`,
+                    transitionTimingFunction: MOBILE_PANEL_EASE,
+                  }}
+                >
+                  <div
+                    className={`flex-1 overflow-y-auto ${
+                      mobileContentEnter && !mobileActiveMenu ? "mega-menu-enter" : ""
+                    }`}
                   >
-                    <RiArrowLeftLine className="size-4" aria-hidden />
-                    <span>Back</span>
-                  </button>
-
-                  <div className="space-y-8">
-                    {activeMobileConfig.columns.map((column) => (
-                      <div key={column.title} className="border-t border-[#E8ECF0] pt-4 first:border-t-0 first:pt-0">
-                        <p className="mb-2 font-mono text-[0.75rem] font-medium uppercase tracking-[0.12em] text-[#7C8798]">
-                          {column.title}
-                        </p>
-                        <div className="divide-y divide-[#E8ECF0]">
-                          {column.links.map((link) => (
-                            <MobileMenuSubLink
-                              key={link.label}
-                              link={link}
-                              onNavigate={handleNavigate}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    ))}
+                    <div>
+                      {navItems.map(({ label, href, hasDropdown }, index) => (
+                        <MobileMenuReveal
+                          key={label}
+                          enterKey={mobileEnterKey}
+                          delay={MOBILE_CONTENT_BASE_DELAY + MOBILE_CONTENT_STAG * index}
+                        >
+                          <MobileMenuLinkRow
+                            label={label}
+                            onClick={() => {
+                              if (hasDropdown && MEGA_MENUS[label]) {
+                                openMobileSubMenu(label);
+                                return;
+                              }
+                              handleNavigate(href);
+                            }}
+                          />
+                        </MobileMenuReveal>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div>
-                  {navItems.map(({ label, href, hasDropdown }) => (
-                    <MobileMenuLinkRow
-                      key={label}
-                      label={label}
-                      onClick={() => {
-                        if (hasDropdown && MEGA_MENUS[label]) {
-                          setMobileActiveMenu(label);
-                          return;
-                        }
-                        handleNavigate(href);
-                      }}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
 
-            <div className="border-t border-[#E8ECF0] px-6 py-5">
-              <div className="flex items-center gap-3">
-                <Button href="/" className="flex-1 justify-center">
-                  Request demo
-                </Button>
-                <Button href="/" variant="secondary" className="flex-1 justify-center">
-                  Login
-                </Button>
+                  <MobileMenuReveal
+                    enterKey={mobileEnterKey}
+                    delay={
+                      MOBILE_CONTENT_BASE_DELAY + MOBILE_CONTENT_STAG * (navItems.length + 1)
+                    }
+                    className="shrink-0"
+                  >
+                    <div className="border-t border-[#E8ECF0] px-6 py-5">
+                      <div className="flex items-center gap-3">
+                        <Button href="/" className="flex-1 justify-center">
+                          Request demo
+                        </Button>
+                        <Button href="/" variant="secondary" className="flex-1 justify-center">
+                          Login
+                        </Button>
+                      </div>
+                    </div>
+                  </MobileMenuReveal>
+                </div>
+
+                <div
+                  className={`absolute inset-0 overflow-y-auto transition-transform motion-reduce:transition-none ${
+                    mobileActiveMenu ? "translate-x-0" : "translate-x-full"
+                  }`}
+                  style={{
+                    transitionDuration: `${MOBILE_PANEL_MS}ms`,
+                    transitionTimingFunction: MOBILE_PANEL_EASE,
+                  }}
+                >
+                  {activeMobileConfig ? (
+                    <div key={renderedMobileSubMenu} className="mega-menu-enter px-6 pb-6 pt-4">
+                      <MobileMenuReveal enterKey={mobileEnterKey} delay={MOBILE_CONTENT_BASE_DELAY}>
+                        <button
+                          type="button"
+                          onClick={backToMobileMain}
+                          className="mb-6 flex items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.08em] text-[#0a143b]"
+                        >
+                          <RiArrowLeftLine className="size-4" aria-hidden />
+                          <span>Back</span>
+                        </button>
+                      </MobileMenuReveal>
+
+                      <div className="space-y-8">
+                        {activeMobileConfig.columns.map((column, columnIndex) => {
+                          const columnDelay =
+                            MOBILE_CONTENT_BASE_DELAY +
+                            MOBILE_CONTENT_STAG * (columnIndex + 1);
+
+                          return (
+                            <div
+                              key={column.title}
+                              className="border-t border-[#E8ECF0] pt-4 first:border-t-0 first:pt-0"
+                            >
+                              <MobileMenuReveal enterKey={mobileEnterKey} delay={columnDelay}>
+                                <p className="mb-2 font-mono text-[0.75rem] font-medium uppercase tracking-[0.12em] text-[#7C8798]">
+                                  {column.title}
+                                </p>
+                              </MobileMenuReveal>
+                              <div className="divide-y divide-[#E8ECF0]">
+                                {column.links.map((link, linkIndex) => (
+                                  <MobileMenuReveal
+                                    key={link.label}
+                                    enterKey={mobileEnterKey}
+                                    delay={columnDelay + MOBILE_CONTENT_STAG * (linkIndex + 1)}
+                                  >
+                                    <MobileMenuSubLink
+                                      link={link}
+                                      onNavigate={handleNavigate}
+                                    />
+                                  </MobileMenuReveal>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </>
       ) : null}
     </nav>
   );
