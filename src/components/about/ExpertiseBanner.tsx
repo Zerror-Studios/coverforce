@@ -19,7 +19,8 @@ const ExpertiseBanner = () => {
       if (!section || !image) return;
 
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reducedMotion) {
+      const isMobile = window.matchMedia("(max-width: 767px)").matches;
+      if (reducedMotion || isMobile) {
         gsap.set(image, { y: 0, clearProps: "transform" });
         return;
       }
@@ -62,11 +63,11 @@ const ExpertiseBanner = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative h-svh min-h-svh w-full overflow-hidden"
+      className="relative h-[45svh] min-h-[45svh] w-full overflow-hidden sm:h-[60svh] sm:min-h-[60svh] md:h-svh md:min-h-svh"
     >
       <div
         ref={imageRef}
-        className="absolute inset-0 scale-105 will-change-transform"
+        className="absolute inset-0 will-change-transform md:scale-105"
       >
         <Image
           src="/images/about/expertise.png"

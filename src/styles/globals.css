@@ -175,14 +175,14 @@ button {
 }
 
 .logo-marquee-viewport--offset {
-  padding-left: 4.5rem;
+  padding-left: 2rem;
 }
 
 .logo-marquee-track {
   display: flex;
   width: max-content;
   align-items: center;
-  gap: 5.5rem;
+  gap: 2.5rem;
   animation: logo-marquee-left 42s linear infinite;
   will-change: transform;
 }
@@ -197,7 +197,7 @@ button {
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  min-width: 7rem;
+  min-width: 4.5rem;
 }
 
 @media (min-width: 768px) {

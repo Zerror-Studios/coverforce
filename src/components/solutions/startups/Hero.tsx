@@ -1,6 +1,6 @@
 "use client";
 
-import StartupRecentActivityCard from "@/components/solutions/startups/StartupRecentActivityCard";
+import Image from "next/image";
 import SolutionScrollHero from "@/components/solutions/shared/SolutionScrollHero";
 import { SOLUTION_GRAD_FLOW } from "@/data/wayCardStyles";
 
@@ -15,6 +15,17 @@ const STARTUP_MARQUEE_LOGOS = [
   { src: "/images/startups/logos/switchboard.png", alt: "Switchboard" },
 ] as const;
 
+const StartupHeroCard = () => (
+  <Image
+    src="/images/startups/startup.svg"
+    alt="Startup program dashboard preview"
+    width={543}
+    height={569}
+    className="relative z-10 mx-auto h-auto w-full max-w-[420px]"
+    priority
+  />
+);
+
 const Hero = () => (
   <SolutionScrollHero
     eyebrow="Startups"
@@ -25,7 +36,7 @@ const Hero = () => (
     primaryButtonLabel="Apply to Startup Program"
     secondaryButtonHref="#launch"
     secondaryButtonLabel="How it Works"
-    rightCard={<StartupRecentActivityCard />}
+    rightCard={<StartupHeroCard />}
     showSecondSection={false}
     showMarquee
     marqueeLogos={STARTUP_MARQUEE_LOGOS}

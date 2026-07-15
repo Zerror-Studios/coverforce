@@ -387,7 +387,10 @@ const Review = () => {
             ref={desktopPinRef}
             className="relative hidden h-screen overflow-hidden lg:block"
           >
-            <div ref={trackViewportRef} className="flex h-full items-center overflow-hidden">
+            <div
+              ref={trackViewportRef}
+              className="@container flex h-full items-center overflow-hidden"
+            >
               <div
                 ref={rowRef}
                 onMouseLeave={() => animateCardHover(null)}
@@ -399,7 +402,7 @@ const Review = () => {
                     ref={(el) => {
                       if (el) cardRefs.current[i] = el;
                     }}
-                    className="relative w-[min(34vw,400px)] shrink-0 will-change-transform"
+                    className="relative w-[calc((80cqi-3rem)/1.95)] shrink-0 will-change-transform"
                   >
                     <div
                       ref={(el) => {

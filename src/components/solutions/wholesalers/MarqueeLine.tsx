@@ -25,9 +25,9 @@ type MarqueeRowProps = {
 
 const LOGO_SIZE_CLASS = {
   default:
-    "h-8 w-auto max-h-8 object-contain opacity-90 grayscale contrast-200 md:h-6 md:max-h-6 lg:h-7 lg:max-h-7",
+    "h-6 w-auto max-h-6 object-contain opacity-90 grayscale contrast-200 sm:h-7 sm:max-h-7 md:h-6 md:max-h-6 lg:h-7 lg:max-h-7",
   large:
-    "h-12 w-auto max-h-12 object-contain opacity-90 grayscale contrast-200 md:h-10 md:max-h-10 lg:h-12 lg:max-h-12",
+    "h-7 w-auto max-h-7 object-contain opacity-90 grayscale contrast-200 sm:h-8 sm:max-h-8 md:h-10 md:max-h-10 lg:h-12 lg:max-h-12",
 } as const;
 
 const LOGO_TONE_CLASS = {

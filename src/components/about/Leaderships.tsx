@@ -15,8 +15,10 @@ gsap.registerPlugin(ScrollTrigger);
 const LEADER_CARD_BG =
   "linear-gradient(0deg, #5f37e9cc 31.26%, #230098cc 56.47%)";
 
-const FOUNDER_CARD_HEIGHT = "h-[32rem] xl:h-[38rem]";
-const ADVISORY_CARD_HEIGHT = "h-[28rem] xl:h-[33rem]";
+const FOUNDER_CARD_HEIGHT =
+  "h-[14rem] sm:h-[16rem] md:h-[20rem] lg:h-[31rem] xl:h-[36rem]";
+const ADVISORY_CARD_HEIGHT =
+  "h-[14rem] sm:h-[16rem] md:h-[20rem] lg:h-[28rem] xl:h-[33rem]";
 
 type Leader = {
   id: string;
@@ -124,10 +126,10 @@ function LeaderCard({
   return (
     <article className="leader-member">
       <div
-        className={`relative ${height} flex w-full flex-col overflow-hidden rounded-full text-center text-white`}
+        className={`relative ${height} flex w-full flex-col overflow-hidden rounded-md text-center text-white lg:rounded-full`}
         style={{ backgroundImage: LEADER_CARD_BG }}
       >
-        <div className="shrink-0 px-4 pb-2 pt-7 md:px-5 md:pt-8">
+        <div className="hidden shrink-0 px-4 pb-2 pt-7 md:px-5 md:pt-8 lg:block">
           <p className="font-heading text-[0.6875rem] font-semibold uppercase leading-[1.45] tracking-[0.08em] text-white/90 md:text-[0.75rem]">
             {toLines(formatRole(leader.role))}
           </p>
@@ -151,19 +153,21 @@ function LeaderCard({
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`${leader.name} on LinkedIn`}
-              className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 text-white transition-opacity hover:opacity-80"
+              className="absolute bottom-3 right-3 z-10 text-white transition-opacity hover:opacity-80 lg:bottom-6 lg:left-1/2 lg:right-auto lg:-translate-x-1/2"
             >
               <RiLinkedinFill className="size-5" aria-hidden />
             </a>
-          ) : (
-            <span
-              className="pointer-events-none absolute bottom-6 left-1/2 z-10 -translate-x-1/2 text-white"
-              aria-hidden
-            >
-              <RiLinkedinFill className="size-5" />
-            </span>
-          )}
+          ) : null}
         </div>
+      </div>
+
+      <div className="mt-4 lg:hidden">
+        <h3 className="font-heading text-lg font-medium leading-[1.2] tracking-tight text-[#000000] sm:text-xl">
+          {leader.name}
+        </h3>
+        <p className="mt-1.5 font-heading text-[0.625rem] font-semibold uppercase leading-[1.45] tracking-[0.08em] text-[#3A3A3A] sm:text-[0.6875rem]">
+          {formatRole(leader.role)}
+        </p>
       </div>
     </article>
   );

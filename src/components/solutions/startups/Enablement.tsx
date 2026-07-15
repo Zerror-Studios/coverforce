@@ -45,7 +45,7 @@ const NODES: NodeDef[] = [
     id: "custom-policy",
     label: "CUSTOM POLICY",
     icon: Diamond,
-    position: { x: 83, y: 50 },
+    position: { x: 78, y: 50 },
     anchor: "left",
   },
   {
@@ -66,7 +66,7 @@ const NODES: NodeDef[] = [
     id: "compliance",
     label: "COMPLIANCE",
     icon: ShieldCheck,
-    position: { x: 17, y: 50 },
+    position: { x: 22, y: 50 },
     anchor: "right",
   },
   {
@@ -129,7 +129,7 @@ const NodeCard = ({
           fontSize: 11,
           fontFamily: "monospace",
           letterSpacing: "0.08em",
-          color: "#3D3D5C",
+          color: "#111827",
           fontWeight: 500,
           whiteSpace: "nowrap",
         }}
@@ -174,7 +174,7 @@ const MobileNodeCard = ({
       <div className="flex size-[18px] shrink-0 items-center justify-center rounded border border-[#E5E7F0]">
         <Icon size={10} strokeWidth={2} color="#8B8BAD" />
       </div>
-      <span className="font-mono text-[10px] font-medium tracking-[0.08em] text-[#3D3D5C] sm:text-[11px]">
+      <span className="font-mono text-[10px] font-medium text-[#111827] sm:text-sm">
         {label}
       </span>
     </div>
@@ -207,7 +207,7 @@ const CIRCLE_START_RATIO = 0.38;
 const DIAGONAL_REACH = 0.42;
 const LINE_END_RATIO = 0.9;
 const HORIZONTAL_LINE_END_RATIO = 0.86;
-const LINE_CARD_GAP = 28;
+const LINE_CARD_GAP = 14;
 
 const computeLineEndpoints = (
   cx: number,
@@ -321,8 +321,8 @@ const Enablement = () => {
           mode === "horizontal"
             ? LINE_CARD_GAP
             : mode === "diagonal"
-              ? 20
-              : 16;
+              ? 10
+              : 8;
 
         const { ex, ey, dx, dy } = computeLineEndpoints(
           cx,
@@ -407,7 +407,7 @@ const Enablement = () => {
             <div className="flex aspect-square w-28 items-center justify-center rounded-full border border-[#ECE7FF] bg-white sm:w-32">
               <div className="flex aspect-square w-14 items-center justify-center rounded-full bg-[#ECE7FF] sm:w-16">
                 <Image
-                  src="/ft-logo.svg"
+                  src="/images/startups/center-logo.svg"
                   alt="CoverForce logo"
                   width={32}
                   height={32}
@@ -425,7 +425,7 @@ const Enablement = () => {
           {/* Desktop diagram — unchanged at lg+ */}
           <div
             ref={wrapRef}
-            className="relative mt-12 w-full max-lg:hidden md:mt-14 lg:mt-16 aspect-[16/12] max-h-[580px] min-h-[380px]"
+            className="relative mt-12 w-full max-lg:hidden md:mt-14 lg:mt-16 aspect-16/13 max-h-[640px] min-h-[420px]"
           >
             <svg
               ref={svgRef}
@@ -492,7 +492,7 @@ const Enablement = () => {
             >
               <div className="w-20 aspect-square bg-[#ECE7FF] rounded-full flex items-center justify-center">
                 <Image
-                  src="/ft-logo.svg"
+                  src="/images/startups/center-logo.svg"
                   alt="CoverForce logo"
                   width={36}
                   height={36}
