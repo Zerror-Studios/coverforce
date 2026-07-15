@@ -62,7 +62,7 @@ const Investors = () => {
           }
         }
       `}</style>
-      <Container borderColor="#53535380">
+      <Container borderColor="#53535380" borderBottom>
         <div className="flex flex-col items-center py-20 text-center md:py-24 lg:py-28">
           <div ref={headerRef} className="flex flex-col items-center text-center">
             <EyebrowPill surface="light" className="mb-5">
