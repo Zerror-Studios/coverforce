@@ -64,6 +64,7 @@ export default function RequestDemoModal() {
   const { isOpen, close } = useRequestDemo();
   const [isClosing, setIsClosing] = useState(false);
   const [step, setStep] = useState(1);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -90,6 +91,7 @@ export default function RequestDemoModal() {
     setIsClosing(false);
     close();
     setStep(1);
+    setSubmitError(null);
     reset(REQUEST_DEMO_DEFAULT_VALUES);
   }, [close, reset]);
 
@@ -159,13 +161,34 @@ export default function RequestDemoModal() {
 
   const goPrevious = () => {
     if (step <= 1) return;
+    setSubmitError(null);
     setStep((current) => current - 1);
   };
 
   const onSubmit = async (data: RequestDemoFormValues) => {
-    // Placeholder for API integration.
-    console.info("Request demo submission", data);
-    setStep(4);
+    setSubmitError(null);
+
+    try {
+      const response = await fetch("/api/request-demo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...data,
+          submittedAt: new Date().toISOString(),
+        }),
+      });
+
+      if (!response.ok) {
+        const result = await response.json().catch(() => ({}));
+        throw new Error(result.error || "Something went wrong. Please try again.");
+      }
+
+      setStep(4);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "Something went wrong. Please try again."
+      );
+    }
   };
 
   if (!visible || typeof document === "undefined") return null;
@@ -421,6 +444,10 @@ export default function RequestDemoModal() {
                     style={{ width: `${progress}%` }}
                   />
                 </div>
+
+                {submitError ? (
+                  <p className="mt-3 font-sans text-xs text-red-600">{submitError}</p>
+                ) : null}
 
                 <div className="mt-5 flex items-center justify-between gap-4">
                   {step > 1 ? (
