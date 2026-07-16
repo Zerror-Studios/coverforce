@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-export const containerPadding = "px-5 md:px-4 lg:px-6 xl:px-6";
+export const containerPadding = "px-5 sm:px-[40px] md:px-[40px]";
 
 export const DEFAULT_BORDER_COLOR = "#e5e7eb";
 

@@ -17,7 +17,7 @@ const Hero = () => {
   return (
     <section className="bg-white text-[#0a143b]">
       <Container borderColor="#53535380" borderBottom>
-        <HeroReveal className="mx-auto max-w-4xl pb-14 pt-28 md:py-20 lg:py-24">
+        <HeroReveal className="mx-auto w-full max-w-none pb-14 pt-28 md:pb-20 md:pt-36 lg:max-w-4xl lg:py-24">
           <Link
             href={FEATURED_POST.href}
             className="group mx-auto block w-full"
@@ -30,7 +30,7 @@ const Hero = () => {
                   fill
                   priority
                   className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-                  sizes="(max-width: 768px) 100vw, 48rem"
+                  sizes="(max-width: 1023px) 100vw, 48rem"
                 />
               </div>
             </div>
@@ -44,7 +44,7 @@ const Hero = () => {
               </p>
             </div>
 
-            <h2 className="mt-4 max-w-3xl font-heading text-2xl font-medium leading-[1.15] tracking-tight text-[#0a143b] transition-colors sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
+            <h2 className="mt-4 w-full max-w-none font-heading text-2xl font-medium leading-[1.15] tracking-tight text-[#0a143b] transition-colors sm:text-3xl sm:leading-[1.12] md:text-4xl lg:max-w-3xl lg:text-[1.625rem] lg:leading-[1.12]">
               {FEATURED_POST.title}
             </h2>
           </Link>
