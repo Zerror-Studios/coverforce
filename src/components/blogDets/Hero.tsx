@@ -186,7 +186,7 @@ const Hero = () => {
               Share
               <Image
                 src="/images/blog/share.svg"
-                alt=""
+                alt="share-icon"
                 width={14}
                 height={14}
                 className="size-3.5"

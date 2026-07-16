@@ -106,7 +106,7 @@ const Hero = () => {
       >
         <Image
           src="/images/about/about.jpg"
-          alt=""
+          alt="about-hero"
           fill
           priority
           className="object-cover object-center"

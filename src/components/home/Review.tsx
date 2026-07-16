@@ -109,7 +109,7 @@ function TestimonialCard({
       <div className="pointer-events-none absolute -translate-y-1/6 left-1/2 z-0 h-[180%] w-[120%] -translate-x-1/2 md:-top-24 lg:-top-28">
         <Image
           src="/images/secondcardbg.svg"
-          alt=""
+          alt="gradient"
           fill
           className="h-full w-full object-cover object-bottom opacity-60"
           sizes="100vw"

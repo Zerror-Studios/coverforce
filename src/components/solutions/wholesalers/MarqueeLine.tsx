@@ -54,7 +54,7 @@ export function MarqueeRow({
           <div key={`${logo.src}-${index}`} className="logo-marquee-item">
             <Image
               src={logo.src}
-              alt=""
+              alt="partner-logo"
               width={size === "large" ? 180 : 120}
               height={size === "large" ? 60 : 40}
               className={`${LOGO_SIZE_CLASS[size]} ${LOGO_TONE_CLASS[tone]}`}

@@ -137,7 +137,7 @@ export default function AiExtractedDetailsMock() {
                   key={idx}
                   className="relative size-6 overflow-hidden rounded-full border-2 border-white md:size-7"
                 >
-                  <Image src={src} alt="" fill className="object-cover" sizes="28px" />
+                  <Image src={src} alt="avatar" fill className="object-cover" sizes="28px" />
                 </span>
               ))}
             </div>
@@ -152,7 +152,7 @@ export default function AiExtractedDetailsMock() {
             >
               <Image
                 src={file.icon}
-                alt=""
+                alt="attachment-file"
                 width={16}
                 height={16}
                 className="size-4 shrink-0"

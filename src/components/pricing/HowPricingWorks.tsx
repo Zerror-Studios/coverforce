@@ -80,7 +80,7 @@ function UsageCard({ card }: { card: PricingWorkCard }) {
       {card.imageSrc ? (
         <Image
           src={card.imageSrc}
-          alt=""
+          alt="usage-card"
           width={480}
           height={480}
           className="pointer-events-none absolute top-0 right-0 h-auto w-[82%] max-w-none object-contain object-right-bottom md:w-[78%]"
@@ -112,7 +112,7 @@ function SplitDarkCard({ card }: { card: PricingWorkCard }) {
         {card.bottomSrc ? (
           <Image
             src={card.bottomSrc}
-            alt=""
+            alt="split-dark-card"
             fill
             unoptimized={card.bottomSrc.endsWith(".gif")}
             className="object-cover object-center"
@@ -139,7 +139,7 @@ function SplitLightCard({ card }: { card: PricingWorkCard }) {
         {card.bottomSrc ? (
           <Image
             src={card.bottomSrc}
-            alt=""
+            alt="split-light-card"
             fill
             unoptimized={card.bottomSrc.endsWith(".gif")}
             className="object-cover object-center"

@@ -64,7 +64,7 @@ function DockAppIcon({ src }: { src: string }) {
   return (
     <img
       src={src}
-      alt=""
+      alt="icon"
       draggable={false}
       className="size-full object-contain"
     />
@@ -187,7 +187,7 @@ function DocumentPreviewContent({ src }: { src: string }) {
     <div className="flex h-full w-full items-start justify-center overflow-hidden bg-[#F4F5F7]">
       <img
         src={src}
-        alt=""
+        alt="document-preview"
         draggable={false}
         className="h-full w-full min-w-full object-cover object-top"
       />
@@ -761,7 +761,7 @@ export default function GenieEffect() {
       <div className="absolute inset-0 overflow-hidden">
       <img
         src="/macos.png"
-        alt=""
+        alt="macos-background"
         aria-hidden="true"
         className="absolute inset-0 w-full h-full object-cover"
       />
@@ -814,7 +814,7 @@ export default function GenieEffect() {
         }}
       >
         <span className="text-white/70 flex items-center text-[11px] gap-1 font-semibold tracking-tight">
-         <img src="/macicon.png" alt="" aria-hidden="true" className="w-4 h-4" />{app?.label ?? "CoverForce"} &nbsp; File &nbsp; Edit &nbsp; View
+         <img src="/macicon.png" alt="mac-icon" aria-hidden="true" className="w-4 h-4" />{app?.label ?? "CoverForce"} &nbsp; File &nbsp; Edit &nbsp; View
           &nbsp; Window &nbsp; Help
         </span>
         <span className="text-white/60 text-[11px] font-medium">9:41 AM</span>

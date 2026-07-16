@@ -116,7 +116,7 @@ export default function AiDocumentReaderMock() {
                 >
                   <Image
                     src={file.icon}
-                    alt=""
+                    alt="file-type"
                     width={14}
                     height={14}
                     className="size-3.5 md:size-4"

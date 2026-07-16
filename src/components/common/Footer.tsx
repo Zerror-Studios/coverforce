@@ -227,7 +227,7 @@ const Footer = () => {
           <div className="relative min-h-[22rem] overflow-hidden border-b border-neutral-200 md:min-h-[26rem] lg:min-h-[30rem]">
             <Image
               src="/images/footer.avif"
-              alt=""
+              alt="footer-banner"
               fill
               className="object-cover object-top md:object-center"
               sizes="100vw"

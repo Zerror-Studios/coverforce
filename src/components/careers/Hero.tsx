@@ -108,7 +108,7 @@ const Hero = () => {
       >
         <Image
           src="/images/careers/careers.avif"
-          alt=""
+          alt="careers-hero"
           fill
           priority
           className="object-cover object-center"

@@ -96,7 +96,7 @@ export default function ProductDigitizationMock() {
             >
               <Image
                 src={tag.icon}
-                alt=""
+                alt="file-tag"
                 width={16}
                 height={16}
                 className="size-4 shrink-0"

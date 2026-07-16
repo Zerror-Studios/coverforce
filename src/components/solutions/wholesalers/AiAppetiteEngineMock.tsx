@@ -8,14 +8,14 @@ function AppetiteHubGraphic() {
     <div className="relative mx-auto mt-3 h-[148px] w-full max-w-[220px] md:mt-4 md:h-[186px] md:max-w-[260px]">
       <Image
         src="/images/solution/orbit.svg"
-        alt=""
+        alt="orbit"
         fill
         className="object-contain"
         aria-hidden
       />
       <Image
         src="/images/solution/logo-network.svg"
-        alt=""
+        alt="logo-network"
         fill
         className="object-contain"
         aria-hidden
@@ -23,7 +23,7 @@ function AppetiteHubGraphic() {
       <div className="absolute inset-0 flex items-center justify-center">
         <Image
           src="/images/solution/ai-logo.svg"
-          alt=""
+          alt="ai-logo"
           width={57}
           height={57}
           className="relative z-10 size-11 md:size-14"

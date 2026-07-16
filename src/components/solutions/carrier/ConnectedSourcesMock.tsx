@@ -69,7 +69,7 @@ function AvatarStack() {
           key={idx}
           className="relative size-5 overflow-hidden rounded-full border border-white md:size-6"
         >
-          <Image src={src} alt="" fill className="object-cover" sizes="24px" />
+          <Image src={src} alt="avatar" fill className="object-cover" sizes="24px" />
         </span>
       ))}
     </div>

@@ -530,7 +530,7 @@ function PanelStep2() {
             </div>
 
             <div className="cursor2 absolute bottom-[40%] right-[35%] z-10 flex h-12 w-12 items-center justify-center opacity-0">
-                <Image src="/images/process/cursor.svg" alt="" width={100} height={100} className="h-full w-full object-cover" />
+                <Image src="/images/process/cursor.svg" alt="cursor" width={100} height={100} className="h-full w-full object-cover" />
             </div>
 
             <div className="form-wrap2 opacity-0 absolute inset-0 flex items-center justify-center">
@@ -666,7 +666,7 @@ function PanelStep4() {
                     className="cursor4 pointer-events-none absolute z-50 flex h-11 w-11 items-center justify-center opacity-0 max-lg:right-[18%] max-lg:top-[74%] max-lg:h-9 max-lg:w-9"
                     style={{ right: "25%", top: "60%", transform: "translateY(0%)" }}
                 >
-                    <Image src="/images/process/cursor.svg" alt="" width={100} height={100} className="h-full w-full object-cover" />
+                    <Image src="/images/process/cursor.svg" alt="cursor" width={100} height={100} className="h-full w-full object-cover" />
                 </div>
 
                 <div className="row4-1 w-full h-[31%] overflow-hidden flex items-center justify-between max-lg:hidden">
