@@ -276,7 +276,7 @@ const Footer = () => {
                 </ul>
               </div>
 
-              <div className="sm:hidden">
+              <div className="md:hidden">
                 <ul className="space-y-4">
                   {legalLinks.map(({ label, href }) => (
                     <li key={label}>
@@ -308,7 +308,7 @@ const Footer = () => {
 
           {/* ── Bottom bar ── */}
           <div className="relative flex flex-col items-center gap-5 py-6 font-heading md:flex-row md:justify-between md:py-8">
-            <ul className="hidden flex-wrap justify-center gap-5 sm:flex sm:gap-8 md:justify-start">
+            <ul className="hidden flex-wrap justify-center gap-5 sm:gap-8 md:flex md:justify-start">
               {legalLinks.map(({ label, href }) => (
                 <li key={label}>
                   <FooterLegalLink href={href}>{label}</FooterLegalLink>
