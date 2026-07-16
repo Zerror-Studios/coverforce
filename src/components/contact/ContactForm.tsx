@@ -31,6 +31,8 @@ const ContactForm = () => {
     companyName: ""
   });
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -186,8 +188,39 @@ const ContactForm = () => {
   };
 
   const nextStep = () => setStep(s => Math.min(s + 1, 5));
-  const prevStep = () => setStep(s => Math.max(s - 1, 0));
-  const handleSubmit = () => setStep(5);
+  const prevStep = () => {
+    setSubmitError(null);
+    setStep(s => Math.max(s - 1, 0));
+  };
+
+  const handleSubmit = async () => {
+    setSubmitError(null);
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          submittedAt: new Date().toISOString(),
+        }),
+      });
+
+      if (!response.ok) {
+        const result = await response.json().catch(() => ({}));
+        throw new Error(result.error || "Something went wrong. Please try again.");
+      }
+
+      setStep(5);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "Something went wrong. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const businessTypes = [
     "Agency Network", "AMS", "MGA", "Association",
@@ -507,10 +540,15 @@ const ContactForm = () => {
                   <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
                     GO BACK
                   </Button>
-                  <Button surface="on-dark" onClick={handleSubmit} balanced>
-                    SUBMIT
+                  <Button surface="on-dark" onClick={handleSubmit} balanced disabled={isSubmitting}>
+                    {isSubmitting ? "SUBMITTING..." : "SUBMIT"}
                   </Button>
                 </div>
+                {submitError && (
+                  <p className="mt-4 text-sm text-red-300" data-animate-field>
+                    {submitError}
+                  </p>
+                )}
               </div>
             )}
 
