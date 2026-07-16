@@ -16,9 +16,9 @@ const LEADER_CARD_BG =
   "linear-gradient(0deg, #5f37e9cc 31.26%, #230098cc 56.47%)";
 
 const FOUNDER_CARD_HEIGHT =
-  "h-[14rem] sm:h-[16rem] md:h-[20rem] lg:h-[31rem] xl:h-[36rem]";
+  "aspect-[248/366] h-auto lg:aspect-auto lg:h-[31rem] xl:h-[36rem]";
 const ADVISORY_CARD_HEIGHT =
-  "h-[14rem] sm:h-[16rem] md:h-[20rem] lg:h-[28rem] xl:h-[33rem]";
+  "aspect-[248/366] h-auto lg:aspect-auto lg:h-[28rem] xl:h-[33rem]";
 
 type Leader = {
   id: string;
@@ -82,7 +82,11 @@ const advisoryRow: Leader[] = [
   },
 ];
 
-const mobileLeaders = [...foundersRow, ...advisoryRow];
+const mobileLeaders = [
+  ...foundersRow,
+  ...advisoryRow.filter((leader) => leader.id !== "tj-ryan"),
+  advisoryRow.find((leader) => leader.id === "tj-ryan")!,
+];
 
 const founderStagger = ["lg:mt-14 xl:mt-16", "lg:mt-0", "lg:mt-14 xl:mt-16"];
 const advisoryStagger = [
@@ -124,7 +128,7 @@ function LeaderCard({
   height?: string;
 }) {
   return (
-    <article className="leader-member">
+    <article className="leader-member h-full">
       <div
         className={`relative ${height} flex w-full flex-col overflow-hidden rounded-md text-center text-white lg:rounded-full`}
         style={{ backgroundImage: LEADER_CARD_BG }}
@@ -144,7 +148,7 @@ function LeaderCard({
             alt={leader.name}
             width={248}
             height={366}
-            className="absolute inset-x-0 bottom-0 h-auto w-full"
+            className="absolute inset-0 h-full w-full object-contain object-bottom lg:object-cover lg:object-[center_18%]"
             sizes="(max-width: 1024px) 50vw, 25vw"
           />
           {leader.linkedin ? (

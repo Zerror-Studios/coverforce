@@ -91,6 +91,9 @@ const TABLE_GRID =
 const ROW_BASE =
   `flex flex-col gap-y-2 ${containerPadding} lg:grid lg:col-span-full lg:grid-cols-subgrid lg:items-center lg:gap-x-6 lg:gap-y-0`;
 
+const JOB_ROW_LAYOUT =
+  "sm:grid sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start sm:gap-x-6 sm:gap-y-2 lg:grid-cols-subgrid lg:items-center lg:gap-y-0";
+
 const COL_LOCATION =
   "font-mono text-sm font-medium uppercase text-white/55 lg:justify-self-start lg:text-left lg:whitespace-nowrap";
 
@@ -102,19 +105,19 @@ const COL_HEADER =
 function JobRow({ job }: { job: JobListing }) {
   return (
     <article
-      className={`positions-row ${ROW_BASE} py-5 lg:py-6`}
+      className={`positions-row ${ROW_BASE} ${JOB_ROW_LAYOUT} py-5 lg:py-6`}
       style={getBottomBorderStyle(BORDER_COLOR)}
     >
-      <h3 className="max-w-sm font-heading text-base font-semibold leading-snug text-white md:text-xl md:font-medium">
+      <h3 className="max-w-sm font-heading text-base font-semibold leading-snug text-white sm:col-start-1 sm:row-start-1 md:text-xl md:font-medium lg:col-auto lg:row-auto">
         {job.title}
       </h3>
 
-      <div className="flex items-center gap-x-4 lg:contents">
+      <div className="flex items-center gap-x-4 sm:col-start-1 sm:row-start-2 lg:col-auto lg:row-auto lg:contents">
         <p className={COL_LOCATION}>{job.location}</p>
         <p className={COL_TYPE}>{job.type}</p>
       </div>
 
-      <div className="flex justify-start pt-2 lg:justify-end lg:pt-0">
+      <div className="flex justify-start pt-2 sm:col-start-2 sm:row-span-2 sm:row-start-1 sm:justify-end sm:justify-self-end sm:self-start sm:pt-0 lg:col-auto lg:row-auto lg:row-span-1 lg:justify-self-end lg:self-center">
         <Button href={job.href} target={job.target} rel={job.rel} size="sm" surface="on-dark">
           Apply
         </Button>
