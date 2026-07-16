@@ -18,6 +18,8 @@ type JobListing = {
   location: string;
   type: string;
   href: string;
+  target?: "_blank";
+  rel?: string;
 };
 
 type JobCategory = {
@@ -30,39 +32,20 @@ const jobCategories: JobCategory[] = [
     name: "Engineering Roles",
     jobs: [
       {
-        title: "Business Analyst – Commercial Insurance",
-        location: "Remote [India]",
-        type: "Full Time",
-        href: "#",
-      },
-      {
         title: "Founding AI Engineer",
         location: "Remote [India]",
         type: "Full Time",
-        href: "#",
+        href: "https://app.dover.com/apply/CoverForce/c55c4cef-cf3e-40a5-982c-320db7f3e310/?rs=76643084",
+        target: "_blank",
+        rel: "noopener noreferrer",
       },
       {
         title: "Software Engineer – Backend",
         location: "Remote [India]",
         type: "Full Time",
-        href: "#",
-      },
-    ],
-  },
-  {
-    name: "Sales",
-    jobs: [
-      {
-        title: "Enterprise Account Executive",
-        location: "Remote [India]",
-        type: "Full Time",
-        href: "#",
-      },
-      {
-        title: "Marketing Associate",
-        location: "Remote [India]",
-        type: "Full Time",
-        href: "#",
+        href: "https://app.dover.com/apply/CoverForce/bc645e74-d00e-4f3c-8818-12761092eb58/?rs=76643084",
+        target: "_blank",
+        rel: "noopener noreferrer",
       },
     ],
   },
@@ -70,16 +53,28 @@ const jobCategories: JobCategory[] = [
     name: "More Jobs",
     jobs: [
       {
-        title: "Enterprise Account Executive",
+        title: "Business Analyst: Carrier Data, Integrations & Automation (Commercial Insurance)",
         location: "Remote [India]",
         type: "Full Time",
-        href: "#",
+        href: "https://app.dover.com/apply/CoverForce/e6d4296f-bc88-4e48-993c-31cc2ea3662c/?rs=76643084",
+        target: "_blank",
+        rel: "noopener noreferrer",
       },
       {
         title: "Marketing Associate",
+        location: "Hybrid [New York City, NY]",
+        type: "Full Time",
+        href: "https://app.dover.com/apply/CoverForce/48c77e04-ee97-4e43-9d05-04ca25b2ebdb/?rs=76643084",
+        target: "_blank",
+        rel: "noopener noreferrer",
+      },
+      {
+        title: "Software Engineer – Frontend",
         location: "Remote [India]",
         type: "Full Time",
-        href: "#",
+        href: "https://app.dover.com/apply/CoverForce/85f2fe65-5da6-4f20-8578-ad060b8efa36/?rs=76643084",
+        target: "_blank",
+        rel: "noopener noreferrer",
       },
     ],
   },
@@ -91,13 +86,13 @@ const GRADIENT_TEXT =
   "bg-gradient-to-r from-[#B482FF] via-[#C4B5FD] to-[#E9E4FF] bg-clip-text text-transparent";
 
 const TABLE_GRID =
-  "lg:grid lg:grid-cols-[minmax(0,1fr)_11rem_8rem_auto] lg:gap-x-6";
+  "lg:grid lg:grid-cols-[minmax(0,1fr)_16rem_8rem_auto] lg:gap-x-6";
 
 const ROW_BASE =
   `flex flex-col gap-y-2 ${containerPadding} lg:grid lg:col-span-full lg:grid-cols-subgrid lg:items-center lg:gap-x-6 lg:gap-y-0`;
 
 const COL_LOCATION =
-  "font-mono text-sm font-medium uppercase text-white/55 lg:justify-self-start lg:text-left";
+  "font-mono text-sm font-medium uppercase text-white/55 lg:justify-self-start lg:text-left lg:whitespace-nowrap";
 
 const COL_TYPE = COL_LOCATION;
 
@@ -120,7 +115,7 @@ function JobRow({ job }: { job: JobListing }) {
       </div>
 
       <div className="flex justify-start pt-2 lg:justify-end lg:pt-0">
-        <Button href={job.href} size="sm" surface="on-dark">
+        <Button href={job.href} target={job.target} rel={job.rel} size="sm" surface="on-dark">
           Apply
         </Button>
       </div>
