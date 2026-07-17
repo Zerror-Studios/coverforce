@@ -52,7 +52,7 @@ const TABS: Tab[] = [
   { id: "carriers", label: "Carriers & MGAs", count: 20 },
   { id: "ams", label: "Agency Management" },
   { id: "finance", label: "Finance & Compliance", count: 3 },
-  { id: "ai", label: "AI & Technology", count: 3 },
+  { id: "ai", label: "Market Access", count: 3 },
 ];
 
 function getTabLabel(tab: Tab) {
@@ -288,21 +288,6 @@ const CarrierCard = ({ carrier }: { carrier: Carrier }) => {
           })}
         </div>
 
-        {carrier.products.some((p) => p.availability === "request") && (
-          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-[#F0F0F0] pt-3 text-[0.625rem] font-sans font-medium text-[#98A2B3]">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="size-1.5 rounded-full bg-[#4F8A2E]" aria-hidden />
-              Live
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span
-                className="size-1.5 rounded-full ring-1 ring-[#C08A2B]"
-                aria-hidden
-              />
-              Available to request
-            </span>
-          </div>
-        )}
       </div>
     </div>
   );

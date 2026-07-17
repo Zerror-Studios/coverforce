@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -14,32 +14,14 @@ gsap.registerPlugin(ScrollTrigger);
 
 const REVEAL_EASE = "power3.out";
 
-const stats = [
-  { value: "47", label: "Team Members" },
-  { value: "35+", label: "Engineers" },
-] as const;
-
-const exploreStatTheme = {
-  statValueActive: "text-white",
-  statValueInactive: "text-[#8296B0]",
-  statLabelActive: "text-white/80",
-  statLabelInactive: "text-[#8296B0]",
-  statLine: "bg-white/5",
-} as const;
-
 const Explore = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const eyebrowRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
-  const statsRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLUListElement>(null);
-  const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
   const splitsRef = useRef<SplitText[]>([]);
   const [borderOpacity, setBorderOpacity] = useState(0);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [indicator, setIndicator] = useState({ left: 0, width: 0 });
 
   useGSAP(
     () => {
@@ -48,15 +30,14 @@ const Explore = () => {
       const eyebrow = eyebrowRef.current;
       const heading = headingRef.current;
       const buttons = buttonsRef.current;
-      const statsEl = statsRef.current;
-      if (!section || !content || !eyebrow || !heading || !buttons || !statsEl) return;
+      if (!section || !content || !eyebrow || !heading || !buttons) return;
 
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       if (reducedMotion) {
         setBorderOpacity(1);
         gsap.set(content, { opacity: 1, y: 0 });
-        gsap.set([eyebrow, buttons, statsEl], { opacity: 1, y: 0 });
+        gsap.set([eyebrow, buttons], { opacity: 1, y: 0 });
         return;
       }
 
@@ -64,7 +45,6 @@ const Explore = () => {
       gsap.set(heading, { opacity: 0 });
       gsap.set(eyebrow, { opacity: 0, y: 18 });
       gsap.set(buttons, { opacity: 0, y: 18 });
-      gsap.set(statsEl, { opacity: 0, y: 18 });
 
       const reveal = () => {
         const borderProxy = { value: borderOpacity };
@@ -127,17 +107,6 @@ const Explore = () => {
               onComplete: () => gsap.set(buttons, { clearProps: "transform" }),
             },
             "-=0.2",
-          )
-          .to(
-            statsEl,
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.55,
-              ease: "power2.out",
-              onComplete: () => gsap.set(statsEl, { clearProps: "transform" }),
-            },
-            "-=0.25",
           );
       };
 
@@ -161,25 +130,6 @@ const Explore = () => {
     },
     { scope: sectionRef },
   );
-
-  useLayoutEffect(() => {
-    const update = () => {
-      const listEl = listRef.current;
-      const itemEl = itemRefs.current[activeIndex];
-      if (!listEl || !itemEl) return;
-
-      const listRect = listEl.getBoundingClientRect();
-      const itemRect = itemEl.getBoundingClientRect();
-      setIndicator({
-        left: itemRect.left - listRect.left,
-        width: itemRect.width,
-      });
-    };
-
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, [activeIndex]);
 
   return (
     <section ref={sectionRef} className="relative bg-[#151f4d] text-white">
@@ -220,72 +170,6 @@ const Explore = () => {
           </div>
         </div>
 
-        <div ref={statsRef} className="relative z-10">
-          <ul
-            ref={listRef}
-            className="relative grid grid-cols-2 gap-x-4 gap-y-8 pb-6 pt-2 md:flex md:py-10"
-            onMouseLeave={() => setActiveIndex(0)}
-          >
-            <div
-              className="pointer-events-none absolute inset-y-0 hidden w-full md:block"
-              aria-hidden
-            >
-              <div
-                className={`absolute left-0 top-0 h-[0.05rem] w-full ${exploreStatTheme.statLine}`}
-              >
-                <div
-                  className="linear-line_color h-full rounded-full transition-[transform,width] duration-300 ease-out"
-                  style={{
-                    width: `${indicator.width}px`,
-                    transform: `translateX(${indicator.left}px)`,
-                  }}
-                />
-              </div>
-
-              <div
-                className={`absolute bottom-0 left-0 h-[0.05rem] w-full ${exploreStatTheme.statLine}`}
-              >
-                <div
-                  className="linear-line_color h-full rounded-full transition-[transform,width] duration-300 ease-out"
-                  style={{
-                    width: `${indicator.width}px`,
-                    transform: `translateX(${indicator.left}px)`,
-                  }}
-                />
-              </div>
-            </div>
-
-            {stats.map((stat, index) => (
-              <li
-                key={stat.label}
-                ref={(el) => {
-                  itemRefs.current[index] = el;
-                }}
-                onMouseEnter={() => setActiveIndex(index)}
-                className="flex flex-col items-center gap-2 md:flex-1 md:px-8"
-              >
-                <p
-                  className={`text-[1.35rem] font-heading font-regular tracking-tight transition-colors sm:text-2xl md:text-3xl lg:text-4xl ${
-                    index === activeIndex
-                      ? exploreStatTheme.statValueActive
-                      : exploreStatTheme.statValueInactive
-                  }`}
-                >
-                  {stat.value}
-                </p>
-                <p
-                  className={`max-w-[10rem] text-center font-sans text-[0.68rem] font-regular leading-relaxed transition-colors sm:text-xs md:max-w-none md:text-lg ${
-                    index === activeIndex
-                      ? exploreStatTheme.statLabelActive
-                      : exploreStatTheme.statLabelInactive
-                  }`}
-                >
-                  {stat.label}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
       </Container>
     </section>
   );

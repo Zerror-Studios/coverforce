@@ -187,16 +187,16 @@ const DemoSteps = () => {
       images.forEach((image) => {
         gsap.fromTo(
           image,
-          { y: 56, opacity: 0 },
+          { y: 40, opacity: 0 },
           {
             y: 0,
             opacity: 1,
             ease: "none",
             scrollTrigger: {
               trigger: image,
-              start: "top 90%",
-              end: "center center",
-              scrub: 0.45,
+              start: "top 100%",
+              end: "top 68%",
+              scrub: 0.3,
             },
           },
         );

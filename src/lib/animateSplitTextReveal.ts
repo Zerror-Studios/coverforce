@@ -38,6 +38,8 @@ export type SplitTextRevealOptions = {
     theme?: SplitTextColorTheme;
     colors?: { idle: string; active: string; done: string };
     splitSelf?: boolean;
+    scrub?: boolean;
+    sequentialTargets?: boolean;
     charsClass?: string;
     wordsClass?: string;
 };
@@ -209,6 +211,8 @@ export function animateSplitTextReveal(
         theme = "light",
         colors = COLOR_THEMES[theme],
         splitSelf = false,
+        scrub = false,
+        sequentialTargets = false,
         charsClass = "split-reveal-char",
         wordsClass = "split-reveal-word",
     } = options;
@@ -221,10 +225,12 @@ export function animateSplitTextReveal(
 
     const splits: SplitText[] = [];
     const chars: HTMLSpanElement[] = [];
+    const charGroups: HTMLSpanElement[][] = [];
 
     targets.forEach((el) => {
         const split = new SplitText(el, { type: "chars", charsClass, wordsClass });
         splits.push(split);
+        charGroups.push(split.chars);
         chars.push(...split.chars);
     });
 
@@ -240,6 +246,18 @@ export function animateSplitTextReveal(
     const waveSpan = chars.length + WAVE_TOTAL + WAVE_SETTLE;
 
     const updateWave = (progress: number) => {
+        if (sequentialTargets && charGroups.length > 1) {
+            const groupedProgress = progress * charGroups.length;
+            charGroups.forEach((group, index) => {
+                applyWaveToChars(
+                    group,
+                    gsap.utils.clamp(0, 1, groupedProgress - index),
+                    colors,
+                );
+            });
+            return;
+        }
+
         const head = progress * waveSpan;
 
         chars.forEach((char, index) => {
@@ -263,6 +281,11 @@ export function animateSplitTextReveal(
         start,
         end,
         onUpdate: (self) => {
+            if (scrub) {
+                updateWave(smootherstep(self.progress));
+                return;
+            }
+
             if (completed) return;
 
             maxProgress = Math.max(maxProgress, self.progress);
@@ -272,7 +295,9 @@ export function animateSplitTextReveal(
         },
     });
 
-    if (st.progress >= 1) {
+    if (scrub) {
+        updateWave(smootherstep(st.progress));
+    } else if (st.progress >= 1) {
         finish();
     } else {
         updateWave(smootherstep(maxProgress));

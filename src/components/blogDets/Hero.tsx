@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Container from "@/components/common/Container";
+import Button from "@/components/common/Button";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import HeroReveal from "@/components/common/HeroReveal";
 
@@ -13,6 +14,7 @@ type BlogDetail = {
   image: string;
   title: string;
   author: string;
+  authorRole: string;
   authorHref: string;
   authorAvatar?: string;
   authorBio: string;
@@ -25,7 +27,8 @@ const POST: BlogDetail = {
   image: "/images/blog/blog6.png",
   title:
     "CoverForce and Great American Insurance Group Partner to Enable Digital Access to Commercial Insurance Products Across the United States",
-  author: "Cyrus-Karai",
+  author: "Cyrus Karai",
+  authorRole: "CEO & Co-Founder",
   authorHref: "/author/cyrus-karai",
   authorAvatar: "/images/blog/author.png",
   authorBio:
@@ -40,6 +43,27 @@ function authorInitials(name: string) {
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase() ?? "")
     .join("");
+}
+
+function ShareIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <circle cx="18" cy="5" r="3" />
+      <circle cx="6" cy="12" r="3" />
+      <circle cx="18" cy="19" r="3" />
+      <path d="m8.6 10.5 6.8-4" />
+      <path d="m8.6 13.5 6.8 4" />
+    </svg>
+  );
 }
 
 const Hero = () => {
@@ -117,15 +141,35 @@ const Hero = () => {
             {POST.title}
           </h2>
 
-          <div className="mt-5 flex items-center justify-between gap-4">
+          <div className="relative z-30 mt-5 flex items-center justify-between gap-4">
             <div ref={authorRef} className="group relative">
               <button
                 type="button"
                 onClick={() => setAuthorOpen((prev) => !prev)}
                 aria-expanded={authorOpen}
-                className="font-mono text-xs font-medium uppercase tracking-[0.14em] text-[#5D4DDB] underline underline-offset-4 transition-colors hover:text-[#0a143b] focus-visible:text-[#0a143b] focus-visible:outline-none"
+                className="flex items-center gap-3 text-left transition-opacity hover:opacity-75 focus-visible:outline-none"
               >
-                {POST.author}
+                {POST.authorAvatar ? (
+                  <Image
+                    src={POST.authorAvatar}
+                    alt={POST.author}
+                    width={48}
+                    height={48}
+                    className="size-11 shrink-0 rounded-full object-cover"
+                  />
+                ) : (
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-[#5D4DDB] to-[#2A2470] font-heading text-sm font-semibold text-white">
+                    {authorInitials(POST.author)}
+                  </span>
+                )}
+                <span className="flex flex-col gap-1">
+                  <span className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-[#0a143b]">
+                    {POST.author}
+                  </span>
+                  <span className="font-mono text-[0.625rem] font-medium uppercase tracking-[0.1em] text-[#6B7280]">
+                    {POST.authorRole}
+                  </span>
+                </span>
               </button>
 
               <div
@@ -154,9 +198,14 @@ const Hero = () => {
                         {authorInitials(POST.author)}
                       </span>
                     )}
-                    <p className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-[#0a143b] underline underline-offset-4">
-                      {POST.author}
-                    </p>
+                    <div>
+                      <p className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-[#0a143b]">
+                        {POST.author}
+                      </p>
+                      <p className="mt-1 font-mono text-[0.625rem] font-medium uppercase tracking-[0.1em] text-[#6B7280]">
+                        {POST.authorRole}
+                      </p>
+                    </div>
                   </div>
 
                   <p className="mt-4 text-sm font-regular font-sans leading-[1.6] text-[#454545]">
@@ -178,21 +227,14 @@ const Hero = () => {
               </div>
             </div>
 
-            <button
-              type="button"
+            <Button
               onClick={handleShare}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#E6E6E6] bg-white px-4 py-1.5 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[#5D4DDB] transition-colors hover:border-[#413CC0] hover:text-[#413CC0]"
+              variant="secondary"
+              size="sm"
+              icon={ShareIcon}
             >
               Share
-              <Image
-                src="/images/blog/share.svg"
-                alt="share-icon"
-                width={14}
-                height={14}
-                className="size-3.5"
-                aria-hidden
-              />
-            </button>
+            </Button>
           </div>
         </HeroReveal>
       </Container>

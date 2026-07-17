@@ -45,17 +45,16 @@ const Hero = () => {
               Developers
             </EyebrowPill>
 
-            <h1 className="max-w-4xl text-3xl font-heading font-normal leading-[1.15] tracking-tight md:text-4xl lg:text-5xl xl:text-5xl">
+            <h1 className="max-w-4xl text-3xl font-heading font-normal leading-[1.15] tracking-tight md:text-4xl lg:whitespace-nowrap lg:text-6xl xl:text-6xl">
               Embed insurance
               <br />
               with one API
             </h1>
 
             <p className="mx-auto mt-8 max-w-xl font-sans text-sm font-regular leading-relaxed text-white/85 md:text-sm">
-              One API for 40+ carriers — RESTful endpoints, open docs, MCP support,
-              and sandbox access so you can add quoting, binding, and policy
-              management without becoming an insurance company. Go from API key to
-              production in 30 days.
+              One API for 40+ carriers, with open docs, MCP support, and sandbox
+              access. Add quoting, binding, and policy management, then go live in
+              30 days.
             </p>
 
             <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center">

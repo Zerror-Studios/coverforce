@@ -125,7 +125,7 @@ const Hero = () => {
               Careers
             </EyebrowPill>
 
-            <h1 className="mt-4 text-4xl font-heading font-normal leading-[1.08] tracking-tight md:text-5xl lg:text-[3.5rem] lg:leading-[1.05]">
+            <h1 className="mt-4 text-4xl font-heading font-normal leading-[1.08] tracking-tight md:text-5xl lg:whitespace-nowrap lg:text-6xl lg:leading-[1.05] xl:text-6xl">
               Join a team of
               <br />
               Industry Experts

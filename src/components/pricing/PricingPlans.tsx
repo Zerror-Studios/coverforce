@@ -276,7 +276,7 @@ const PricingPlans = () => {
         }
       `}</style>
       <Container borderColor="#53535380">
-        <div className="grid grid-cols-1 items-stretch gap-4 pb-12 pt-2 sm:gap-6 md:grid-cols-2 md:gap-8 md:px-26 md:pb-16 md:pt-4 lg:pb-20">
+        <div className="grid grid-cols-1 items-stretch gap-4 py-12 sm:gap-6 md:grid-cols-2 md:gap-8 md:px-26 md:py-16 lg:py-20">
           {PLANS.map((plan) => (
             <PricingCard key={plan.id} plan={plan} />
           ))}

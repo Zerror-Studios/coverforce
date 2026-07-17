@@ -478,7 +478,7 @@ const Hero = () => {
               </div>
               <div
                 ref={titleSpacerRef}
-                className="pointer-events-none invisible max-w-4xl px-4 text-[2.2rem] font-heading font-regular leading-[1.05] tracking-tight sm:px-6 sm:text-5xl md:text-4xl lg:text-5xl xl:text-5xl"
+                className="pointer-events-none invisible max-w-5xl px-4 text-[2.2rem] font-heading font-regular leading-[1.05] tracking-tight sm:px-6 sm:text-5xl md:text-4xl lg:text-6xl xl:text-6xl"
                 aria-hidden
               >
                 {INTRO_TITLE_LINES.map((line, lineIndex) => (
@@ -493,7 +493,7 @@ const Hero = () => {
               <h1
                 ref={titleLineRef}
                 data-loader-line
-                className={`absolute left-1/2 top-0 z-10 max-w-4xl -translate-x-1/2 px-4 text-[2.2rem] font-heading font-normal leading-[1.05] tracking-tight will-change-[transform,opacity] sm:px-6 sm:text-5xl md:text-4xl lg:text-5xl xl:text-5xl ${introEnabled && introPhase === "loader-in" ? "opacity-0" : ""
+                className={`absolute left-1/2 top-0 z-10 max-w-5xl -translate-x-1/2 px-4 text-[2.2rem] font-heading font-normal leading-[1.05] tracking-tight will-change-[transform,opacity] sm:px-6 sm:text-5xl md:text-4xl lg:text-6xl xl:text-6xl ${introEnabled && introPhase === "loader-in" ? "opacity-0" : ""
                   } ${introTitleMuted ? theme.titleMuted : theme.title}`}
               >
                 {INTRO_TITLE_LINES.map((line, lineIndex) => (

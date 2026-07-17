@@ -355,7 +355,15 @@ const WayCard = memo(function WayCard({
                   : "max-md:max-w-[12.5rem] max-w-[12rem] sm:max-w-[16rem]"
               }
             >
-              <EyebrowPill surface={pillSurface} dotAttr={label}>{label}</EyebrowPill>
+              <EyebrowPill
+                surface={pillSurface}
+                background="#FFFFFF"
+                dotColor="#151f4d"
+                dotAttr={label}
+                className="text-[#151f4d]!"
+              >
+                {label}
+              </EyebrowPill>
               <p
                 className={`max-md:line-clamp-2 text-left font-heading font-medium tracking-tight max-md:text-lg max-md:leading-[1.12] max-md:sm:text-xl text-[1.7rem] leading-[1.08] sm:text-3xl md:text-4xl lg:text-[1.625rem] lg:leading-[1.12] ${variant == "light" ? "text-[#424242]" : "text-white"}`}
               >

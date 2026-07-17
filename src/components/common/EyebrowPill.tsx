@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { withAlpha } from "@/data/wayCardStyles";
 
 /** Brand navy — default accent for light pills (text, border, tinted bg). */
 const DEFAULT_ACCENT = "#151f4d";
@@ -46,17 +45,16 @@ export default function EyebrowPill({
     textClass = "text-white";
   } else if (useAccent) {
     wrapperStyle = {
-      background: withAlpha(resolvedAccent, 0.07),
-      color: resolvedAccent,
-      border: `1px solid ${withAlpha(resolvedAccent, 0.35)}`,
+      background: resolvedAccent,
+      boxShadow: DARK_SHADOW,
     };
+    textClass = "text-white";
   } else {
     wrapperStyle = { boxShadow: DARK_SHADOW };
     textClass = "bg-[#ffffff14] text-white";
   }
 
-  const dotColorResolved =
-    dotColor ?? (useGradient ? "#FFFFFF" : useAccent ? resolvedAccent : "#FFFFFF");
+  const dotColorResolved = dotColor ?? "#FFFFFF";
 
   return (
     <p style={wrapperStyle} className={`${baseClass} ${textClass} ${className}`}>

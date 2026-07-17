@@ -68,7 +68,6 @@ type HeaderTheme = "dark" | "light";
 function getHeaderTheme(pathname: string): HeaderTheme {
   if (
     pathname.startsWith("/solutions") ||
-    pathname.startsWith("/pricing") ||
     pathname.startsWith("/calculation") ||
     pathname.startsWith("/terms") ||
     pathname.startsWith("/privacy") ||
@@ -82,7 +81,10 @@ function getHeaderTheme(pathname: string): HeaderTheme {
 }
 
 function usesTransparentHeaderUntilScroll(pathname: string): boolean {
-  return pathname.startsWith("/about") || pathname.startsWith("/careers");
+  return (
+    pathname.startsWith("/about") ||
+    pathname.startsWith("/careers")
+  );
 }
 
 const headerThemes = {

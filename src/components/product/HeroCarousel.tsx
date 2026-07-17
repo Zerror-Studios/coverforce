@@ -136,7 +136,7 @@ function HeroSlideContent({ slide }: { slide: HeroSlide }) {
     <div className="flex h-full w-full flex-col items-center justify-center text-center">
       <EyebrowPill surface="dark">{slide.label}</EyebrowPill>
 
-      <h1 className="max-w-3xl text-3xl font-heading font-normal leading-[1.15] tracking-tight md:text-4xl lg:text-5xl xl:text-5xl [&_br]:hidden md:[&_br]:inline">
+      <h1 className="max-w-4xl text-3xl font-heading font-normal leading-[1.15] tracking-tight md:text-4xl lg:whitespace-nowrap lg:text-6xl xl:text-6xl [&_br]:hidden md:[&_br]:inline">
         {slide.title}
       </h1>
 

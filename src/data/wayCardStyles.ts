@@ -50,10 +50,10 @@ const SOLUTION_GRADIENT_DEFS = {
     { hex: "8E46FF", pos: 100 },
   ],
   startup: [
-    { hex: "0E9E51", pos: 0 },
-    { hex: "0C9E7D", pos: 33 },
-    { hex: "059AAD", pos: 66 },
-    { hex: "049FB8", pos: 100 },
+    { hex: "30DF71", pos: 0 },
+    { hex: "1ED5B3", pos: 33 },
+    { hex: "00DCF1", pos: 66 },
+    { hex: "00DEFA", pos: 100 },
   ],
   carrier: [
     { hex: "E25E2F", pos: 0 },

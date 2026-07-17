@@ -121,8 +121,8 @@ const Hero = () => {
           borderColor="#FFFFFF33"
           className="relative flex h-svh min-h-svh items-end pb-14 md:pb-20 lg:pb-24"
         >
-          <HeroReveal className="max-w-xl text-left md:max-w-2xl lg:max-w-3xl">
-            <h1 className="text-3xl font-heading font-normal leading-[1.12] tracking-tight md:text-4xl lg:text-5xl xl:text-[3.25rem] xl:leading-[1.08]">
+          <HeroReveal className="max-w-xl text-left md:max-w-2xl lg:max-w-4xl">
+            <h1 className="text-3xl font-heading font-normal leading-[1.12] tracking-tight md:text-4xl lg:text-6xl lg:leading-[1.08] xl:text-6xl">
               Building intelligent infrastructure for commercial insurance distribution.
             </h1>
           </HeroReveal>

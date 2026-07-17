@@ -1,29 +1,26 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import Link from "next/link";
+import { useRef, type PointerEvent } from "react";
 import { RiLinkedinFill } from "@remixicon/react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
+import SectionRadialGlow from "@/components/common/SectionRadialGlow";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const LEADER_CARD_BG =
-  "linear-gradient(0deg, #5f37e9cc 31.26%, #230098cc 56.47%)";
-
-const FOUNDER_CARD_HEIGHT =
-  "aspect-[248/366] h-auto lg:aspect-auto lg:h-[31rem] xl:h-[36rem]";
-const ADVISORY_CARD_HEIGHT =
-  "aspect-[248/366] h-auto lg:aspect-auto lg:h-[28rem] xl:h-[33rem]";
+const LEADER_CARD_BG = "#151f4d";
 
 type Leader = {
   id: string;
   name: string;
   role: string;
+  bio: string;
   image: string;
   linkedin?: string;
 };
@@ -33,6 +30,7 @@ const foundersRow: Leader[] = [
     id: "behram-dinshaw",
     name: "Behram Dinshaw",
     role: "Chairman & Co-Founder",
+    bio: "Former Travelers executive with 25+ years in insurance leadership.",
     image: "/images/about/behram.png",
     linkedin: "https://www.linkedin.com/in/behram-m-dinshaw-77760b6/",
   },
@@ -40,6 +38,7 @@ const foundersRow: Leader[] = [
     id: "cyrus-karai",
     name: "Cyrus Karai",
     role: "CEO & Co-Founder",
+    bio: "Former Credit Suisse and PwC leader with a Wharton MBA.",
     image: "/images/about/cyrus.png",
     linkedin: "https://www.linkedin.com/in/cyrus-karai/",
   },
@@ -47,6 +46,7 @@ const foundersRow: Leader[] = [
     id: "kaivan-wadia",
     name: "Kaivan Wadia",
     role: "CTO & Co-Founder",
+    bio: "Former Amazon engineering leader experienced in scaling platforms.",
     image: "/images/about/kaivan.png",
     linkedin: "https://www.linkedin.com/in/kaivanwadia/",
   },
@@ -57,6 +57,7 @@ const advisoryRow: Leader[] = [
     id: "bill-bloom",
     name: "Bill Bloom",
     role: "Advisory Board",
+    bio: "Former technology executive at The Hartford and Travelers.",
     image: "/images/about/bill.png",
     linkedin: "https://www.linkedin.com/in/bill-bloom-ab141aa/",
   },
@@ -64,6 +65,7 @@ const advisoryRow: Leader[] = [
     id: "patrick-kinney",
     name: "Patrick Kinney",
     role: "Advisory Board",
+    bio: "Former Travelers executive and Keystone CEO.",
     image: "/images/about/patrick.png",
     linkedin: "https://www.linkedin.com/in/p-kinney/",
   },
@@ -71,108 +73,138 @@ const advisoryRow: Leader[] = [
     id: "tj-ryan",
     name: "TJ Ryan",
     role: "Advisory Board",
+    bio: "Insurance advisor modernizing commercial distribution.",
     image: "/images/about/tj.png",
   },
   {
     id: "brad-brown",
     name: "Brad Brown",
     role: "Advisory Board",
+    bio: "McKinsey Senior Partner Emeritus and former FinTech leader.",
     image: "/images/about/brad.png",
     linkedin: "https://www.linkedin.com/in/bradfordtbrown/",
   },
 ];
 
-const mobileLeaders = [
+const leaders = [
   ...foundersRow,
   ...advisoryRow.filter((leader) => leader.id !== "tj-ryan"),
   advisoryRow.find((leader) => leader.id === "tj-ryan")!,
 ];
 
-const founderStagger = ["lg:mt-14 xl:mt-16", "lg:mt-0", "lg:mt-14 xl:mt-16"];
-const advisoryStagger = [
-  "lg:mt-16 xl:mt-20",
-  "lg:mt-6 xl:mt-8",
-  "lg:mt-0",
-  "lg:mt-16 xl:mt-20",
-];
-
-const LEADER_PARALLAX_TRAVEL = [
-  // Founders (top 3) — stronger / distinct speeds
-  { start: -72, end: 88 },
-  { start: 56, end: -96 },
-  { start: -88, end: 72 },
-  // Advisory (bottom 4)
-  { start: 64, end: -56 },
-  { start: 28, end: -80 },
-  { start: -40, end: 68 },
-  { start: 52, end: -60 },
-] as const;
-
-function toLines(value: string) {
-  return value.split(" ").map((part, index) => (
-    <span key={`${part}-${index}`} className="block">
-      {part}
-    </span>
-  ));
+function chunkMembers<T>(items: T[], size: number): T[][] {
+  const rows: T[][] = [];
+  for (let index = 0; index < items.length; index += size) {
+    rows.push(items.slice(index, index + size));
+  }
+  return rows;
 }
 
-function formatRole(role: string) {
-  return role.replace(/ & /g, " ").toUpperCase();
-}
-
-function LeaderCard({
-  leader,
-  height = FOUNDER_CARD_HEIGHT,
-}: {
-  leader: Leader;
-  height?: string;
-}) {
+function LeaderCard({ leader }: { leader: Leader }) {
   return (
     <article className="leader-member h-full">
       <div
-        className={`relative ${height} flex w-full flex-col overflow-hidden rounded-md text-center text-white lg:rounded-full`}
-        style={{ backgroundImage: LEADER_CARD_BG }}
+        className="leader-image-shell way-card-shell relative aspect-[248/366] w-full overflow-hidden rounded-md text-white"
+        style={{ background: LEADER_CARD_BG }}
       >
-        <div className="hidden shrink-0 px-4 pb-2 pt-7 md:px-5 md:pt-8 lg:block">
-          <p className="font-heading text-[0.6875rem] font-semibold uppercase leading-[1.45] tracking-[0.08em] text-white/90 md:text-[0.75rem]">
-            {toLines(formatRole(leader.role))}
-          </p>
-          <h3 className="mt-4 font-heading text-[1.375rem] font-medium leading-[1.15] tracking-tight text-white sm:text-[1.5rem] lg:text-[1.625rem] xl:text-[1.75rem] md:mt-5">
-            {toLines(leader.name)}
-          </h3>
-        </div>
-
-        <div className="relative mt-auto min-h-0 w-full flex-1">
+        <SectionRadialGlow className="absolute left-1/2 top-1/2 z-0 !w-[130%] -translate-x-1/2 -translate-y-1/2 opacity-75" />
+        <div className="way-card-body absolute inset-0 z-10 flex items-end overflow-hidden">
           <Image
             src={leader.image}
             alt={leader.name}
             width={248}
             height={366}
-            className="absolute inset-0 h-full w-full object-contain object-bottom lg:object-cover lg:object-[center_18%]"
-            sizes="(max-width: 1024px) 50vw, 25vw"
+            className="relative h-auto w-full"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
-          {leader.linkedin ? (
-            <a
-              href={leader.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${leader.name} on LinkedIn`}
-              className="absolute bottom-3 right-3 z-10 text-white transition-opacity hover:opacity-80 lg:bottom-6 lg:left-1/2 lg:right-auto lg:-translate-x-1/2"
-            >
-              <RiLinkedinFill className="size-5" aria-hidden />
-            </a>
-          ) : null}
         </div>
+        {leader.linkedin ? (
+          <a
+            href={leader.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${leader.name} on LinkedIn`}
+            className="absolute bottom-3 right-3 z-20 text-white transition-opacity hover:opacity-80"
+          >
+            <RiLinkedinFill className="size-5" aria-hidden />
+          </a>
+        ) : null}
       </div>
 
-      <div className="mt-4 lg:hidden">
-        <h3 className="font-heading text-lg font-medium leading-[1.2] tracking-tight text-[#000000] sm:text-xl">
-          {leader.name}
-        </h3>
-        <p className="mt-1.5 font-heading text-[0.625rem] font-semibold uppercase leading-[1.45] tracking-[0.08em] text-[#3A3A3A] sm:text-[0.6875rem]">
-          {formatRole(leader.role)}
-        </p>
-      </div>
+      <h3 className="mt-5 font-heading text-xl font-medium leading-tight tracking-tight text-[#000000] md:text-2xl">
+        {leader.name}
+      </h3>
+      <p className="mt-1 font-mono text-[0.6875rem] font-medium uppercase text-[#3A3A3A] md:text-sm">
+        {leader.role}
+      </p>
+      <p className="mt-4 font-sans text-sm font-normal leading-[1.65] text-[#3A3A3A] md:leading-[1.7]">
+        {leader.bio}
+      </p>
+    </article>
+  );
+}
+
+function EmptyLeaderCard() {
+  const tiltRef = useRef<HTMLAnchorElement>(null);
+
+  const handleTilt = (event: PointerEvent<HTMLAnchorElement>) => {
+    const card = tiltRef.current;
+    if (!card || event.pointerType !== "mouse") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const rect = card.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+
+    gsap.to(card, {
+      rotateX: y * -12,
+      rotateY: x * 12,
+      scale: 1.025,
+      duration: 0.35,
+      ease: "power2.out",
+      transformPerspective: 900,
+      overwrite: "auto",
+    });
+  };
+
+  const resetTilt = () => {
+    const card = tiltRef.current;
+    if (!card) return;
+
+    gsap.to(card, {
+      rotateX: 0,
+      rotateY: 0,
+      scale: 1,
+      duration: 0.6,
+      ease: "power3.out",
+      overwrite: "auto",
+    });
+  };
+
+  return (
+    <article className="leader-member h-full">
+      <Link
+        ref={tiltRef}
+        href="/careers"
+        aria-label="Explore careers at CoverForce"
+        onPointerMove={handleTilt}
+        onPointerLeave={resetTilt}
+        onBlur={resetTilt}
+        className="relative block aspect-[248/366] w-full overflow-hidden rounded-md transform-gpu will-change-transform focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#151f4d]"
+        style={{ background: LEADER_CARD_BG }}
+      >
+        <SectionRadialGlow className="absolute left-1/2 top-1/2 !w-[130%] -translate-x-1/2 -translate-y-1/2 opacity-75" />
+        <div className="absolute inset-x-0 bottom-0 z-10 p-5 text-white sm:p-6">
+          <h3 className="font-heading text-[1.65rem] font-medium leading-[1.1] tracking-tight lg:text-[1.75rem] xl:text-[2rem]">
+            Join A Team Of
+            <br />
+            Industry Experts
+          </h3>
+          <p className="mt-6 max-w-xs font-sans text-sm leading-snug text-white/90">
+            Join us in creating great work. Share your resume.
+          </p>
+        </div>
+      </Link>
     </article>
   );
 }
@@ -201,61 +233,41 @@ const Leaderships = () => {
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       if (reducedMotion) {
-        gsap.set(members, { opacity: 1 });
-        gsap.set(".leader-parallax-card", { y: 0, clearProps: "transform" });
+        gsap.set(members, { opacity: 1, y: 0, clearProps: "transform" });
         return;
       }
 
-      gsap.set(members, { opacity: 0 });
+      gsap.set(members, { opacity: 0, y: 28 });
 
-      members.forEach((member) => {
-        gsap.to(member, {
-          opacity: 1,
-          duration: 0.7,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: member,
-            start: "top 88%",
-            toggleActions: "play none none none",
-            once: true,
-          },
-        });
-      });
+      const mm = gsap.matchMedia();
 
-      const parallaxCards = gsap.utils.toArray<HTMLElement>(
-        ".leader-parallax-card",
-        grid,
+      mm.add(
+        {
+          isTwoColumns: "(max-width: 767px)",
+          isFourColumns: "(min-width: 768px)",
+        },
+        (context) => {
+          const columns = context.conditions?.isFourColumns ? 4 : 2;
+          const rows = chunkMembers(members, columns);
+
+          rows.forEach((rowMembers) => {
+            gsap.to(rowMembers, {
+              opacity: 1,
+              y: 0,
+              duration: 0.7,
+              ease: "power3.out",
+              stagger: 0.14,
+              clearProps: "transform",
+              scrollTrigger: {
+                trigger: rowMembers[0],
+                start: "top 88%",
+                toggleActions: "play none none none",
+                once: true,
+              },
+            });
+          });
+        },
       );
-      const parallaxCleanups: Array<() => void> = [];
-      const isMobile = window.matchMedia("(max-width: 1023px)").matches;
-
-      if (!reducedMotion && !isMobile) {
-        parallaxCards.forEach((card, index) => {
-          const travel =
-            LEADER_PARALLAX_TRAVEL[index] ?? LEADER_PARALLAX_TRAVEL[0];
-
-          gsap.set(card, { y: travel.start, force3D: true });
-
-          const tween = gsap.to(card, {
-            y: travel.end,
-            ease: "none",
-            force3D: true,
-            overwrite: "auto",
-            scrollTrigger: {
-              trigger: section,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 1,
-              invalidateOnRefresh: true,
-            },
-          });
-
-          parallaxCleanups.push(() => {
-            tween.scrollTrigger?.kill();
-            tween.kill();
-          });
-        });
-      }
 
       const lenis = window.lenis;
       let scrollPending = false;
@@ -273,7 +285,7 @@ const Leaderships = () => {
 
       return () => {
         lenis?.off("scroll", onLenisScroll);
-        parallaxCleanups.forEach((cleanup) => cleanup());
+        mm.revert();
       };
     },
     { scope: sectionRef },
@@ -281,6 +293,17 @@ const Leaderships = () => {
 
   return (
     <section ref={sectionRef} className="bg-white text-[#0a143b]">
+      <style>{`
+        .leader-image-shell.way-card-shell {
+          --way-card-hover-scale: 1.03;
+          clip-path: inset(0);
+        }
+
+        .leader-image-shell .way-card-body {
+          transition: transform 800ms cubic-bezier(0.165, 0.84, 0.44, 1);
+          transform: translate3d(0, 0, 0) scale(1);
+        }
+      `}</style>
       <Container borderColor="#53535380" borderBottom>
         <div className="py-20 md:py-24 lg:py-28">
           <div
@@ -302,34 +325,11 @@ const Leaderships = () => {
           </div>
 
           <div ref={leadersGridRef} className="mt-12 lg:mt-16">
-            <div className="hidden flex-col gap-8 lg:flex xl:gap-10">
-              <div className="mx-auto grid w-full max-w-4xl grid-cols-3 gap-10 xl:max-w-5xl xl:gap-14">
-                {foundersRow.map((leader, index) => (
-                  <div
-                    key={leader.id}
-                    className={`leader-parallax-card ${founderStagger[index]}`}
-                  >
-                    <LeaderCard leader={leader} />
-                  </div>
-                ))}
-              </div>
-
-              <div className="mx-auto grid w-full max-w-5xl grid-cols-4 gap-6 xl:max-w-6xl xl:gap-8">
-                {advisoryRow.map((leader, index) => (
-                  <div
-                    key={leader.id}
-                    className={`leader-parallax-card ${advisoryStagger[index]}`}
-                  >
-                    <LeaderCard leader={leader} height={ADVISORY_CARD_HEIGHT} />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-5 sm:gap-6 lg:hidden">
-              {mobileLeaders.map((leader) => (
+            <div className="grid grid-cols-2 gap-x-5 gap-y-10 sm:gap-x-6 md:grid-cols-4 lg:gap-x-6 lg:gap-y-12 xl:gap-x-8">
+              {leaders.map((leader) => (
                 <LeaderCard key={leader.id} leader={leader} />
               ))}
+              <EmptyLeaderCard />
             </div>
           </div>
         </div>
