@@ -55,7 +55,7 @@ const DataAdvantage = () => {
           <div className="grid gap-5 md:grid-cols-2 md:gap-6 md:items-stretch">
             {/* Underwriting data retention */}
             <article
-              className="relative flex min-h-[26rem] w-full flex-col overflow-hidden rounded-sm text-[#0a143b] md:min-h-[32rem]"
+              className="relative flex min-h-[28rem] w-full flex-col overflow-hidden rounded-sm text-[#0a143b] md:min-h-[36rem] lg:min-h-[37rem]"
               style={{ backgroundColor: "#FFFFFFCC" }}
             >
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_70%_20%,rgba(90,53,224,0.18),transparent_60%)]" aria-hidden />
@@ -80,7 +80,7 @@ const DataAdvantage = () => {
             </article>
 
             {/* Placement / decline intelligence — keep RHS video */}
-            <article className="relative flex min-h-[26rem] w-full flex-col justify-between overflow-hidden rounded-sm p-6 md:min-h-[32rem] md:p-8 lg:p-10">
+            <article className="relative flex min-h-[28rem] w-full flex-col justify-between overflow-hidden rounded-sm p-6 md:min-h-[36rem] md:p-8 lg:min-h-[37rem] lg:p-10">
               <video
                 src="/carrier.mp4"
                 autoPlay

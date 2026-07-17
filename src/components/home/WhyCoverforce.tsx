@@ -7,10 +7,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import Container from "../common/Container";
-import Button from "../common/Button";
 import ArrowNavButton from "../common/ArrowNavButton";
 import Image from "next/image";
-import Link from "next/link";
 
 import "swiper/css";
 
@@ -18,7 +16,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 type WhySlide = {
   id: string;
-  slug: string;
+  title: string;
+  descriptionLines: string[];
   image: string;
   alt: string;
 };
@@ -26,27 +25,47 @@ type WhySlide = {
 const whySlides: WhySlide[] = [
   {
     id: "slide-1",
-    slug: "wholesalers-embrace-apis",
-    image: "/images/blog/blog1.png",
-    alt: "Wholesalers Must Embrace APIs to Stay Competitive",
+    title: "AI Investments",
+    descriptionLines: [
+      "AI-first infrastructure that gets smarter with every quote —",
+      "driving higher bind rates and a customer experience",
+      "that keeps improving for Chase.",
+    ],
+    image: "/images/hero/img1.avif",
+    alt: "AI-powered insurance infrastructure",
   },
   {
     id: "slide-2",
-    slug: "hidden-costs-slow-submission-workflows",
-    image: "/images/blog/blog2.png",
-    alt: "The Hidden Costs of Slow Submission Workflows",
+    title: "Market Power",
+    descriptionLines: [
+      "The largest bindable carrier network in the market means",
+      "Chase inherits access on day one, instead of negotiating",
+      "carrier relationships alone.",
+    ],
+    image: "/images/hero/img2.avif",
+    alt: "Commercial insurance carrier network",
   },
   {
     id: "slide-3",
-    slug: "true-bindability-commercial-quoting",
-    image: "/images/blog/blog3.png",
-    alt: "True Bindability in Commercial Quoting",
+    title: "Carrier Knowledge",
+    descriptionLines: [
+      "60+ live integrations and deep institutional know-how mean",
+      "CoverForce launches in weeks — on rails already built",
+      "and battle-tested.",
+    ],
+    image: "/images/hero/img3.avif",
+    alt: "Carrier integrations and insurance expertise",
   },
   {
     id: "slide-4",
-    slug: "broker-codes-extended",
-    image: "/images/blog/blog4.png",
-    alt: "Broker Codes, Extended",
+    title: "Security & Resilience",
+    descriptionLines: [
+      "SOC 2 Type II certified, cloud-native, and built for enterprise scale —",
+      "giving Chase infrastructure that's secure, resilient, and ready",
+      "for FI-grade volume from day one.",
+    ],
+    image: "/images/hero/img4.avif",
+    alt: "Secure and resilient enterprise infrastructure",
   },
 ];
 
@@ -214,6 +233,52 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
           object-fit: cover;
         }
 
+        .why-slide-copy {
+          transition:
+            opacity 500ms cubic-bezier(0.19, 1, 0.22, 1),
+            transform 700ms cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .why-slide.is-inactive .why-slide-copy {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        .why-slide.is-active .why-slide-copy {
+          opacity: 1;
+          transform: translateY(0);
+          transition-delay: 700ms;
+        }
+
+        .why-slide-mask {
+          overflow: hidden;
+        }
+        .why-slide-title-inner,
+        .why-slide-description-line {
+          opacity: 0;
+          transform: translateY(110%);
+          transition:
+            opacity 500ms cubic-bezier(0.22, 1, 0.36, 1),
+            transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .why-slide.is-active .why-slide-title-inner {
+          opacity: 1;
+          transform: translateY(0);
+          transition-delay: 850ms;
+        }
+        .why-slide.is-active .why-slide-description-line {
+          opacity: 1;
+          transform: translateY(0);
+          transition-delay: 980ms;
+        }
+        .why-slide.is-active p .why-slide-mask:nth-child(2) .why-slide-description-line {
+          transition-delay: 1070ms;
+        }
+        .why-slide.is-active p .why-slide-mask:nth-child(3) .why-slide-description-line {
+          transition-delay: 1160ms;
+        }
+        .why-slide.is-active p .why-slide-mask:nth-child(4) .why-slide-description-line {
+          transition-delay: 1250ms;
+        }
+
         .why-swiper-slide {
           position: relative;
           height: 340px;
@@ -247,9 +312,6 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                   Insurance distribution should work like infrastructure — just
                   like Stripe for payments or Plaid for identity.
                 </p>
-                <Button href="/blog">
-                  View all insights
-                </Button>
               </div>
 
               <div className="flex max-w-md flex-col items-end gap-6 text-left lg:ml-auto">
@@ -288,7 +350,7 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
               >
                 {whySlides.map((slide) => (
                   <SwiperSlide key={slide.id}>
-                    <Link href={`/blog/${slide.slug}`} className="why-swiper-slide block">
+                    <article className="why-swiper-slide">
                       <Image
                         width={1000}
                         height={1000}
@@ -298,7 +360,19 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                         alt={slide.alt}
                         draggable={false}
                       />
-                    </Link>
+                      <div
+                        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent"
+                        aria-hidden
+                      />
+                      <div className="absolute inset-x-0 bottom-0 z-10 p-5 text-white sm:p-7">
+                        <h3 className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
+                          {slide.title}
+                        </h3>
+                        <p className="mt-3 font-sans text-sm font-regular leading-[1.4] text-white/85 md:text-[1.125rem]">
+                          {slide.descriptionLines.join(" ")}
+                        </p>
+                      </div>
+                    </article>
                   </SwiperSlide>
                 ))}
               </Swiper>
@@ -308,18 +382,14 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
             <div className="relative mt-12 hidden md:mt-14 lg:mt-16 lg:block">
               <div className="why-slider-track" onMouseLeave={handleTrackMouseLeave}>
                 {whySlides.map((slide, i) => (
-                  <Link
+                  <button
+                    type="button"
                     key={slide.id}
-                    href={`/blog/${slide.slug}`}
-                    className={`why-slide ${i === active ? "is-active" : "is-inactive"}`}
+                    className={`why-slide text-left ${i === active ? "is-active" : "is-inactive"}`}
                     onMouseEnter={() => handleSlideMouseEnter(i)}
                     onFocus={() => goTo(i)}
-                    onClick={(e) => {
-                      if (i !== active) {
-                        e.preventDefault();
-                        goTo(i);
-                      }
-                    }}
+                    onClick={() => goTo(i)}
+                    aria-pressed={i === active}
                   >
                     <Image
                       width={1000}
@@ -330,7 +400,27 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                       alt={slide.alt}
                       draggable={false}
                     />
-                  </Link>
+                    <div
+                      className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/95 via-black/35 to-transparent"
+                      aria-hidden
+                    />
+                    <div className="why-slide-copy pointer-events-none absolute inset-x-0 bottom-0 z-20 max-w-3xl p-8 text-white lg:p-10">
+                      <div className="why-slide-mask">
+                        <h3 className="why-slide-title-inner max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
+                          {slide.title}
+                        </h3>
+                      </div>
+                      <p className={`mt-4 font-sans text-sm font-regular leading-[1.4] text-white/85 md:text-[1.125rem] ${i === 3 ? "max-w-2xl" : "max-w-xl"}`}>
+                        {slide.descriptionLines.map((line) => (
+                          <span key={line} className="why-slide-mask block">
+                            <span className="why-slide-description-line block">
+                              {line}
+                            </span>
+                          </span>
+                        ))}
+                      </p>
+                    </div>
+                  </button>
                 ))}
               </div>
             </div>
