@@ -7,12 +7,11 @@
  *    container borders (3 left, 2 right) and peel into each card's EyebrowPill,
  *    turning white and handing off to the pill dot.
  *
- *  Phase 2 (ProcessFlow, lg+ only): the dots fall from the top of the viewport and each
- *    settles into its step's EyebrowPill dot (kept transparent) as that step
- *    rises into view. Skipped below lg where ProcessFlow uses a stacked layout.
+ *  Phase 2 (ProcessFlow, lg+ only): dots drop from above onto the Container
+ *    left border as the section enters; further scroll peels each into its
+ *    step pill — white handoff to the pill dot. Skipped below lg.
  *
- * All positions/targets are measured live every frame so the dots track the page
- * (including the pinned ProcessFlow timeline).
+ * All positions/targets are measured live every frame so the dots track the page.
  */
 
 import { useEffect, useRef } from "react";
@@ -26,12 +25,13 @@ const PARK_GAP = 0.06;
 // ThreeWays: pill viewport position (height fractions) over which the dot travels.
 const PEEL_START = 1.12;
 const PEEL_END = 0.48;
-// ProcessFlow: dots fall from above onto each step's pill dot.
-// Window (viewport height fractions) of the pill's Y over which the dot drops in.
-const PF_FALL_START = 1.0; // pill entering the lower viewport → dot starts falling
-const PF_FALL_END = 0.5; // pill near its resting spot → dot has landed
-// Colour of the dot once it sits in the EyebrowPill (matches the light pill dot).
-const PF_DOT_COLOR = "#413CC0";
+// ProcessFlow: drop from above onto the Container left border, then peel to pills.
+const PF_DROP_START = 1.05; // section top vs vh — drop begins
+const PF_DROP_END = 0.55; // section top vs vh — all parked on the border
+const PF_PEEL_START = 0.58;
+const PF_PEEL_END = 0.32;
+const PF_DOT_COLOR = "#FFFFFF";
+const PF_DOT_COUNT = 5;
 
 type DotConfig = { label: string; side: "left" | "right"; rank: number };
 
@@ -42,13 +42,6 @@ const DOTS: DotConfig[] = [
   { label: "Brokers", side: "right", rank: 0 },
   { label: "Carriers", side: "right", rank: 1 },
 ];
-
-const rectOf = (sel: string, root?: ParentNode | null) => {
-  const el = root
-    ? root.querySelector<HTMLElement>(sel)
-    : document.querySelector<HTMLElement>(sel);
-  return el?.getBoundingClientRect();
-};
 
 export default function HeroToCardsDots() {
   const layerRef = useRef<HTMLDivElement>(null);
@@ -81,7 +74,6 @@ export default function HeroToCardsDots() {
       const pf = document.querySelector<HTMLElement>("[data-processflow]");
       const pfRect = pf?.getBoundingClientRect();
       const pfCont = (pf?.firstElementChild as HTMLElement | null)?.getBoundingClientRect();
-      const pfDesktopScroll = pf?.querySelector<HTMLElement>(".leftScroll");
       const inPF =
         !!pfRect && pfRect.top < vh * 0.85 && pfRect.bottom > vh * 0.15;
 
@@ -95,9 +87,8 @@ export default function HeroToCardsDots() {
 
       // ── ProcessFlow visibility ──
       let pfVis = 0;
-      let pfEnter = 0;
       if (pfRect) {
-        pfEnter = gsap.utils.clamp(0, 1, (vh - pfRect.top) / (vh * 0.4));
+        const pfEnter = gsap.utils.clamp(0, 1, (vh - pfRect.top) / (vh * 0.4));
         const pfLeave = gsap.utils.clamp(0, 1, pfRect.bottom / (vh * 0.25));
         pfVis = Math.min(pfEnter, pfLeave);
       }
@@ -114,35 +105,68 @@ export default function HeroToCardsDots() {
             return;
           }
 
-          // ── Phase 2: ProcessFlow — fall from the top onto each step's pill dot ──
-          const target = rectOf(`[data-card-dot="step-${i}"]`, pfDesktopScroll);
-          if (!target || (target.width === 0 && target.height === 0)) {
+          // ── Phase 2: ProcessFlow ──────────────────────────────────────────
+          // 1) Section enters → dots fall from above onto the Container left border.
+          // 2) Further scroll → each peels to its step pill as that step arrives.
+          const targetEl = pf?.querySelector<HTMLElement>(`[data-card-dot="step-${i}"]`);
+          const target = targetEl?.getBoundingClientRect();
+          if (!target || !targetEl || (target.width === 0 && target.height === 0)) {
             dot.style.opacity = "0";
             return;
           }
+
+          // Same left edge ThreeWays uses — Container dotted border.
+          const lineX = pfCont.left;
+
+          // Park slots spaced along the viewport on that border so all 5 show at once.
+          const railTop = vh * 0.18;
+          const railBottom = vh * 0.82;
+          const parkT = PF_DOT_COUNT <= 1 ? 0.5 : i / (PF_DOT_COUNT - 1);
+          const parkY = gsap.utils.interpolate(railTop, railBottom, parkT);
+
+          // Drop from above → park, staggered so they cascade like the same dots arriving.
+          const dropRaw = pfRect
+            ? gsap.utils.clamp(
+                0,
+                1,
+                (PF_DROP_START * vh - pfRect.top) /
+                  ((PF_DROP_START - PF_DROP_END) * vh),
+              )
+            : 1;
+          const dropStagger = (i / Math.max(1, PF_DOT_COUNT - 1)) * 0.28;
+          const drop = gsap.utils.clamp(0, 1, (dropRaw - dropStagger) / (1 - dropStagger * 0.85));
+          const dropE = ease(drop);
+
+          const startY = -0.08 * vh - i * 18; // above the viewport, slight cascade
+          const settledY = startY + (parkY - startY) * dropE;
+
           const tx = target.left + target.width / 2;
           const ty = target.top + target.height / 2;
 
-          // Fall progress: 0 while the pill is low in the viewport, 1 once it
-          // reaches its resting spot — the dot drops straight down onto the pill.
-          const fall = gsap.utils.clamp(
+          // Peel only after the drop has mostly settled, when this step's pill rises.
+          const peelRaw = gsap.utils.clamp(
             0,
             1,
-            (PF_FALL_START * vh - ty) / ((PF_FALL_START - PF_FALL_END) * vh),
+            (PF_PEEL_START * vh - ty) / ((PF_PEEL_START - PF_PEEL_END) * vh),
           );
-          const e = ease(fall);
+          const peel = dropE > 0.85 ? peelRaw * gsap.utils.clamp(0, 1, (dropE - 0.85) / 0.15) : 0;
+          const e = ease(peel);
 
-          const startY = -0.05 * vh; // just above the top edge
-          const x = tx;
-          const y = startY + (ty - startY) * e;
+          const x = lineX + (tx - lineX) * e;
+          const y = settledY + (ty - settledY) * e;
 
           dot.style.width = `${DOT_SIZE}px`;
           dot.style.height = `${DOT_SIZE}px`;
           dot.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-          dot.style.background = PF_DOT_COLOR;
-          dot.style.boxShadow = "none";
-          // Only show once the dot has begun its fall, and fade with the section.
-          dot.style.opacity = String(fall > 0 ? pfVis : 0);
+          const colorT = gsap.utils.clamp(0, 1, (peel - 0.55) / 0.45);
+          dot.style.background = gsap.utils.interpolate(DOT_COLOR, PF_DOT_COLOR, colorT);
+          dot.style.boxShadow =
+            peel < 0.85 ? `0 0 ${8 * (1 - Math.max(e, dropE)) + 1}px ${DOT_COLOR}33` : "none";
+
+          const arrived = gsap.utils.clamp(0, 1, (peel - 0.9) / 0.1);
+          // Show once the drop has started; hand off on pill arrival.
+          dot.style.opacity = String(drop > 0.02 ? pfVis * (1 - arrived) : 0);
+          targetEl.style.opacity = String(arrived);
           return;
         }
 
@@ -207,8 +231,7 @@ export default function HeroToCardsDots() {
       });
       for (let i = 0; i < DOTS.length; i++) {
         const pf = document.querySelector<HTMLElement>("[data-processflow]");
-        const pfDesktopScroll = pf?.querySelector<HTMLElement>(".leftScroll");
-        const stepTarget = pfDesktopScroll?.querySelector<HTMLElement>(
+        const stepTarget = pf?.querySelector<HTMLElement>(
           `[data-card-dot="step-${i}"]`,
         );
         if (stepTarget) stepTarget.style.opacity = "";
