@@ -38,7 +38,7 @@ const IMAGE_HEIGHTS = {
 
 const cultureItems: CultureItem[] = [
   {
-    src: "/images/careers/image1.png",
+    src: "/images/careers/img1.webp",
     alt: "Team meeting collaboration",
     caption:
       "Built on collaboration — we ship together, share context freely, and win as one team.",
@@ -46,7 +46,7 @@ const cultureItems: CultureItem[] = [
     imageHeight: "large",
   },
   {
-    src: "/images/careers/image2.png",
+    src: "/images/careers/img2.webp",
     alt: "Colleagues discussing work",
     caption:
       "A culture people stick with — we keep attrition around 2%, because the work and the team are worth staying for.",
@@ -54,14 +54,14 @@ const cultureItems: CultureItem[] = [
     imageHeight: "large",
   },
   {
-    src: "/images/careers/image3.png",
+    src: "/images/careers/img3.webp",
     alt: "Team outdoor adventure",
     caption: "Tight feedback loops and shared ownership keep collaboration high and handoffs low.",
     placement: "lg:col-span-6 lg:row-span-3 lg:row-start-7 lg:mt-10 xl:mt-12",
     imageHeight: "medium",
   },
   {
-    src: "/images/careers/image4.png",
+    src: "/images/careers/img4.webp",
     alt: "Global team gathering outdoors",
     caption:
       "People stay because they grow here — low attrition, high trust, real impact on customers.",
@@ -72,14 +72,14 @@ const cultureItems: CultureItem[] = [
 
 const bottomCulturePair = {
   left: {
-    src: "/images/careers/image5.png",
+    src: "/images/careers/img5.webp",
     alt: "Diverse team group photo",
     caption: "Collaboration first — from product to support, we build side by side.",
     placement: "",
     imageHeight: "large" as const,
   },
   right: {
-    src: "/images/careers/image6.png",
+    src: "/images/careers/img6.webp",
     alt: "Team in modern office space",
     caption: "~2% attrition. A team that chooses to keep building together.",
     placement: "",

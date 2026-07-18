@@ -226,14 +226,18 @@ const Footer = () => {
           {/* ── Top: CTA banner ── */}
           <div className="relative min-h-[22rem] overflow-hidden border-b border-neutral-200 md:min-h-[26rem] lg:min-h-[30rem]">
             <Image
-              src="/images/footer.avif"
+              src="/images/CoverForce_footer_banner.webp"
               alt="footer-banner"
               fill
-              className="object-cover object-top md:object-center"
+              className="object-cover object-top md:object-right"
               sizes="100vw"
             />
             <div
               className="absolute inset-0 bg-linear-to-t from-black/75 via-black/40 to-black/10 md:from-black/60 md:via-black/25 md:to-transparent"
+              aria-hidden
+            />
+            <div
+              className="absolute inset-0 bg-linear-to-r from-black/85 via-black/35 to-transparent md:from-black/80 md:via-black/25 md:to-transparent [mask-image:linear-gradient(to_right,black_0%,black_32%,transparent_58%)]"
               aria-hidden
             />
 

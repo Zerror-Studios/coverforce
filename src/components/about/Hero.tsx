@@ -105,7 +105,7 @@ const Hero = () => {
         className="relative h-full w-full overflow-hidden will-change-transform"
       >
         <Image
-          src="/images/about/about.jpg"
+          src="/images/about/about.avif"
           alt="about-hero"
           fill
           priority
@@ -113,7 +113,7 @@ const Hero = () => {
           sizes="100vw"
         />
         <div
-          className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-black/25"
+          className="absolute inset-0 bg-linear-to-t from-black/85 via-black/50 to-black/40"
           aria-hidden
         />
 

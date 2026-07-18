@@ -26,7 +26,7 @@ type Milestone = {
 
 const milestones: Milestone[] = [
   {
-    src: "/images/about/milestone1.png",
+    src: "/images/about/mil1.webp",
     alt: "CoverForce milestone 2022",
     year: "2022",
     title: "Partnered with ISU",
@@ -34,7 +34,7 @@ const milestones: Milestone[] = [
       "Our first customer — partnered with ISU Steadfast to build CoverForce from the ground up.",
   },
   {
-    src: "/images/about/milestone2.png",
+    src: "/images/about/mil2.webp",
     alt: "CoverForce milestone 2023",
     year: "2023",
     title: "Nationwide launch",
@@ -42,7 +42,7 @@ const milestones: Milestone[] = [
       "Scaled carrier connectivity and launched admitted with 8 carriers across the country.",
   },
   {
-    src: "/images/about/milestone3.png",
+    src: "/images/about/mil3.webp",
     alt: "CoverForce milestone 2025",
     year: "2025",
     title: "Launched E&S",
@@ -50,7 +50,7 @@ const milestones: Milestone[] = [
       "Introduced CoverForce to a broader audience — now powering 4 of the top 10 U.S. wholesalers.",
   },
   {
-    src: "/images/about/milestone4.png",
+    src: "/images/about/mil4.webp",
     alt: "CoverForce milestone 2026",
     year: "2026",
     title: "First-in-market AI agents",
@@ -66,7 +66,7 @@ const CLIP_HIDDEN_TOP = "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)";
 const IMAGE_TRAVEL = 18;
 
 const MILESTONE_OVERLAY_GRADIENT =
-  "linear-gradient(135deg, rgba(0, 0, 0, 0.54) 0%, rgba(0, 0, 0, 0.27) 100%)";
+  "linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.7) 100%)";
 
 const milestoneDisplayClassName =
   "font-heading text-[2.5rem] font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl sm:leading-tight md:text-[4.5rem] md:leading-none lg:text-[3.5rem]";
