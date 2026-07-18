@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
+import { useLayoutEffect, useRef, type ReactNode } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
@@ -18,6 +18,21 @@ export default function HeroReveal({
   stagger = 0.12,
 }: HeroRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const items = Array.from(el.children) as HTMLElement[];
+    if (!items.length) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      gsap.set(items, { opacity: 1, y: 0 });
+      return;
+    }
+
+    gsap.set(items, { opacity: 0, y: 30 });
+  }, []);
 
   useGSAP(
     () => {

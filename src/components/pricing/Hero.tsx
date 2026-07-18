@@ -19,7 +19,7 @@ const PRICING_COLOURS = ["#123B68", "#087F8C", "#18BFA2", "#A7F3D0"];
 
 const Hero = () => {
   return (
-    <section className="relative h-svh overflow-hidden bg-[#151f4d] text-white">
+    <section className="pricing-hero-shell relative h-svh overflow-hidden bg-[#151f4d] text-white">
       <div
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{

@@ -24,7 +24,7 @@ import { MEGA_MENUS, type MegaMenuLink } from "@/data/megaMenu";
 import { DEMO_VIDEO_SRC, DEMO_VIDEO_TITLE } from "@/data/demoVideo";
 import { HOME_INTRO_NAV_MS, useHomeIntro } from "@/contexts/HomeIntroContext";
 import { useVideoModal } from "@/contexts/VideoModalContext";
-import { pageAnimation, setPageTransitionBg } from "@/lib/pageTransition";
+import { pageAnimation, setPageTransitionBg, setPendingPathname, subscribePendingPathname } from "@/lib/pageTransition";
 import { scrollToHashWhenReady } from "@/lib/scrollToTop";
 import { useTransitionRouter } from "next-view-transitions";
 
@@ -269,7 +269,8 @@ function MobileMenuSubLink({
 
 const Header = () => {
   const pathname = usePathname();
-  const baseTheme = getHeaderTheme(pathname);
+  const [displayPathname, setDisplayPathname] = useState(pathname);
+  const baseTheme = getHeaderTheme(displayPathname);
   const { enabled: introEnabled, phase: introPhase } = useHomeIntro();
   const navBarRef = useRef<HTMLDivElement>(null);
   const navRevealedRef = useRef(false);
@@ -297,20 +298,31 @@ const Header = () => {
   renderedMenuRef.current = renderedMenu;
   clipOpenRef.current = clipOpen;
 
+  useEffect(() => {
+    setDisplayPathname(pathname);
+  }, [pathname]);
+
+  useEffect(() => {
+    return subscribePendingPathname((nextPath) => {
+      setDisplayPathname(nextPath);
+      if (usesTransparentHeaderUntilScroll(nextPath)) {
+        setHeaderPastHero(false);
+      }
+    });
+  }, []);
+
   useLayoutEffect(() => {
     const navBar = navBarRef.current;
     if (!navBar) return;
 
-    if (!introEnabled) {
-      gsap.set(navBar, { clearProps: "all" });
-      return;
-    }
+    if (!introEnabled) return;
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       gsap.set(navBar, { clearProps: "all" });
       return;
     }
 
+    navRevealedRef.current = false;
     gsap.set(navBar, { yPercent: -100, autoAlpha: 0 });
   }, [introEnabled]);
 
@@ -335,6 +347,31 @@ const Header = () => {
     });
   }, [introEnabled, introPhase]);
 
+  // Slide the header in from the top on every non-home route change.
+  useEffect(() => {
+    if (introEnabled) return;
+
+    const navBar = navBarRef.current;
+    if (!navBar) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      gsap.set(navBar, { clearProps: "all" });
+      return;
+    }
+
+    gsap.fromTo(
+      navBar,
+      { yPercent: -100, autoAlpha: 0 },
+      {
+        yPercent: 0,
+        autoAlpha: 1,
+        duration: HOME_INTRO_NAV_MS / 1000,
+        ease: "power3.out",
+        overwrite: "auto",
+      },
+    );
+  }, [pathname, introEnabled]);
+
   useLayoutEffect(() => {
     const navBar = navBarRef.current;
     if (!navBar) return;
@@ -352,13 +389,14 @@ const Header = () => {
     };
   }, []);
 
-  const transparentUntilScroll = usesTransparentHeaderUntilScroll(pathname);
+  const transparentUntilScroll = usesTransparentHeaderUntilScroll(displayPathname);
   const theme = transparentUntilScroll
     ? headerPastHero
       ? "light"
       : "dark"
     : baseTheme;
   const styles = headerThemes[theme];
+  const isTransparentHeader = transparentUntilScroll && !headerPastHero;
 
   useEffect(() => {
     if (!transparentUntilScroll) {
@@ -518,10 +556,12 @@ const Header = () => {
 
       if (typeof document !== "undefined" && "startViewTransition" in document) {
         setPageTransitionBg(path || href);
+        setPendingPathname(path || href);
         router.push(href, { onTransitionReady: pageAnimation });
         return;
       }
 
+      setPendingPathname(path || href);
       router.push(href);
     },
     [closeMenuImmediately, closeMobileMenu, pathname, router],
@@ -556,7 +596,7 @@ const Header = () => {
   const activeMobileConfig = renderedMobileSubMenu ? MEGA_MENUS[renderedMobileSubMenu] : null;
   const navBarClass = mobileMenuOpen
     ? headerThemes.light.bar
-    : transparentUntilScroll && !headerPastHero
+    : isTransparentHeader
       ? "border-b border-transparent bg-transparent"
       : styles.bar;
   const activeLogo = mobileMenuOpen ? headerThemes.light.logo : styles.logo;
@@ -575,7 +615,7 @@ const Header = () => {
         <div
           ref={navBarRef}
           data-site-nav
-          className={`relative z-20 overflow-hidden will-change-transform transition-[background-color,border-color,color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${navBarClass}`}
+          className={`relative z-20 overflow-hidden will-change-transform transition-[background-color,border-color,color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${navBarClass}`}
         >
           <Container>
             <div className="relative flex items-center justify-between py-4">

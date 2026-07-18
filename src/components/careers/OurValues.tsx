@@ -54,22 +54,34 @@ type ValueCard = {
 
 const VALUE_CARDS: ValueCard[] = [
   {
-    id: "customer-obsessed",
-    label: "Be Customer Obsessed",
-    body: "We're insurance people who love delighting our customers—and their customers too.",
-    background: "startup",
+    id: "ownership",
+    label: "Ownership",
+    body: "We take full responsibility for outcomes — from first idea to lasting customer impact.",
+    background: "developer",
   },
   {
-    id: "modern-simple",
-    label: "Modern & Simple",
-    body: "Insurance is simple in idea, complex in practice. We make it smarter and easier for people and businesses.",
+    id: "learning-curious",
+    label: "Be Learning-Curious",
+    body: "We stay curious, ask better questions, and keep leveling up how we build and serve.",
     background: "wholesaler",
   },
   {
-    id: "security-trust",
-    label: "Build Security & Trust",
-    body: "We earn trust through world-class security and engineering, ensuring carriers and customers can rely on us.",
-    background: "developer",
+    id: "communication",
+    label: "Communication",
+    body: "Clear, direct communication keeps teams aligned, decisions fast, and customers informed.",
+    background: "broker",
+  },
+  {
+    id: "frugality",
+    label: "Frugality",
+    body: "We focus on what yields real customer benefit and ROI — spending energy where it matters most.",
+    background: "startup",
+  },
+  {
+    id: "customer-obsession",
+    label: "Customer Obsession",
+    body: "Every decision starts with the customer — their workflow, their trust, and their success.",
+    background: "carrier",
   },
 ];
 
@@ -230,7 +242,7 @@ const OurValues = () => {
 
           <div
             ref={cardsGridRef}
-            className="grid gap-4 md:grid-cols-3 md:gap-6 lg:gap-8"
+            className="grid gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8"
           >
             {VALUE_CARDS.map((card) => (
               <ValueCardItem key={card.id} card={card} />

@@ -80,15 +80,6 @@ button {
     opacity: 0;
   }
 
-  ::view-transition-old(site-header),
-  ::view-transition-new(site-header) {
-    animation: none;
-  }
-
-  ::view-transition-group(site-header) {
-    z-index: 100;
-  }
-
   ::view-transition-group(page-content) {
     z-index: 1;
     overflow: clip;
@@ -107,6 +98,21 @@ button {
     background-color: var(--page-transition-bg);
     animation: site-page-in var(--page-transition-in) var(--page-transition-enter-ease)
       var(--page-transition-delay) both;
+  }
+
+  /* Pricing hero is navy — fade only so no white gap shows under a Y slide. */
+  html[data-page-enter="pricing"] ::view-transition-new(page-content) {
+    animation: site-page-fade-in var(--page-transition-in) var(--page-transition-enter-ease)
+      var(--page-transition-delay) both;
+  }
+
+  @keyframes site-page-fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -130,12 +136,33 @@ button {
 }
 
 .site-view-header {
-  view-transition-name: site-header;
+  /* Keep header outside view-transition snapshots so theme/transparency
+     can update immediately on navigation (e.g. blue → transparent). */
+  view-transition-name: none;
 }
 
 .site-view-content {
   view-transition-name: page-content;
   background-color: var(--page-transition-bg);
+}
+
+/* Pricing hero shell stays put during page transition; only copy uses HeroReveal. */
+.pricing-hero-shell {
+  view-transition-name: pricing-hero-shell;
+}
+
+@supports (view-transition-name: none) {
+  ::view-transition-old(pricing-hero-shell),
+  ::view-transition-new(pricing-hero-shell) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-group(pricing-hero-shell) {
+    z-index: 5;
+    animation: none;
+    background-color: #151f4d;
+  }
 }
 
 @keyframes button-arrow-nudge {
