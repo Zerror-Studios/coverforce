@@ -107,7 +107,7 @@ export default function RevenueMapTab({ results }: { results: CalculationResult 
                   />
                   <span className={`truncate ${calcRowLabel}`}>{l.label}</span>
                   {!l.on ? (
-                    <span className="rounded bg-[#F3F3F6] px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-wide text-[#8A8A8A]">
+                    <span className="rounded bg-[#F3F3F6] px-1.5 py-0.5 font-mono text-[9px] font-medium tracking-normal text-[#8A8A8A]">
                       Off
                     </span>
                   ) : null}
@@ -140,7 +140,7 @@ export default function RevenueMapTab({ results }: { results: CalculationResult 
                     aria-hidden
                   />
                   <span className={`truncate ${calcRowLabel}`}>{l.label}</span>
-                  <span className="rounded bg-[#F4F4F5] px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-wide text-[#8A8A8A]">
+                  <span className="rounded bg-[#F4F4F5] px-1.5 py-0.5 font-mono text-[9px] font-medium tracking-normal text-[#8A8A8A]">
                     Personal
                   </span>
                 </div>
@@ -237,7 +237,7 @@ export default function RevenueMapTab({ results }: { results: CalculationResult 
                 <div key={l.id}>
                   <div className="mb-1 flex items-center justify-between">
                     <div className={`flex items-center gap-1.5 ${calcRowLabel}`}>
-                      <span className="rounded bg-[#FFEDD5] px-1.5 py-0.5 font-mono text-[8px] font-medium uppercase tracking-wider text-[#C2410C]">Pain Only</span>
+                      <span className="rounded bg-[#FFEDD5] px-1.5 py-0.5 font-mono text-[8px] font-medium tracking-normal text-[#C2410C]">Pain Only</span>
                       {l.label}
                     </div>
                     <div className={calcRowValue}>{fmtM(l.premium)}</div>

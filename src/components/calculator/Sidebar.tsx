@@ -8,15 +8,7 @@ import {
   SEGMENTS,
 } from "@/lib/calculations";
 import {
-  BarChart3,
-  Blocks,
-  CheckCircle2,
   ChevronDown,
-  FolderGit2,
-  PlusCircle,
-  Wrench,
-  Zap,
-  type LucideIcon,
 } from "lucide-react";
 import {
   calcEyebrow,
@@ -66,13 +58,11 @@ function ControlLabel({ children }: { children: React.ReactNode }) {
 
 function SidebarAccordion({
   title,
-  icon: Icon,
   open,
   onToggle,
   children,
 }: {
   title: string;
-  icon: LucideIcon;
   open: boolean;
   onToggle: () => void;
   children: React.ReactNode;
@@ -85,8 +75,7 @@ function SidebarAccordion({
         aria-expanded={open}
         className="flex w-full items-center justify-between gap-3 px-1 py-3.5 text-left transition-colors hover:bg-[#F7F7F7]/80"
       >
-        <span className="flex items-center gap-2.5 font-heading text-sm font-medium tracking-tight text-[#444444]">
-          <Icon className="size-4 shrink-0 text-[#8A8A8A]" aria-hidden />
+        <span className="font-heading text-sm font-medium tracking-tight text-[#444444]">
           {title}
         </span>
         <ChevronDown
@@ -258,7 +247,6 @@ export default function Sidebar({
 
       <SidebarAccordion
         title="Business Mix"
-        icon={FolderGit2}
         open={openSection === "business-mix"}
         onToggle={() => toggleSection("business-mix")}
       >
@@ -280,8 +268,7 @@ export default function Sidebar({
 
         <div className="my-4 border-t border-[#535353]/10" />
 
-        <p className={`mb-2 flex items-center ${calcEyebrow}`}>
-          <CheckCircle2 className="mr-1.5 size-3.5" aria-hidden />
+        <p className={`mb-2 ${calcEyebrow}`}>
           Commercial lines — CF can help
         </p>
         <div className="mb-4 flex flex-col gap-1.5 font-sans">
@@ -318,8 +305,7 @@ export default function Sidebar({
           })}
         </div>
 
-        <p className={`mb-2 mt-4 flex items-center ${calcEyebrow}`}>
-          <BarChart3 className="mr-1.5 size-3.5" aria-hidden />
+        <p className={`mb-2 mt-4 ${calcEyebrow}`}>
           Personal lines — quantify pain only
         </p>
         <div className="flex flex-col gap-1.5 font-sans">
@@ -356,8 +342,7 @@ export default function Sidebar({
           })}
         </div>
 
-        <p className={`mb-2 mt-4 flex items-center ${calcEyebrow}`}>
-          <PlusCircle className="mr-1.5 size-3.5" aria-hidden />
+        <p className={`mb-2 mt-4 ${calcEyebrow}`}>
           Other line of business
         </p>
         <div className="flex items-center gap-2 font-sans">
@@ -394,7 +379,6 @@ export default function Sidebar({
 
       <SidebarAccordion
         title="Business Profile"
-        icon={BarChart3}
         open={openSection === "business-profile"}
         onToggle={() => toggleSection("business-profile")}
       >
@@ -424,7 +408,6 @@ export default function Sidebar({
 
       <SidebarAccordion
         title="Quoting Operations"
-        icon={Zap}
         open={openSection === "quoting-ops"}
         onToggle={() => toggleSection("quoting-ops")}
       >
@@ -444,7 +427,6 @@ export default function Sidebar({
 
       <SidebarAccordion
         title="Quality & Compliance"
-        icon={Wrench}
         open={openSection === "quality"}
         onToggle={() => toggleSection("quality")}
       >
@@ -455,7 +437,6 @@ export default function Sidebar({
 
       <SidebarAccordion
         title="Technology Investment"
-        icon={Blocks}
         open={openSection === "technology"}
         onToggle={() => toggleSection("technology")}
       >

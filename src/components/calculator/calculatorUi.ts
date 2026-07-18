@@ -8,14 +8,14 @@ export const calcAccent = "#2E2E2E";
 export const calcAccentMuted = "#6B6B6B";
 
 export const calcLabel =
-  "mb-1.5 block font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[#8A8A8A] md:text-xs";
+  "mb-1.5 block font-mono text-[0.6875rem] font-medium tracking-normal text-[#8A8A8A] md:text-xs";
 
 export const calcEyebrow =
-  "font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[#8A8A8A]";
+  "font-mono text-[0.6875rem] font-medium tracking-normal text-[#8A8A8A]";
 
 /** KPI / metric label (mono) */
 export const calcMetricLabel =
-  "font-mono text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-[#8A8A8A]";
+  "font-mono text-[0.6875rem] font-medium tracking-normal text-[#8A8A8A]";
 
 /** Section title inside a card (heading) */
 export const calcHeading =
@@ -99,7 +99,7 @@ export const calcTableWrap =
 export const calcTable = "w-full border-collapse font-sans";
 
 export const calcTh =
-  "px-4 py-3.5 font-mono text-sm font-medium uppercase text-[#414141] md:px-5 md:py-4";
+  "px-4 py-3.5 font-mono text-sm font-medium text-[#414141] md:px-5 md:py-4";
 
 export const calcThRight = `${calcTh} text-right`;
 

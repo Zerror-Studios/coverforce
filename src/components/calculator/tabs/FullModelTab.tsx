@@ -59,7 +59,7 @@ export default function FullModelTab({ results }: { results: CalculationResult }
               <tr className={calcSectionRow}>
                 <td
                   colSpan={years.length + 2}
-                  className="px-4 py-3 font-mono text-sm font-medium uppercase text-[#414141] md:px-5"
+                  className="px-4 py-3 font-mono text-sm font-medium text-[#414141] md:px-5"
                 >
                   1. Revenue Growth
                 </td>
@@ -101,7 +101,7 @@ export default function FullModelTab({ results }: { results: CalculationResult }
               <tr className={calcSectionRow}>
                 <td
                   colSpan={years.length + 2}
-                  className="px-4 py-3 font-mono text-sm font-medium uppercase text-[#414141] md:px-5"
+                  className="px-4 py-3 font-mono text-sm font-medium text-[#414141] md:px-5"
                 >
                   2. Operational Efficiency
                 </td>
@@ -173,7 +173,7 @@ export default function FullModelTab({ results }: { results: CalculationResult }
               <tr className={calcSectionRow}>
                 <td
                   colSpan={years.length + 2}
-                  className="px-4 py-3 font-mono text-sm font-medium uppercase text-[#414141] md:px-5"
+                  className="px-4 py-3 font-mono text-sm font-medium text-[#414141] md:px-5"
                 >
                   3. Investment
                 </td>

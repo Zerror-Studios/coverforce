@@ -39,7 +39,7 @@ export default function CompanyBar({ inputs, updateInput, results }: Props) {
         <div className="flex shrink-0 flex-col gap-4 sm:flex-row sm:items-end sm:justify-between lg:flex-col lg:items-end">
           <div className="grid grid-cols-3 gap-x-5 gap-y-2 lg:min-w-[16rem]">
             <div>
-              <p className="font-mono text-[0.625rem] font-medium uppercase tracking-[0.12em] text-[#8A8A8A]">
+              <p className="font-mono text-[0.625rem] font-medium tracking-normal text-[#8A8A8A]">
                 Net ROI
               </p>
               <p className="mt-1 font-heading text-lg font-medium tracking-tight text-[#444444]">
@@ -47,7 +47,7 @@ export default function CompanyBar({ inputs, updateInput, results }: Props) {
               </p>
             </div>
             <div>
-              <p className="font-mono text-[0.625rem] font-medium uppercase tracking-[0.12em] text-[#8A8A8A]">
+              <p className="font-mono text-[0.625rem] font-medium tracking-normal text-[#8A8A8A]">
                 Payback
               </p>
               <p className="mt-1 font-heading text-lg font-medium tracking-tight text-[#444444]">
@@ -55,7 +55,7 @@ export default function CompanyBar({ inputs, updateInput, results }: Props) {
               </p>
             </div>
             <div>
-              <p className="font-mono text-[0.625rem] font-medium uppercase tracking-[0.12em] text-[#8A8A8A]">
+              <p className="font-mono text-[0.625rem] font-medium tracking-normal text-[#8A8A8A]">
                 Multiple
               </p>
               <p className="mt-1 font-heading text-lg font-medium tracking-tight text-[#444444]">
