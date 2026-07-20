@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useVideoModal } from "@/contexts/VideoModalContext";
 import ButtonArrowIcon from "./ButtonArrowIcon";
 import AnimatedLinkText from "./AnimatedLinkText";
+import { containerPadding } from "./containerStyles";
 import {
   MEGA_MENU_COLUMNS_MIN_HEIGHT_REM,
   MEGA_MENU_FIXED_HEIGHT_REM,
@@ -292,8 +293,8 @@ export default function MegaMenu({
       onMouseEnter={onMouseEnter}
     >
       <div
-        className="relative mx-auto w-full max-w-7xl px-6 py-6 transition-[height] duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] motion-reduce:transition-none md:py-7"
-        style={{ height: `${MEGA_MENU_FIXED_HEIGHT_REM}rem`, minHeight: `${MEGA_MENU_FIXED_HEIGHT_REM}rem` }}
+        className={`relative mx-auto w-full max-w-7xl ${containerPadding} py-6 transition-[height] duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] motion-reduce:transition-none md:py-7`}
+        style={{ minHeight: `${MEGA_MENU_FIXED_HEIGHT_REM}rem` }}
       >
         <div
         className={`flex h-full flex-col gap-6 ease-[cubic-bezier(0.33,1,0.68,1)] motion-reduce:transition-none md:flex-row md:items-stretch md:gap-8 lg:gap-10 ${contentEnter ? "mega-menu-enter" : ""}`}

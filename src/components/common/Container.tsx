@@ -33,7 +33,7 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(function Container(
   return (
     <div
       ref={ref}
-      className={`relative z-10 mx-auto w-full max-w-none md:max-w-[min(1280px,calc(100%-80px))] ${containerPadding} ${className}`}
+      className={`relative z-10 mx-auto w-full max-w-7xl ${containerPadding} ${className}`}
     >
       {borderColor !== undefined ? (
         <>
