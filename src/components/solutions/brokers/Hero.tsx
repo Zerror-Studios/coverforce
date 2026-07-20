@@ -1,10 +1,8 @@
 "use client";
 
 import SolutionScrollHero from "@/components/solutions/shared/SolutionScrollHero";
-import { brokersHeroCardMock } from "@/components/solutions/brokers/OperatingSystem";
+import SolutionHeroCards from "@/components/solutions/shared/SolutionHeroCards";
 import { SOLUTION_GRAD_FLOW } from "@/data/wayCardStyles";
-
-const HeroMock = brokersHeroCardMock;
 
 const Hero = () => (
   <SolutionScrollHero
@@ -16,7 +14,23 @@ const Hero = () => (
     primaryButtonLabel="Start a quote"
     secondaryButtonHref="#workflow"
     secondaryButtonLabel="How it works"
-    rightCard={HeroMock ? <HeroMock /> : null}
+    rightCard={
+      <SolutionHeroCards
+        transferTargetId="brokers-step-1-card"
+        cardOne={{
+          src: "/images/broker/broker1.svg",
+          alt: "Broker quoting dashboard",
+          width: 444,
+          height: 269,
+        }}
+        cardTwo={{
+          src: "/images/broker/broker2.svg",
+          alt: "Broker workflow summary",
+          width: 371,
+          height: 179,
+        }}
+      />
+    }
     rightCardTransferTargetId="brokers-step-1-card"
     showSecondSection={false}
     gradFlow={SOLUTION_GRAD_FLOW.broker}

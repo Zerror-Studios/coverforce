@@ -1,10 +1,8 @@
 "use client";
 
 import SolutionScrollHero from "@/components/solutions/shared/SolutionScrollHero";
-import { wholesalersHeroCardMock } from "@/components/solutions/wholesalers/OperatingSystem";
+import SolutionHeroCards from "@/components/solutions/shared/SolutionHeroCards";
 import { SOLUTION_GRAD_FLOW } from "@/data/wayCardStyles";
-
-const HeroMock = wholesalersHeroCardMock;
 
 const Hero = () => (
   <SolutionScrollHero
@@ -15,7 +13,23 @@ const Hero = () => (
     primaryButtonLabel="Talk to sales"
     secondaryButtonHref="#workflow"
     secondaryButtonLabel="How it works"
-    rightCard={HeroMock ? <HeroMock /> : null}
+    rightCard={
+      <SolutionHeroCards
+        transferTargetId="wholesalers-step-1-card"
+        cardOne={{
+          src: "/images/wholesaler/wholesaler1.svg",
+          alt: "Wholesale distribution dashboard",
+          width: 444,
+          height: 269,
+        }}
+        cardTwo={{
+          src: "/images/wholesaler/wholesaler2.svg",
+          alt: "Wholesale program workflow",
+          width: 371,
+          height: 179,
+        }}
+      />
+    }
     rightCardTransferTargetId="wholesalers-step-1-card"
     showMarquee
     showSecondSection={false}
