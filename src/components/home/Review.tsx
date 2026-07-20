@@ -139,7 +139,7 @@ const Review = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="bg-[#121C49] text-white">
+    <section ref={sectionRef} className="bg-[#151f4d] text-white">
       <Container borderColor="#FFFFFF33" className="border-t border-[#FFFFFF1A]">
         <div className="relative overflow-hidden py-16 md:py-20 lg:py-24">
           <div
