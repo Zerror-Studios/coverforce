@@ -48,9 +48,9 @@ function RecognitionImageCard({ src, alt }: { src: string; alt: string }) {
 function RecognitionTextCard({ text }: { text: string }) {
   return (
     <article
-      className={`flex overflow-hidden rounded-xl bg-[#1a1f2e] ${CARD_HEIGHT} flex-col justify-end p-6 md:p-8`}
+      className={`flex overflow-hidden rounded-md bg-white ${CARD_HEIGHT} flex-col justify-end p-6 md:p-8`}
     >
-      <p className="font-heading text-2xl font-medium leading-[1.15] tracking-tight text-white sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
+      <p className="font-heading text-2xl font-medium leading-[1.15] tracking-tight text-[#111110] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
         {text}
       </p>
     </article>

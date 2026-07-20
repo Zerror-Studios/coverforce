@@ -195,12 +195,7 @@ export default function MapPoints() {
                   : 'opacity-0 pointer-events-none -translate-x-1/2 translate-y-2'
               }`}
             >
-              <div className="flex items-center gap-4">
-                <div className="size-14 shrink-0 rounded-md bg-[url(/images/contact/thumbnail_cv.jpg)] bg-cover bg-center" />
-                <p className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-[#0a143b] underline underline-offset-4">
-                  CoverForce Inc.
-                </p>
-              </div>
+              <div className="h-28 w-full rounded-md bg-[url(/images/contact/thumbnail_cv.jpg)] bg-cover bg-center sm:h-32" />
 
               <div className="mt-4 flex flex-col gap-2 font-sans text-sm font-regular leading-[1.6] text-[#454545]">
                 <a
@@ -274,12 +269,7 @@ export default function MapPoints() {
                     : 'opacity-0 pointer-events-none -translate-x-1/2 translate-y-2'
                 }`}
               >
-                <div className="flex items-center gap-4">
-                  <div className="size-14 shrink-0 rounded-md bg-[url(/images/contact/thumbnail_cv.jpg)] bg-cover bg-center" />
-                  <p className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-[#0a143b] underline underline-offset-4">
-                    CoverForce Inc.
-                  </p>
-                </div>
+                <div className="h-28 w-full rounded-md bg-[url(/images/denver.avif)] bg-cover bg-top sm:h-32" />
 
                 <div className="mt-4 flex flex-col gap-2 font-sans text-sm font-regular leading-[1.6] text-[#454545]">
                   <div className="flex items-start gap-2">

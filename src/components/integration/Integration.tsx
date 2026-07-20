@@ -2,7 +2,7 @@
 
 import React, { useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { RiSearchEyeLine, RiArrowDownSLine } from "@remixicon/react";
+import { RiSearchEyeLine } from "@remixicon/react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -395,98 +395,70 @@ const Integration = () => {
   );
 
   return (
-    <>
-      <section
-        id="integration"
-        ref={sectionRef}
-        className="relative overflow-hidden text-[#0a143b]"
-      >
-        <Container borderColor="#53535333" borderBottom>
-          <div className="pt-16 md:pt-24">
-            <div
-              ref={headerRef}
-              className="grid gap-8 lg:grid-cols-2 lg:items-end lg:justify-between lg:gap-12"
-            >
-              <div className="flex flex-col justify-end space-y-5">
-                <EyebrowPill surface="light">Universal Integrations Index</EyebrowPill>
-                <h2
-                  ref={headingRef}
-                  className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
-                >
-                  <span data-split>One integration. The entire ecosystem.</span>
-                </h2>
-                <p
-                  ref={descRef}
-                  className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
-                >
-                  The universal index of CoverForce integrations — carriers, AMS,
-                  premium finance, E&amp;S compliance, and AI in one place.
-                </p>
-              </div>
-              <p className="hidden max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:block lg:text-right">
+    <section
+      id="integration"
+      ref={sectionRef}
+      className="relative overflow-hidden bg-[#FBFCFF] text-[#0a143b]"
+    >
+      <Container borderColor="#53535380">
+        <div className="pb-12 pt-16 md:pb-24 md:pt-24">
+          <div
+            ref={headerRef}
+            className="grid gap-8 lg:grid-cols-2 lg:items-end lg:justify-between lg:gap-12"
+          >
+            <div className="flex flex-col justify-end">
+              <EyebrowPill surface="light">Universal Integrations Index</EyebrowPill>
+              <h2
+                ref={headingRef}
+                className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+              >
+                <span data-split>One integration. The entire ecosystem.</span>
+              </h2>
+              <p
+                ref={descRef}
+                className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
+              >
                 The universal index of CoverForce integrations — carriers, AMS,
                 premium finance, E&amp;S compliance, and AI in one place.
               </p>
             </div>
+            <p className="hidden max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:block lg:text-right">
+              The universal index of CoverForce integrations — carriers, AMS,
+              premium finance, E&amp;S compliance, and AI in one place.
+            </p>
+          </div>
 
-            <div className="mt-8 pb-8 lg:hidden">
-              <label htmlFor="integration-tab" className="sr-only">
-                Integration category
-              </label>
-              <div className="relative">
-                <select
-                  id="integration-tab"
-                  value={activeTab}
-                  onChange={(event) => setActiveTab(event.target.value)}
-                  className="w-full appearance-none rounded-lg border border-[#E4E7EE] bg-white px-4 py-3 pr-10 text-sm font-medium text-[#0a143b] outline-none transition-colors focus:border-[#413CC0] focus:ring-1 focus:ring-[#413CC0]/20"
-                >
-                  {TABS.map((tab) => (
-                    <option key={tab.id} value={tab.id}>
-                      {getTabLabel(tab)}
-                    </option>
-                  ))}
-                </select>
-                <RiArrowDownSLine
-                  className="pointer-events-none absolute right-3 top-1/2 size-5 -translate-y-1/2 text-[#667085]"
-                  aria-hidden
-                />
-              </div>
-            </div>
-
-            <div className="mt-10 hidden pb-10 lg:block">
-              <div className="flex flex-wrap justify-between gap-x-10 gap-y-3">
+          <div className="mt-8 pb-8 lg:mt-10 lg:pb-10">
+            <div
+              className="-mx-1 overflow-x-auto overflow-y-hidden pb-1 lg:mx-0 lg:overflow-visible lg:pb-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+              role="tablist"
+              aria-label="Integration category"
+            >
+              <div className="flex w-max gap-2 px-1 lg:w-full lg:justify-between lg:gap-3 lg:px-0">
                 {TABS.map((tab) => {
                   const isActive = tab.id === activeTab;
                   return (
                     <button
                       key={tab.id}
                       type="button"
+                      role="tab"
+                      aria-selected={isActive}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`relative -mb-px pb-3 text-sm font-medium transition-colors ${
+                      className={`shrink-0 rounded-full border px-5 py-2 font-heading text-[0.6875rem] transition-colors md:text-xs ${
                         isActive
-                          ? "text-[#413CC0]"
-                          : "text-[#667085] hover:text-[#0a143b]"
+                          ? "border-[#413CC0] bg-[#FAFBFC] text-[#3834A4]"
+                          : "border-[#E4E7EC] bg-[#FAFBFC] text-[#6B7280] hover:border-[#C8CDD6]"
                       }`}
                     >
                       {getTabLabel(tab)}
-                      <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-[#E4E7EE]" />
-                      <span
-                        className="absolute inset-x-0 -bottom-px h-0.5 origin-left rounded-full bg-[#413CC0] transition-transform duration-500 ease-out"
-                        style={{ transform: `scaleX(${isActive ? 1 : 0})` }}
-                      />
                     </button>
                   );
                 })}
               </div>
             </div>
           </div>
-        </Container>
-      </section>
 
-      <section className="relative overflow-hidden bg-[#FBFCFF] text-[#0a143b]">
-        <Container borderColor="#53535333">
-          <div className="pb-12 pt-8 md:pb-24 md:pt-12">
-            <div className="space-y-5 lg:space-y-3">
+          <div className="space-y-5 lg:space-y-3">
               <div className="flex flex-col gap-5 lg:flex-row lg:flex-wrap lg:items-center lg:gap-3">
                 <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
                   <span className="text-[0.6875rem] font-mono font-medium uppercase tracking-wide text-[#4F4F4F]/80">
@@ -558,7 +530,7 @@ const Integration = () => {
                 ))}
               </div>
             ) : (
-              <div className="mt-8 flex flex-col items-center justify-center rounded-3xl border border-dashed border-[#53535333]/60 bg-[#FBFCFF] px-6 py-20 text-center">
+              <div className="mt-8 flex flex-col items-center justify-center rounded-3xl border border-dashed border-[#53535380]/60 bg-[#FBFCFF] px-6 py-20 text-center">
                 <span className="flex size-14 items-center justify-center rounded-full bg-[#EEF0F9] text-[#2D3E9D]">
                   <RiSearchEyeLine className="size-7" />
                 </span>
@@ -582,10 +554,9 @@ const Integration = () => {
                 </button>
               </div>
             )}
-          </div>
-        </Container>
-      </section>
-    </>
+        </div>
+      </Container>
+    </section>
   );
 };
 

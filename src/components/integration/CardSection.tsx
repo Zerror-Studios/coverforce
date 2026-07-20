@@ -70,7 +70,7 @@ const CardSection = () => {
       ref={sectionRef}
       className="relative overflow-hidden bg-white text-[#0a143b]"
     >
-      <Container borderColor="#53535333">
+      <Container borderColor="#53535380">
         <div className="py-12 md:py-20 lg:py-24">
           <p className="mx-auto max-w-2xl text-center font-sans text-sm font-regular leading-[1.55] text-[#50617a] md:text-base md:leading-[1.6]">
             CoverForce is the universal integrations index for commercial

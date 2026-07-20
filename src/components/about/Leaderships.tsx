@@ -1,12 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useRef, type PointerEvent } from "react";
 import { RiLinkedinFill } from "@remixicon/react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Button from "@/components/common/Button";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import SectionRadialGlow from "@/components/common/SectionRadialGlow";
@@ -145,9 +145,9 @@ function LeaderCard({ leader }: { leader: Leader }) {
 }
 
 function EmptyLeaderCard() {
-  const tiltRef = useRef<HTMLAnchorElement>(null);
+  const tiltRef = useRef<HTMLDivElement>(null);
 
-  const handleTilt = (event: PointerEvent<HTMLAnchorElement>) => {
+  const handleTilt = (event: PointerEvent<HTMLDivElement>) => {
     const card = tiltRef.current;
     if (!card || event.pointerType !== "mouse") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -183,14 +183,12 @@ function EmptyLeaderCard() {
 
   return (
     <article className="leader-member h-full">
-      <Link
+      <div
         ref={tiltRef}
-        href="/careers"
-        aria-label="Explore careers at CoverForce"
         onPointerMove={handleTilt}
         onPointerLeave={resetTilt}
         onBlur={resetTilt}
-        className="relative block aspect-[248/366] w-full overflow-hidden rounded-md transform-gpu will-change-transform focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#151f4d]"
+        className="relative block aspect-[248/366] w-full overflow-hidden rounded-md transform-gpu will-change-transform"
         style={{ background: LEADER_CARD_BG }}
       >
         <SectionRadialGlow className="absolute left-1/2 top-1/2 !w-[130%] -translate-x-1/2 -translate-y-1/2 opacity-75" />
@@ -203,8 +201,11 @@ function EmptyLeaderCard() {
           <p className="mt-6 max-w-xs font-sans text-sm leading-snug text-white/90">
             Join us in creating great work. Share your resume.
           </p>
+          <Button href="/careers" surface="on-dark" size="sm" className="mt-6">
+            Join Now
+          </Button>
         </div>
-      </Link>
+      </div>
     </article>
   );
 }
@@ -304,7 +305,7 @@ const Leaderships = () => {
           transform: translate3d(0, 0, 0) scale(1);
         }
       `}</style>
-      <Container borderColor="#53535380" borderBottom>
+      <Container borderColor="#53535380">
         <div className="py-20 md:py-24 lg:py-28">
           <div
             ref={headerRef}

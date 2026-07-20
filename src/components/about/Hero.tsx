@@ -105,7 +105,7 @@ const Hero = () => {
         className="relative h-full w-full overflow-hidden will-change-transform"
       >
         <Image
-          src="/images/about/about.avif"
+          src="/images/about/about.webp"
           alt="about-hero"
           fill
           priority

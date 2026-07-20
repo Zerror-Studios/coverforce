@@ -68,7 +68,7 @@ const Hero = () => {
           </HeroReveal>
 
           <HeroReveal
-            className="relative z-10 mx-auto -mt-10 w-full max-w-6xl px-4 pb-16 md:-mt-16 md:pb-20 lg:-mt-20 lg:max-w-7xl lg:pb-24"
+            className="relative z-10 mx-auto -mt-10 w-full max-w-6xl px-4 pb-16 md:-mt-28 md:pb-20 lg:-mt-36 lg:max-w-7xl lg:pb-24"
             delay={0.75}
           >
             <div className="relative mx-auto w-full md:hidden">
