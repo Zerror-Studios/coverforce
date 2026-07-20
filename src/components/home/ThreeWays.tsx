@@ -143,14 +143,7 @@ const WAY_CARDS: WayCardConfig[] = [
   },
   {
     label: "Startups",
-    tagline: (
-      <>
-        The faster way to build
-        <br className="md:hidden" />
-        <span className="hidden md:inline"> </span>
-        a modern brokerage
-      </>
-    ),
+    tagline: "Launch your brokerage faster",
     variant: "dark",
     compact: true,
     background: "startup",
