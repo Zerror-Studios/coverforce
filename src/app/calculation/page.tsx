@@ -1,6 +1,5 @@
 "use client";
 
-import CompanyBar from "@/components/calculator/CompanyBar";
 import Sidebar from "@/components/calculator/Sidebar";
 import Tabs from "@/components/calculator/Tabs";
 import PageWrapper from "@/components/PageWrapper";
@@ -33,11 +32,6 @@ export default function CalculationPage() {
             setPersonalLobPct={setPersonalLobPct}
           />
           <div className="flex min-w-0 flex-1 flex-col gap-5">
-            <CompanyBar
-              inputs={inputs}
-              updateInput={updateInput}
-              results={results}
-            />
             <Tabs results={results} />
           </div>
         </div>

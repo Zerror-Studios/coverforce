@@ -9,6 +9,7 @@ import ProductivityTab from "./tabs/ProductivityTab";
 import BuildVsBuyTab from "./tabs/BuildVsBuyTab";
 import InactionTab from "./tabs/InactionTab";
 import FullModelTab from "./tabs/FullModelTab";
+import TabSummaryCard from "./TabSummaryCard";
 import { Map, TrendingUp, RefreshCw, Zap, Scale, Coins, Table } from "lucide-react";
 
 interface Props {
@@ -94,7 +95,7 @@ export default function Tabs({ results }: Props) {
         </div>
       </div>
 
-      <div className="tab-content" role="tabpanel">
+      <div className="tab-content flex flex-col gap-5 md:gap-6" role="tabpanel">
         {activeTab === "revmap" && <RevenueMapTab results={results} />}
         {activeTab === "overview" && <OverviewTab results={results} />}
         {activeTab === "compounding" && <CompoundingTab results={results} />}
@@ -102,6 +103,7 @@ export default function Tabs({ results }: Props) {
         {activeTab === "buildvbuy" && <BuildVsBuyTab results={results} />}
         {activeTab === "inaction" && <InactionTab results={results} />}
         {activeTab === "model" && <FullModelTab results={results} />}
+        <TabSummaryCard results={results} />
       </div>
     </div>
   );

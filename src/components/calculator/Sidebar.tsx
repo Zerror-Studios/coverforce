@@ -213,6 +213,19 @@ export default function Sidebar({
 
   return (
     <aside className="flex w-full shrink-0 flex-col rounded-xl border border-[#E8E8EC] bg-white p-4 print:w-full md:sticky md:top-24 md:w-[260px] md:self-start md:p-5 lg:w-[280px]">
+      <div className="mb-4 border-b border-[#535353]/10 pb-4">
+        <ControlLabel>Company</ControlLabel>
+        <div className={calcInputWrap}>
+          <input
+            type="text"
+            className="w-full border-none bg-transparent px-3 py-2.5 font-heading text-sm font-medium text-[#444444] outline-none placeholder:text-[#8A8A8A]"
+            placeholder="Company name"
+            value={inputs.companyName}
+            onChange={(e) => updateInput("companyName", e.target.value)}
+          />
+        </div>
+      </div>
+
       <div className="mb-4 space-y-4 border-b border-[#535353]/10 pb-4">
         <div>
           <span className={calcLabel}>Company size</span>
