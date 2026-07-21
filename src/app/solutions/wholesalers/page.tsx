@@ -15,7 +15,7 @@ export const metadata = createPageMetadata('/solutions/wholesalers')
       <PageWrapper>
         <Hero />
         <OperatingSystem />
-        <Workflow />
+        <Workflow coverforceBackground="wholesaler" />
         <WhyCoverforce paddingTop={true} />
         <Review />
         <CarrierResults />

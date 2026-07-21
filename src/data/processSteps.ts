@@ -9,6 +9,7 @@ export type ProcessStep = {
   tag: string;
   heading: string;
   points: ProcessStepPoint[];
+  videoSrc: string;
 };
 
 export const processSteps: ProcessStep[] = [
@@ -31,6 +32,7 @@ export const processSteps: ProcessStep[] = [
         text: "Customer details are saved and reused for future submissions.",
       },
     ],
+    videoSrc: "/videos/process-video.mp4",
   },
   {
     id: "step-02",
@@ -41,6 +43,7 @@ export const processSteps: ProcessStep[] = [
       { id: "p2", text: "Classification codes and underwriting answers are mapped intelligently." },
       { id: "p3", text: "Intelligent prefill completes applications across carrier formats — using 350k+ datapoints." },
     ],
+    videoSrc: "/videos/process-video.mp4",
   },
   {
     id: "step-03",
@@ -51,6 +54,7 @@ export const processSteps: ProcessStep[] = [
       { id: "p2", text: "Carrier-specific questions and requirements are handled automatically." },
       { id: "p3", text: "No portal logins, repeated typing, or switching between carrier websites." },
     ],
+    videoSrc: "/videos/process-video.mp4",
   },
   {
     id: "step-04",
@@ -61,6 +65,7 @@ export const processSteps: ProcessStep[] = [
       { id: "p2", text: "Compare premium, deductible, limits, coverage, and quote status clearly." },
       { id: "p3", text: "Generate customer-ready quote proposals in seconds." },
     ],
+    videoSrc: "/videos/process-video.mp4",
   },
   {
     id: "step-05",
@@ -71,5 +76,6 @@ export const processSteps: ProcessStep[] = [
       { id: "p2", text: "Complete payment and premium finance inside the same workflow." },
       { id: "p3", text: "Policy documents are delivered instantly after binding." },
     ],
+    videoSrc: "/videos/process-video.mp4",
   },
 ];

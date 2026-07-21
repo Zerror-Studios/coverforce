@@ -144,12 +144,6 @@ const POSTS: ListedPost[] = buildDemoCatalog();
 const FILTERS = ["All", "Insights", "Case Study", "News"] as const;
 type Filter = (typeof FILTERS)[number];
 
-/** Fixed page layout: 3 / 2 / 3 across a 6-col grid. */
-function getPageGridSpan(index: number): "lg:col-span-2" | "lg:col-span-3" {
-  if (index >= 3 && index <= 4) return "lg:col-span-3";
-  return "lg:col-span-2";
-}
-
 function CategoryPill({ label }: { label: Category }) {
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0801140a] px-2.5 py-1 font-mono text-[0.625rem] font-medium uppercase tracking-[0.12em] text-[#0a143b]">
@@ -159,11 +153,11 @@ function CategoryPill({ label }: { label: Category }) {
   );
 }
 
-function BlogCard({ post, index }: { post: ListedPost; index: number }) {
+function BlogCard({ post }: { post: ListedPost }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className={`group flex flex-col ${getPageGridSpan(index)}`}
+      className="group flex flex-col"
     >
       <div className="relative w-full overflow-hidden rounded-md bg-[#F7F7FB]">
         <div className="relative aspect-video w-full">
@@ -413,9 +407,9 @@ const Listing = () => {
 
           {filteredPosts.length > 0 ? (
             <>
-              <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:mt-12 lg:grid-cols-6">
-                {pagedPosts.map((post, index) => (
-                  <BlogCard key={post.listKey} post={post} index={index} />
+              <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:mt-12 lg:grid-cols-3">
+                {pagedPosts.map((post) => (
+                  <BlogCard key={post.listKey} post={post} />
                 ))}
               </div>
 

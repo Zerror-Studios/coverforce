@@ -7,9 +7,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
-import { CARD_BACKGROUND_STYLES } from "@/data/wayCardStyles";
+import { CARD_BACKGROUND_STYLES, type CardBackground } from "@/data/wayCardStyles";
 
 gsap.registerPlugin(ScrollTrigger);
+
+type WorkflowProps = {
+  coverforceBackground?: CardBackground;
+};
+
 type ComparisonItem = {
   title: string;
   description: string;
@@ -54,9 +59,11 @@ const coverforceItems: ComparisonItem[] = [
 function ComparisonPanel({
   tone,
   items,
+  coverforceBackground = "broker",
 }: {
   tone: "today" | "coverforce";
   items: ComparisonItem[];
+  coverforceBackground?: CardBackground;
 }) {
   const isToday = tone === "today";
 
@@ -64,7 +71,8 @@ function ComparisonPanel({
     <div
       className={`workflow-comparison-card flex min-h-[28rem] flex-col rounded-md px-6 py-8 sm:min-h-[32rem] sm:px-8 sm:py-10 md:min-h-[36rem] md:px-10 md:py-12 lg:min-h-[40rem] ${
         isToday ? "bg-[#F5F5F7]" : ""
-      }`}      style={isToday ? undefined : { background: CARD_BACKGROUND_STYLES.broker }}
+      }`}
+      style={isToday ? undefined : { background: CARD_BACKGROUND_STYLES[coverforceBackground] }}
     >
       <EyebrowPill
         surface={isToday ? "light" : "dark"}
@@ -99,7 +107,7 @@ function ComparisonPanel({
   );
 }
 
-const Workflow = () => {
+const Workflow = ({ coverforceBackground = "broker" }: WorkflowProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -125,15 +133,14 @@ const Workflow = () => {
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       if (reducedMotion) {
-        gsap.set(cards, { opacity: 1, rotateY: 0, clearProps: "transform" });
+        gsap.set(cards, { opacity: 1, x: 0 });
         return;
       }
 
-      cards.forEach((card, index) => {
+      cards.forEach((card) => {
         gsap.set(card, {
           opacity: 0,
-          rotateY: index === 0 ? 75 : -75,
-          transformOrigin: index === 0 ? "left center" : "right center",
+          x: 96,
         });
       });
 
@@ -148,11 +155,10 @@ const Workflow = () => {
 
       revealTl.to(cards, {
         opacity: 1,
-        rotateY: 0,
+        x: 0,
         duration: 0.85,
         ease: "power3.out",
         stagger: 0.14,
-        clearProps: "transform",
       });
 
       const lenis = window.lenis;
@@ -211,9 +217,14 @@ const Workflow = () => {
 
           <div
             ref={cardsGridRef}
-            className="grid gap-4 [perspective:1200px] lg:grid-cols-2 lg:gap-5"
-          >            <ComparisonPanel tone="today" items={todayItems} />
-            <ComparisonPanel tone="coverforce" items={coverforceItems} />
+            className="grid gap-4 overflow-hidden lg:grid-cols-2 lg:gap-5"
+          >
+            <ComparisonPanel tone="today" items={todayItems} />
+            <ComparisonPanel
+              tone="coverforce"
+              items={coverforceItems}
+              coverforceBackground={coverforceBackground}
+            />
           </div>
         </div>
       </Container>

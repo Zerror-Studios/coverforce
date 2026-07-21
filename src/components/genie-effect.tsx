@@ -661,6 +661,7 @@ export default function GenieEffect() {
   const doOpen = useCallback(
     (idx: number) => {
       if (stateRef.current.phase !== "idle") return;
+      windowRef.current = null;
       const wp = getWinPos();
       setupCanvas();
       stateRef.current = { phase: "opening", activeApp: idx };
@@ -685,37 +686,64 @@ export default function GenieEffect() {
     [getWinPos, setupCanvas, startAnim, clearCanvas],
   );
 
-  const doMinimize = useCallback(() => {
-    const { phase: p, activeApp: a } = stateRef.current;
-    if (p !== "open" || a === null) return;
+  const doMinimize = useCallback(
+    (onComplete?: () => void) => {
+      const { phase: p, activeApp: a } = stateRef.current;
+      if (p !== "open" || a === null) return;
 
-    const cvs = canvasRef.current;
-    if (cvs) cvs.style.zIndex = "50";
+      const cvs = canvasRef.current;
+      if (cvs) cvs.style.zIndex = "50";
 
-    setupCanvas();
-    const dock = getDockCenter(a);
-    const win = getWinPos();
-    const { w: cw, h: ch } = getContainerSize();
-    const ctx = cvs?.getContext("2d");
-    if (ctx && cvs) {
-      renderGenie(ctx, offRef.current[a], cw, ch, 0, "minimize", dock, win);
-    }
+      setupCanvas();
+      const dock = getDockCenter(a);
+      const win = getWinPos();
+      const { w: cw, h: ch } = getContainerSize();
+      const ctx = cvs?.getContext("2d");
+      if (ctx && cvs) {
+        renderGenie(ctx, offRef.current[a], cw, ch, 0, "minimize", dock, win);
+      }
 
-    if (windowRef.current) {
-      windowRef.current.style.opacity = "0";
-      windowRef.current.style.pointerEvents = "none";
-    }
+      if (windowRef.current) {
+        windowRef.current.style.opacity = "0";
+        windowRef.current.style.pointerEvents = "none";
+      }
 
-    stateRef.current.phase = "closing";
-    setPhase("closing");
+      stateRef.current.phase = "closing";
+      setPhase("closing");
 
-    startAnim("minimize", a, () => {
-      stateRef.current = { phase: "idle", activeApp: null };
-      setPhase("idle");
-      setActiveApp(null);
-      clearCanvas();
-    });
-  }, [setupCanvas, getDockCenter, getWinPos, getContainerSize, startAnim, clearCanvas]);
+      startAnim("minimize", a, () => {
+        stateRef.current = { phase: "idle", activeApp: null };
+        setPhase("idle");
+        setActiveApp(null);
+        windowRef.current = null;
+        clearCanvas();
+        onComplete?.();
+      });
+    },
+    [setupCanvas, getDockCenter, getWinPos, getContainerSize, startAnim, clearCanvas],
+  );
+
+  const handleDockClick = useCallback(
+    (idx: number) => {
+      const { phase: p, activeApp: a } = stateRef.current;
+
+      if (p === "opening" || p === "closing") return;
+
+      if (p === "idle") {
+        doOpen(idx);
+        return;
+      }
+
+      if (p === "open" && a !== null) {
+        if (a === idx) {
+          doMinimize();
+          return;
+        }
+        doMinimize(() => doOpen(idx));
+      }
+    },
+    [doOpen, doMinimize],
+  );
 
   useEffect(() => {
     return () => {
@@ -854,7 +882,7 @@ export default function GenieEffect() {
             isAnimating={isAnimating}
             snapshotsReady={snapshotsReady}
             dockRefs={dockRefs}
-            onOpen={doOpen}
+            onOpen={handleDockClick}
           />
         </>
       )}

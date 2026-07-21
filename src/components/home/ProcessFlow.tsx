@@ -19,11 +19,28 @@ function ProcessPoint({ text }: { text: string }) {
     );
 }
 
+function ProcessStepVideo({ src, label }: { src: string; label: string }) {
+    return (
+        <div className="relative aspect-square w-full overflow-hidden">
+            <video
+                src={src}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                className="absolute inset-0 h-full w-full border-0 object-cover object-center outline-none"
+                aria-label={label}
+            />
+        </div>
+    );
+}
+
 function MobileProcessFlow() {
     return (
         <div className="flex flex-col gap-16 py-12 lg:hidden">
             {processSteps.map((step, index) => (
-                <div key={index} className="flex flex-col">
+                <div key={step.id} className="flex flex-col">
                     <div className="w-fit">
                         <EyebrowPill surface="light">{step.tag}</EyebrowPill>
                     </div>
@@ -58,14 +75,13 @@ const ProcessFlow = () => {
             <Container borderColor="#53535380">
                 <MobileProcessFlow />
 
-                <div className="hidden gap-12 pb-16 md:pb-20 lg:grid lg:grid-cols-2 lg:gap-16 lg:pb-24 xl:gap-20">
-                    {/* Left: normal scroll steps */}
-                    <div className="relative flex flex-col">
-                        {processSteps.map((step, index) => (
-                            <div
-                                key={index}
-                                className={`flex flex-col justify-center ${index === 0 ? "" : "pt-16 lg:pt-20"} ${index === processSteps.length - 1 ? "" : "pb-16 lg:pb-20"}`}
-                            >
+                <div className="hidden flex-col pb-16 md:pb-20 lg:flex lg:pb-24">
+                    {processSteps.map((step, index) => (
+                        <div
+                            key={step.id}
+                            className={`grid items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20 ${index === 0 ? "" : "pt-16 lg:pt-20"} ${index === processSteps.length - 1 ? "" : "pb-16 lg:pb-20"}`}
+                        >
+                            <div className="flex flex-col justify-center">
                                 <div className="w-fit">
                                     <EyebrowPill surface="light" className="mb-0" dotAttr={`step-${index}`}>
                                         {step.tag}
@@ -80,24 +96,10 @@ const ProcessFlow = () => {
                                     ))}
                                 </ul>
                             </div>
-                        ))}
-                    </div>
 
-                    {/* Right: sticky video slot — centered below header */}
-                    <div className="sticky top-16 flex h-[calc(100svh-4rem)] items-center justify-center self-start">
-                        <div className="relative aspect-square w-full overflow-hidden">
-                            <video
-                                src="/videos/process-video.mp4"
-                                autoPlay
-                                muted
-                                loop
-                                playsInline
-                                preload="metadata"
-                                className="absolute inset-0 h-full w-full border-0 object-cover object-center outline-none"
-                                aria-label="Process flow demo"
-                            />
+                            <ProcessStepVideo src={step.videoSrc} label={step.heading} />
                         </div>
-                    </div>
+                    ))}
                 </div>
             </Container>
         </section>

@@ -51,15 +51,24 @@ export default function SolutionHeroCards({
 
       const updateCards = (
         progress: number,
-        config: { baseY: number; startY: number; startX: number; startCenterY: number },
+        config: {
+          baseY: number;
+          startY: number;
+          startX: number;
+          startCenterY: number;
+          cardOneStartX: number;
+          cardOneStartY: number;
+        },
       ) => {
         const baseY = progress * config.baseY;
         const extraY = gsap.utils.interpolate(config.startY, 0, progress);
         const extraX = gsap.utils.interpolate(config.startX, 0, progress);
         const centerY = gsap.utils.interpolate(config.startCenterY, 0, progress);
+        const cardOneX = gsap.utils.interpolate(config.cardOneStartX, 0, progress);
+        const cardOneY = gsap.utils.interpolate(config.cardOneStartY, 0, progress);
 
         gsap.set(root, { y: centerY });
-        gsap.set(cardOneEl, { x: 0, y: baseY });
+        gsap.set(cardOneEl, { x: cardOneX, y: baseY + cardOneY });
         gsap.set(cardTwoEl, { x: extraX, y: baseY + extraY });
       };
 
@@ -76,9 +85,11 @@ export default function SolutionHeroCards({
           onUpdate: (self) =>
             updateCards(self.progress, {
               baseY: 64,
-              startY: 176,
-              startX: -56,
+              startY: 128,
+              startX: -48,
               startCenterY: -92,
+              cardOneStartX: 32,
+              cardOneStartY: 24,
             }),
         });
 
@@ -94,7 +105,14 @@ export default function SolutionHeroCards({
         };
         lenis?.on("scroll", onLenisScroll);
 
-        updateCards(0, { baseY: 64, startY: 176, startX: -56, startCenterY: -92 });
+        updateCards(0, {
+          baseY: 64,
+          startY: 128,
+          startX: -48,
+          startCenterY: -92,
+          cardOneStartX: 32,
+          cardOneStartY: 24,
+        });
 
         return () => {
           trigger.kill();
@@ -112,13 +130,22 @@ export default function SolutionHeroCards({
           onUpdate: (self) =>
             updateCards(self.progress, {
               baseY: 32,
-              startY: 88,
-              startX: -28,
+              startY: 64,
+              startX: -24,
               startCenterY: -44,
+              cardOneStartX: 16,
+              cardOneStartY: 12,
             }),
         });
 
-        updateCards(0, { baseY: 32, startY: 88, startX: -28, startCenterY: -44 });
+        updateCards(0, {
+          baseY: 32,
+          startY: 64,
+          startX: -24,
+          startCenterY: -44,
+          cardOneStartX: 16,
+          cardOneStartY: 12,
+        });
 
         return () => {
           trigger.kill();
@@ -134,7 +161,7 @@ export default function SolutionHeroCards({
   return (
     <div
       ref={rootRef}
-      className="relative mx-auto w-full max-w-[min(100%,420px)] pb-16 will-change-transform sm:pb-20 md:pb-16"
+      className="relative mx-auto w-full max-w-[min(100%,420px)] pb-12 will-change-transform sm:pb-16 md:pb-14"
     >
       <div ref={cardOneRef} className="relative z-10 w-full will-change-transform">
         <Image
@@ -148,7 +175,7 @@ export default function SolutionHeroCards({
       </div>
       <div
         ref={cardTwoRef}
-        className="relative z-20 -ml-8 mt-10 w-[94%] max-w-[360px] will-change-transform sm:-ml-10 sm:mt-12 md:absolute md:bottom-0 md:-left-4 md:mt-0 md:w-[88%] lg:-left-6 lg:w-[86%]"
+      className="relative z-20 -ml-8 mt-6 w-[94%] max-w-[360px] will-change-transform sm:-ml-10 sm:mt-8 md:absolute md:bottom-2 md:-left-4 md:mt-0 md:w-[88%] lg:-left-6 lg:w-[86%]"
       >
         <Image
           src={cardTwo.src}

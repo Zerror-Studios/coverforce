@@ -7,9 +7,9 @@
  *    container borders (3 left, 2 right) and peel into each card's EyebrowPill,
  *    turning white and handing off to the pill dot.
  *
- *  Phase 2 (ProcessFlow, lg+ only): dots drop from above onto the Container
- *    left border as the section enters; further scroll peels each into its
- *    step pill — white handoff to the pill dot. Skipped below lg.
+ *  Phase 2 (ProcessFlow, lg+ only): dots drop onto the Container left border
+ *    at the top of the section (clustered, not spread); each peels into its
+ *    step EyebrowPill as that step scrolls into view.
  *
  * All positions/targets are measured live every frame so the dots track the page.
  */
@@ -25,11 +25,12 @@ const PARK_GAP = 0.06;
 // ThreeWays: pill viewport position (height fractions) over which the dot travels.
 const PEEL_START = 1.12;
 const PEEL_END = 0.48;
-// ProcessFlow: drop from above onto the Container left border, then peel to pills.
+// ProcessFlow: drop onto the top of the left border, then peel into step pills.
 const PF_DROP_START = 1.05; // section top vs vh — drop begins
-const PF_DROP_END = 0.55; // section top vs vh — all parked on the border
-const PF_PEEL_START = 0.58;
-const PF_PEEL_END = 0.32;
+const PF_DROP_END = 0.72; // section top vs vh — all parked at the top cluster
+const PF_PEEL_START = 0.72; // pill center vs vh — peel begins
+const PF_PEEL_END = 0.38; // pill center vs vh — peel completes
+const PF_TOP_CLUSTER_GAP = 14; // px between dots while waiting at the top
 const PF_DOT_COLOR = "#FFFFFF";
 const PF_DOT_COUNT = 5;
 
@@ -106,8 +107,8 @@ export default function HeroToCardsDots() {
           }
 
           // ── Phase 2: ProcessFlow ──────────────────────────────────────────
-          // 1) Section enters → dots fall from above onto the Container left border.
-          // 2) Further scroll → each peels to its step pill as that step arrives.
+          // 1) Section enters → dots drop onto the top of the left border (clustered).
+          // 2) As each step's EyebrowPill scrolls in, that dot peels into the pill.
           const targetEl = pf?.querySelector<HTMLElement>(`[data-card-dot="step-${i}"]`);
           const target = targetEl?.getBoundingClientRect();
           if (!target || !targetEl || (target.width === 0 && target.height === 0)) {
@@ -118,13 +119,11 @@ export default function HeroToCardsDots() {
           // Same left edge ThreeWays uses — Container dotted border.
           const lineX = pfCont.left;
 
-          // Park slots spaced along the viewport on that border so all 5 show at once.
-          const railTop = vh * 0.18;
-          const railBottom = vh * 0.82;
-          const parkT = PF_DOT_COUNT <= 1 ? 0.5 : i / (PF_DOT_COUNT - 1);
-          const parkY = gsap.utils.interpolate(railTop, railBottom, parkT);
+          // Keep all dots at the top of the section — no vertical spread down the border.
+          const parkY = gsap.utils.clamp(pfRect.top + 48, vh * 0.12, vh * 0.22);
+          const clusterY = parkY + i * PF_TOP_CLUSTER_GAP;
 
-          // Drop from above → park, staggered so they cascade like the same dots arriving.
+          // Drop from slightly above → top cluster, staggered cascade.
           const dropRaw = pfRect
             ? gsap.utils.clamp(
                 0,
@@ -137,13 +136,13 @@ export default function HeroToCardsDots() {
           const drop = gsap.utils.clamp(0, 1, (dropRaw - dropStagger) / (1 - dropStagger * 0.85));
           const dropE = ease(drop);
 
-          const startY = -0.08 * vh - i * 18; // above the viewport, slight cascade
-          const settledY = startY + (parkY - startY) * dropE;
+          const startY = clusterY - 0.1 * vh - i * 12;
+          const settledY = startY + (clusterY - startY) * dropE;
 
           const tx = target.left + target.width / 2;
           const ty = target.top + target.height / 2;
 
-          // Peel only after the drop has mostly settled, when this step's pill rises.
+          // Peel when this step's pill reaches the handoff zone.
           const peelRaw = gsap.utils.clamp(
             0,
             1,

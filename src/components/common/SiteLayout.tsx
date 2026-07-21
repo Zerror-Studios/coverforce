@@ -35,6 +35,7 @@ function SiteLayoutInner({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { enabled: introEnabled, phase } = useHomeIntro();
   const hideChrome = introEnabled && isPreNavIntroPhase(phase);
+  const hideFooter = pathname === "/contact";
   const pageBg = getPageTransitionBg(pathname);
 
   useEffect(() => {
@@ -66,7 +67,7 @@ function SiteLayoutInner({ children }: { children: ReactNode }) {
         >
           <main className="relative w-full">{children}</main>
 
-          {!hideChrome ? (
+          {!hideChrome && !hideFooter ? (
             <footer className="relative w-full">
               <Footer />
             </footer>

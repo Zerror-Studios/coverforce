@@ -1,16 +1,45 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
+import dynamic from "next/dynamic";
 import Container from "@/components/common/Container";
+import EyebrowPill from "@/components/common/EyebrowPill";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
-import Image from "next/image";
+import { CARD_BACKGROUND_STYLES, type CardBackground } from "@/data/wayCardStyles";
+
+const WholesalerMock = dynamic(() => import("@/components/home/WholesalerMock"), {
+  loading: () => <MockPlaceholder />,
+});
+
+const BrokerMockWithCardHover = dynamic(
+  () => import("@/components/home/BrokerMock").then((m) => ({ default: m.BrokerMockWithCardHover })),
+  { loading: () => <MockPlaceholder /> },
+);
+
+const StartupRecentActivityCard = dynamic(
+  () => import("@/components/solutions/startups/StartupRecentActivityCard"),
+  { loading: () => <MockPlaceholder /> },
+);
+
+function MockPlaceholder({ className = "max-w-[250px] sm:max-w-[290px]" }: { className?: string }) {
+  return (
+    <div
+      className={`mx-auto h-[240px] w-full animate-pulse rounded-2xl bg-white/10 sm:h-[280px] md:h-[260px] ${className}`}
+      aria-hidden
+    />
+  );
+}
 
 type LaunchStep = {
   id: string;
   label: string;
   title: string;
   description: string;
-  image: string;
+  cardTagline: string;
+  background: CardBackground;
+  mock: ReactNode;
+  backgroundScene?: ReactNode;
+  mockShiftDown?: boolean;
 };
 
 const launchSteps: LaunchStep[] = [
@@ -19,23 +48,85 @@ const launchSteps: LaunchStep[] = [
     label: "STEP 01",
     title: "Get Licensed",
     description: "Secure producer and entity licenses with guided checklists.",
-    image: "/images/startups/step1.png",
+    cardTagline: "Grow distribution efficiently",
+    background: "wholesaler",
+    mockShiftDown: true,
+    mock: <WholesalerMock />,
   },
   {
     id: "appointments",
     label: "STEP 02",
     title: "Access the Market",
     description: "Accelerate carrier appointments through our partner network.",
-    image: "/images/startups/step2.png",
+    cardTagline: "One workflow for every producer",
+    background: "broker",
+    mockShiftDown: true,
+    mock: <BrokerMockWithCardHover />,
   },
   {
     id: "api",
     label: "STEP 03",
     title: "Connect the API",
     description: "Plug into CoverForce and start quoting in days, not months.",
-    image: "/images/startups/step3.png",
+    cardTagline: "Be present at the moment agents quote",
+    background: "carrier",
+    mockShiftDown: true,
+    mock: (
+      <div className="w-full max-md:mt-10 max-md:sm:mt-12">
+        <StartupRecentActivityCard />
+      </div>
+    ),
   },
 ];
+
+type LaunchPreviewCardProps = {
+  step: LaunchStep;
+};
+
+function LaunchPreviewCard({ step }: LaunchPreviewCardProps) {
+  return (
+    <article className="launch-preview-card way-card-shell relative w-full text-white max-md:aspect-[4/5] max-md:min-h-0 [contain-intrinsic-size:auto_530px] md:min-h-[22rem] md:aspect-[580/530]">
+      <div
+        className="way-card-body absolute inset-0 overflow-hidden rounded-md"
+        style={{ background: CARD_BACKGROUND_STYLES[step.background] }}
+      >
+        {step.backgroundScene ? (
+          <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden" aria-hidden>
+            {step.backgroundScene}
+          </div>
+        ) : null}
+      </div>
+
+      <div
+        className={`way-card-mock pointer-events-none absolute inset-0 z-10 flex items-center justify-center p-4 sm:p-5 md:p-6 ${
+          step.mockShiftDown ? "max-md:pt-[5.75rem] max-md:sm:pt-24 md:pt-28 lg:pt-32" : "max-md:pt-[5.75rem] max-md:sm:pt-24"
+        }`}
+      >
+        <div
+          className={`relative mx-auto flex h-full w-full max-w-full items-center justify-center max-md:scale-[0.82] max-md:origin-top ${
+            step.mockShiftDown ? "md:items-center md:justify-center" : "md:items-end md:justify-center md:pb-4"
+          }`}
+        >
+          {step.mock}
+        </div>
+      </div>
+
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 p-4 sm:p-5 md:p-8">
+        <EyebrowPill
+          surface="dark"
+          background="#FFFFFF"
+          dotColor="#151f4d"
+          className="text-[#151f4d]!"
+        >
+          {step.title}
+        </EyebrowPill>
+        <p className="mt-4 max-w-[13rem] text-left font-heading text-lg font-medium leading-[1.12] tracking-tight text-white max-md:sm:text-xl sm:max-w-xs sm:text-3xl md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
+          {step.cardTagline}
+        </p>
+      </div>
+    </article>
+  );
+}
 
 const Launch = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -44,7 +135,7 @@ const Launch = () => {
   const descRef = useRef<HTMLParagraphElement>(null);
 
   const [activeStep, setActiveStep] = useState(0);
-  const active = launchSteps[activeStep];
+  const active = launchSteps[activeStep]!;
 
   useSectionHeaderReveal({
     scopeRef: sectionRef,
@@ -55,6 +146,27 @@ const Launch = () => {
 
   return (
     <section id="launch" ref={sectionRef} className="bg-white text-[#0a143b]">
+      <style>{`
+        .launch-preview-card.way-card-shell {
+          --way-card-hover-scale: 1.02;
+          border-radius: 0.375rem;
+          clip-path: inset(4px 4.798048790430439px 4px 4.798048790430439px round 0.375rem);
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+          @media (hover: hover) {
+            .launch-preview-card.way-card-shell:hover {
+              clip-path: inset(4px 4.798048790430439px 4px 4.798048790430439px round 0.375rem);
+            }
+          }
+        }
+
+        .launch-preview-card .way-card-body {
+          transition: transform 800ms cubic-bezier(0.165, 0.84, 0.44, 1);
+          transform: translate3d(0, 0, 0) scale(1);
+        }
+      `}</style>
+
       <Container borderColor="#53535380">
         <div ref={headerRef} className="space-y-3 py-10 lg:hidden">
           <h2
@@ -72,7 +184,7 @@ const Launch = () => {
           </p>
         </div>
 
-        {/* Mobile: step → image, stacked */}
+        {/* Mobile: step → card, stacked */}
         <div className="flex flex-col gap-12 pb-10 lg:hidden">
           {launchSteps.map((step) => (
             <div key={step.id} className="flex flex-col gap-5">
@@ -88,20 +200,12 @@ const Launch = () => {
                 </p>
               </div>
 
-              <div className="w-full overflow-hidden rounded-md bg-[#F5F7FA]">
-                <Image
-                  className="h-auto w-full object-contain"
-                  src={step.image}
-                  alt={step.title}
-                  width={1200}
-                  height={900}
-                />
-              </div>
+              <LaunchPreviewCard step={step} />
             </div>
           ))}
         </div>
 
-        {/* Desktop: click tabs to switch image */}
+        {/* Desktop: click tabs to switch card */}
         <div className="hidden grid-cols-7 items-stretch gap-16 py-24 xl:gap-23 lg:grid">
           <div className="flex h-full min-h-0 flex-col lg:col-span-3">
             <div className="shrink-0 space-y-5">
@@ -177,31 +281,9 @@ const Launch = () => {
             role="tabpanel"
             id="launch-panel"
             aria-labelledby={`launch-tab-${active.id}`}
-            className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-md bg-[#F5F7FA] lg:col-span-4"
+            className="flex h-full min-h-0 w-full flex-col lg:col-span-4"
           >
-            <div className="relative h-full w-full">
-              {launchSteps.map((step, index) => (
-                <div
-                  key={step.id}
-                  className={`transition-opacity duration-500 ease-out ${
-                    activeStep === index
-                      ? "relative h-full opacity-100"
-                      : "pointer-events-none absolute inset-0 opacity-0"
-                  }`}
-                  aria-hidden={activeStep !== index}
-                >
-                  <Image
-                    className="h-auto w-full object-contain"
-                    src={step.image}
-                    alt={step.title}
-                    width={1200}
-                    height={900}
-                    sizes="(max-width: 1024px) 100vw, 55vw"
-                    priority={index === 0}
-                  />
-                </div>
-              ))}
-            </div>
+            <LaunchPreviewCard key={active.id} step={active} />
           </div>
         </div>
       </Container>
