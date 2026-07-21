@@ -98,12 +98,12 @@ function NavItem({
     <button
       type="button"
       onClick={onClick}
-      className={`flex w-full items-center gap-2.5 py-2 text-left font-heading text-[0.9375rem] font-regular leading-none tracking-normal transition-colors duration-300 ${
+      className={`relative flex w-full items-center gap-2.5 py-2 text-left font-heading text-[0.9375rem] font-regular leading-none tracking-normal transition-colors duration-300 lg:gap-0 lg:pl-[0.8125rem] ${
         active ? "text-white" : "text-white/35 hover:text-white/55"
       }`}
     >
       <span
-        className={`size-1.5 shrink-0 rounded-full transition-colors duration-300 lg:-translate-x-1/2 ${
+        className={`size-1.5 shrink-0 rounded-full transition-colors duration-300 lg:absolute lg:left-0 lg:top-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2 ${
           active ? "bg-white" : "bg-transparent"
         }`}
         aria-hidden
@@ -294,8 +294,8 @@ const DemoSteps = () => {
 
           {/* Desktop: sticky nav + scroll panels */}
           <div className="hidden gap-12 lg:grid lg:grid-cols-[minmax(11rem,16rem)_minmax(0,1fr)] lg:gap-16 xl:gap-20">
-            <aside className="lg:-ml-6 lg:sticky lg:top-28 lg:self-start">
-              <nav className="flex flex-col gap-0">
+            <aside className="lg:-ml-10 lg:sticky lg:top-28 lg:self-start">
+              <nav className="flex flex-col gap-0 lg:pl-0">
                 {DEMO_STEPS.map((step, index) => (
                   <NavItem
                     key={step.id}
