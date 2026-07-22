@@ -30,7 +30,7 @@ const testimonials: Testimonial[] = [
     role: "Sr. Director of Sales",
     company: "Coalition",
     avatar:
-      "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
     id: "2",
@@ -40,7 +40,7 @@ const testimonials: Testimonial[] = [
     role: "VP of Underwriting",
     company: "Coalition",
     avatar:
-      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
     id: "3",
@@ -50,7 +50,7 @@ const testimonials: Testimonial[] = [
     role: "Head of Distribution",
     company: "Coalition",
     avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&h=240&fit=crop",
   },
 ];
 
@@ -70,44 +70,41 @@ function CoalitionLogo() {
 
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
-    <article
-      className="relative flex min-h-[320px] flex-col overflow-hidden rounded-sm bg-white p-7 md:min-h-[420px] md:p-9 lg:min-h-[520px] lg:p-10"
-    >
-      <div className="pointer-events-none absolute -translate-y-1/6 left-1/2 z-0 h-[180%] w-[120%] -translate-x-1/2 md:-top-24 lg:-top-28">
-        <Image
-          src="/images/secondcardbg.svg"
-          alt=""
-          fill
-          className="h-full w-full object-cover object-bottom"
-          sizes="100vw"
-          aria-hidden
-        />
-      </div>
+    <article className="relative flex min-h-[360px] flex-col overflow-hidden rounded-sm bg-white p-6 md:min-h-[440px] md:p-8 lg:min-h-[520px] lg:p-10">
+      <div
+        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_90%_80%_at_50%_0%,rgba(203,190,255,0.45),rgba(255,255,255,0.95)_72%)]"
+        aria-hidden
+      />
 
-      <div className="relative z-10 flex h-full flex-1 flex-col justify-between">
-        <div className="size-20 shrink-0 overflow-hidden md:size-24">
-          <Image
-            src={testimonial.avatar}
-            alt={testimonial.name}
-            width={96}
-            height={96}
-            className="size-full object-cover"
-          />
-        </div>
+      <div className="relative z-10 flex h-full flex-1 flex-col">
+        <div className="flex items-center gap-4 md:gap-5">
+          <div className="size-16 shrink-0 overflow-hidden md:size-20">
+            <Image
+              src={testimonial.avatar}
+              alt={testimonial.name}
+              width={80}
+              height={80}
+              className="size-full object-cover object-[50%_20%]"
+            />
+          </div>
 
-        <blockquote className="max-w-3xl text-xl font-heading font-regular leading-[1.3] tracking-tight text-[#1a1a2e] md:text-2xl lg:text-4xl">
-          &ldquo;{testimonial.quote}&rdquo;
-        </blockquote>
-
-        <div className="flex items-end justify-between gap-6">
-          <div>
-            <p className="text-xs font-mono font-medium uppercase tracking-[0.14em]  text-[#303030]">
+          <div className="space-y-1">
+            <p className="font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[#303030] md:text-xs">
               {testimonial.name}
             </p>
-            <p className="text-xs font-mono font-medium uppercase tracking-[0.14em] text-[#303030]">
+            <p className="font-mono text-[0.625rem] font-normal uppercase tracking-[0.12em] text-[#303030]/55 md:text-[0.6875rem]">
               {testimonial.role}
             </p>
           </div>
+        </div>
+
+        <div className="flex flex-1 items-center px-2 md:px-4">
+          <blockquote className="max-w-3xl text-left text-2xl font-heading font-regular leading-[1.35] tracking-tight text-[#1a1a2e] md:text-3xl lg:text-4xl lg:leading-[1.3]">
+            &ldquo;{testimonial.quote}&rdquo;
+          </blockquote>
+        </div>
+
+        <div className="mt-8 flex justify-end md:mt-10">
           <CoalitionLogo />
         </div>
       </div>

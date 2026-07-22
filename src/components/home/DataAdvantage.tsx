@@ -55,15 +55,13 @@ const DataAdvantage = () => {
           <div className="grid gap-5 md:grid-cols-2 md:gap-6 md:items-stretch">
             {/* Underwriting data retention */}
             <article
-              className="relative flex min-h-[28rem] w-full flex-col overflow-hidden rounded-sm text-[#0a143b] md:min-h-[36rem] lg:min-h-[37rem]"
-              style={{ backgroundColor: "#FFFFFFCC" }}
+              className="relative flex min-h-[28rem] w-full flex-col overflow-hidden rounded-sm text-white md:min-h-[36rem] lg:min-h-[37rem]"
+              style={{ backgroundColor: "#282828" }}
             >
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_70%_20%,rgba(90,53,224,0.18),transparent_60%)]" aria-hidden />
-
               <div className="relative z-10 flex flex-1 flex-col justify-between gap-8 p-6 md:p-8 lg:p-10">
                 <div className="space-y-2">
-                  <AnimatedEightyFivePercent className="text-6xl font-heading font-medium leading-none tracking-tight text-[#121C49] md:text-7xl" />
-                  <p className="text-base font-heading font-medium text-[#525252] md:text-lg">
+                  <AnimatedEightyFivePercent className="text-6xl font-heading font-medium leading-none tracking-tight text-white md:text-7xl" />
+                  <p className="text-base font-heading font-medium text-white/80 md:text-lg">
                     Faster remarket &amp; service
                   </p>
                 </div>
@@ -72,7 +70,7 @@ const DataAdvantage = () => {
                   <h3 className="max-w-sm text-lg font-heading font-medium md:text-2xl">
                     Retain underwriting data to streamline policy remarket and service
                   </h3>
-                  <p className="max-w-sm text-sm font-sans font-regular leading-relaxed text-[#525252]">
+                  <p className="max-w-sm text-sm font-sans font-regular leading-relaxed text-white/80">
                     Keep rich underwriting history with every account — so renewals, remarkets, and service run up to 85% faster.
                   </p>
                 </div>

@@ -244,7 +244,6 @@ const WayCard = memo(function WayCard({
       : background === "accent" || background === "carrier" || isDark
         ? "text-white"
         : "text-[#0a143b]";
-  const pillSurface = textClass === "text-white" ? "dark" : "light";
 
   const handleOpen = () => {
     onOpen();
@@ -348,13 +347,7 @@ const WayCard = memo(function WayCard({
                   : "max-md:max-w-[12.5rem] max-w-[12rem] sm:max-w-[16rem]"
               }
             >
-              <EyebrowPill
-                surface={pillSurface}
-                background="#FFFFFF"
-                dotColor="#151f4d"
-                dotAttr={label}
-                className="text-[#151f4d]!"
-              >
+              <EyebrowPill surface="dark" className="mb-0">
                 {label}
               </EyebrowPill>
               <p

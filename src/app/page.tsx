@@ -10,14 +10,12 @@ import SectionRadialGlow from "@/components/common/SectionRadialGlow";
 import CarrierResults from "@/components/home/CarrierResults";
 import { createPageMetadata } from "@/lib/seo";
 import Marquee from "@/components/home/Marquee";
-import HeroToCardsDots from "@/components/home/HeroToCardsDots";
 import PageWrapper from "@/components/PageWrapper";
 
 const HomePage = () => {
   return (
     <>
       <PageWrapper>
-        <HeroToCardsDots />
         <Hero />
         <HomeSectionsAfterIntro>
           <Marquee />

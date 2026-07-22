@@ -8,8 +8,6 @@ type EyebrowPillProps = {
   /** Surface the pill sits on. "dark" = light pill on dark bg, "light" = navy-outlined pill on light bg. */
   surface?: "dark" | "light";
   className?: string;
-  /** When set, tags the inner dot with `data-card-dot` (used as a landing target). */
-  dotAttr?: string;
   /** Override the default dot color (e.g. card gradient accent). */
   dotColor?: string;
   /** Gradient or solid fill for the pill background (overrides accent coloring). */
@@ -25,7 +23,6 @@ export default function EyebrowPill({
   children,
   surface = "dark",
   className = "",
-  dotAttr,
   dotColor,
   background,
   accent,
@@ -59,9 +56,8 @@ export default function EyebrowPill({
   return (
     <p style={wrapperStyle} className={`${baseClass} ${textClass} ${className}`}>
       <span
-        className={`size-1.5 shrink-0 rounded-full ${dotAttr ? "opacity-100 lg:opacity-0" : ""}`}
+        className="size-1.5 shrink-0 rounded-full"
         style={{ backgroundColor: dotColorResolved }}
-        data-card-dot={dotAttr}
         aria-hidden
       />
       {children}
