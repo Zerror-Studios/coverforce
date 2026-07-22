@@ -182,7 +182,7 @@ export default function OperatingSystemSection({
                     {showStats && row.stat && row.statLabelLines ? (
                       <div className="mt-10 flex items-center gap-4 md:mt-8 md:gap-5">
                         <span
-                          className="text-2xl font-heading font-regular leading-[1.2] tracking-tight md:text-3xl lg:text-[1.75rem] lg:leading-[1.25]"
+                          className="text-4xl font-heading font-bold leading-[1.1] tracking-tight md:text-5xl lg:text-[3.25rem] lg:leading-[1.1]"
                           style={{ color: statColor }}
                         >
                           {row.stat}

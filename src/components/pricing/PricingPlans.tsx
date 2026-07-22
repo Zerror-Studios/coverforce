@@ -7,6 +7,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { RiCheckLine } from "@remixicon/react";
 import Container from "@/components/common/Container";
 import RequestDemoCta from "@/components/request-demo/RequestDemoCta";
+import {
+  CARD_BACKGROUND_STYLES,
+  type CardBackground,
+} from "@/data/wayCardStyles";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,6 +21,8 @@ type PricingPlan = {
   description: string;
   features: string[];
   cta: { label: string; href: string };
+  background: CardBackground;
+  tone: "light" | "dark";
 };
 
 const PLANS: PricingPlan[] = [
@@ -39,6 +45,8 @@ const PLANS: PricingPlan[] = [
       label: "Apply to our startup program",
       href: "/contact",
     },
+    background: "startup",
+    tone: "dark",
   },
   {
     id: "enterprise",
@@ -59,17 +67,35 @@ const PLANS: PricingPlan[] = [
       label: "Talk to sales",
       href: "/contact",
     },
+    background: "accent",
+    tone: "dark",
   },
 ];
 
-function FeatureItem({ children }: { children: string }) {
+function FeatureItem({
+  children,
+  tone,
+}: {
+  children: string;
+  tone: "light" | "dark";
+}) {
+  const isDark = tone === "dark";
+
   return (
     <li className="pricing-feature">
       <div className="flex items-start gap-3">
-        <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-[#7CD20D] text-[#0a143b]">
+        <span
+          className={`mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full ${
+            isDark ? "bg-white text-[#0a143b]" : "bg-[#0a143b] text-white"
+          }`}
+        >
           <RiCheckLine className="size-3" aria-hidden />
         </span>
-        <span className="font-sans text-[0.9375rem] font-regular leading-relaxed text-[#2E2E2E]">
+        <span
+          className={`font-sans text-[0.9375rem] font-regular leading-relaxed ${
+            isDark ? "text-white/85" : "text-[#2E2E2E]"
+          }`}
+        >
           {children}
         </span>
       </div>
@@ -81,6 +107,7 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
   const cardRef = useRef<HTMLElement>(null);
   const hoverTweenRef = useRef<gsap.core.Timeline | null>(null);
   const isEnterprise = plan.id === "enterprise";
+  const isDark = plan.tone === "dark";
 
   const handleMouseEnter = () => {
     const card = cardRef.current;
@@ -140,28 +167,55 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
       } md:min-h-[44rem] lg:min-h-[48rem]`}
     >
       <div className="way-card-body absolute inset-0 overflow-hidden rounded-md">
-        <div className="absolute inset-0 rounded-md bg-[#F4F5F7]" aria-hidden />
+        <div
+          className="absolute inset-0 rounded-md"
+          style={{ background: CARD_BACKGROUND_STYLES[plan.background] }}
+          aria-hidden
+        />
+        {plan.id === "startup" ? (
+          <div className="absolute inset-0 rounded-md bg-black/45" aria-hidden />
+        ) : null}
       </div>
 
-      <div className="relative z-10 flex flex-1 flex-col p-5 text-[#0a143b] sm:p-8 md:p-12 lg:p-10">
+      <div
+        className={`relative z-10 flex flex-1 flex-col p-5 sm:p-8 md:p-12 lg:p-10 ${
+          isDark ? "text-white" : "text-[#0a143b]"
+        }`}
+      >
         <div className="flex items-center gap-3">
-          <h2 className="font-heading text-3xl font-medium text-[#0a143b] sm:text-4xl md:text-5xl">
+          <h2
+            className={`font-heading text-3xl font-medium sm:text-4xl md:text-5xl ${
+              isDark ? "text-white" : "text-[#0a143b]"
+            }`}
+          >
             {plan.title}
           </h2>
           {plan.badge ? (
-            <span className="rounded-full bg-[#0a143b] px-2.5 py-1 font-sans text-sm font-semibold text-white">
+            <span
+              className={`rounded-full px-2.5 py-1 font-sans text-sm font-semibold ${
+                isDark
+                  ? "bg-white/15 text-white"
+                  : "bg-[#0a143b] text-white"
+              }`}
+            >
               {plan.badge}
             </span>
           ) : null}
         </div>
 
-        <p className="mt-4 font-sans text-[0.9375rem] font-regular leading-relaxed text-[#444444] sm:mt-5">
+        <p
+          className={`mt-4 font-sans text-[0.9375rem] font-regular leading-relaxed sm:mt-5 ${
+            isDark ? "text-white/80" : "text-[#444444]"
+          }`}
+        >
           {plan.description}
         </p>
 
         <ul className="mt-6 flex flex-1 flex-col gap-3 sm:mt-8 sm:gap-4">
           {plan.features.map((feature) => (
-            <FeatureItem key={feature}>{feature}</FeatureItem>
+            <FeatureItem key={feature} tone={plan.tone}>
+              {feature}
+            </FeatureItem>
           ))}
         </ul>
 
@@ -170,7 +224,7 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
           href={plan.cta.href}
           variant="primary"
           size="md"
-          surface="default"
+          surface={isDark ? "on-dark" : "default"}
           balanced
           className="w-full"
         />
