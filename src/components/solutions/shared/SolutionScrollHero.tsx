@@ -446,6 +446,7 @@ export default function SolutionScrollHero({
             noise: 0.08,
           }}
         />
+        <div className="absolute inset-0 bg-black/45" aria-hidden />
       </div>
     </section>
   );

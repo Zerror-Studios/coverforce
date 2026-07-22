@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Container from "@/components/common/Container";
+import AnimatedLinkText from "@/components/common/AnimatedLinkText";
 import {
     getBottomBorderStyle,
     getTopBorderStyle,
@@ -57,6 +58,79 @@ const ENDPOINTS: Endpoint[] = [
         description: "Retrieve policy docs, ACORDs, proposals.",
     },
 ];
+
+const WAVE_MS = 650;
+const ROW_STAGGER = 0.09;
+
+function EndpointRow({
+    endpoint,
+    index,
+}: {
+    endpoint: Endpoint;
+    index: number;
+}) {
+    const rowRef = useRef<HTMLLIElement>(null);
+    const [hovered, setHovered] = useState(false);
+    const [wave, setWave] = useState(false);
+
+    useGSAP(() => {
+        const row = rowRef.current;
+        if (!row) return;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        let resetTimer: ReturnType<typeof setTimeout> | null = null;
+
+        const st = ScrollTrigger.create({
+            trigger: row,
+            start: "top 88%",
+            once: true,
+            onEnter: () => {
+                const delay = index * ROW_STAGGER * 1000;
+                window.setTimeout(() => {
+                    setWave(true);
+                    resetTimer = setTimeout(() => setWave(false), WAVE_MS);
+                }, delay);
+            },
+        });
+
+        return () => {
+            st.kill();
+            if (resetTimer) clearTimeout(resetTimer);
+        };
+    }, [index]);
+
+    return (
+        <li
+            ref={rowRef}
+            className="endpoint-row group"
+            style={getBottomBorderStyle(BORDER_COLOR)}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+        >
+            <div className="grid grid-cols-1 items-center gap-2 py-5 transition-transform duration-300 ease-out group-hover:translate-x-2 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] md:gap-8 md:py-6">
+                <div className="flex items-center gap-3">
+                    {endpoint.badge ? (
+                        <span className="flex h-6 min-w-9 items-center justify-center rounded-full bg-[#151f4d] px-2 font-sans text-xs font-semibold tracking-[0.08em] text-white">
+                            {endpoint.badge}
+                        </span>
+                    ) : null}
+                    <span className="font-heading text-xl font-normal tracking-tight text-[#151f4d] md:text-2xl">
+                        <AnimatedLinkText
+                            hovered={hovered || wave}
+                            textClip="h-[1.25rem] md:h-6"
+                            textLine="h-[1.25rem] leading-none md:h-6 md:leading-none"
+                        >
+                            {`/${endpoint.name}`}
+                        </AnimatedLinkText>
+                    </span>
+                </div>
+                <p className="font-sans text-base font-normal leading-relaxed text-[#49494A]">
+                    {endpoint.description}
+                </p>
+            </div>
+        </li>
+    );
+}
 
 const Endpoints = () => {
     const sectionRef = useRef<HTMLElement>(null);
@@ -127,29 +201,12 @@ const Endpoints = () => {
                     </h2>
 
                     <ul className="endpoint-list mt-12 md:mt-16" style={getTopBorderStyle(BORDER_COLOR)}>
-                        {ENDPOINTS.map((endpoint) => (
-                            <li
+                        {ENDPOINTS.map((endpoint, index) => (
+                            <EndpointRow
                                 key={endpoint.name}
-                                className="endpoint-row group"
-                                style={getBottomBorderStyle(BORDER_COLOR)}
-                            >
-                                <div className="grid grid-cols-1 items-center gap-2 py-5 transition-transform duration-300 ease-out group-hover:translate-x-2 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] md:gap-8 md:py-6">
-                                    <div className="flex items-center gap-3">
-                                        {endpoint.badge ? (
-                                            <span className="flex h-6 min-w-9 items-center justify-center rounded-full bg-[#0130BE] px-2 font-sans text-xs font-semibold  tracking-[0.08em] text-white">
-                                                {endpoint.badge}
-                                            </span>
-                                        ) : null}
-                                        <span className="font-heading text-xl font-normal tracking-tight text-[#4445DA] md:text-2xl">
-                                            /
-                                            {endpoint.name}
-                                        </span>
-                                    </div>
-                                    <p className="font-sans text-base font-normal leading-relaxed text-[#49494A]">
-                                        {endpoint.description}
-                                    </p>
-                                </div>
-                            </li>
+                                endpoint={endpoint}
+                                index={index}
+                            />
                         ))}
                     </ul>
                 </div>
