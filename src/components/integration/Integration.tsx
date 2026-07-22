@@ -2,6 +2,7 @@
 
 import React, { useMemo, useRef, useState } from "react";
 import Image from "next/image";
+import { ChevronDown } from "lucide-react";
 import { RiSearchEyeLine } from "@remixicon/react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -59,18 +60,13 @@ function getTabLabel(tab: Tab) {
   return `${tab.label}${typeof tab.count === "number" ? ` (${tab.count})` : ""}`;
 }
 
-const LOB_FILTERS = ["All", "WC", "BOP", "GL", "Cyber", "Prof", "Auto"];
+const LOB_FILTERS = ["All", "WC", "BOP", "GL", "Cyber", "Prof", "Auto"] as const;
 const STATUS_FILTERS = ["All", "Live on CoverForce", "API available"] as const;
-type PillColors = { bg: string; text: string; border?: string };
-
-const MARKET_FILTERS: { id: Market; label: string; colors: PillColors }[] = [
-  { id: "AD", label: "Admitted", colors: { bg: "#E3F2FF", text: "#185FA5" } },
-  { id: "ES", label: "Excess & Surplus", colors: { bg: "#FFDAB6", text: "#693300" } },
-];
-
-const STATUS_COLORS: Record<string, PillColors> = {
-  "Live on CoverForce": { bg: "#EFF6E7", text: "#6DAB4E", border: "#EDF8AD" },
-};
+const MARKET_OPTIONS = [
+  { value: "All", label: "All" },
+  { value: "AD", label: "AD | Admitted" },
+  { value: "ES", label: "ES | Excess & Surplus" },
+] as const;
 
 const BASE_CARRIERS: Carrier[] = [
   {
@@ -293,73 +289,70 @@ const CarrierCard = ({ carrier }: { carrier: Carrier }) => {
   );
 };
 
-const FilterPill = ({
+function FormSelect({
+  id,
   label,
-  active,
-  onClick,
-  colors,
+  value,
+  options,
+  onChange,
 }: {
-  label: React.ReactNode;
-  active: boolean;
-  onClick: () => void;
-  colors?: PillColors;
-}) => {
-  if (colors) {
-    return (
-      <button
-        type="button"
-        onClick={onClick}
-        style={{
-          background: colors.bg,
-          color: colors.text,
-          border: `1px solid ${colors.border ?? "transparent"}`,
-          boxShadow: active ? `0 0 0 2px ${colors.text}33` : undefined,
-        }}
-        className={`rounded-full px-4 py-1 text-xs font-sans font-medium transition-all ${
-          active ? "" : "opacity-80 hover:opacity-100"
-        }`}
-      >
-        {label}
-      </button>
-    );
-  }
+  id: string;
+  label: string;
+  value: string;
+  options: readonly { value: string; label: string }[] | readonly string[];
+  onChange: (value: string) => void;
+}) {
+  const normalized = options.map((option) =>
+    typeof option === "string" ? { value: option, label: option } : option,
+  );
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`rounded-full px-4 py-1 text-xs font-sans font-medium transition-colors ${
-        active
-          ? "bg-[#2D3E9D] text-white"
-          : "bg-[#EEF0F9] text-[#2D3E9D] hover:bg-[#2D3E9D] hover:text-white"
-      }`}
-    >
-      {label}
-    </button>
+    <label className="block min-w-0 flex-1">
+      <span className="mb-2 block font-mono text-sm font-medium uppercase text-[#2A297C]">
+        {label}
+      </span>
+      <div className="relative">
+        <select
+          id={id}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          className="box-border h-10 min-h-10 max-h-10 w-full appearance-none rounded-lg border border-[#E4E7EC] bg-white px-4 pr-10 font-heading text-sm font-medium leading-none text-[#1A1A1A] outline-none transition-colors hover:border-[#5B35E0]/40 focus:border-[#5B35E0] focus:ring-1 focus:ring-[#5B35E0]/20"
+        >
+          {normalized.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <ChevronDown
+          className="pointer-events-none absolute right-3.5 top-1/2 size-4 -translate-y-1/2 text-[#9AA8BC]"
+          aria-hidden
+        />
+      </div>
+    </label>
   );
-};
+}
 
 const Integration = () => {
   const [activeTab, setActiveTab] = useState("carriers");
-  const [lob, setLob] = useState("All");
-  const [status, setStatus] = useState<(typeof STATUS_FILTERS)[number]>("All");
-  const [markets, setMarkets] = useState<Market[]>([]);
-
-  const toggleMarket = (m: Market) =>
-    setMarkets((prev) =>
-      prev.includes(m) ? prev.filter((x) => x !== m) : [...prev, m],
-    );
+  const [lob, setLob] = useState<string>("All");
+  const [status, setStatus] = useState<string>("All");
+  const [market, setMarket] = useState<string>("All");
 
   const filtered = useMemo(
     () =>
       CARRIERS.filter((c) => {
         if (lob !== "All" && !c.lobs.includes(lob)) return false;
         if (status !== "All" && c.status !== status) return false;
-        if (markets.length && !c.products.some((p) => markets.includes(p.market)))
+        if (
+          market !== "All" &&
+          !c.products.some((p) => p.market === market)
+        ) {
           return false;
+        }
         return true;
       }),
-    [lob, status, markets],
+    [lob, status, market],
   );
 
   const gridRef = useRef<HTMLDivElement>(null);
@@ -459,66 +452,36 @@ const Integration = () => {
           </div>
 
           <div className="space-y-5 lg:space-y-3">
-              <div className="flex flex-col gap-5 lg:flex-row lg:flex-wrap lg:items-center lg:gap-3">
-                <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
-                  <span className="text-[0.6875rem] font-mono font-medium uppercase tracking-wide text-[#4F4F4F]/80">
-                    LOB :
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {LOB_FILTERS.map((item) => (
-                      <FilterPill
-                        key={item}
-                        label={item}
-                        active={lob === item}
-                        onClick={() => setLob(item)}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2 lg:ml-20 lg:flex-row lg:items-center">
-                  <span className="text-[0.6875rem] font-mono font-medium uppercase tracking-wide text-[#4F4F4F]/80">
-                    Market Type :
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {MARKET_FILTERS.map((m) => (
-                      <FilterPill
-                        key={m.id}
-                        label={
-                          <span>
-                            <span className="font-semibold">{m.id}</span> | {m.label}
-                          </span>
-                        }
-                        active={markets.includes(m.id)}
-                        onClick={() => toggleMarket(m.id)}
-                        colors={m.colors}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-5 lg:flex-row lg:flex-wrap lg:items-center lg:justify-between">
-                <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
-                  <span className="text-[0.6875rem] font-mono font-medium uppercase tracking-wide text-[#4F4F4F]/80">
-                    Status :
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {STATUS_FILTERS.map((item) => (
-                      <FilterPill
-                        key={item}
-                        label={item}
-                        active={status === item}
-                        onClick={() => setStatus(item)}
-                        colors={STATUS_COLORS[item]}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <span className="text-[0.6875rem] font-medium text-[#98A2B3]">
-                  {filtered.length} carriers shown
-                </span>
-              </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <FormSelect
+                id="integration-lob"
+                label="LOB"
+                value={lob}
+                options={LOB_FILTERS}
+                onChange={setLob}
+              />
+              <FormSelect
+                id="integration-market"
+                label="Market Type"
+                value={market}
+                options={MARKET_OPTIONS}
+                onChange={setMarket}
+              />
+              <FormSelect
+                id="integration-status"
+                label="Status"
+                value={status}
+                options={STATUS_FILTERS}
+                onChange={setStatus}
+              />
             </div>
+
+            <div className="flex justify-end">
+              <span className="text-[0.6875rem] font-medium text-[#98A2B3]">
+                {filtered.length} carriers shown
+              </span>
+            </div>
+          </div>
 
             {filtered.length > 0 ? (
               <div
@@ -546,7 +509,7 @@ const Integration = () => {
                   onClick={() => {
                     setLob("All");
                     setStatus("All");
-                    setMarkets([]);
+                    setMarket("All");
                   }}
                   className="mt-5 rounded-full bg-[#2D3E9D] px-5 py-2 text-xs font-sans font-semibold text-white transition-colors hover:bg-[#22307c]"
                 >
