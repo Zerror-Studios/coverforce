@@ -31,8 +31,9 @@ const whySlides: WhySlide[] = [
       "driving higher bind rates and a customer experience",
       "that keeps improving for Chase.",
     ],
-    image: "/images/hero/img1.avif",
-    alt: "AI-powered insurance infrastructure",
+    image:
+      "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1600&h=1200&q=80",
+    alt: "Abstract AI neural network visualization",
   },
   {
     id: "slide-2",
@@ -42,8 +43,9 @@ const whySlides: WhySlide[] = [
       "Chase inherits access on day one, instead of negotiating",
       "carrier relationships alone.",
     ],
-    image: "/images/hero/img2.avif",
-    alt: "Commercial insurance carrier network",
+    image:
+      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&h=1200&q=80",
+    alt: "Modern city skyline representing market scale",
   },
   {
     id: "slide-3",
@@ -53,8 +55,9 @@ const whySlides: WhySlide[] = [
       "CoverForce launches in weeks — on rails already built",
       "and battle-tested.",
     ],
-    image: "/images/hero/img3.avif",
-    alt: "Carrier integrations and insurance expertise",
+    image:
+      "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1600&h=1200&q=80",
+    alt: "Team collaborating on insurance technology strategy",
   },
   {
     id: "slide-4",
@@ -64,8 +67,9 @@ const whySlides: WhySlide[] = [
       "giving Chase infrastructure that's secure, resilient, and ready",
       "for FI-grade volume from day one.",
     ],
-    image: "/images/hero/img4.avif",
-    alt: "Secure and resilient enterprise infrastructure",
+    image:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&h=1200&q=80",
+    alt: "Secure data center infrastructure",
   },
 ];
 

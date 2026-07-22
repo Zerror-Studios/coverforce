@@ -4,7 +4,6 @@ import React from 'react'
 import CarrierResults from '@/components/home/CarrierResults'
 import WhosFor from '@/components/solutions/startups/WhosFor'
 import ProgramOverview from '@/components/solutions/startups/ProgramOverview'
-import StartupCubeBand from '@/components/solutions/startups/StartupCubeBand'
 import Launch from '@/components/solutions/startups/Launch'
 import Enablement from '@/components/solutions/startups/Enablement'
 import Hero from '@/components/solutions/startups/Hero'
@@ -17,10 +16,8 @@ const page = () => {
     <>
       <PageWrapper>
         <Hero />
-        <StartupCubeBand>
-          <WhosFor />
-          <ProgramOverview />
-        </StartupCubeBand>
+        <WhosFor />
+        <ProgramOverview />
         <Launch />
         <Enablement />
         <WhyCoverforce paddingTop={true} />

@@ -113,7 +113,7 @@ const ProgramOverview = () => {
   });
 
   return (
-    <section id="program-overview" ref={sectionRef} className="relative text-white">
+    <section id="program-overview" ref={sectionRef} className="relative bg-[#121C49] text-white">
       <Container borderColor="#FFFFFF33" borderBottom={true} className="relative z-10">
         <div className="grid gap-10 pt-16 pb-24 md:gap-12 md:pt-20 md:pb-32 lg:grid-cols-2 lg:items-stretch lg:gap-12 lg:pt-24 lg:pb-40 xl:gap-16">
           <div className="order-2 flex flex-col gap-4 md:gap-5 lg:order-1">

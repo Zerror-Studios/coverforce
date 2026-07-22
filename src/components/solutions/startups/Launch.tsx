@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
@@ -128,6 +128,8 @@ function LaunchPreviewCard({ step }: LaunchPreviewCardProps) {
   );
 }
 
+const AUTO_TAB_MS = 3000;
+
 const Launch = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -143,6 +145,20 @@ const Launch = () => {
     headingRef,
     descRef,
   });
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const id = window.setInterval(() => {
+      setActiveStep((current) => (current + 1) % launchSteps.length);
+    }, AUTO_TAB_MS);
+
+    return () => window.clearInterval(id);
+  }, [activeStep]);
+
+  const selectStep = (index: number) => {
+    setActiveStep(index);
+  };
 
   return (
     <section id="launch" ref={sectionRef} className="bg-white text-[#0a143b]">
@@ -235,11 +251,11 @@ const Launch = () => {
                     id={`launch-tab-${step.id}`}
                     aria-selected={isActive}
                     aria-controls="launch-panel"
-                    onClick={() => setActiveStep(index)}
-                    className={`group flex w-full items-start gap-5 rounded-xl border border-[#E5E7EB] px-4 py-3.5 text-left outline-none transition-all duration-300 ease-out focus-visible:ring-2 focus-visible:ring-[#0a143b]/25 focus-visible:ring-offset-2 ${
+                    onClick={() => selectStep(index)}
+                    className={`group flex w-full items-start gap-5 rounded-xl border px-4 py-3.5 text-left outline-none transition-all duration-300 ease-out focus-visible:ring-2 focus-visible:ring-[#0a143b]/25 focus-visible:ring-offset-2 ${
                       isActive
-                        ? "bg-white shadow-[0_1px_2px_rgba(10,20,59,0.04)]"
-                        : "bg-transparent hover:bg-[#F8F9FC]"
+                        ? "border-[#0a143b] bg-white shadow-[0_1px_2px_rgba(10,20,59,0.04)]"
+                        : "border-[#E5E7EB] bg-transparent hover:bg-[#F8F9FC]"
                     }`}
                   >
                     <span
