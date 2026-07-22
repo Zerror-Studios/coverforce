@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Button from "@/components/common/Button";
 import Container from "../common/Container";
+import SectionRadialGlow from "../common/SectionRadialGlow";
 import { SplitText } from "@/lib/SplitText";
 import { getCountries, getCountryCallingCode } from "react-phone-number-input/input";
 import en from "react-phone-number-input/locale/en.json";
@@ -269,9 +270,10 @@ const ContactForm = () => {
           background: rgba(255, 255, 255, 0.3);
         }
       `}</style>
-      <section ref={sectionRef} className="relative bg-[#151f4d] text-white  flex items-center">
-        <Container borderColor="#FFFFFF33" borderOpacity={borderOpacity} className="relative min-h-[calc(100svh-2rem)] flex items-center w-full">
-          <div ref={contentRef} className="mx-auto w-full max-w-3xl flex flex-col items-center justify-center text-center">
+      <section ref={sectionRef} className="relative flex h-full items-center overflow-hidden bg-[#151f4d] text-white">
+        <Container borderColor="#FFFFFF33" borderOpacity={borderOpacity} className="relative flex h-full w-full items-center">
+          <SectionRadialGlow className="absolute left-1/2 top-[10%] z-0 -translate-x-1/2 md:top-[12%]" />
+          <div ref={contentRef} className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center justify-center text-center">
 
             {step > 0 && step < 5 && (
               <div className="text-sm font-medium tracking-widest text-white/60 mb-8 uppercase">

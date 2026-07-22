@@ -80,10 +80,35 @@ function getHeaderTheme(pathname: string): HeaderTheme {
   return "dark";
 }
 
+const SCROLL_GLASS_THRESHOLD = 12;
+
 function usesTransparentHeaderUntilScroll(pathname: string): boolean {
   return (
+    pathname === "/" ||
+    pathname.startsWith("/product") ||
+    pathname.startsWith("/developers") ||
+    pathname.startsWith("/integration") ||
+    pathname.startsWith("/pricing") ||
+    pathname.startsWith("/solutions") ||
     pathname.startsWith("/about") ||
-    pathname.startsWith("/careers")
+    pathname.startsWith("/careers") ||
+    pathname.startsWith("/contact") ||
+    pathname.startsWith("/blog")
+  );
+}
+
+function usesHeroThemeSwitch(pathname: string): boolean {
+  return (
+    pathname === "/" ||
+    pathname.startsWith("/product") ||
+    pathname.startsWith("/developers") ||
+    pathname.startsWith("/integration") ||
+    pathname.startsWith("/pricing") ||
+    pathname.startsWith("/solutions") ||
+    pathname.startsWith("/about") ||
+    pathname.startsWith("/careers") ||
+    pathname.startsWith("/contact") ||
+    pathname.startsWith("/blog")
   );
 }
 
@@ -112,6 +137,12 @@ const headerThemes = {
     login: string;
   }
 >;
+
+const headerGlass = {
+  dark: "border-b border-white/10 bg-[#151f4d]/35 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(10,20,59,0.08)]",
+  light:
+    "border-b border-[#E8ECF0]/70 bg-white/72 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(10,20,59,0.06)]",
+} satisfies Record<HeaderTheme, string>;
 
 function HeaderNavLink({
   label,
@@ -288,6 +319,7 @@ const Header = () => {
   const [renderedMobileSubMenu, setRenderedMobileSubMenu] = useState<string | null>(null);
   const { open: openVideoModal } = useVideoModal();
   const [navBarHeight, setNavBarHeight] = useState(0);
+  const [headerScrolled, setHeaderScrolled] = useState(false);
   const [headerPastHero, setHeaderPastHero] = useState(false);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const activeMenuRef = useRef<string | null>(null);
@@ -306,6 +338,7 @@ const Header = () => {
     return subscribePendingPathname((nextPath) => {
       setDisplayPathname(nextPath);
       if (usesTransparentHeaderUntilScroll(nextPath)) {
+        setHeaderScrolled(false);
         setHeaderPastHero(false);
       }
     });
@@ -390,22 +423,38 @@ const Header = () => {
   }, []);
 
   const transparentUntilScroll = usesTransparentHeaderUntilScroll(displayPathname);
+  const heroThemeSwitch = usesHeroThemeSwitch(displayPathname);
+  const showGlass =
+    transparentUntilScroll &&
+    (heroThemeSwitch ? headerPastHero : headerScrolled);
+  // Most heroes are dark → white logo while transparent.
+  // Blog (and similar light pages) keep the light treatment until glass.
+  const lightOverHero =
+    displayPathname.startsWith("/blog") || displayPathname.startsWith("/author");
   const theme = transparentUntilScroll
-    ? headerPastHero
-      ? "light"
-      : "dark"
+    ? showGlass
+      ? "dark"
+      : lightOverHero
+        ? "light"
+        : "dark"
     : baseTheme;
   const styles = headerThemes[theme];
-  const isTransparentHeader = transparentUntilScroll && !headerPastHero;
+  const isTransparentHeader = transparentUntilScroll && !showGlass;
+  const isGlassHeader = showGlass;
 
   useEffect(() => {
     if (!transparentUntilScroll) {
+      setHeaderScrolled(false);
       setHeaderPastHero(false);
       return;
     }
 
     const update = () => {
-      setHeaderPastHero(window.scrollY >= window.innerHeight);
+      const scrollY = window.scrollY;
+      setHeaderScrolled(scrollY > SCROLL_GLASS_THRESHOLD);
+      setHeaderPastHero(
+        heroThemeSwitch ? scrollY >= window.innerHeight : false,
+      );
     };
 
     update();
@@ -420,7 +469,7 @@ const Header = () => {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, [transparentUntilScroll]);
+  }, [transparentUntilScroll, heroThemeSwitch]);
 
   const openMobileMenu = useCallback(() => {
     setMobileActiveMenu(null);
@@ -598,7 +647,9 @@ const Header = () => {
     ? headerThemes.light.bar
     : isTransparentHeader
       ? "border-b border-transparent bg-transparent"
-      : styles.bar;
+      : isGlassHeader
+        ? headerGlass.dark
+        : styles.bar;
   const activeLogo = mobileMenuOpen ? headerThemes.light.logo : styles.logo;
   return (
     <nav className={`relative w-full ${theme === "light" ? "text-[#3D3D3D]" : "text-white"}`}>
@@ -615,7 +666,7 @@ const Header = () => {
         <div
           ref={navBarRef}
           data-site-nav
-          className={`relative z-20 overflow-hidden will-change-transform transition-[background-color,border-color,color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${navBarClass}`}
+          className={`relative z-20 overflow-hidden will-change-[transform,backdrop-filter] transition-[background-color,border-color,color,box-shadow,backdrop-filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${navBarClass}`}
         >
           <Container>
             <div className="relative flex items-center justify-between py-4">
@@ -644,7 +695,7 @@ const Header = () => {
                     width={180}
                     height={34}
                     priority
-                    className={`absolute left-0 top-1/2 h-7 w-auto -translate-y-1/2 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:h-8 ${
+                    className={`absolute left-0 top-1/2 h-7 w-auto -translate-y-1/2 grayscale brightness-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:h-8 ${
                       activeLogo === headerThemes.light.logo ? "opacity-100" : "opacity-0"
                     }`}
                   />
