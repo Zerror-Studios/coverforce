@@ -5,7 +5,6 @@ import gsap from "gsap";
 import RequestDemoButton from "@/components/request-demo/RequestDemoButton";
 import WatchDemoButton from "@/components/common/WatchDemoButton";
 import Container from "../common/Container";
-import { getSideBorderStyle } from "../common/containerStyles";
 import SectionRadialGlow from "../common/SectionRadialGlow";
 import dynamic from "next/dynamic";
 
@@ -44,7 +43,6 @@ const stats: StatItem[] = [
 const heroTheme = {
   settledBg: "bg-[#151f4d]",
   sectionText: "text-white",
-  borderColor: "#FFFFFF33",
   gdpText: "text-white/85",
   title: "text-white",
   titleMuted: "text-[#BCC5D6]",
@@ -56,27 +54,6 @@ const heroTheme = {
   fiberColor: "#ffffff",
   fiberOriginGlow: true,
 } as const;
-
-function syncHeroContainerBorder(
-  el: HTMLDivElement,
-  color: string,
-  opacity: number,
-) {
-  if (window.matchMedia("(min-width: 768px)").matches) {
-    Object.assign(el.style, getSideBorderStyle(color, opacity));
-    return;
-  }
-
-  el.style.borderLeft = "";
-  el.style.borderRight = "";
-  el.style.borderImage = "";
-}
-
-function clearHeroContainerBorder(el: HTMLDivElement) {
-  el.style.borderLeft = "";
-  el.style.borderRight = "";
-  el.style.borderImage = "";
-}
 
 const Hero = () => {
   const theme = heroTheme;
@@ -116,9 +93,7 @@ const Hero = () => {
   const gdpLineRef = useRef<HTMLDivElement | null>(null);
   const dataLinesRef = useRef<HTMLDivElement | null>(null);
   const networkRef = useRef<HTMLDivElement | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
   const revealAnimatedRef = useRef(false);
-  const [borderOpacity, setBorderOpacity] = useState(introEnabled ? 0 : 1);
 
   const [activeIndex, setActiveIndex] = useState(1);
   const [indicator, setIndicator] = useState({ left: 0, width: 0 });
@@ -307,20 +282,6 @@ const Hero = () => {
     }
   }, [theme.fiberOriginGlow, introEnabled, introPhase]);
 
-  useEffect(() => {
-    const sync = () => {
-      const el = containerRef.current;
-      if (!el) return;
-      if (!window.matchMedia("(min-width: 768px)").matches) {
-        clearHeroContainerBorder(el);
-      }
-    };
-
-    sync();
-    window.addEventListener("resize", sync);
-    return () => window.removeEventListener("resize", sync);
-  }, []);
-
   useLayoutEffect(() => {
     if (!introEnabled || introPhase !== "nav" || revealAnimatedRef.current) return;
     revealAnimatedRef.current = true;
@@ -328,8 +289,6 @@ const Hero = () => {
     sectionRef.current?.removeAttribute("data-intro-reveal");
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setBorderOpacity(1);
-      if (containerRef.current) clearHeroContainerBorder(containerRef.current);
       if (gdpLineRef.current) gsap.set(gdpLineRef.current, { clearProps: "all" });
       if (buttonsRef.current) gsap.set(buttonsRef.current, { clearProps: "all" });
       if (statsWrapRef.current) gsap.set(statsWrapRef.current, { clearProps: "all" });
@@ -342,10 +301,6 @@ const Hero = () => {
     const tl = gsap.timeline({
       defaults: { ease: "power2.out" },
       onComplete: () => {
-        setBorderOpacity(1);
-        if (containerRef.current) {
-          syncHeroContainerBorder(containerRef.current, theme.borderColor, 1);
-        }
         if (gdpLineRef.current) gsap.set(gdpLineRef.current, { clearProps: "all" });
         if (buttonsRef.current) gsap.set(buttonsRef.current, { clearProps: "all" });
         if (statsWrapRef.current) gsap.set(statsWrapRef.current, { clearProps: "all" });
@@ -353,23 +308,6 @@ const Hero = () => {
         if (dataLinesRef.current) gsap.set(dataLinesRef.current, { clearProps: "all" });
       },
     });
-
-    const borderProxy = { value: 0 };
-    tl.fromTo(
-      borderProxy,
-      { value: 0 },
-      {
-        value: 1,
-        duration: revealDur,
-        ease: "power3.out",
-        onUpdate: () => {
-          const el = containerRef.current;
-          if (!el) return;
-          syncHeroContainerBorder(el, theme.borderColor, borderProxy.value);
-        },
-      },
-      0,
-    );
 
     if (gdpLineRef.current) {
       tl.to(
@@ -406,13 +344,7 @@ const Hero = () => {
     if (dataLinesRef.current) {
       tl.to(dataLinesRef.current, { autoAlpha: 1, duration: revealDur }, 0.04);
     }
-  }, [introEnabled, introPhase, theme.borderColor]);
-
-  useEffect(() => {
-    if (!introEnabled) {
-      setBorderOpacity(1);
-    }
-  }, [introEnabled]);
+  }, [introEnabled, introPhase, theme.fiberOriginGlow]);
 
   useLayoutEffect(() => {
     const update = () => {
@@ -446,12 +378,7 @@ const Hero = () => {
       data-intro-reveal={introEnabled ? "pending" : undefined}
       className={`relative isolate overflow-hidden ${theme.sectionText} ${sectionBgClass}`}
     >
-      <Container
-        ref={containerRef}
-        borderColor={theme.borderColor}
-        borderOpacity={borderOpacity}
-        className="relative z-10 px-0!"
-      >
+      <Container className="relative z-10 px-0!">
 
 
         {/* ── 100vh block: heading + button + network ── */}

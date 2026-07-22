@@ -10,9 +10,11 @@ import {
 type ContainerProps = {
   children: ReactNode;
   className?: string;
-  /** Dotted side borders (hex e.g. #e5e7eb). Omit to hide; uses DEFAULT_BORDER_COLOR if empty. */
+  /** When true, show dotted left and right borders. */
+  border?: boolean;
+  /** Color for side/bottom borders (hex e.g. #e5e7eb). */
   borderColor?: string;
-  /** Dotted bottom border using the same color as the sides. */
+  /** Dotted bottom border. */
   borderBottom?: boolean;
   /** Fades dotted side borders without affecting children. */
   borderOpacity?: number;
@@ -22,6 +24,7 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(function Container(
   {
     children,
     className = "",
+    border = false,
     borderColor,
     borderBottom = false,
     borderOpacity = 1,
@@ -35,7 +38,7 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(function Container(
       ref={ref}
       className={`relative z-10 mx-auto w-full max-w-7xl ${containerPadding} ${className}`}
     >
-      {borderColor !== undefined ? (
+      {border ? (
         <>
           <span
             className="pointer-events-none absolute bottom-0 left-0 top-0 z-20 hidden w-0 md:block"
@@ -49,7 +52,7 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(function Container(
           />
         </>
       ) : null}
-      {borderBottom && borderColor !== undefined ? (
+      {borderBottom ? (
         <span
           className="pointer-events-none absolute inset-x-0 bottom-0 z-20 block h-0"
           style={getBottomBorderStyle(resolvedColor)}
