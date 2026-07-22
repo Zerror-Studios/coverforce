@@ -67,6 +67,8 @@ function RecognitionCardItem({ card }: { card: RecognitionCard }) {
 
 const Recognition = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const cardsGridRef = useRef<HTMLDivElement>(null);
@@ -80,13 +82,15 @@ const Recognition = () => {
 
   useGSAP(
     () => {
+      const section = sectionRef.current;
+      const container = containerRef.current;
+      const overlay = overlayRef.current;
       const grid = cardsGridRef.current;
-      if (!grid) return;
+      if (!section || !container || !overlay || !grid) return;
 
       const cards = gsap.utils.toArray<HTMLElement>(".recognition-card", grid);
-      if (!cards.length) return;
-
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const isSmallDevice = window.matchMedia("(max-width: 1023px)").matches;
 
       if (reducedMotion) {
         gsap.set(cards, { opacity: 1, x: 0, clearProps: "transform" });
@@ -113,6 +117,57 @@ const Recognition = () => {
         clearProps: "transform",
       });
 
+      gsap.set(container, {
+        y: 0,
+        scale: 1,
+        force3D: true,
+        transformOrigin: "50% 50%",
+        backfaceVisibility: "hidden",
+      });
+      gsap.set(overlay, { opacity: 0, pointerEvents: "none" });
+
+      let parallaxTl: gsap.core.Timeline | null = null;
+      let overlayTl: gsap.core.Timeline | null = null;
+
+      if (!isSmallDevice) {
+        const getShift = () => container.offsetHeight;
+        const scrollEnd = "bottom -180%";
+        const scrollConfig = {
+          trigger: section,
+          scrub: 0.35,
+          invalidateOnRefresh: true,
+          fastScrollEnd: true,
+        };
+
+        parallaxTl = gsap.timeline({
+          scrollTrigger: {
+            ...scrollConfig,
+            start: "bottom bottom",
+            end: scrollEnd,
+          },
+        });
+
+        parallaxTl.to(container, {
+          y: getShift,
+          scale: 0.8,
+          ease: "none",
+          force3D: true,
+        });
+
+        overlayTl = gsap.timeline({
+          scrollTrigger: {
+            ...scrollConfig,
+            start: "bottom center",
+            end: scrollEnd,
+          },
+        });
+
+        overlayTl.to(overlay, {
+          opacity: 0.85,
+          ease: "none",
+        });
+      }
+
       const lenis = window.lenis;
       let scrollPending = false;
       const onLenisScroll = () => {
@@ -131,42 +186,54 @@ const Recognition = () => {
         lenis?.off("scroll", onLenisScroll);
         revealTl.scrollTrigger?.kill();
         revealTl.kill();
+        parallaxTl?.scrollTrigger?.kill();
+        parallaxTl?.kill();
+        overlayTl?.scrollTrigger?.kill();
+        overlayTl?.kill();
       };
     },
     { scope: sectionRef },
   );
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden bg-[#151f4d] text-white">
-      <Container borderColor="#FFFFFF33" className="relative z-10">
-        <div className="flex flex-col gap-10 py-16 md:gap-12 md:py-20 lg:gap-14 lg:py-24">
-          <div
-            ref={headerRef}
-            className="flex max-w-xl flex-col items-start justify-end space-y-5"
-          >
-            <EyebrowPill surface="dark" className="mb-0">
-              Recognition
-            </EyebrowPill>
-
-            <h2
-              ref={headingRef}
-              className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+    <section ref={sectionRef} className="relative z-30 overflow-hidden bg-[#151f4d] text-white">
+      <div ref={containerRef} className="relative z-10 overflow-hidden lg:will-change-transform">
+        <Container borderColor="#FFFFFF33" className="relative z-10">
+          <div className="flex flex-col gap-10 py-16 md:gap-12 md:py-20 lg:gap-14 lg:py-24">
+            <div
+              ref={headerRef}
+              className="flex max-w-xl flex-col items-start justify-end space-y-5"
             >
-              <span data-split>
-                Recognized Among the World&apos;s Leading Insurtech Innovators
-              </span>
-            </h2>
-          </div>
+              <EyebrowPill surface="dark" className="mb-0">
+                Recognition
+              </EyebrowPill>
 
-          <div ref={cardsGridRef} className="grid gap-4 md:grid-cols-3 md:gap-6 lg:gap-8">
-            {CARDS.map((card) => (
-              <div key={card.id} className="recognition-card h-full">
-                <RecognitionCardItem card={card} />
-              </div>
-            ))}
+              <h2
+                ref={headingRef}
+                className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+              >
+                <span data-split>
+                  Recognized Among the World&apos;s Leading Insurtech Innovators
+                </span>
+              </h2>
+            </div>
+
+            <div ref={cardsGridRef} className="grid gap-4 md:grid-cols-3 md:gap-6 lg:gap-8">
+              {CARDS.map((card) => (
+                <div key={card.id} className="recognition-card h-full">
+                  <RecognitionCardItem card={card} />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </Container>
+        </Container>
+      </div>
+
+      <div
+        ref={overlayRef}
+        className="pointer-events-none absolute inset-0 z-20 bg-[#080808]"
+        aria-hidden
+      />
     </section>
   );
 };

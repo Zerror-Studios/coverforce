@@ -147,6 +147,8 @@ function JobCategoryBlock({ category }: { category: JobCategory }) {
 
 const Positions = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const positionsListRef = useRef<HTMLDivElement>(null);
@@ -160,36 +162,92 @@ const Positions = () => {
 
   useGSAP(
     () => {
+      const section = sectionRef.current;
+      const container = containerRef.current;
+      const overlay = overlayRef.current;
       const list = positionsListRef.current;
-      if (!list) return;
+      if (!section || !container || !overlay || !list) return;
 
       const rows = gsap.utils.toArray<HTMLElement>(".positions-row", list);
-      if (!rows.length) return;
-
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const isSmallDevice = window.matchMedia("(max-width: 1023px)").matches;
+
+      const tweens: gsap.core.Tween[] = [];
 
       if (reducedMotion) {
         gsap.set(rows, { opacity: 1, y: 0, clearProps: "transform" });
-        return;
+      } else if (rows.length) {
+        gsap.set(rows, { opacity: 0, y: 28 });
+
+        rows.forEach((row) => {
+          tweens.push(
+            gsap.to(row, {
+              opacity: 1,
+              y: 0,
+              duration: 0.7,
+              ease: "power3.out",
+              clearProps: "transform",
+              scrollTrigger: {
+                trigger: row,
+                start: "top 88%",
+                toggleActions: "play none none none",
+                once: true,
+              },
+            }),
+          );
+        });
       }
 
-      gsap.set(rows, { opacity: 0, y: 28 });
+      gsap.set(container, {
+        y: 0,
+        scale: 1,
+        force3D: true,
+        transformOrigin: "50% 50%",
+        backfaceVisibility: "hidden",
+      });
+      gsap.set(overlay, { opacity: 0, pointerEvents: "none" });
 
-      const tweens = rows.map((row) =>
-        gsap.to(row, {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          ease: "power3.out",
-          clearProps: "transform",
+      let parallaxTl: gsap.core.Timeline | null = null;
+      let overlayTl: gsap.core.Timeline | null = null;
+
+      if (!reducedMotion && !isSmallDevice) {
+        const getShift = () => container.offsetHeight;
+        const scrollEnd = "bottom -180%";
+        const scrollConfig = {
+          trigger: section,
+          scrub: 0.35,
+          invalidateOnRefresh: true,
+          fastScrollEnd: true,
+        };
+
+        parallaxTl = gsap.timeline({
           scrollTrigger: {
-            trigger: row,
-            start: "top 88%",
-            toggleActions: "play none none none",
-            once: true,
+            ...scrollConfig,
+            start: "bottom bottom",
+            end: scrollEnd,
           },
-        }),
-      );
+        });
+
+        parallaxTl.to(container, {
+          y: getShift,
+          scale: 0.8,
+          ease: "none",
+          force3D: true,
+        });
+
+        overlayTl = gsap.timeline({
+          scrollTrigger: {
+            ...scrollConfig,
+            start: "bottom center",
+            end: scrollEnd,
+          },
+        });
+
+        overlayTl.to(overlay, {
+          opacity: 0.85,
+          ease: "none",
+        });
+      }
 
       const lenis = window.lenis;
       let scrollPending = false;
@@ -211,6 +269,10 @@ const Positions = () => {
           tween.scrollTrigger?.kill();
           tween.kill();
         });
+        parallaxTl?.scrollTrigger?.kill();
+        parallaxTl?.kill();
+        overlayTl?.scrollTrigger?.kill();
+        overlayTl?.kill();
       };
     },
     { scope: sectionRef },
@@ -220,35 +282,43 @@ const Positions = () => {
     <section
       id="positions"
       ref={sectionRef}
-      className="relative overflow-hidden bg-[#151f4d] text-white"
+      className="relative z-30 overflow-hidden bg-[#151f4d] text-white"
     >
-      <Container borderColor="#FFFFFF33" className="relative !px-0">
-        <SectionRadialGlow className="absolute left-1/2 top-[10%] z-0 -translate-x-1/2 opacity-70 md:top-[12%]" />
+      <div ref={containerRef} className="relative z-10 overflow-hidden lg:will-change-transform">
+        <Container borderColor="#FFFFFF33" className="relative !px-0">
+          <SectionRadialGlow className="absolute left-1/2 top-[10%] z-0 -translate-x-1/2 opacity-70 md:top-[12%]" />
 
-        <div className="relative z-10 py-16 md:py-20 lg:py-24">
-          <div
-            ref={headerRef}
-            className={`flex flex-col items-start justify-end space-y-5 ${containerPadding}`}
-          >
-            <EyebrowPill surface="dark" className="mb-0">
-              Open Positions
-            </EyebrowPill>
-
-            <h2
-              ref={headingRef}
-              className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-white sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+          <div className="relative z-10 py-16 md:py-20 lg:py-24">
+            <div
+              ref={headerRef}
+              className={`flex flex-col items-start justify-end space-y-5 ${containerPadding}`}
             >
-              <span data-split>Join Our Growing Team</span>
-            </h2>
-          </div>
+              <EyebrowPill surface="dark" className="mb-0">
+                Open Positions
+              </EyebrowPill>
 
-          <div ref={positionsListRef} className="mt-14 md:mt-16 lg:mt-20">
-            {jobCategories.map((category) => (
-              <JobCategoryBlock key={category.name} category={category} />
-            ))}
+              <h2
+                ref={headingRef}
+                className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-white sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+              >
+                <span data-split>Join Our Growing Team</span>
+              </h2>
+            </div>
+
+            <div ref={positionsListRef} className="mt-14 md:mt-16 lg:mt-20">
+              {jobCategories.map((category) => (
+                <JobCategoryBlock key={category.name} category={category} />
+              ))}
+            </div>
           </div>
-        </div>
-      </Container>
+        </Container>
+      </div>
+
+      <div
+        ref={overlayRef}
+        className="pointer-events-none absolute inset-0 z-20 bg-[#080808]"
+        aria-hidden
+      />
     </section>
   );
 };
