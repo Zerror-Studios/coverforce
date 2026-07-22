@@ -18,7 +18,7 @@ type CarrierResult = {
 const carrierResults: CarrierResult[] = [
   {
     id: "employers",
-    logo: "/images/Employers.svg",
+    logo: "/images/employers.png",
     logoAlt: "Employers",
     title: "0% Error Rate",
     description:
@@ -26,7 +26,7 @@ const carrierResults: CarrierResult[] = [
   },
   {
     id: "nationwide",
-    logo: "/images/Nationwide.svg",
+    logo: "/images/nation.svg",
     logoAlt: "Nationwide",
     title: "Live in 12 Weeks",
     description:
@@ -57,7 +57,7 @@ function CarrierLogo({ src, alt }: { src: string; alt: string }) {
         src={src}
         alt={alt}
         fill
-        className="object-contain object-left"
+        className="object-contain object-left brightness-0 invert"
         sizes="(max-width: 768px) 132px, 148px"
       />
     </div>

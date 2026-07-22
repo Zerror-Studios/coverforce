@@ -105,11 +105,11 @@ const Hero = () => {
         className="relative h-full w-full overflow-hidden will-change-transform"
       >
         <Image
-          src="/images/about/about.webp"
+          src="/images/about/about-banner.webp"
           alt="about-hero"
           fill
           priority
-          className="object-cover object-center"
+          className="object-cover object-top"
           sizes="100vw"
         />
         <div
