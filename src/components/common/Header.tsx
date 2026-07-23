@@ -478,18 +478,23 @@ const Header = () => {
   // Glass blur: white content over dark sections, black over light.
   const lightOverHero =
     displayPathname.startsWith("/blog") || displayPathname.startsWith("/author");
-  const theme = transparentUntilScroll
-    ? showGlass
-      ? glassOverDark
-        ? "dark"
-        : "light"
-      : lightOverHero
-        ? "light"
-        : "dark"
-    : baseTheme;
+  // Mega menu panel is white — keep header chrome white while it's open/closing.
+  const forceLightHeader =
+    mobileMenuOpen || Boolean(activeMenu) || Boolean(renderedMenu);
+  const theme = forceLightHeader
+    ? "light"
+    : transparentUntilScroll
+      ? showGlass
+        ? glassOverDark
+          ? "dark"
+          : "light"
+        : lightOverHero
+          ? "light"
+          : "dark"
+      : baseTheme;
   const styles = headerThemes[theme];
-  const isTransparentHeader = transparentUntilScroll && !showGlass;
-  const isGlassHeader = showGlass;
+  const isTransparentHeader = transparentUntilScroll && !showGlass && !forceLightHeader;
+  const isGlassHeader = showGlass && !forceLightHeader;
 
   useEffect(() => {
     if (!transparentUntilScroll) {
@@ -712,14 +717,14 @@ const Header = () => {
   }, [mobileMenuRendered]);
 
   const activeMobileConfig = renderedMobileSubMenu ? MEGA_MENUS[renderedMobileSubMenu] : null;
-  const navBarClass = mobileMenuOpen
+  const navBarClass = forceLightHeader
     ? headerThemes.light.bar
     : isTransparentHeader
       ? "border-b border-transparent bg-transparent"
       : isGlassHeader
         ? headerGlass[theme]
         : styles.bar;
-  const activeLogo = mobileMenuOpen ? headerThemes.light.logo : styles.logo;
+  const activeLogo = forceLightHeader ? headerThemes.light.logo : styles.logo;
   const navBarMotionClass = isGlassHeader
     ? "transition-[background-color,border-color,color,box-shadow,backdrop-filter] duration-150 ease-out"
     : "transition-[background-color,border-color,color,box-shadow,backdrop-filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]";
