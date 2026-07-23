@@ -9,6 +9,10 @@ import Button from "@/components/common/Button";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import RequestDemoButton from "@/components/request-demo/RequestDemoButton";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
+import {
+  parseStatValue,
+  ScrollTriggeredOdometerStat,
+} from "@/components/common/AnimatedPercent";
 import OperatingPlatformMock from "@/components/solutions/brokers/OperatingPlatformMock";
 import OperatingAiMock from "@/components/solutions/brokers/OperatingAiMock";
 import OperatingVisibilityMock from "@/components/solutions/brokers/OperatingVisibilityMock";
@@ -46,6 +50,39 @@ const DEFAULT_MOCKS: Record<string, ComponentType> = {
   ai: OperatingAiMock,
   visibility: OperatingVisibilityMock,
 };
+
+function OperatingStatBlock({
+  stat,
+  labelLines,
+  color,
+}: {
+  stat: string;
+  labelLines: [string, string];
+  color: string;
+}) {
+  const { value, suffix } = parseStatValue(stat);
+
+  return (
+    <div className="operating-stat mt-10 flex items-center gap-4 md:mt-8 md:gap-5">
+      <span style={{ color }}>
+        <ScrollTriggeredOdometerStat
+          value={value}
+          suffix={suffix}
+          className="text-4xl font-heading font-bold tracking-tight md:text-5xl lg:text-[3.25rem]"
+          suffixClassName="font-heading font-bold"
+          ariaLabel={stat}
+        />
+      </span>
+      <span
+        className="operating-stat-label font-heading text-base font-medium leading-[1.25] md:text-lg md:leading-[1.2]"
+        style={{ color }}
+      >
+        <span className="operating-stat-label-line block">{labelLines[0]}</span>
+        <span className="operating-stat-label-line block">{labelLines[1]}</span>
+      </span>
+    </div>
+  );
+}
 
 export default function OperatingSystemSection({
   sectionTitle,
@@ -88,6 +125,31 @@ export default function OperatingSystemSection({
           scrollTrigger: {
             trigger: mock,
             start: "top 68%",
+            toggleActions: "play none none none",
+            once: true,
+          },
+        });
+      });
+
+      const stats = gsap.utils.toArray<HTMLElement>(".operating-stat");
+      stats.forEach((stat) => {
+        const labelLines = gsap.utils.toArray<HTMLElement>(
+          ".operating-stat-label-line",
+          stat,
+        );
+
+        gsap.set(labelLines, { opacity: 0, y: 14 });
+
+        gsap.to(labelLines, {
+          opacity: 1,
+          y: 0,
+          duration: 0.55,
+          stagger: 0.08,
+          ease: "power2.out",
+          delay: 0.15,
+          scrollTrigger: {
+            trigger: stat,
+            start: "top 82%",
             toggleActions: "play none none none",
             once: true,
           },
@@ -180,22 +242,11 @@ export default function OperatingSystemSection({
                       </div>
                     ) : null}
                     {showStats && row.stat && row.statLabelLines ? (
-                      <div className="mt-10 flex items-center gap-4 md:mt-8 md:gap-5">
-                        <span
-                          className="text-4xl font-heading font-bold leading-[1.1] tracking-tight md:text-5xl lg:text-[3.25rem] lg:leading-[1.1]"
-                          style={{ color: statColor }}
-                        >
-                          {row.stat}
-                        </span>
-                        <span
-                          className="font-heading text-sm font-medium leading-[1.2] md:text-xs"
-                          style={{ color: statColor }}
-                        >
-                          {row.statLabelLines[0]}
-                          <br />
-                          {row.statLabelLines[1]}
-                        </span>
-                      </div>
+                      <OperatingStatBlock
+                        stat={row.stat}
+                        labelLines={row.statLabelLines}
+                        color={statColor}
+                      />
                     ) : null}
                   </div>
 
