@@ -16,7 +16,7 @@ const DistributionFlow = () => {
   return (
     <section ref={sectionRef} className="bg-white">
       <Container borderColor="#53535380">
-        <div className="relative z-10 py-16 md:py-20 lg:py-24">
+        <div className="relative z-10 pt-16 md:pt-20 lg:pt-24">
           <div
             ref={headerRef}
             className="flex flex-col gap-6 md:gap-8 lg:flex-row lg:items-start lg:justify-between"

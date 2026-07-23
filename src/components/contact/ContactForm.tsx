@@ -6,20 +6,113 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Button from "@/components/common/Button";
 import Container from "../common/Container";
-import SectionRadialGlow from "../common/SectionRadialGlow";
 import { SplitText } from "@/lib/SplitText";
 import { getCountries, getCountryCallingCode } from "react-phone-number-input/input";
+import { isValidPhoneNumber } from "react-phone-number-input";
 import en from "react-phone-number-input/locale/en.json";
 import Flags from "react-phone-number-input/flags";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const REVEAL_EASE = "power3.out";
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const NAME_PATTERN = /^[\p{L}][\p{L}\s'.-]{1,49}$/u;
+
+type FormDataState = {
+  businessType: string[];
+  problems: string;
+  bookSize: string;
+  firstName: string;
+  lastName: string;
+  phoneCode: string;
+  countryCode: string;
+  phone: string;
+  email: string;
+  jobTitle: string;
+  companyName: string;
+};
+
+type FieldErrors = Partial<Record<keyof FormDataState | "form", string>>;
+
+function buildFullPhone(phoneCode: string, phone: string) {
+  const digits = phone.replace(/\D/g, "");
+  if (!digits) return "";
+  return `${phoneCode}${digits}`;
+}
+
+function validateStep(step: number, data: FormDataState): FieldErrors {
+  const errors: FieldErrors = {};
+
+  if (step === 1 && data.businessType.length === 0) {
+    errors.businessType = "Please select at least one business type.";
+  }
+
+  if (step === 2) {
+    const problems = data.problems.trim();
+    if (!problems) {
+      errors.problems = "Please describe what CoverForce would solve.";
+    } else if (problems.length < 10) {
+      errors.problems = "Please write at least a couple of sentences (10+ characters).";
+    }
+  }
+
+  if (step === 3 && !data.bookSize.trim()) {
+    errors.bookSize = "Please select your book of business size.";
+  }
+
+  if (step === 4) {
+    const firstName = data.firstName.trim();
+    const lastName = data.lastName.trim();
+    const email = data.email.trim();
+    const jobTitle = data.jobTitle.trim();
+    const companyName = data.companyName.trim();
+    const fullPhone = buildFullPhone(data.phoneCode, data.phone);
+
+    if (!firstName) errors.firstName = "First name is required.";
+    else if (!NAME_PATTERN.test(firstName)) {
+      errors.firstName = "Enter a valid first name.";
+    }
+
+    if (!lastName) errors.lastName = "Last name is required.";
+    else if (!NAME_PATTERN.test(lastName)) {
+      errors.lastName = "Enter a valid last name.";
+    }
+
+    if (!data.phone.trim()) {
+      errors.phone = "Phone number is required.";
+    } else if (!isValidPhoneNumber(fullPhone)) {
+      errors.phone = "Please enter a valid phone number.";
+    }
+
+    if (!email) errors.email = "Email address is required.";
+    else if (!EMAIL_PATTERN.test(email)) {
+      errors.email = "Please enter a valid email address.";
+    }
+
+    if (!jobTitle) errors.jobTitle = "Job title is required.";
+    else if (jobTitle.length < 2) {
+      errors.jobTitle = "Enter a valid job title.";
+    }
+
+    if (!companyName) errors.companyName = "Company name is required.";
+    else if (companyName.length < 2) {
+      errors.companyName = "Enter a valid company name.";
+    }
+  }
+
+  return errors;
+}
+
+function fieldBorderClass(hasError: boolean) {
+  return hasError
+    ? "border-red-400 focus:border-red-300"
+    : "border-white/40 focus:border-white";
+}
 
 const ContactForm = () => {
   const [step, setStep] = useState(0);
-  const [formData, setFormData] = useState({
-    businessType: [] as string[],
+  const [formData, setFormData] = useState<FormDataState>({
+    businessType: [],
     problems: "",
     bookSize: "",
     firstName: "",
@@ -29,8 +122,9 @@ const ContactForm = () => {
     phone: "",
     email: "",
     jobTitle: "",
-    companyName: ""
+    companyName: "",
   });
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -47,10 +141,17 @@ const ContactForm = () => {
 
   useEffect(() => {
     (async function () {
-      const cal = await getCalApi({ "namespace": "15min" });
-      cal("ui", { "cssVarsPerTheme": { "light": { "cal-brand": "#1e2a5e" }, "dark": { "cal-brand": "#ffffff" } }, "hideEventTypeDetails": false, "layout": "month_view" });
+      const cal = await getCalApi({ namespace: "15min" });
+      cal("ui", {
+        cssVarsPerTheme: {
+          light: { "cal-brand": "#1e2a5e" },
+          dark: { "cal-brand": "#ffffff" },
+        },
+        hideEventTypeDetails: false,
+        layout: "month_view",
+      });
     })();
-  }, [])
+  }, []);
 
   useGSAP(
     () => {
@@ -129,35 +230,47 @@ const ContactForm = () => {
         }
 
         if (buttonsContainer && step === 0) {
-          tl.to(buttonsContainer, {
-            opacity: 1,
-            y: 0,
-            duration: 0.55,
-            ease: "power2.out",
-            onComplete: () => gsap.set(buttonsContainer, { clearProps: "transform" }),
-          }, "-=0.15");
+          tl.to(
+            buttonsContainer,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.55,
+              ease: "power2.out",
+              onComplete: () => gsap.set(buttonsContainer, { clearProps: "transform" }),
+            },
+            "-=0.15",
+          );
         }
 
         if (animateBtns.length) {
-          tl.to(animateBtns, {
-            opacity: 1,
-            y: 0,
-            duration: 0.5,
-            stagger: 0.025,
-            ease: "power2.out",
-            onComplete: () => gsap.set(animateBtns, { clearProps: "transform" }),
-          }, "-=0.2");
+          tl.to(
+            animateBtns,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.5,
+              stagger: 0.025,
+              ease: "power2.out",
+              onComplete: () => gsap.set(animateBtns, { clearProps: "transform" }),
+            },
+            "-=0.2",
+          );
         }
 
         if (animateFields.length) {
-          tl.to(animateFields, {
-            opacity: 1,
-            y: 0,
-            duration: 0.5,
-            stagger: 0.025,
-            ease: "power2.out",
-            onComplete: () => gsap.set(animateFields, { clearProps: "transform" }),
-          }, "-=0.2");
+          tl.to(
+            animateFields,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.5,
+              stagger: 0.025,
+              ease: "power2.out",
+              onComplete: () => gsap.set(animateFields, { clearProps: "transform" }),
+            },
+            "-=0.2",
+          );
         }
       };
 
@@ -177,24 +290,50 @@ const ContactForm = () => {
           lenis?.off("scroll", onLenisScroll);
           st.kill();
         };
-      } else {
-        reveal();
       }
+
+      reveal();
     },
-    { dependencies: [step], scope: sectionRef }
+    { dependencies: [step], scope: sectionRef },
   );
 
-  const updateData = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const clearFieldError = (field: keyof FieldErrors) => {
+    setFieldErrors((prev) => {
+      if (!prev[field]) return prev;
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
   };
 
-  const nextStep = () => setStep(s => Math.min(s + 1, 5));
+  const updateData = (field: keyof FormDataState, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    clearFieldError(field);
+    setSubmitError(null);
+  };
+
+  const goNext = () => {
+    const errors = validateStep(step, formData);
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+    setSubmitError(null);
+    setStep((s) => Math.min(s + 1, 5));
+  };
+
   const prevStep = () => {
     setSubmitError(null);
-    setStep(s => Math.max(s - 1, 0));
+    setFieldErrors({});
+    setStep((s) => Math.max(s - 1, 0));
   };
 
   const handleSubmit = async () => {
+    const errors = validateStep(4, formData);
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      setSubmitError("Please fix the highlighted fields before submitting.");
+      return;
+    }
+
     setSubmitError(null);
     setIsSubmitting(true);
 
@@ -204,6 +343,14 @@ const ContactForm = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
+          firstName: formData.firstName.trim(),
+          lastName: formData.lastName.trim(),
+          email: formData.email.trim(),
+          jobTitle: formData.jobTitle.trim(),
+          companyName: formData.companyName.trim(),
+          problems: formData.problems.trim(),
+          bookSize: formData.bookSize.trim(),
+          phone: formData.phone.replace(/\D/g, ""),
           submittedAt: new Date().toISOString(),
         }),
       });
@@ -216,7 +363,7 @@ const ContactForm = () => {
       setStep(5);
     } catch (error) {
       setSubmitError(
-        error instanceof Error ? error.message : "Something went wrong. Please try again."
+        error instanceof Error ? error.message : "Something went wrong. Please try again.",
       );
     } finally {
       setIsSubmitting(false);
@@ -224,33 +371,46 @@ const ContactForm = () => {
   };
 
   const businessTypes = [
-    "Agency Network", "AMS", "MGA", "Association",
-    "Brokerage", "Carrier", "Independent Agent", "Wholesaler",
-    "Technology Provider", "Other"
+    "Agency Network",
+    "AMS",
+    "MGA",
+    "Association",
+    "Brokerage",
+    "Carrier",
+    "Independent Agent",
+    "Wholesaler",
+    "Technology Provider",
+    "Other",
   ];
 
   const bookSizes = [
-    "25k-50k", "25k-50k ", " 25k-50k", "25k-50k  ",
-    " 25k-50k ", "  25k-50k", "10M+"
+    "Under $25k",
+    "$25k – $50k",
+    "$50k – $250k",
+    "$250k – $1M",
+    "$1M – $5M",
+    "$5M – $10M",
+    "$10M+",
   ];
 
-  const jobTitles = ["Product Manager", "Software Engineer", "CEO", "CTO", "Designer", "Other"];
-  const dummyCompanies = ["Acme Technologies", "Stark Industries", "Wayne Enterprises", "Globex Corporation"];
-
-  const countryCodes = getCountries().map(country => ({
-    code: `+${getCountryCallingCode(country)}`,
-    countryCode: country,
-    country: (en as any)[country]
-  })).sort((a, b) => a.country.localeCompare(b.country));
+  const countryCodes = getCountries()
+    .map((country) => ({
+      code: `+${getCountryCallingCode(country)}`,
+      countryCode: country,
+      country: (en as Record<string, string>)[country],
+    }))
+    .sort((a, b) => a.country.localeCompare(b.country));
 
   const toggleBusinessType = (type: string) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       const current = prev.businessType;
       if (current.includes(type)) {
-        return { ...prev, businessType: current.filter(t => t !== type) };
+        return { ...prev, businessType: current.filter((t) => t !== type) };
       }
       return { ...prev, businessType: [...current, type] };
     });
+    clearFieldError("businessType");
+    setSubmitError(null);
   };
 
   return (
@@ -270,22 +430,30 @@ const ContactForm = () => {
           background: rgba(255, 255, 255, 0.3);
         }
       `}</style>
-      <section ref={sectionRef} className="relative flex h-full items-center overflow-hidden bg-[#151f4d] text-white">
-        <Container borderColor="#FFFFFF33" borderOpacity={borderOpacity} className="relative flex h-full w-full items-center">
-          <SectionRadialGlow className="absolute left-1/2 top-[10%] z-0 -translate-x-1/2 md:top-[12%]" />
-          <div ref={contentRef} className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center justify-center text-center">
-
+      <section
+        ref={sectionRef}
+        className="relative flex h-full items-center overflow-hidden text-white"
+      >
+        <Container
+          borderColor="#FFFFFF33"
+          borderOpacity={borderOpacity}
+          className="relative z-10 flex h-full w-full items-center"
+        >
+          <div
+            ref={contentRef}
+            className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center justify-center text-center"
+          >
             {step > 0 && step < 5 && (
-              <div className="text-sm font-medium tracking-widest text-white/60 mb-8 uppercase">
+              <div className="mb-8 text-sm font-medium uppercase tracking-widest text-white/60">
                 0{step} / <span className="opacity-30"> 04</span>
               </div>
             )}
 
             {step === 0 && (
-              <div className="w-full flex flex-col items-center">
+              <div className="flex w-full flex-col items-center">
                 <h2
                   data-heading
-                  className="mt-5 max-w-2xl px-2 text-balance text-[1.625rem] font-heading font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
+                  className="mt-5 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
                 >
                   <span data-split>
                     Hey there! How can we assist you on this afternoon in Chicago, USA?
@@ -304,24 +472,37 @@ const ContactForm = () => {
             )}
 
             {step === 1 && (
-              <div className="w-full flex flex-col items-center">
-                <h2 data-heading className="mb-12 max-w-2xl px-2 text-balance text-[1.625rem] font-heading font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]">
+              <div className="flex w-full flex-col items-center">
+                <h2
+                  data-heading
+                  className="mb-12 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
+                >
                   <span data-split>Type of Business</span>
                 </h2>
-                <div className="flex flex-wrap justify-center gap-4 w-full">
-                  {businessTypes.map(type => (
+                <div className="flex w-full flex-wrap justify-center gap-4">
+                  {businessTypes.map((type) => (
                     <button
                       key={type}
+                      type="button"
                       data-animate-btn
                       onClick={() => toggleBusinessType(type)}
-                      className={`px-8 py-3 rounded-[5px] transition-colors border ${formData.businessType.includes(type) ? 'bg-white text-[#2E2E2E] border-transparent' : 'bg-transparent text-white border-white/40 hover:bg-white/[0.08]'}`}
+                      className={`rounded-[5px] border px-8 py-3 transition-colors ${
+                        formData.businessType.includes(type)
+                          ? "border-transparent bg-white text-[#2E2E2E]"
+                          : "border-white/40 bg-transparent text-white hover:bg-white/[0.08]"
+                      }`}
                     >
                       {type}
                     </button>
                   ))}
                 </div>
+                {fieldErrors.businessType && (
+                  <p className="mt-6 text-sm text-red-300" role="alert">
+                    {fieldErrors.businessType}
+                  </p>
+                )}
                 <div className="mt-16" data-animate-btn>
-                  <Button surface="on-dark" onClick={nextStep} balanced>
+                  <Button surface="on-dark" onClick={goNext} balanced>
                     NEXT
                   </Button>
                 </div>
@@ -329,23 +510,35 @@ const ContactForm = () => {
             )}
 
             {step === 2 && (
-              <div className="w-full flex flex-col items-center">
-                <h2 data-heading className="mb-12 max-w-2xl px-2 text-balance text-[1.625rem] font-heading font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]">
-                  <span data-split>Please describe in a few sentences what problems CoverForce would solve for your company *</span>
+              <div className="flex w-full flex-col items-center">
+                <h2
+                  data-heading
+                  className="mb-12 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
+                >
+                  <span data-split>
+                    Please describe in a few sentences what problems CoverForce would solve for
+                    your company *
+                  </span>
                 </h2>
                 <div className="w-full" data-animate-field>
                   <input
                     type="text"
                     value={formData.problems}
-                    onChange={e => updateData("problems", e.target.value)}
-                    className="w-full bg-transparent border-b border-white/40 pb-3 text-center text-lg text-white outline-none focus:border-white transition-colors"
+                    onChange={(e) => updateData("problems", e.target.value)}
+                    aria-invalid={Boolean(fieldErrors.problems)}
+                    className={`w-full border-b bg-transparent pb-3 text-center text-lg text-white outline-none transition-colors ${fieldBorderClass(Boolean(fieldErrors.problems))}`}
                   />
+                  {fieldErrors.problems && (
+                    <p className="mt-3 text-sm text-red-300" role="alert">
+                      {fieldErrors.problems}
+                    </p>
+                  )}
                 </div>
-                <div className="mt-16 w-full  flex items-center justify-between" data-animate-field>
+                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
                   <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
                     GO BACK
                   </Button>
-                  <Button surface="on-dark" onClick={nextStep} balanced>
+                  <Button surface="on-dark" onClick={goNext} balanced>
                     NEXT
                   </Button>
                 </div>
@@ -353,27 +546,43 @@ const ContactForm = () => {
             )}
 
             {step === 3 && (
-              <div className="w-full flex flex-col items-center">
-                <h2 data-heading className="mb-12 max-w-2xl px-2 text-balance text-[1.625rem] font-heading font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]">
-                  <span data-split>How big is your existing commercial book of business ($ of Gross Written Premium)?*</span>
+              <div className="flex w-full flex-col items-center">
+                <h2
+                  data-heading
+                  className="mb-12 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
+                >
+                  <span data-split>
+                    How big is your existing commercial book of business ($ of Gross Written
+                    Premium)?*
+                  </span>
                 </h2>
-                <div className="flex flex-wrap justify-center gap-4 w-full">
-                  {bookSizes.map((size, i) => (
+                <div className="flex w-full flex-wrap justify-center gap-4">
+                  {bookSizes.map((size) => (
                     <button
-                      key={i}
+                      key={size}
+                      type="button"
                       data-animate-btn
                       onClick={() => updateData("bookSize", size)}
-                      className={`px-8 py-3 rounded-[5px] transition-colors border min-w-[140px] ${formData.bookSize === size ? 'bg-white text-[#2E2E2E] border-transparent' : 'bg-transparent text-white border-white/40 hover:bg-white/[0.08]'}`}
+                      className={`min-w-[140px] rounded-[5px] border px-8 py-3 transition-colors ${
+                        formData.bookSize === size
+                          ? "border-transparent bg-white text-[#2E2E2E]"
+                          : "border-white/40 bg-transparent text-white hover:bg-white/[0.08]"
+                      }`}
                     >
-                      {size.trim()}
+                      {size}
                     </button>
                   ))}
                 </div>
-                <div className="mt-16 w-full flex items-center justify-between" data-animate-btn>
+                {fieldErrors.bookSize && (
+                  <p className="mt-6 text-sm text-red-300" role="alert">
+                    {fieldErrors.bookSize}
+                  </p>
+                )}
+                <div className="mt-16 flex w-full items-center justify-between" data-animate-btn>
                   <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
                     GO BACK
                   </Button>
-                  <Button surface="on-dark" onClick={nextStep} balanced>
+                  <Button surface="on-dark" onClick={goNext} balanced>
                     NEXT
                   </Button>
                 </div>
@@ -381,40 +590,71 @@ const ContactForm = () => {
             )}
 
             {step === 4 && (
-              <div className="w-full flex flex-col items-center">
-                <h2 data-heading className="mb-12 max-w-2xl px-2 text-balance text-[1.625rem] font-heading font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]">
+              <div className="flex w-full flex-col items-center">
+                <h2
+                  data-heading
+                  className="mb-12 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
+                >
                   <span data-split>Almost there! Tell us about you and your company.</span>
                 </h2>
 
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 text-left mt-4">
+                <div className="mt-4 grid w-full grid-cols-1 gap-x-12 gap-y-10 text-left md:grid-cols-2">
                   <div className="flex flex-col gap-2" data-animate-field>
-                    <label className="text-[11px] uppercase tracking-widest text-white/70 font-medium">FULL NAME *</label>
+                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
+                      FIRST NAME *
+                    </label>
                     <input
                       type="text"
                       placeholder="Arjun"
+                      autoComplete="given-name"
                       value={formData.firstName}
-                      onChange={e => updateData("firstName", e.target.value)}
-                      className="w-full bg-transparent border-b border-white/40 pb-2 text-white outline-none focus:border-white transition-colors"
+                      onChange={(e) => updateData("firstName", e.target.value)}
+                      aria-invalid={Boolean(fieldErrors.firstName)}
+                      className={`w-full border-b bg-transparent pb-2 text-white outline-none transition-colors ${fieldBorderClass(Boolean(fieldErrors.firstName))}`}
                     />
+                    {fieldErrors.firstName && (
+                      <p className="text-xs text-red-300" role="alert">
+                        {fieldErrors.firstName}
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-col gap-2" data-animate-field>
-                    <label className="text-[11px] uppercase tracking-widest text-white/70 font-medium">FULL NAME *</label>
+                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
+                      LAST NAME *
+                    </label>
                     <input
                       type="text"
                       placeholder="Sharma"
+                      autoComplete="family-name"
                       value={formData.lastName}
-                      onChange={e => updateData("lastName", e.target.value)}
-                      className="w-full bg-transparent border-b border-white/40 pb-2 text-white outline-none focus:border-white transition-colors"
+                      onChange={(e) => updateData("lastName", e.target.value)}
+                      aria-invalid={Boolean(fieldErrors.lastName)}
+                      className={`w-full border-b bg-transparent pb-2 text-white outline-none transition-colors ${fieldBorderClass(Boolean(fieldErrors.lastName))}`}
                     />
+                    {fieldErrors.lastName && (
+                      <p className="text-xs text-red-300" role="alert">
+                        {fieldErrors.lastName}
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-col gap-2" data-animate-field>
-                    <label className="text-[11px] uppercase tracking-widest text-white/70 font-medium">PHONE NUMBER</label>
-                    <div className="flex items-center border-b border-white/40 pb-2 focus-within:border-white transition-colors relative">
+                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
+                      PHONE NUMBER *
+                    </label>
+                    <div
+                      className={`relative flex items-center border-b pb-2 transition-colors ${
+                        fieldErrors.phone
+                          ? "border-red-400 focus-within:border-red-300"
+                          : "border-white/40 focus-within:border-white"
+                      }`}
+                    >
                       <div
-                        className="mr-2 text-sm opacity-100 flex gap-x-2 items-center cursor-pointer select-none"
-                        onClick={() => setActiveDropdown(activeDropdown === "phone" ? null : "phone")}
+                        className="mr-2 flex cursor-pointer select-none items-center gap-x-2 text-sm opacity-100"
+                        onClick={() =>
+                          setActiveDropdown(activeDropdown === "phone" ? null : "phone")
+                        }
                       >
-                        <div className="w-6 flex items-center justify-center">
+                        <div className="flex w-6 items-center justify-center">
                           {(() => {
                             const ActiveFlag = Flags[formData.countryCode as keyof typeof Flags];
                             return ActiveFlag ? (
@@ -426,22 +666,34 @@ const ContactForm = () => {
                             );
                           })()}
                         </div>
-                        <span className={`text-[10px] transition-transform duration-200 ${activeDropdown === "phone" ? "rotate-180" : ""}`}>▼</span>
+                        <span
+                          className={`text-[10px] transition-transform duration-200 ${activeDropdown === "phone" ? "rotate-180" : ""}`}
+                        >
+                          ▼
+                        </span>
                         {activeDropdown === "phone" && (
-                          <div data-lenis-prevent className="absolute top-full left-0 mt-1 w-full bg-[#1e2a5e] border border-white/20 rounded-md shadow-xl z-20 max-h-48 overflow-y-auto custom-scrollbar">
-                            {countryCodes.map(c => {
+                          <div
+                            data-lenis-prevent
+                            className="custom-scrollbar absolute top-full left-0 z-20 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-white/20 bg-[#1e2a5e] shadow-xl"
+                          >
+                            {countryCodes.map((c) => {
                               const Flag = Flags[c.countryCode as keyof typeof Flags];
                               return (
                                 <div
                                   key={`${c.country}-${c.code}`}
-                                  className="px-3 py-2 hover:bg-white/10 cursor-pointer text-sm flex items-center gap-2 transition-colors"
+                                  className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-white/10"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    setFormData(prev => ({ ...prev, phoneCode: c.code, countryCode: c.countryCode }));
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      phoneCode: c.code,
+                                      countryCode: c.countryCode,
+                                    }));
+                                    clearFieldError("phone");
                                     setActiveDropdown(null);
                                   }}
                                 >
-                                  <div className="w-6 flex items-center justify-center">
+                                  <div className="flex w-6 items-center justify-center">
                                     {Flag ? (
                                       <span className="flex w-5 items-center justify-center">
                                         <Flag title={c.countryCode} />
@@ -451,103 +703,111 @@ const ContactForm = () => {
                                     )}
                                   </div>
                                   <span className="w-12 text-white/70">{c.code}</span>
-                                  <span className="truncate flex-1" title={c.country}>{c.country}</span>
+                                  <span className="flex-1 truncate" title={c.country}>
+                                    {c.country}
+                                  </span>
                                 </div>
                               );
                             })}
                           </div>
                         )}
                       </div>
-                      <span className="text-white/60 mr-2 text-sm select-none">{formData.phoneCode}</span>
+                      <span className="mr-2 select-none text-sm text-white/60">
+                        {formData.phoneCode}
+                      </span>
                       <input
-                        type="text"
+                        type="tel"
+                        inputMode="tel"
+                        autoComplete="tel-national"
                         placeholder="98765 43210"
                         value={formData.phone}
-                        onChange={e => updateData("phone", e.target.value)}
+                        onChange={(e) =>
+                          updateData("phone", e.target.value.replace(/[^\d\s()-]/g, ""))
+                        }
+                        aria-invalid={Boolean(fieldErrors.phone)}
                         className="w-full bg-transparent text-white outline-none"
                       />
                     </div>
-                  </div>
-                  <div className="flex flex-col gap-2" data-animate-field>
-                    <label className="text-[11px] uppercase tracking-widest text-white/70 font-medium">EMAIL ADDRESS *</label>
-                    <input
-                      type="email"
-                      placeholder="arjun@company.com"
-                      value={formData.email}
-                      onChange={e => updateData("email", e.target.value)}
-                      className="w-full bg-transparent border-b border-white/40 pb-2 text-white outline-none focus:border-white transition-colors"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2 relative" data-animate-field>
-                    <label className="text-[11px] uppercase tracking-widest text-white/70 font-medium">JOB TITLE *</label>
-                    <div
-                      className="relative cursor-pointer"
-                      onClick={() => setActiveDropdown(activeDropdown === "jobTitle" ? null : "jobTitle")}
-                    >
-                      <input
-                        type="text"
-                        readOnly
-                        placeholder="Select Job Title"
-                        value={formData.jobTitle}
-                        className="w-full bg-transparent border-b border-white/40 pb-2 text-white outline-none cursor-pointer focus:border-white transition-colors pr-6"
-                      />
-                      <span className={`absolute right-0 bottom-3 text-[10px] opacity-70 transition-transform duration-200 ${activeDropdown === "jobTitle" ? "rotate-180" : ""}`}>▼</span>
-                    </div>
-                    {activeDropdown === "jobTitle" && (
-                      <div data-lenis-prevent className="absolute top-full left-0 mt-1 w-full bg-[#1e2a5e] border border-white/20 rounded-md shadow-xl z-20 max-h-48 overflow-y-auto custom-scrollbar">
-                        {jobTitles.map(title => (
-                          <div
-                            key={title}
-                            className="px-4 py-2 hover:bg-white/10 cursor-pointer text-sm transition-colors"
-                            onClick={(e) => { e.stopPropagation(); updateData("jobTitle", title); setActiveDropdown(null); }}
-                          >
-                            {title}
-                          </div>
-                        ))}
-                      </div>
+                    {fieldErrors.phone && (
+                      <p className="text-xs text-red-300" role="alert">
+                        {fieldErrors.phone}
+                      </p>
                     )}
                   </div>
-                  <div className="flex flex-col gap-2 relative" data-animate-field>
-                    <label className="text-[11px] uppercase tracking-widest text-white/70 font-medium">COMPANY NAME *</label>
-                    <div
-                      className="relative cursor-pointer"
-                      onClick={() => setActiveDropdown(activeDropdown === "companyName" ? null : "companyName")}
-                    >
-                      <input
-                        type="text"
-                        readOnly
-                        placeholder="Select Company"
-                        value={formData.companyName}
-                        className="w-full bg-transparent border-b border-white/40 pb-2 text-white outline-none cursor-pointer focus:border-white transition-colors pr-6"
-                      />
-                      <span className={`absolute right-0 bottom-3 text-[10px] opacity-70 transition-transform duration-200 ${activeDropdown === "companyName" ? "rotate-180" : ""}`}>▼</span>
-                    </div>
-                    {activeDropdown === "companyName" && (
-                      <div data-lenis-prevent className="absolute top-full left-0 mt-1 w-full bg-[#1e2a5e] border border-white/20 rounded-md shadow-xl z-20 max-h-48 overflow-y-auto custom-scrollbar">
-                        {dummyCompanies.map(company => (
-                          <div
-                            key={company}
-                            className="px-4 py-2 hover:bg-white/10 cursor-pointer text-sm transition-colors"
-                            onClick={(e) => { e.stopPropagation(); updateData("companyName", company); setActiveDropdown(null); }}
-                          >
-                            {company}
-                          </div>
-                        ))}
-                      </div>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
+                      EMAIL ADDRESS *
+                    </label>
+                    <input
+                      type="email"
+                      autoComplete="email"
+                      placeholder="arjun@company.com"
+                      value={formData.email}
+                      onChange={(e) => updateData("email", e.target.value)}
+                      aria-invalid={Boolean(fieldErrors.email)}
+                      className={`w-full border-b bg-transparent pb-2 text-white outline-none transition-colors ${fieldBorderClass(Boolean(fieldErrors.email))}`}
+                    />
+                    {fieldErrors.email && (
+                      <p className="text-xs text-red-300" role="alert">
+                        {fieldErrors.email}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
+                      JOB TITLE *
+                    </label>
+                    <input
+                      type="text"
+                      autoComplete="organization-title"
+                      placeholder="Product Manager"
+                      value={formData.jobTitle}
+                      onChange={(e) => updateData("jobTitle", e.target.value)}
+                      aria-invalid={Boolean(fieldErrors.jobTitle)}
+                      className={`w-full border-b bg-transparent pb-2 text-white outline-none transition-colors ${fieldBorderClass(Boolean(fieldErrors.jobTitle))}`}
+                    />
+                    {fieldErrors.jobTitle && (
+                      <p className="text-xs text-red-300" role="alert">
+                        {fieldErrors.jobTitle}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
+                      COMPANY NAME *
+                    </label>
+                    <input
+                      type="text"
+                      autoComplete="organization"
+                      placeholder="Acme Technologies"
+                      value={formData.companyName}
+                      onChange={(e) => updateData("companyName", e.target.value)}
+                      aria-invalid={Boolean(fieldErrors.companyName)}
+                      className={`w-full border-b bg-transparent pb-2 text-white outline-none transition-colors ${fieldBorderClass(Boolean(fieldErrors.companyName))}`}
+                    />
+                    {fieldErrors.companyName && (
+                      <p className="text-xs text-red-300" role="alert">
+                        {fieldErrors.companyName}
+                      </p>
                     )}
                   </div>
                 </div>
 
-                <div className="mt-16 flex items-center justify-between w-full" data-animate-field>
+                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
                   <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
                     GO BACK
                   </Button>
-                  <Button surface="on-dark" onClick={handleSubmit} balanced disabled={isSubmitting}>
+                  <Button
+                    surface="on-dark"
+                    onClick={handleSubmit}
+                    balanced
+                    disabled={isSubmitting}
+                  >
                     {isSubmitting ? "SUBMITTING..." : "SUBMIT"}
                   </Button>
                 </div>
                 {submitError && (
-                  <p className="mt-4 text-sm text-red-300" data-animate-field>
+                  <p className="mt-4 text-sm text-red-300" role="alert" data-animate-field>
                     {submitError}
                   </p>
                 )}
@@ -555,24 +815,31 @@ const ContactForm = () => {
             )}
 
             {step === 5 && (
-              <div className="w-full flex flex-col items-center">
-                <h2 data-heading className="mb-6 max-w-2xl px-2 text-balance text-[1.625rem] font-heading font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]">
+              <div className="flex w-full flex-col items-center">
+                <h2
+                  data-heading
+                  className="mb-6 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
+                >
                   <span data-split>Thank you! Your request has been submitted.</span>
                 </h2>
-                <p className="mb-12 mt-4 max-w-xl px-2 text-balance text-base text-white/90 sm:px-0 md:text-lg" data-animate-field>
+                <p
+                  className="mb-12 mt-4 max-w-xl px-2 text-balance text-base text-white/90 sm:px-0 md:text-lg"
+                  data-animate-field
+                >
                   Want to move faster? Schedule a call with our team at a time that works for you.
                 </p>
-                <div data-animate-field data-cal-namespace="15min"
+                <div
+                  data-animate-field
+                  data-cal-namespace="15min"
                   data-cal-link="sunny-cal/15min"
-
-                  data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true","theme":"auto"}'>
+                  data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true","theme":"auto"}'
+                >
                   <Button surface="on-dark" balanced>
                     SCHEDULE A CALL
                   </Button>
                 </div>
               </div>
             )}
-
           </div>
         </Container>
       </section>

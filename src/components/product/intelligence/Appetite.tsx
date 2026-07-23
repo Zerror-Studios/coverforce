@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -205,30 +205,98 @@ function FormSelect({
   options: readonly string[];
   onChange: (value: string) => void;
 }) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const listId = `${id}-listbox`;
+  const selected = options.includes(value) ? value : options[0];
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onPointerDown = (event: MouseEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
   return (
-    <label className="block min-w-0 flex-1">
-      <span className="mb-2 block font-mono text-sm font-medium uppercase text-[#2A297C]">
+    <div ref={rootRef} className="relative block min-w-0 flex-1">
+      <span
+        id={`${id}-label`}
+        className="mb-2 block font-mono text-sm font-medium uppercase text-[#2A297C]"
+      >
         {label}
       </span>
-      <div className="relative">
-        <select
-          id={id}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          className="box-border h-10 min-h-10 max-h-10 w-full appearance-none rounded-lg border border-[#E4E7EC] bg-white px-4 pr-10 font-heading text-sm font-medium leading-none text-[#1A1A1A] outline-none transition-colors hover:border-[#5B35E0]/40 focus:border-[#5B35E0] focus:ring-1 focus:ring-[#5B35E0]/20"
-        >
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+      <button
+        id={id}
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listId}
+        aria-labelledby={`${id}-label`}
+        onClick={() => setOpen((prev) => !prev)}
+        className={`box-border flex h-10 min-h-10 max-h-10 w-full items-center justify-between rounded-lg border bg-white px-4 text-left font-heading text-sm font-medium leading-none outline-none transition-colors ${
+          open
+            ? "border-[#5B35E0] text-[#1A1A1A] ring-1 ring-[#5B35E0]/20"
+            : "border-[#E4E7EC] text-[#1A1A1A] hover:border-[#5B35E0]/40"
+        }`}
+      >
+        <span className="truncate text-[#1A1A1A]">{selected}</span>
         <ChevronDown
-          className="pointer-events-none absolute right-3.5 top-1/2 size-4 -translate-y-1/2 text-[#9AA8BC]"
+          className={`ml-3 size-4 shrink-0 text-[#9AA8BC] transition-transform duration-200 ${
+            open ? "rotate-180" : ""
+          }`}
           aria-hidden
         />
-      </div>
-    </label>
+      </button>
+
+      {open ? (
+        <ul
+          id={listId}
+          role="listbox"
+          aria-labelledby={`${id}-label`}
+          data-lenis-prevent
+          className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-64 overflow-y-auto rounded-xl border border-[#E8ECF0] bg-white py-1 shadow-[0_12px_32px_rgba(10,20,59,0.1)]"
+        >
+          {options.map((option, index) => {
+            const isSelected = option === value;
+            return (
+              <li key={option} role="presentation">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => {
+                    onChange(option);
+                    setOpen(false);
+                  }}
+                  className={`flex w-full items-center px-4 py-3.5 text-left font-heading text-xs font-semibold uppercase tracking-[0.04em] transition-colors md:text-sm ${
+                    index > 0 ? "border-t border-[#EEF1F5]" : ""
+                  } ${
+                    isSelected
+                      ? "bg-[#F5F3FF] text-[#2A297C]"
+                      : "text-[#111110] hover:bg-[#F7F8FA]"
+                  }`}
+                >
+                  {option}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
+    </div>
   );
 }
 
@@ -357,7 +425,7 @@ const Appetite = () => {
 
             <div className="relative z-10 rounded-2xl bg-white p-5 text-[#0a143b] shadow-[0_24px_80px_rgba(0,0,0,0.28)] md:p-8 lg:p-10">
               <form className="space-y-6" onSubmit={(event) => event.preventDefault()}>
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="relative z-20 grid gap-4 md:grid-cols-3">
                   <FormSelect
                     id="appetite-product"
                     label="Product"

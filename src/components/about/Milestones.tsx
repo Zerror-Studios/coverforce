@@ -172,7 +172,11 @@ const Milestones = () => {
   );
 
   return (
-    <section ref={sectionRef} className="relative w-full">
+    <section
+      ref={sectionRef}
+      data-header-surface="dark"
+      className="relative w-full"
+    >
       <div className="relative h-dvh min-h-dvh w-full overflow-hidden lg:h-svh lg:min-h-svh">
         {milestones.map((milestone, index) => (
           <div

@@ -80,24 +80,69 @@ function getHeaderTheme(pathname: string): HeaderTheme {
   return "dark";
 }
 
-const SCROLL_GLASS_THRESHOLD = 12;
+const SCROLL_GLASS_THRESHOLD_RATIO = 0.2;
 
-function usesTransparentHeaderUntilScroll(pathname: string): boolean {
-  return (
-    pathname === "/" ||
-    pathname.startsWith("/product") ||
-    pathname.startsWith("/developers") ||
-    pathname.startsWith("/integration") ||
-    pathname.startsWith("/pricing") ||
-    pathname.startsWith("/solutions") ||
-    pathname.startsWith("/about") ||
-    pathname.startsWith("/careers") ||
-    pathname.startsWith("/contact") ||
-    pathname.startsWith("/blog")
+function parseCssRgb(color: string): { r: number; g: number; b: number; a: number } | null {
+  const match = color.match(
+    /rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*\)/i,
   );
+  if (!match) return null;
+  return {
+    r: Number(match[1]),
+    g: Number(match[2]),
+    b: Number(match[3]),
+    a: match[4] === undefined ? 1 : Number(match[4]),
+  };
 }
 
-function usesHeroThemeSwitch(pathname: string): boolean {
+function isDarkSurfaceUnderHeader(navHeight: number): boolean {
+  const x = Math.min(Math.floor(window.innerWidth / 2), window.innerWidth - 1);
+  const y = Math.min(
+    Math.max(Math.floor(navHeight + 12), 8),
+    window.innerHeight - 1,
+  );
+  const stack = document.elementsFromPoint(x, y);
+
+  for (const el of stack) {
+    if (!(el instanceof HTMLElement)) continue;
+    if (el.closest("[data-site-nav]") || el.closest("header.site-view-header")) continue;
+
+    const surfaceHost = el.closest("[data-header-surface]");
+    if (surfaceHost instanceof HTMLElement) {
+      const surface = surfaceHost.dataset.headerSurface;
+      if (surface === "dark") return true;
+      if (surface === "light") return false;
+    }
+
+    let node: HTMLElement | null = el;
+    while (node && node !== document.documentElement) {
+      const className = typeof node.className === "string" ? node.className : "";
+      if (
+        /bg-\[#(151f4d|151F4D|121[Cc]49|0a143b|080808|080114)\b/i.test(className) ||
+        /\bbg-black\b|\bbg-zinc-9|\bbg-neutral-9|\bbg-slate-9/.test(className)
+      ) {
+        return true;
+      }
+      if (
+        /\bbg-white\b|\bbg-\[#FBFCFF\]|\bbg-\[#FAFAFA\]|\bbg-\[#F4F5F7\]/.test(className)
+      ) {
+        return false;
+      }
+
+      const rgba = parseCssRgb(getComputedStyle(node).backgroundColor);
+      // Image overlays (e.g. milestones) often sit around 0.7 opacity.
+      if (rgba && rgba.a >= 0.65) {
+        const luminance = (0.299 * rgba.r + 0.587 * rgba.g + 0.114 * rgba.b) / 255;
+        return luminance < 0.55;
+      }
+      node = node.parentElement;
+    }
+  }
+
+  return true;
+}
+
+function usesTransparentHeaderUntilScroll(pathname: string): boolean {
   return (
     pathname === "/" ||
     pathname.startsWith("/product") ||
@@ -141,7 +186,7 @@ const headerThemes = {
 const headerGlass = {
   dark: "border-b border-white/10 bg-[#151f4d]/35 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(10,20,59,0.08)]",
   light:
-    "border-b border-[#E8ECF0]/70 bg-white/72 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(10,20,59,0.06)]",
+    "border-b border-[#E8ECF0]/50 bg-transparent backdrop-blur-xl backdrop-saturate-150",
 } satisfies Record<HeaderTheme, string>;
 
 function HeaderNavLink({
@@ -175,7 +220,7 @@ function HeaderNavLink({
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={`group flex items-center gap-1 font-heading text-[0.9375rem] font-regular leading-none transition-colors ${
+      className={`group flex items-center gap-1 font-heading text-[0.9375rem] font-regular leading-none transition-colors duration-150 ${
         isHighlighted ? linkActiveClass : linkIdleClass
       }`}
       aria-current={isCurrentPage ? "page" : undefined}
@@ -320,8 +365,10 @@ const Header = () => {
   const { open: openVideoModal } = useVideoModal();
   const [navBarHeight, setNavBarHeight] = useState(0);
   const [headerScrolled, setHeaderScrolled] = useState(false);
-  const [headerPastHero, setHeaderPastHero] = useState(false);
+  const [glassOverDark, setGlassOverDark] = useState(true);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const glassOverDarkRef = useRef(true);
+  const headerScrolledRef = useRef(false);
   const activeMenuRef = useRef<string | null>(null);
   const renderedMenuRef = useRef<string | null>(null);
   const clipOpenRef = useRef(false);
@@ -338,8 +385,10 @@ const Header = () => {
     return subscribePendingPathname((nextPath) => {
       setDisplayPathname(nextPath);
       if (usesTransparentHeaderUntilScroll(nextPath)) {
+        headerScrolledRef.current = false;
+        glassOverDarkRef.current = true;
         setHeaderScrolled(false);
-        setHeaderPastHero(false);
+        setGlassOverDark(true);
       }
     });
   }, []);
@@ -423,38 +472,63 @@ const Header = () => {
   }, []);
 
   const transparentUntilScroll = usesTransparentHeaderUntilScroll(displayPathname);
-  const heroThemeSwitch = usesHeroThemeSwitch(displayPathname);
-  const showGlass =
-    transparentUntilScroll &&
-    (heroThemeSwitch ? headerPastHero : headerScrolled);
+  const showGlass = transparentUntilScroll && headerScrolled;
   // Most heroes are dark → white logo while transparent.
   // Blog (and similar light pages) keep the light treatment until glass.
+  // Glass blur: white content over dark sections, black over light.
   const lightOverHero =
     displayPathname.startsWith("/blog") || displayPathname.startsWith("/author");
-  const theme = transparentUntilScroll
-    ? showGlass
-      ? "dark"
-      : lightOverHero
-        ? "light"
-        : "dark"
-    : baseTheme;
+  // Mega menu panel is white — keep header chrome white while it's open/closing.
+  const forceLightHeader =
+    mobileMenuOpen || Boolean(activeMenu) || Boolean(renderedMenu);
+  const theme = forceLightHeader
+    ? "light"
+    : transparentUntilScroll
+      ? showGlass
+        ? glassOverDark
+          ? "dark"
+          : "light"
+        : lightOverHero
+          ? "light"
+          : "dark"
+      : baseTheme;
   const styles = headerThemes[theme];
-  const isTransparentHeader = transparentUntilScroll && !showGlass;
-  const isGlassHeader = showGlass;
+  const isTransparentHeader = transparentUntilScroll && !showGlass && !forceLightHeader;
+  const isGlassHeader = showGlass && !forceLightHeader;
 
   useEffect(() => {
     if (!transparentUntilScroll) {
+      headerScrolledRef.current = false;
+      glassOverDarkRef.current = true;
       setHeaderScrolled(false);
-      setHeaderPastHero(false);
+      setGlassOverDark(true);
       return;
     }
 
+    const updateSurface = () => {
+      const height = navBarRef.current?.offsetHeight || navBarHeight || 72;
+      const overDark = isDarkSurfaceUnderHeader(height);
+      if (overDark === glassOverDarkRef.current) return;
+      glassOverDarkRef.current = overDark;
+      setGlassOverDark(overDark);
+    };
+
     const update = () => {
-      const scrollY = window.scrollY;
-      setHeaderScrolled(scrollY > SCROLL_GLASS_THRESHOLD);
-      setHeaderPastHero(
-        heroThemeSwitch ? scrollY >= window.innerHeight : false,
-      );
+      const scrollY = window.lenis?.scroll ?? window.scrollY;
+      const scrolled =
+        scrollY >= window.innerHeight * SCROLL_GLASS_THRESHOLD_RATIO;
+
+      if (scrolled !== headerScrolledRef.current) {
+        headerScrolledRef.current = scrolled;
+        setHeaderScrolled(scrolled);
+      }
+
+      if (scrolled) {
+        updateSurface();
+      } else if (!glassOverDarkRef.current) {
+        glassOverDarkRef.current = true;
+        setGlassOverDark(true);
+      }
     };
 
     update();
@@ -469,7 +543,7 @@ const Header = () => {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, [transparentUntilScroll, heroThemeSwitch]);
+  }, [transparentUntilScroll, navBarHeight]);
 
   const openMobileMenu = useCallback(() => {
     setMobileActiveMenu(null);
@@ -643,14 +717,20 @@ const Header = () => {
   }, [mobileMenuRendered]);
 
   const activeMobileConfig = renderedMobileSubMenu ? MEGA_MENUS[renderedMobileSubMenu] : null;
-  const navBarClass = mobileMenuOpen
+  const navBarClass = forceLightHeader
     ? headerThemes.light.bar
     : isTransparentHeader
       ? "border-b border-transparent bg-transparent"
       : isGlassHeader
-        ? headerGlass.dark
+        ? headerGlass[theme]
         : styles.bar;
-  const activeLogo = mobileMenuOpen ? headerThemes.light.logo : styles.logo;
+  const activeLogo = forceLightHeader ? headerThemes.light.logo : styles.logo;
+  const navBarMotionClass = isGlassHeader
+    ? "transition-[background-color,border-color,color,box-shadow,backdrop-filter] duration-150 ease-out"
+    : "transition-[background-color,border-color,color,box-shadow,backdrop-filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]";
+  const logoMotionClass = isGlassHeader
+    ? "transition-opacity duration-150 ease-out"
+    : "transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]";
   return (
     <nav className={`relative w-full ${theme === "light" ? "text-[#3D3D3D]" : "text-white"}`}>
       {menuVisible ? (
@@ -666,7 +746,7 @@ const Header = () => {
         <div
           ref={navBarRef}
           data-site-nav
-          className={`relative z-20 overflow-hidden will-change-[transform,backdrop-filter] transition-[background-color,border-color,color,box-shadow,backdrop-filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${navBarClass}`}
+          className={`relative z-20 overflow-hidden will-change-[transform,backdrop-filter] ${navBarMotionClass} ${navBarClass}`}
         >
           <Container>
             <div className="relative flex items-center justify-between py-4">
@@ -685,7 +765,7 @@ const Header = () => {
                     width={180}
                     height={34}
                     priority
-                    className={`absolute left-0 top-1/2 h-7 w-auto -translate-y-1/2 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:h-8 ${
+                    className={`absolute left-0 top-1/2 h-7 w-auto -translate-y-1/2 ${logoMotionClass} md:h-8 ${
                       activeLogo === headerThemes.dark.logo ? "opacity-100" : "opacity-0"
                     }`}
                   />
@@ -695,7 +775,7 @@ const Header = () => {
                     width={180}
                     height={34}
                     priority
-                    className={`absolute left-0 top-1/2 h-7 w-auto -translate-y-1/2 grayscale brightness-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:h-8 ${
+                    className={`absolute left-0 top-1/2 h-7 w-auto -translate-y-1/2 grayscale brightness-0 ${logoMotionClass} md:h-8 ${
                       activeLogo === headerThemes.light.logo ? "opacity-100" : "opacity-0"
                     }`}
                   />

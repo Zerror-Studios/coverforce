@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 import { RiSearchEyeLine } from "@remixicon/react";
@@ -302,34 +302,104 @@ function FormSelect({
   options: readonly { value: string; label: string }[] | readonly string[];
   onChange: (value: string) => void;
 }) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const listId = `${id}-listbox`;
+
   const normalized = options.map((option) =>
     typeof option === "string" ? { value: option, label: option } : option,
   );
+  const selected = normalized.find((option) => option.value === value) ?? normalized[0];
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onPointerDown = (event: MouseEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
 
   return (
-    <label className="block min-w-0 flex-1">
-      <span className="mb-2 block font-mono text-sm font-medium uppercase text-[#2A297C]">
+    <div ref={rootRef} className="relative block min-w-0 flex-1">
+      <span
+        id={`${id}-label`}
+        className="mb-2 block font-mono text-sm font-medium uppercase text-[#2A297C]"
+      >
         {label}
       </span>
-      <div className="relative">
-        <select
-          id={id}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          className="box-border h-10 min-h-10 max-h-10 w-full appearance-none rounded-lg border border-[#E4E7EC] bg-white px-4 pr-10 font-heading text-sm font-medium leading-none text-[#1A1A1A] outline-none transition-colors hover:border-[#5B35E0]/40 focus:border-[#5B35E0] focus:ring-1 focus:ring-[#5B35E0]/20"
-        >
-          {normalized.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+      <button
+        id={id}
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listId}
+        aria-labelledby={`${id}-label`}
+        onClick={() => setOpen((prev) => !prev)}
+        className={`box-border flex h-10 min-h-10 max-h-10 w-full items-center justify-between rounded-lg border bg-white px-4 text-left font-heading text-sm font-medium leading-none outline-none transition-colors ${
+          open
+            ? "border-[#5B35E0] text-[#1A1A1A] ring-1 ring-[#5B35E0]/20"
+            : "border-[#E4E7EC] text-[#1A1A1A] hover:border-[#5B35E0]/40"
+        }`}
+      >
+        <span className={`truncate ${value ? "text-[#1A1A1A]" : "text-[#9AA8BC]"}`}>
+          {selected?.label ?? "Select"}
+        </span>
         <ChevronDown
-          className="pointer-events-none absolute right-3.5 top-1/2 size-4 -translate-y-1/2 text-[#9AA8BC]"
+          className={`ml-3 size-4 shrink-0 text-[#9AA8BC] transition-transform duration-200 ${
+            open ? "rotate-180" : ""
+          }`}
           aria-hidden
         />
-      </div>
-    </label>
+      </button>
+
+      {open ? (
+        <ul
+          id={listId}
+          role="listbox"
+          aria-labelledby={`${id}-label`}
+          data-lenis-prevent
+          className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-64 overflow-y-auto rounded-xl border border-[#E8ECF0] bg-white py-1 shadow-[0_12px_32px_rgba(10,20,59,0.1)]"
+        >
+          {normalized.map((option, index) => {
+            const isSelected = option.value === value;
+            return (
+              <li key={option.value} role="presentation">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => {
+                    onChange(option.value);
+                    setOpen(false);
+                  }}
+                  className={`flex w-full items-center px-4 py-3.5 text-left font-heading text-xs font-semibold uppercase tracking-[0.04em] transition-colors md:text-sm ${
+                    index > 0 ? "border-t border-[#EEF1F5]" : ""
+                  } ${
+                    isSelected
+                      ? "bg-[#F5F3FF] text-[#2A297C]"
+                      : "text-[#111110] hover:bg-[#F7F8FA]"
+                  }`}
+                >
+                  {option.label}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
+    </div>
   );
 }
 
@@ -357,11 +427,92 @@ const Integration = () => {
 
   const gridRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
 
   useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef, descRef });
+
+  useGSAP(() => {
+    const container = containerRef.current;
+    const overlay = overlayRef.current;
+    const section = sectionRef.current;
+    if (!container || !overlay || !section) return;
+
+    gsap.set(container, {
+      y: 0,
+      scale: 1,
+      force3D: true,
+      transformOrigin: "50% 50%",
+      backfaceVisibility: "hidden",
+    });
+    gsap.set(overlay, { opacity: 0, pointerEvents: "none" });
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isSmallDevice = window.matchMedia("(max-width: 1023px)").matches;
+    if (reducedMotion || isSmallDevice) return;
+
+    const getShift = () => container.offsetHeight/3;
+    const scrollEnd = "bottom -100%";
+    const scrollConfig = {
+      trigger: section,
+      scrub: 0.35,
+      invalidateOnRefresh: true,
+      fastScrollEnd: true,
+    };
+
+    const parallaxTl = gsap.timeline({
+      scrollTrigger: {
+        ...scrollConfig,
+        start: "bottom bottom",
+        end: scrollEnd,
+      },
+    });
+
+    parallaxTl.to(container, {
+      y: getShift,
+      scale: 0.8,
+      ease: "none",
+      force3D: true,
+    });
+
+    const overlayTl = gsap.timeline({
+      scrollTrigger: {
+        ...scrollConfig,
+        start: "bottom center",
+        end: scrollEnd,
+      },
+    });
+
+    overlayTl.to(overlay, {
+      opacity: 0.85,
+      ease: "none",
+    });
+
+    const lenis = window.lenis;
+    let scrollPending = false;
+    const onLenisScroll = () => {
+      if (scrollPending) return;
+      scrollPending = true;
+      requestAnimationFrame(() => {
+        ScrollTrigger.update();
+        scrollPending = false;
+      });
+    };
+    lenis?.on("scroll", onLenisScroll);
+
+    ScrollTrigger.refresh();
+
+    return () => {
+      lenis?.off("scroll", onLenisScroll);
+      parallaxTl.scrollTrigger?.kill();
+      parallaxTl.kill();
+      overlayTl.scrollTrigger?.kill();
+      overlayTl.kill();
+    };
+  }, { scope: sectionRef });
 
   useGSAP(
     () => {
@@ -391,97 +542,98 @@ const Integration = () => {
     <section
       id="integration"
       ref={sectionRef}
-      className="relative overflow-hidden bg-[#FBFCFF] text-[#0a143b]"
+      className="relative z-30 overflow-hidden bg-[#FBFCFF] text-[#0a143b]"
     >
-      <Container borderColor="#53535380">
-        <div className="pb-12 pt-16 md:pb-24 md:pt-24">
-          <div
-            ref={headerRef}
-            className="grid gap-8 lg:grid-cols-2 lg:items-end lg:justify-between lg:gap-12"
-          >
-            <div className="flex flex-col justify-end">
-              <EyebrowPill surface="light">Universal Integrations Index</EyebrowPill>
-              <h2
-                ref={headingRef}
-                className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
-              >
-                <span data-split>One integration. The entire ecosystem.</span>
-              </h2>
-              <p
-                ref={descRef}
-                className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
-              >
+      <div ref={containerRef} className="relative z-10 overflow-hidden lg:will-change-transform">
+        <Container borderColor="#53535380">
+          <div className="pb-12 pt-16 md:pb-24 md:pt-24">
+            <div
+              ref={headerRef}
+              className="grid gap-8 lg:grid-cols-2 lg:items-end lg:justify-between lg:gap-12"
+            >
+              <div className="flex flex-col justify-end">
+                <EyebrowPill surface="light">Universal Integrations Index</EyebrowPill>
+                <h2
+                  ref={headingRef}
+                  className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+                >
+                  <span data-split>One integration. The entire ecosystem.</span>
+                </h2>
+                <p
+                  ref={descRef}
+                  className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
+                >
+                  The universal index of CoverForce integrations — carriers, AMS,
+                  premium finance, E&amp;S compliance, and AI in one place.
+                </p>
+              </div>
+              <p className="hidden max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:block lg:text-right">
                 The universal index of CoverForce integrations — carriers, AMS,
                 premium finance, E&amp;S compliance, and AI in one place.
               </p>
             </div>
-            <p className="hidden max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:block lg:text-right">
-              The universal index of CoverForce integrations — carriers, AMS,
-              premium finance, E&amp;S compliance, and AI in one place.
-            </p>
-          </div>
 
-          <div className="mt-8 pb-8 lg:mt-10 lg:pb-10">
-            <div
-              className="-mx-1 overflow-x-auto overflow-y-hidden pb-1 lg:mx-0 lg:overflow-visible lg:pb-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-              role="tablist"
-              aria-label="Integration category"
-            >
-              <div className="flex w-max gap-2 px-1 lg:w-full lg:justify-between lg:gap-3 lg:px-0">
-                {TABS.map((tab) => {
-                  const isActive = tab.id === activeTab;
-                  return (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      role="tab"
-                      aria-selected={isActive}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`shrink-0 rounded-full border px-5 py-2 font-heading text-[0.6875rem] transition-colors md:text-xs ${
-                        isActive
-                          ? "border-[#413CC0] bg-[#FAFBFC] text-[#3834A4]"
-                          : "border-[#E4E7EC] bg-[#FAFBFC] text-[#6B7280] hover:border-[#C8CDD6]"
-                      }`}
-                    >
-                      {getTabLabel(tab)}
-                    </button>
-                  );
-                })}
+            <div className="mt-8 pb-8 lg:mt-10 lg:pb-10">
+              <div
+                className="-mx-1 overflow-x-auto overflow-y-hidden pb-1 lg:mx-0 lg:overflow-visible lg:pb-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                role="tablist"
+                aria-label="Integration category"
+              >
+                <div className="flex w-max gap-2 px-1 lg:w-full lg:justify-between lg:gap-3 lg:px-0">
+                  {TABS.map((tab) => {
+                    const isActive = tab.id === activeTab;
+                    return (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        role="tab"
+                        aria-selected={isActive}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`shrink-0 rounded-full border px-5 py-2 font-heading text-[0.6875rem] transition-colors md:text-xs ${
+                          isActive
+                            ? "border-[#413CC0] bg-[#FAFBFC] text-[#3834A4]"
+                            : "border-[#E4E7EC] bg-[#FAFBFC] text-[#6B7280] hover:border-[#C8CDD6]"
+                        }`}
+                      >
+                        {getTabLabel(tab)}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="space-y-5 lg:space-y-3">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <FormSelect
-                id="integration-lob"
-                label="LOB"
-                value={lob}
-                options={LOB_FILTERS}
-                onChange={setLob}
-              />
-              <FormSelect
-                id="integration-market"
-                label="Market Type"
-                value={market}
-                options={MARKET_OPTIONS}
-                onChange={setMarket}
-              />
-              <FormSelect
-                id="integration-status"
-                label="Status"
-                value={status}
-                options={STATUS_FILTERS}
-                onChange={setStatus}
-              />
-            </div>
+            <div className="relative z-20 space-y-5 lg:space-y-3">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <FormSelect
+                  id="integration-lob"
+                  label="LOB"
+                  value={lob}
+                  options={LOB_FILTERS}
+                  onChange={setLob}
+                />
+                <FormSelect
+                  id="integration-market"
+                  label="Market Type"
+                  value={market}
+                  options={MARKET_OPTIONS}
+                  onChange={setMarket}
+                />
+                <FormSelect
+                  id="integration-status"
+                  label="Status"
+                  value={status}
+                  options={STATUS_FILTERS}
+                  onChange={setStatus}
+                />
+              </div>
 
-            <div className="flex justify-end">
-              <span className="text-[0.6875rem] font-medium text-[#98A2B3]">
-                {filtered.length} carriers shown
-              </span>
+              <div className="flex justify-end">
+                <span className="text-[0.6875rem] font-medium text-[#98A2B3]">
+                  {filtered.length} carriers shown
+                </span>
+              </div>
             </div>
-          </div>
 
             {filtered.length > 0 ? (
               <div
@@ -517,8 +669,14 @@ const Integration = () => {
                 </button>
               </div>
             )}
-        </div>
-      </Container>
+          </div>
+        </Container>
+      </div>
+      <div
+        ref={overlayRef}
+        className="pointer-events-none absolute inset-0 z-20 bg-[#080808]"
+        aria-hidden
+      />
     </section>
   );
 };

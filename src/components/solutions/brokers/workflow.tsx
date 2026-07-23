@@ -4,6 +4,15 @@ import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  RiDatabase2Line,
+  RiFileEditLine,
+  RiFileWarningLine,
+  RiFocus3Line,
+  RiRouteLine,
+  RiSparkling2Line,
+  type RemixiconComponentType,
+} from "@remixicon/react";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
@@ -18,6 +27,7 @@ type WorkflowProps = {
 type ComparisonItem = {
   title: string;
   description: string;
+  Icon: RemixiconComponentType;
 };
 
 const todayItems: ComparisonItem[] = [
@@ -25,16 +35,19 @@ const todayItems: ComparisonItem[] = [
     title: "Manual PDF Data Entry",
     description:
       "Underwriters spend 40% of their day re-typing information from Acord forms into carrier portals.",
+    Icon: RiFileEditLine,
   },
   {
     title: "Blind Submission Routing",
     description:
-      "Submissions get routed to carriers without appetite checks — producers waste days quoting risks that were never going to bind.",
+      "Submissions go to carriers without appetite checks — producers waste days quoting risks that won't bind.",
+    Icon: RiRouteLine,
   },
   {
     title: "Incomplete Submissions",
     description:
       "Missing ACORD fields, loss runs, and supplemental forms stall underwriting before a quote can even begin.",
+    Icon: RiFileWarningLine,
   },
 ];
 
@@ -43,16 +56,19 @@ const coverforceItems: ComparisonItem[] = [
     title: "AI Document Ingestion",
     description:
       "95% accuracy in extracting data from unstructured PDFs and emails in seconds.",
+    Icon: RiSparkling2Line,
   },
   {
     title: "Instant Appetite Matching",
     description:
       "Automatically route to the carrier most likely to bind based on historical data.",
+    Icon: RiFocus3Line,
   },
   {
     title: "Automated Enrichment",
     description:
       "Integrations with 3rd party data sources automatically fill in missing firmographic details.",
+    Icon: RiDatabase2Line,
   },
 ];
 
@@ -76,30 +92,41 @@ function ComparisonPanel({
     >
       <EyebrowPill
         surface={isToday ? "light" : "dark"}
-        background={isToday ? undefined : "#FFFFFF"}
-        dotColor={isToday ? undefined : "#151f4d"}
-        className={`mb-0 ${isToday ? "" : "text-[#151f4d]!"}`}
+        shadow={isToday ? "white" : "default"}
+        className="mb-0"
       >
         {isToday ? "Traditional workflow tools" : "With CoverForce"}
       </EyebrowPill>
 
       <div className="mt-auto flex flex-col gap-10 pt-16 sm:gap-12 sm:pt-20 md:gap-14 md:pt-24 lg:gap-16 lg:pt-28">
-        {items.map((item) => (
-          <div key={item.title}>
-            <h3
-              className={`font-heading text-lg font-medium leading-snug sm:text-xl md:text-[1.375rem] ${
-                isToday ? "text-[#0a143b]" : "text-white"
+        {items.map(({ title, description, Icon }) => (
+          <div key={title} className="flex items-start gap-4 sm:gap-5">
+            <span
+              className={`mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full sm:size-11 ${
+                isToday
+                  ? "bg-white text-[#0a143b] shadow-[0_1px_4px_rgba(10,20,59,0.08)]"
+                  : "bg-white/15 text-white"
               }`}
+              aria-hidden
             >
-              {item.title}
-            </h3>
-            <p
-              className={`mt-2 max-w-md text-sm leading-[1.5] sm:mt-2.5 sm:text-[0.9375rem] md:leading-[1.55] ${
-                isToday ? "text-[#50617a]" : "text-white/75"
-              }`}
-            >
-              {item.description}
-            </p>
+              <Icon className="size-5" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <h3
+                className={`font-heading text-lg font-medium leading-snug sm:text-xl md:text-[1.375rem] ${
+                  isToday ? "text-[#0a143b]" : "text-white"
+                }`}
+              >
+                {title}
+              </h3>
+              <p
+                className={`mt-2 max-w-md text-sm leading-[1.5] sm:mt-2.5 sm:text-[0.9375rem] md:leading-[1.55] ${
+                  isToday ? "text-[#50617a]" : "text-white/75"
+                }`}
+              >
+                {description}
+              </p>
+            </div>
           </div>
         ))}
       </div>

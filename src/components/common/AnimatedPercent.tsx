@@ -283,6 +283,54 @@ function ScrollTriggeredAnimatedStat(
   return <AnimatedStat {...props} rootRef={rootRef} roll={roll} />;
 }
 
+function digitSequence(digit: number): number[] {
+  if (digit <= 0) return [0];
+  return Array.from({ length: digit + 1 }, (_, index) => index);
+}
+
+/** Parse stats like "95%+", "40+", "200+", "1" into value + suffix */
+export function parseStatValue(stat: string): { value: number; suffix: string } {
+  const match = String(stat).trim().match(/^(\d+)(.*)$/);
+  if (!match) return { value: 0, suffix: stat };
+  return { value: Number(match[1]), suffix: match[2] ?? "" };
+}
+
+/** Scroll-triggered odometer for arbitrary whole numbers (e.g. 95, 40, 200) */
+export function ScrollTriggeredOdometerStat({
+  value,
+  suffix = "",
+  className = "",
+  suffixClassName = "",
+  ariaLabel,
+}: {
+  value: number;
+  suffix?: string;
+  className?: string;
+  suffixClassName?: string;
+  ariaLabel?: string;
+}) {
+  const columns = useMemo(
+    () =>
+      String(Math.max(0, Math.floor(value)))
+        .split("")
+        .map((char, index) => ({
+          sequence: digitSequence(Number(char)),
+          delay: index > 0 ? MICRO_ROLL_STAGGER_MS * index : 0,
+        })),
+    [value],
+  );
+
+  return (
+    <ScrollTriggeredAnimatedStat
+      columns={columns}
+      suffix={suffix}
+      suffixClassName={suffixClassName}
+      className={className}
+      ariaLabel={ariaLabel ?? `${value}${suffix}`}
+    />
+  );
+}
+
 type AnimatedPercentProps = {
   className?: string;
   tensDuration?: number;

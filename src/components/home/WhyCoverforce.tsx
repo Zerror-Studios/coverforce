@@ -239,8 +239,8 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
 
         .why-slide-copy {
           transition:
-            opacity 500ms cubic-bezier(0.19, 1, 0.22, 1),
-            transform 700ms cubic-bezier(0.19, 1, 0.22, 1);
+            opacity 400ms cubic-bezier(0.19, 1, 0.22, 1),
+            transform 500ms cubic-bezier(0.19, 1, 0.22, 1);
         }
         .why-slide.is-inactive .why-slide-copy {
           opacity: 0;
@@ -249,7 +249,7 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
         .why-slide.is-active .why-slide-copy {
           opacity: 1;
           transform: translateY(0);
-          transition-delay: 700ms;
+          transition-delay: 180ms;
         }
 
         .why-slide-mask {
@@ -260,27 +260,27 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
           opacity: 0;
           transform: translateY(110%);
           transition:
-            opacity 500ms cubic-bezier(0.22, 1, 0.36, 1),
-            transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+            opacity 400ms cubic-bezier(0.22, 1, 0.36, 1),
+            transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
         }
         .why-slide.is-active .why-slide-title-inner {
           opacity: 1;
           transform: translateY(0);
-          transition-delay: 850ms;
+          transition-delay: 220ms;
         }
         .why-slide.is-active .why-slide-description-line {
           opacity: 1;
           transform: translateY(0);
-          transition-delay: 980ms;
+          transition-delay: 300ms;
         }
         .why-slide.is-active p .why-slide-mask:nth-child(2) .why-slide-description-line {
-          transition-delay: 1070ms;
+          transition-delay: 360ms;
         }
         .why-slide.is-active p .why-slide-mask:nth-child(3) .why-slide-description-line {
-          transition-delay: 1160ms;
+          transition-delay: 420ms;
         }
         .why-slide.is-active p .why-slide-mask:nth-child(4) .why-slide-description-line {
-          transition-delay: 1250ms;
+          transition-delay: 480ms;
         }
 
         .why-swiper-slide {

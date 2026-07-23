@@ -15,10 +15,28 @@ import {
   type MarqueeLogo,
 } from "@/components/solutions/wholesalers/MarqueeLine";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
-import type { GradFlowColors } from "@/data/wayCardStyles";
+import type { GradFlowColors, GradFlowRgb } from "@/data/wayCardStyles";
 import { GradFlow } from "gradflow";
 
 gsap.registerPlugin(ScrollTrigger);
+
+/** Darken GradFlow RGB so hero text stays readable without a black overlay. */
+function darkenGradFlowColor(color: GradFlowRgb, amount = 0.42): GradFlowRgb {
+  const keep = 1 - amount;
+  return {
+    r: Math.round(color.r * keep),
+    g: Math.round(color.g * keep),
+    b: Math.round(color.b * keep),
+  };
+}
+
+function darkenGradFlow(colors: GradFlowColors, amount = 0.42): GradFlowColors {
+  return {
+    color1: darkenGradFlowColor(colors.color1, amount),
+    color2: darkenGradFlowColor(colors.color2, amount),
+    color3: darkenGradFlowColor(colors.color3, amount + 0.08),
+  };
+}
 
 export type SolutionHeroFeature = {
   readonly heading: string;
@@ -439,14 +457,13 @@ export default function SolutionScrollHero({
         <GradFlow
           className="absolute inset-0 h-full w-full"
           config={{
-            ...gradFlow,
+            ...darkenGradFlow(gradFlow),
             speed: 0.4,
             scale: 1,
             type: "stripe",
             noise: 0.08,
           }}
         />
-        <div className="absolute inset-0 bg-black/45" aria-hidden />
       </div>
     </section>
   );
