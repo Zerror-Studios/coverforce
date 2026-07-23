@@ -49,6 +49,7 @@ export default function OperatingSystem({
   showHeader?: boolean;
 }) {
   return (
+    
     <OperatingSystemSection
       sectionTitle={<>{operatingSystemTitle}</>}
       sectionDescription={operatingSystemDescription}

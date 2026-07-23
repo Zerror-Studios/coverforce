@@ -12,6 +12,8 @@ import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import OperatingPlatformMock from "@/components/solutions/brokers/OperatingPlatformMock";
 import OperatingAiMock from "@/components/solutions/brokers/OperatingAiMock";
 import OperatingVisibilityMock from "@/components/solutions/brokers/OperatingVisibilityMock";
+import ShrimpLineAnimation from "@/components/developers/Shrimplineanimation";
+import ShrimpLineAnimation2 from "@/components/developers/Shrimplineanimation2";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -117,6 +119,8 @@ export default function OperatingSystemSection({
 
   return (
     <section ref={sectionRef} className="relative z-10 min-h-screen bg-white text-[#0a143b]">
+      <ShrimpLineAnimation className="h-full" />
+      <ShrimpLineAnimation2 className="h-full" />
       <Container borderColor="#53535380" borderBottom={true}>
         <div className={paddingTop ? "pt-16 pb-16 md:pt-20 md:pb-20 lg:pt-24 lg:pb-24" : "pt-0 pb-16 md:pb-20 lg:pb-24"}>
           {showHeader ? (
