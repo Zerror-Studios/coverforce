@@ -99,7 +99,7 @@ export default function ShrimpLineAnimation({
   return (
     <div
       ref={wrapperRef}
-      className={` absolute inset-0 left-0 top-0 w-full pointer-events-none bg-transparent ${className}`}
+      className={` absolute inset-0 max-sm:hidden left-0 top-0 w-full pointer-events-none bg-transparent ${className}`}
     >
       <div className="flex w-full flex-col" style={{ gap, rowGap: gap }}>
         {[0, 1].map((i) => {
