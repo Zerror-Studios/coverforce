@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
-import { CARD_BACKGROUND_STYLES, type CardBackground } from "@/data/wayCardStyles";
+import { CARD_ACCENT_COLORS, CARD_BACKGROUND_STYLES, CARD_UI_GRADIENT_STYLES, type CardBackground } from "@/data/wayCardStyles";
 
 const WholesalerMock = dynamic(() => import("@/components/home/WholesalerMock"), {
   loading: () => <MockPlaceholder />,
@@ -242,6 +242,8 @@ const Launch = () => {
             >
               {launchSteps.map((step, index) => {
                 const isActive = activeStep === index;
+                const accent = CARD_ACCENT_COLORS[step.background];
+                const tabGradient = CARD_UI_GRADIENT_STYLES[step.background];
 
                 return (
                   <button
@@ -252,17 +254,23 @@ const Launch = () => {
                     aria-selected={isActive}
                     aria-controls="launch-panel"
                     onClick={() => selectStep(index)}
-                    className={`group flex w-full items-start gap-5 rounded-xl border px-4 py-3.5 text-left outline-none transition-all duration-300 ease-out focus-visible:ring-2 focus-visible:ring-[#0a143b]/25 focus-visible:ring-offset-2 ${
+                    className={`group flex w-full items-start gap-5 rounded-xl border px-4 py-3.5 text-left outline-none transition-all duration-300 ease-out focus-visible:ring-2 focus-visible:ring-offset-2 ${
                       isActive
-                        ? "border-[#0a143b] bg-white shadow-[0_1px_2px_rgba(10,20,59,0.04)]"
-                        : "border-[#E5E7EB] bg-transparent hover:bg-[#F8F9FC]"
+                        ? "border-transparent text-white shadow-[0_8px_24px_rgba(10,20,59,0.12)]"
+                        : "border-[color:var(--tab-accent)] bg-transparent"
                     }`}
+                    style={
+                      {
+                        ["--tab-accent" as string]: accent,
+                        ...(isActive ? { background: tabGradient } : null),
+                      } as CSSProperties
+                    }
                   >
                     <span
                       className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full font-sans text-sm font-medium transition-all duration-300 ${
                         isActive
-                          ? "bg-[#0a143b] text-white"
-                          : "bg-[#ECEEF2] text-[#9CA3AF] group-hover:bg-[#E5E7EB] group-hover:text-[#6B7280]"
+                          ? "bg-white/20 text-white"
+                          : "bg-[color:var(--tab-accent)] text-white"
                       }`}
                     >
                       {index + 1}
@@ -271,8 +279,8 @@ const Launch = () => {
                       <span
                         className={`block font-sans text-base leading-snug transition-colors duration-300 ${
                           isActive
-                            ? "font-semibold text-[#0a143b]"
-                            : "font-regular text-[#9CA3AF] group-hover:text-[#6B7280]"
+                            ? "font-semibold text-white"
+                            : "font-regular text-[color:var(--tab-accent)]"
                         }`}
                       >
                         {step.title}
@@ -280,8 +288,8 @@ const Launch = () => {
                       <span
                         className={`mt-1 block font-sans text-sm leading-relaxed transition-colors duration-300 ${
                           isActive
-                            ? "text-[#4B5563]"
-                            : "text-[#B0B5BF] group-hover:text-[#9CA3AF]"
+                            ? "text-white/80"
+                            : "text-[#6B7280]"
                         }`}
                       >
                         {step.description}
