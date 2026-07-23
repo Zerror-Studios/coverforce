@@ -35,7 +35,17 @@ function getAuth() {
 }
 
 const isValidEmail = (value: string): boolean =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value ?? "").trim());
+  /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(value ?? "").trim());
+
+const isValidName = (value: string): boolean =>
+  /^[\p{L}][\p{L}\s'.-]{1,49}$/u.test(String(value ?? "").trim());
+
+const isValidPhone = (phoneCode: string, phone: string): boolean => {
+  const digits = String(phone ?? "").replace(/\D/g, "");
+  if (digits.length < 7 || digits.length > 15) return false;
+  const full = `${String(phoneCode ?? "").trim()}${digits}`;
+  return /^\+\d{8,18}$/.test(full);
+};
 
 export async function POST(request: Request) {
   try {
@@ -61,6 +71,7 @@ export async function POST(request: Request) {
       "bookSize",
       "firstName",
       "lastName",
+      "phone",
       "email",
       "jobTitle",
       "companyName",
@@ -71,8 +82,30 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "All required fields must be filled" }, { status: 400 });
     }
 
+    if (payload.problems.length < 10) {
+      return NextResponse.json(
+        { error: "Please describe the problems in a few sentences" },
+        { status: 400 },
+      );
+    }
+
+    if (!isValidName(payload.firstName) || !isValidName(payload.lastName)) {
+      return NextResponse.json({ error: "Please enter a valid name" }, { status: 400 });
+    }
+
     if (!isValidEmail(payload.email)) {
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+    }
+
+    if (!isValidPhone(payload.phoneCode, payload.phone)) {
+      return NextResponse.json({ error: "Invalid phone number" }, { status: 400 });
+    }
+
+    if (payload.jobTitle.length < 2 || payload.companyName.length < 2) {
+      return NextResponse.json(
+        { error: "Please enter a valid job title and company name" },
+        { status: 400 },
+      );
     }
 
     if (!spreadsheetId) {

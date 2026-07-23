@@ -4,6 +4,7 @@ import React, { Suspense, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import MapPoints from "./MapPoints";
 import ContactForm from "./ContactForm";
+import SectionRadialGlow from "@/components/common/SectionRadialGlow";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";
@@ -14,23 +15,26 @@ const Hero = () => {
   const containerRef = useRef<HTMLElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     const container = containerRef.current;
     const form = formRef.current;
     const map = mapRef.current;
+    const glow = glowRef.current;
     const label = labelRef.current;
-    if (!container || !form || !map) return;
+    if (!container || !form || !map || !glow) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const mapLayers = [map, glow];
 
-    gsap.set(map, { yPercent: 100 });
-    gsap.set(form, { opacity: 1 });
-    if (label) gsap.set(label, { opacity: 1 });
+    gsap.set(mapLayers, { yPercent: 100 });
+    gsap.set(form, { autoAlpha: 1 });
+    if (label) gsap.set(label, { autoAlpha: 1 });
 
     if (reducedMotion) {
-      gsap.set(map, { yPercent: 0 });
+      gsap.set(mapLayers, { yPercent: 0 });
       return;
     }
 
@@ -39,23 +43,27 @@ const Hero = () => {
         trigger: container,
         start: "top top",
         end: "bottom bottom",
-        scrub: true,
+        scrub: 0.6,
         invalidateOnRefresh: true,
       },
     });
 
+    // Map rises over the full scroll; form fades out smoothly in the first half
+    // so the fade stays visible above the map.
     tl.to(
-      form,
-      {
-        opacity: 0,
-        ease: "none",
-      },
-      0,
-    ).to(
-      map,
+      mapLayers,
       {
         yPercent: 0,
         ease: "none",
+        duration: 1,
+      },
+      0,
+    ).to(
+      form,
+      {
+        autoAlpha: 0,
+        ease: "power2.out",
+        duration: 0.5,
       },
       0,
     );
@@ -64,8 +72,9 @@ const Hero = () => {
       tl.to(
         label,
         {
-          opacity: 0,
-          ease: "none",
+          autoAlpha: 0,
+          ease: "power2.out",
+          duration: 0.4,
         },
         0,
       );
@@ -86,7 +95,16 @@ const Hero = () => {
       className="relative h-[200svh] bg-[#151f4d] text-white"
     >
       <div className="sticky top-0 h-svh w-full overflow-hidden">
-        <div ref={formRef} className="absolute inset-0 z-10">
+        {/* Glow rides with the map, but stays under form content */}
+        <div
+          ref={glowRef}
+          className="pointer-events-none absolute inset-0 z-[15] h-full w-full will-change-transform"
+          aria-hidden
+        >
+          <SectionRadialGlow className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2" />
+        </div>
+
+        <div ref={formRef} className="absolute inset-0 z-30 will-change-[opacity]">
           <ContactForm />
 
           <div
@@ -116,7 +134,7 @@ const Hero = () => {
 
         <div
           ref={mapRef}
-          className="us_map_bg absolute inset-0 z-20 h-full w-full overflow-hidden will-change-transform"
+          className="us_map_bg absolute inset-0 z-20 h-full w-full will-change-transform"
         >
           <Canvas
             camera={{ position: [0, 0, 500], fov: 50 }}

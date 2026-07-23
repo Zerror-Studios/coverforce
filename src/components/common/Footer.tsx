@@ -219,7 +219,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative overflow-hidden bg-[#F9F8FF] text-[#0a143b]">
+    <footer className="relative z-40 overflow-hidden bg-white text-[#0a143b]">
       <Container borderColor="#53535380">
         <div className="relative z-10 pt-12 md:pt-16 lg:pt-20">
 
