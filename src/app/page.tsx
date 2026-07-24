@@ -9,7 +9,6 @@ import Review from "@/components/home/Review";
 import SectionRadialGlow from "@/components/common/SectionRadialGlow";
 import CarrierResults from "@/components/home/CarrierResults";
 import { createPageMetadata } from "@/lib/seo";
-import Marquee from "@/components/home/Marquee";
 import PageWrapper from "@/components/PageWrapper";
 
 const HomePage = () => {
@@ -18,7 +17,6 @@ const HomePage = () => {
       <PageWrapper>
         <Hero />
         <HomeSectionsAfterIntro>
-          <Marquee />
           <ThreeWays />
           <DistributionFlow />
           <ProcessFlow />

@@ -6,13 +6,8 @@ import RequestDemoButton from "@/components/request-demo/RequestDemoButton";
 import WatchDemoButton from "@/components/common/WatchDemoButton";
 import Container from "../common/Container";
 import SectionRadialGlow from "../common/SectionRadialGlow";
-import dynamic from "next/dynamic";
-
-const OpticalFiber = dynamic(() => import("./OpticalFiber"), {
-  ssr: false,
-  loading: () => <div className="h-full w-full" aria-hidden />,
-});
 import HeroDataLines from "./HeroDataLines";
+import BranchFlow from "./BranchFlow";
 import {
   HOME_INTRO_EASE,
   HOME_INTRO_HERO_RISE_MS,
@@ -51,8 +46,6 @@ const heroTheme = {
   statLabelActive: "text-white/80",
   statLabelInactive: "text-[#8296B0]",
   statLine: "bg-white/5",
-  fiberColor: "#ffffff",
-  fiberOriginGlow: true,
 } as const;
 
 const Hero = () => {
@@ -60,9 +53,6 @@ const Hero = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const { enabled: introEnabled, phase: introPhase } = useHomeIntro();
   const [introSettled, setIntroSettled] = useState(!introEnabled);
-  const [fiberGlowVisible, setFiberGlowVisible] = useState(
-    !theme.fiberOriginGlow || !introEnabled,
-  );
   const isIntroWhiteBg =
     introEnabled &&
     !introSettled &&
@@ -269,23 +259,9 @@ const Hero = () => {
     }
   }, [introEnabled, introPhase]);
 
-  useEffect(() => {
-    if (!theme.fiberOriginGlow) return;
-
-    if (!introEnabled) {
-      setFiberGlowVisible(true);
-      return;
-    }
-
-    if (introPhase === "done") {
-      setFiberGlowVisible(true);
-    }
-  }, [theme.fiberOriginGlow, introEnabled, introPhase]);
-
   useLayoutEffect(() => {
     if (!introEnabled || introPhase !== "nav" || revealAnimatedRef.current) return;
     revealAnimatedRef.current = true;
-    if (theme.fiberOriginGlow) setFiberGlowVisible(true);
     sectionRef.current?.removeAttribute("data-intro-reveal");
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -344,7 +320,7 @@ const Hero = () => {
     if (dataLinesRef.current) {
       tl.to(dataLinesRef.current, { autoAlpha: 1, duration: revealDur }, 0.04);
     }
-  }, [introEnabled, introPhase, theme.fiberOriginGlow]);
+  }, [introEnabled, introPhase]);
 
   useLayoutEffect(() => {
     const update = () => {
@@ -555,28 +531,21 @@ const Hero = () => {
           </div>
 
         </div>
-        {/* Network image — inside 100vh, pushed to bottom via justify-between */}
-        <div className="relative h-[260px] w-full overflow-hidden pt-4 sm:h-[320px] sm:pt-6 md:h-[480px] md:pt-10 lg:h-[500px]">
+        {/* Network + distribution header */}
+        <div className="relative w-full overflow-hidden pt-4 sm:pt-6 md:pt-10">
+          <h2
+            className={`relative z-10 mb-4 max-w-xl text-2xl font-heading font-medium leading-[1.15] tracking-tight sm:mb-6 sm:text-3xl sm:leading-[1.12] md:mb-8 md:text-4xl lg:mb-10 lg:text-[1.625rem] lg:leading-[1.12] ${theme.titleMuted}`}
+          >
+            Commercial insurance distribution that gets smarter with every
+            transaction
+          </h2>
           <div
             ref={networkRef}
             data-hero-reveal
-            className="relative z-10 h-full w-full motion-reduce:translate-y-0 motion-reduce:opacity-100"
-            aria-label="Partner network"
+            className="relative z-10 h-[220px] w-full overflow-hidden motion-reduce:translate-y-0 motion-reduce:opacity-100 sm:h-[280px] md:h-[340px] lg:h-[380px]"
+            aria-label="Deployment branch timeline"
           >
-            <OpticalFiber
-              className="h-full w-full"
-              contentScale={1.4}
-              fanSpread={0.58}
-              fanReach={1.2}
-              fanHeight={0.62}
-              fanOffsetX={0.45}
-              fov={86}
-              color={theme.fiberColor}
-              originGlow={theme.fiberOriginGlow}
-              glowVisible={theme.fiberOriginGlow ? fiberGlowVisible : false}
-              bloomOnScroll
-              bloomGlow
-            />
+            <BranchFlow className="h-full w-full" />
           </div>
         </div>
 
