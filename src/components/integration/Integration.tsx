@@ -27,6 +27,8 @@ type Market = "AD" | "ES";
 /** live = integrated & quotable now · request = available to request while carrier is live */
 type ProductAvailability = "live" | "request";
 
+type CategoryId = "carriers" | "ams" | "finance" | "ai";
+
 type CarrierProduct = {
   market: Market;
   name: string;
@@ -38,20 +40,21 @@ type Carrier = {
   name: string;
   logoColor: string;
   status: "Live on CoverForce" | "API available";
+  category: CategoryId;
   /** Used for LOB filters only — not shown on cards */
   lobs: string[];
   products: CarrierProduct[];
 };
 
 type Tab = {
-  id: string;
+  id: CategoryId;
   label: string;
   count?: number;
 };
 
 const TABS: Tab[] = [
   { id: "carriers", label: "Carriers & MGAs", count: 20 },
-  { id: "ams", label: "Agency Management" },
+  { id: "ams", label: "Agency Management", count: 4 },
   { id: "finance", label: "Finance & Compliance", count: 3 },
   { id: "ai", label: "Market Access", count: 3 },
 ];
@@ -73,6 +76,7 @@ const BASE_CARRIERS: Carrier[] = [
     name: "AmTrust",
     logoColor: "#1F2A6B",
     status: "Live on CoverForce",
+    category: "carriers",
     lobs: ["WC", "BOP", "GL", "Cyber"],
     products: [
       { market: "AD", name: "Business Owner's Policy" },
@@ -85,18 +89,21 @@ const BASE_CARRIERS: Carrier[] = [
     name: "Liberty Mutual",
     logoColor: "#F2C200",
     status: "API available",
-    lobs: ["WC", "BOP", "GL"],
+    category: "carriers",
+    lobs: ["WC", "BOP", "GL", "Auto"],
     products: [
       { market: "AD", name: "Business Policy" },
       { market: "AD", name: "Inland Marine", availability: "request" },
       { market: "AD", name: "General Liability" },
       { market: "AD", name: "Workers Compensation" },
+      { market: "AD", name: "Commercial Auto", availability: "request" },
     ],
   },
   {
     name: "Travelers",
     logoColor: "#D8232A",
     status: "API available",
+    category: "carriers",
     lobs: ["WC", "BOP", "GL"],
     products: [{ market: "AD", name: "Business Owner's Policy" }],
   },
@@ -104,19 +111,22 @@ const BASE_CARRIERS: Carrier[] = [
     name: "Chubb",
     logoColor: "#111827",
     status: "Live on CoverForce",
-    lobs: ["WC", "BOP", "GL", "Cyber"],
+    category: "carriers",
+    lobs: ["WC", "BOP", "GL", "Cyber", "Prof"],
     products: [
       { market: "AD", name: "Business Owner's Policy" },
       { market: "AD", name: "Inland Marine" },
       { market: "AD", name: "A&M" },
       { market: "AD", name: "Crime" },
+      { market: "ES", name: "Professional Liability" },
     ],
   },
   {
     name: "Nationwide",
     logoColor: "#1A4FA0",
     status: "Live on CoverForce",
-    lobs: ["WC", "BOP", "GL"],
+    category: "carriers",
+    lobs: ["WC", "BOP", "GL", "Auto"],
     products: [
       { market: "AD", name: "Business Policy" },
       { market: "AD", name: "Inland Marine", availability: "request" },
@@ -128,7 +138,8 @@ const BASE_CARRIERS: Carrier[] = [
     name: "Coalition",
     logoColor: "#5B3DF5",
     status: "API available",
-    lobs: ["Cyber"],
+    category: "carriers",
+    lobs: ["Cyber", "Prof"],
     products: [
       { market: "AD", name: "Cyber" },
       { market: "AD", name: "D&O" },
@@ -141,6 +152,7 @@ const BASE_CARRIERS: Carrier[] = [
     name: "Liberty Mutual",
     logoColor: "#F2C200",
     status: "API available",
+    category: "carriers",
     lobs: ["WC", "BOP", "GL"],
     products: [
       { market: "AD", name: "Business Owner's Policy" },
@@ -151,6 +163,7 @@ const BASE_CARRIERS: Carrier[] = [
     name: "AmTrust",
     logoColor: "#1F2A6B",
     status: "Live on CoverForce",
+    category: "carriers",
     lobs: ["WC", "BOP", "GL", "Cyber"],
     products: [
       { market: "AD", name: "Inland Marine" },
@@ -162,16 +175,134 @@ const BASE_CARRIERS: Carrier[] = [
     name: "Travelers",
     logoColor: "#D8232A",
     status: "Live on CoverForce",
+    category: "carriers",
     lobs: ["WC", "BOP", "GL"],
     products: [{ market: "AD", name: "Business Owner's Policy" }],
   },
 ];
 
-// Repeat the base set to fill the directory (placeholder until real data lands).
-const CARRIERS: Carrier[] = Array.from(
+const AMS_PARTNERS: Carrier[] = [
+  {
+    name: "NowCerts",
+    logoColor: "#1F2A6B",
+    status: "Live on CoverForce",
+    category: "ams",
+    lobs: ["WC", "BOP", "GL"],
+    products: [
+      { market: "AD", name: "AMS Sync" },
+      { market: "AD", name: "Policy Download" },
+    ],
+  },
+  {
+    name: "HawkSoft",
+    logoColor: "#111827",
+    status: "API available",
+    category: "ams",
+    lobs: ["WC", "BOP", "GL", "Auto"],
+    products: [
+      { market: "AD", name: "Agency Sync" },
+      { market: "ES", name: "E&S Feed" },
+    ],
+  },
+  {
+    name: "Applied Epic",
+    logoColor: "#1A4FA0",
+    status: "Live on CoverForce",
+    category: "ams",
+    lobs: ["WC", "BOP", "GL", "Cyber"],
+    products: [
+      { market: "AD", name: "Submission Push" },
+      { market: "AD", name: "Activity Sync" },
+    ],
+  },
+  {
+    name: "QQCatalyst",
+    logoColor: "#5B3DF5",
+    status: "API available",
+    category: "ams",
+    lobs: ["BOP", "GL", "Prof"],
+    products: [{ market: "AD", name: "Client Sync", availability: "request" }],
+  },
+];
+
+const FINANCE_PARTNERS: Carrier[] = [
+  {
+    name: "Premium Finance Co",
+    logoColor: "#1F2A6B",
+    status: "Live on CoverForce",
+    category: "finance",
+    lobs: ["WC", "BOP", "GL", "Auto"],
+    products: [
+      { market: "AD", name: "Premium Finance" },
+      { market: "ES", name: "E&S Finance" },
+    ],
+  },
+  {
+    name: "Compliance Hub",
+    logoColor: "#111827",
+    status: "API available",
+    category: "finance",
+    lobs: ["GL", "Cyber", "Prof"],
+    products: [
+      { market: "AD", name: "License Check" },
+      { market: "AD", name: "E&O Tracking", availability: "request" },
+    ],
+  },
+  {
+    name: "Surplus Lines Filing",
+    logoColor: "#1A4FA0",
+    status: "Live on CoverForce",
+    category: "finance",
+    lobs: ["GL", "Cyber"],
+    products: [{ market: "ES", name: "SL Filing" }],
+  },
+];
+
+const MARKET_ACCESS_PARTNERS: Carrier[] = [
+  {
+    name: "Clearance Exchange",
+    logoColor: "#5B3DF5",
+    status: "Live on CoverForce",
+    category: "ai",
+    lobs: ["WC", "BOP", "GL", "Cyber"],
+    products: [
+      { market: "AD", name: "Clearance API" },
+      { market: "ES", name: "E&S Clearance" },
+    ],
+  },
+  {
+    name: "Appetite Graph",
+    logoColor: "#F2C200",
+    status: "API available",
+    category: "ai",
+    lobs: ["WC", "BOP", "GL", "Prof", "Auto"],
+    products: [
+      { market: "AD", name: "Appetite Match" },
+      { market: "ES", name: "Wholesale Match", availability: "request" },
+    ],
+  },
+  {
+    name: "Bind Network",
+    logoColor: "#D8232A",
+    status: "Live on CoverForce",
+    category: "ai",
+    lobs: ["BOP", "GL", "Cyber"],
+    products: [{ market: "AD", name: "Instant Bind Path" }],
+  },
+];
+
+// Repeat the base set to fill the carriers directory (placeholder until real data lands).
+const CARRIER_DIRECTORY: Carrier[] = Array.from(
   { length: 20 },
-  (_, i) => BASE_CARRIERS[i % BASE_CARRIERS.length],
+  (_, i) => BASE_CARRIERS[i % BASE_CARRIERS.length]!,
 );
+
+const DIRECTORY: Carrier[] = [
+  ...CARRIER_DIRECTORY,
+  ...AMS_PARTNERS,
+  ...FINANCE_PARTNERS,
+  ...MARKET_ACCESS_PARTNERS,
+];
 
 const StatusBadge = ({ status }: { status: Carrier["status"] }) => {
   if (status === "Live on CoverForce") {
@@ -404,26 +535,37 @@ function FormSelect({
 }
 
 const Integration = () => {
-  const [activeTab, setActiveTab] = useState("carriers");
+  const [activeTab, setActiveTab] = useState<CategoryId>("carriers");
   const [lob, setLob] = useState<string>("All");
   const [status, setStatus] = useState<string>("All");
   const [market, setMarket] = useState<string>("All");
 
-  const filtered = useMemo(
-    () =>
-      CARRIERS.filter((c) => {
-        if (lob !== "All" && !c.lobs.includes(lob)) return false;
-        if (status !== "All" && c.status !== status) return false;
-        if (
-          market !== "All" &&
-          !c.products.some((p) => p.market === market)
-        ) {
-          return false;
-        }
-        return true;
-      }),
-    [lob, status, market],
-  );
+  const filtered = useMemo(() => {
+    return DIRECTORY.reduce<Carrier[]>((acc, entry) => {
+      if (entry.category !== activeTab) return acc;
+      if (lob !== "All" && !entry.lobs.includes(lob)) return acc;
+      if (status !== "All" && entry.status !== status) return acc;
+
+      const products =
+        market === "All"
+          ? entry.products
+          : entry.products.filter((product) => product.market === market);
+
+      if (market !== "All" && products.length === 0) return acc;
+
+      acc.push(market === "All" ? entry : { ...entry, products });
+      return acc;
+    }, []);
+  }, [activeTab, lob, status, market]);
+
+  const resultLabel =
+    activeTab === "carriers"
+      ? "carriers shown"
+      : activeTab === "ams"
+        ? "AMS partners shown"
+        : activeTab === "finance"
+          ? "finance partners shown"
+          : "market access partners shown";
 
   const gridRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
@@ -573,38 +715,18 @@ const Integration = () => {
               </p>
             </div>
 
-            <div className="mt-8 pb-8 lg:mt-10 lg:pb-10">
-              <div
-                className="-mx-1 overflow-x-auto overflow-y-hidden pb-1 lg:mx-0 lg:overflow-visible lg:pb-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-                role="tablist"
-                aria-label="Integration category"
-              >
-                <div className="flex w-max gap-2 px-1 lg:w-full lg:justify-between lg:gap-3 lg:px-0">
-                  {TABS.map((tab) => {
-                    const isActive = tab.id === activeTab;
-                    return (
-                      <button
-                        key={tab.id}
-                        type="button"
-                        role="tab"
-                        aria-selected={isActive}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`shrink-0 rounded-full border px-5 py-2 font-heading text-[0.6875rem] transition-colors md:text-xs ${
-                          isActive
-                            ? "border-[#413CC0] bg-[#FAFBFC] text-[#3834A4]"
-                            : "border-[#E4E7EC] bg-[#FAFBFC] text-[#6B7280] hover:border-[#C8CDD6]"
-                        }`}
-                      >
-                        {getTabLabel(tab)}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            <div className="relative z-20 space-y-5 lg:space-y-3">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="relative z-20 mt-8 space-y-5 lg:mt-10 lg:space-y-3">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <FormSelect
+                  id="integration-category"
+                  label="Category"
+                  value={activeTab}
+                  options={TABS.map((tab) => ({
+                    value: tab.id,
+                    label: getTabLabel(tab),
+                  }))}
+                  onChange={(value) => setActiveTab(value as CategoryId)}
+                />
                 <FormSelect
                   id="integration-lob"
                   label="LOB"
@@ -630,7 +752,7 @@ const Integration = () => {
 
               <div className="flex justify-end">
                 <span className="text-[0.6875rem] font-medium text-[#98A2B3]">
-                  {filtered.length} carriers shown
+                  {filtered.length} {resultLabel}
                 </span>
               </div>
             </div>
@@ -650,15 +772,16 @@ const Integration = () => {
                   <RiSearchEyeLine className="size-7" />
                 </span>
                 <p className="mt-5 text-sm font-sans font-bold text-[#111110]">
-                  No carriers found
+                  No results found
                 </p>
                 <p className="mt-1 max-w-xs text-xs font-sans font-regular leading-relaxed text-[#9A9A96]">
                   No results match the selected filters. Try adjusting or clearing
-                  your filters to see more carriers.
+                  your filters to see more partners.
                 </p>
                 <button
                   type="button"
                   onClick={() => {
+                    setActiveTab("carriers");
                     setLob("All");
                     setStatus("All");
                     setMarket("All");

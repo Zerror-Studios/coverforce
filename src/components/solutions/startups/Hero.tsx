@@ -2,7 +2,25 @@
 
 import Image from "next/image";
 import SolutionScrollHero from "@/components/solutions/shared/SolutionScrollHero";
-import { SOLUTION_GRAD_FLOW } from "@/data/wayCardStyles";
+import { SOLUTION_GRAD_FLOW, type GradFlowRgb } from "@/data/wayCardStyles";
+
+/** Deepen a GradFlow stop so white hero copy stays readable. */
+function deepen(color: GradFlowRgb, amount: number): GradFlowRgb {
+  const keep = 1 - amount;
+  return {
+    r: Math.round(color.r * keep),
+    g: Math.round(color.g * keep),
+    b: Math.round(color.b * keep),
+  };
+}
+
+const startupFlow = SOLUTION_GRAD_FLOW.startup;
+/** Flip L/R colors and shade the content side darker for contrast. */
+const STARTUP_HERO_GRAD_FLOW = {
+  color1: deepen(startupFlow.color3, 0.38),
+  color2: deepen(startupFlow.color2, 0.18),
+  color3: startupFlow.color1,
+};
 
 const STARTUP_MARQUEE_LOGOS = [
   { src: "/images/startups/logos/anzen.png", alt: "Anzen" },
@@ -41,7 +59,7 @@ const Hero = () => (
     showMarquee
     marqueeLogos={STARTUP_MARQUEE_LOGOS}
     marqueeSize="large"
-    gradFlow={SOLUTION_GRAD_FLOW.startup}
+    gradFlow={STARTUP_HERO_GRAD_FLOW}
   />
 );
 

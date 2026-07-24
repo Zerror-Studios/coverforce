@@ -84,53 +84,62 @@ function ComparisonPanel({
   const isToday = tone === "today";
 
   return (
-    <div
-      className={`workflow-comparison-card flex min-h-[28rem] flex-col rounded-md px-6 py-8 sm:min-h-[32rem] sm:px-8 sm:py-10 md:min-h-[36rem] md:px-10 md:py-12 lg:min-h-[40rem] ${
-        isToday ? "bg-[#F5F5F7]" : ""
-      }`}
-      style={isToday ? undefined : { background: CARD_BACKGROUND_STYLES[coverforceBackground] }}
+    <article
+      className="workflow-comparison-card way-card-shell relative flex min-h-[28rem] flex-col overflow-hidden rounded-md will-change-transform sm:min-h-[32rem] md:min-h-[36rem] lg:min-h-[40rem]"
     >
-      <EyebrowPill
-        surface={isToday ? "light" : "dark"}
-        shadow={isToday ? "white" : "default"}
-        className="mb-0"
-      >
-        {isToday ? "Traditional workflow tools" : "With CoverForce"}
-      </EyebrowPill>
+      <div
+        className="way-card-body absolute inset-0 overflow-hidden rounded-md"
+        style={
+          isToday
+            ? { background: "#F5F5F7" }
+            : { background: CARD_BACKGROUND_STYLES[coverforceBackground] }
+        }
+        aria-hidden
+      />
 
-      <div className="mt-auto flex flex-col gap-10 pt-16 sm:gap-12 sm:pt-20 md:gap-14 md:pt-24 lg:gap-16 lg:pt-28">
-        {items.map(({ title, description, Icon }) => (
-          <div key={title} className="flex items-start gap-4 sm:gap-5">
-            <span
-              className={`mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full sm:size-11 ${
-                isToday
-                  ? "bg-white text-[#0a143b] shadow-[0_1px_4px_rgba(10,20,59,0.08)]"
-                  : "bg-white/15 text-white"
-              }`}
-              aria-hidden
-            >
-              <Icon className="size-5" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <h3
-                className={`font-heading text-lg font-medium leading-snug sm:text-xl md:text-[1.375rem] ${
-                  isToday ? "text-[#0a143b]" : "text-white"
+      <div className="relative z-10 flex flex-1 flex-col px-6 py-8 sm:px-8 sm:py-10 md:px-10 md:py-12">
+        <EyebrowPill
+          surface={isToday ? "light" : "dark"}
+          shadow={isToday ? "white" : "default"}
+          className="mb-0"
+        >
+          {isToday ? "Traditional workflow tools" : "With CoverForce"}
+        </EyebrowPill>
+
+        <div className="mt-auto flex flex-col gap-10 pt-16 sm:gap-12 sm:pt-20 md:gap-14 md:pt-24 lg:gap-16 lg:pt-28">
+          {items.map(({ title, description, Icon }) => (
+            <div key={title} className="flex items-start gap-4 sm:gap-5">
+              <span
+                className={`mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full sm:size-11 ${
+                  isToday
+                    ? "bg-white text-[#0a143b] shadow-[0_1px_4px_rgba(10,20,59,0.08)]"
+                    : "bg-white/15 text-white"
                 }`}
+                aria-hidden
               >
-                {title}
-              </h3>
-              <p
-                className={`mt-2 max-w-md text-sm leading-[1.5] sm:mt-2.5 sm:text-[0.9375rem] md:leading-[1.55] ${
-                  isToday ? "text-[#50617a]" : "text-white/75"
-                }`}
-              >
-                {description}
-              </p>
+                <Icon className="size-5" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h3
+                  className={`font-heading text-lg font-medium leading-snug sm:text-xl md:text-[1.375rem] ${
+                    isToday ? "text-[#0a143b]" : "text-white"
+                  }`}
+                >
+                  {title}
+                </h3>
+                <p
+                  className={`mt-2 max-w-md text-sm leading-[1.5] sm:mt-2.5 sm:text-[0.9375rem] md:leading-[1.55] ${
+                    isToday ? "text-[#50617a]" : "text-white/75"
+                  }`}
+                >
+                  {description}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+    </article>
   );
 }
 
@@ -160,7 +169,7 @@ const Workflow = ({ coverforceBackground = "broker" }: WorkflowProps) => {
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       if (reducedMotion) {
-        gsap.set(cards, { opacity: 1, x: 0 });
+        gsap.set(cards, { opacity: 1, clearProps: "transform" });
         return;
       }
 
@@ -186,6 +195,7 @@ const Workflow = ({ coverforceBackground = "broker" }: WorkflowProps) => {
         duration: 0.85,
         ease: "power3.out",
         stagger: 0.14,
+        onComplete: () => gsap.set(cards, { clearProps: "transform" }),
       });
 
       const lenis = window.lenis;
@@ -209,6 +219,16 @@ const Workflow = ({ coverforceBackground = "broker" }: WorkflowProps) => {
   );
   return (
     <section ref={sectionRef} id="workflow" className="scroll-mt-14 bg-white text-[#0a143b] lg:scroll-mt-0">
+      <style>{`
+        .workflow-comparison-card.way-card-shell {
+          --way-card-hover-scale: 1.03;
+        }
+
+        .workflow-comparison-card .way-card-body {
+          transition: transform 800ms cubic-bezier(0.165, 0.84, 0.44, 1);
+          transform: translate3d(0, 0, 0) scale(1);
+        }
+      `}</style>
       <Container borderColor="#53535380" borderBottom={true}>
         <div className="py-16 md:py-20 lg:py-24">
           <div
@@ -244,7 +264,7 @@ const Workflow = ({ coverforceBackground = "broker" }: WorkflowProps) => {
 
           <div
             ref={cardsGridRef}
-            className="grid gap-4 overflow-hidden lg:grid-cols-2 lg:gap-5"
+            className="grid gap-4 lg:grid-cols-2 lg:gap-5"
           >
             <ComparisonPanel tone="today" items={todayItems} />
             <ComparisonPanel

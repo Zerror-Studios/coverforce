@@ -144,15 +144,6 @@ const POSTS: ListedPost[] = buildDemoCatalog();
 const FILTERS = ["All", "Insights", "Case Study", "News"] as const;
 type Filter = (typeof FILTERS)[number];
 
-function CategoryPill({ label }: { label: Category }) {
-  return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0801140a] px-2.5 py-1 font-mono text-[0.625rem] font-medium uppercase tracking-[0.12em] text-[#0a143b]">
-      <span className="size-1.5 shrink-0 rounded-full bg-[#413CC0]" aria-hidden />
-      {label}
-    </span>
-  );
-}
-
 function BlogCard({ post }: { post: ListedPost }) {
   return (
     <Link
@@ -171,17 +162,9 @@ function BlogCard({ post }: { post: ListedPost }) {
         </div>
       </div>
 
-      <div className="mt-3">
-        <CategoryPill label={post.category} />
-      </div>
-
       <h3 className="mt-3 font-heading text-base font-medium leading-snug text-[#0a143b] transition-colors group-hover:text-[#413CC0] md:text-lg">
         {post.title}
       </h3>
-
-      <p className="mt-2 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[#6B7280]">
-        {post.date}
-      </p>
     </Link>
   );
 }

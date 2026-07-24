@@ -112,12 +112,7 @@ function LaunchPreviewCard({ step }: LaunchPreviewCardProps) {
       </div>
 
       <div className="pointer-events-none absolute inset-x-0 top-0 z-30 p-4 sm:p-5 md:p-8">
-        <EyebrowPill
-          surface="dark"
-          background="#FFFFFF"
-          dotColor="#151f4d"
-          className="text-[#151f4d]!"
-        >
+        <EyebrowPill surface="dark" className="mb-0">
           {step.title}
         </EyebrowPill>
         <p className="mt-4 max-w-[13rem] text-left font-heading text-lg font-medium leading-[1.12] tracking-tight text-white max-md:sm:text-xl sm:max-w-xs sm:text-3xl md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
@@ -164,22 +159,25 @@ const Launch = () => {
     <section id="launch" ref={sectionRef} className="bg-white text-[#0a143b]">
       <style>{`
         .launch-preview-card.way-card-shell {
-          --way-card-hover-scale: 1.02;
-          border-radius: 0.375rem;
-          clip-path: inset(4px 4.798048790430439px 4px 4.798048790430439px round 0.375rem);
-        }
-
-        @media (prefers-reduced-motion: no-preference) {
-          @media (hover: hover) {
-            .launch-preview-card.way-card-shell:hover {
-              clip-path: inset(4px 4.798048790430439px 4px 4.798048790430439px round 0.375rem);
-            }
-          }
+          --way-card-hover-scale: 1.03;
         }
 
         .launch-preview-card .way-card-body {
           transition: transform 800ms cubic-bezier(0.165, 0.84, 0.44, 1);
           transform: translate3d(0, 0, 0) scale(1);
+        }
+
+        .launch-preview-card .way-card-mock {
+          transition: none;
+          transform: none;
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+          @media (hover: hover) {
+            .launch-preview-card.way-card-shell:hover .way-card-mock {
+              transform: none;
+            }
+          }
         }
       `}</style>
 

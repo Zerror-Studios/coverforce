@@ -93,7 +93,7 @@ function FeatureItem({
         </span>
         <span
           className={`font-sans text-[0.9375rem] font-regular leading-relaxed ${
-            isDark ? "text-white/85" : "text-[#2E2E2E]"
+            isDark ? "text-white" : "text-[#2E2E2E]"
           }`}
         >
           {children}
@@ -104,63 +104,12 @@ function FeatureItem({
 }
 
 function PricingCard({ plan }: { plan: PricingPlan }) {
-  const cardRef = useRef<HTMLElement>(null);
-  const hoverTweenRef = useRef<gsap.core.Timeline | null>(null);
   const isEnterprise = plan.id === "enterprise";
   const isDark = plan.tone === "dark";
 
-  const handleMouseEnter = () => {
-    const card = cardRef.current;
-    if (!card) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (!window.matchMedia("(min-width: 1024px)").matches) return;
-
-    const points = card.querySelectorAll<HTMLElement>(".pricing-feature");
-
-    hoverTweenRef.current?.kill();
-    hoverTweenRef.current = gsap
-      .timeline({ defaults: { ease: "power3.out", overwrite: "auto" } })
-      .to(card, { y: -24, duration: 0.9 }, 0)
-      .to(
-        points,
-        {
-          y: "-0.35rem",
-          duration: 0.75,
-          stagger: 0.05,
-        },
-        0.18,
-      );
-  };
-
-  const handleMouseLeave = () => {
-    const card = cardRef.current;
-    if (!card) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (!window.matchMedia("(min-width: 1024px)").matches) return;
-
-    const points = card.querySelectorAll<HTMLElement>(".pricing-feature");
-
-    hoverTweenRef.current?.kill();
-    hoverTweenRef.current = gsap
-      .timeline({ defaults: { ease: "power3.inOut", overwrite: "auto" } })
-      .to(
-        points,
-        {
-          y: 0,
-          duration: 0.55,
-          stagger: { each: 0.035, from: "end" },
-        },
-        0,
-      )
-      .to(card, { y: 0, duration: 0.8 }, 0.08);
-  };
-
   return (
     <article
-      ref={cardRef}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className={`pricing-card pricing-plan-card-shell way-card-shell group/pricing relative flex flex-col overflow-hidden rounded-md will-change-transform transform-gpu lg:will-change-transform ${
+      className={`pricing-card pricing-plan-card-shell way-card-shell group/pricing relative flex flex-col overflow-hidden rounded-md will-change-transform ${
         isEnterprise
           ? "min-h-[40rem] sm:min-h-[42rem]"
           : "min-h-[36rem] sm:min-h-[38rem]"
@@ -172,9 +121,6 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
           style={{ background: CARD_BACKGROUND_STYLES[plan.background] }}
           aria-hidden
         />
-        {plan.id === "startup" ? (
-          <div className="absolute inset-0 rounded-md bg-black/45" aria-hidden />
-        ) : null}
       </div>
 
       <div
@@ -194,7 +140,7 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
             <span
               className={`rounded-full px-2.5 py-1 font-sans text-sm font-semibold ${
                 isDark
-                  ? "bg-white/15 text-white"
+                  ? "bg-white/20 text-white"
                   : "bg-[#0a143b] text-white"
               }`}
             >
@@ -205,7 +151,7 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
 
         <p
           className={`mt-4 font-sans text-[0.9375rem] font-regular leading-relaxed sm:mt-5 ${
-            isDark ? "text-white/80" : "text-[#444444]"
+            isDark ? "text-white" : "text-[#444444]"
           }`}
         >
           {plan.description}
@@ -307,21 +253,6 @@ const PricingPlans = () => {
       <style>{`
         .pricing-plan-card-shell.way-card-shell {
           --way-card-hover-scale: 1.03;
-          border-radius: 0.375rem;
-          clip-path: inset(4px 4.798048790430439px 4px 4.798048790430439px round 0.375rem);
-        }
-
-        @media (prefers-reduced-motion: no-preference) {
-          @media (hover: hover) {
-            .pricing-plan-card-shell.way-card-shell:hover {
-              clip-path: inset(4px 4.798048790430439px 4px 4.798048790430439px round 0.375rem);
-            }
-          }
-        }
-
-        .pricing-plan-card-shell .way-card-body,
-        .pricing-plan-card-shell .way-card-body > div {
-          border-radius: 0.375rem;
         }
 
         .pricing-plan-card-shell .way-card-body {
