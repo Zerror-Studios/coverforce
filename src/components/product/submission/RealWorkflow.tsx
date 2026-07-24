@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -14,81 +14,175 @@ const WORKFLOW_STEPS = [
   {
     step: "01",
     title: "Document Intake",
-    before: "50 MIN",
-    after: "8 sec",
+    category: "INTAKE",
+    without: "50 MIN",
+    withLabel: "8 sec",
+    meta: "WITHOUT COVERFORCE — 50 MIN — MANUAL ENTRY",
   },
   {
     step: "02",
     title: "Carrier data entry",
-    before: "15 MIN",
-    after: "3 mins",
+    category: "DATA ENTRY",
+    without: "15 MIN",
+    withLabel: "3 mins",
+    meta: "WITHOUT COVERFORCE — 15 MIN — REKEYING",
   },
   {
     step: "03",
     title: "Review & Submit",
-    before: "HOURS",
-    after: "~3mins",
+    category: "REVIEW",
+    without: "HOURS",
+    withLabel: "~3 mins",
+    meta: "WITHOUT COVERFORCE — HOURS — MANUAL CHECKS",
   },
   {
     step: "04",
     title: "Quoting",
-    before: "45 MIN",
-    after: "4 sec",
+    category: "QUOTING",
+    without: "45 MIN",
+    withLabel: "4 sec",
+    meta: "WITHOUT COVERFORCE — 45 MIN — PORTAL HOPS",
   },
   {
     step: "05",
     title: "Bind and Deliver",
-    before: "5 MIN",
-    after: "1 min",
+    category: "BIND",
+    without: "5 MIN",
+    withLabel: "1 min",
+    meta: "WITHOUT COVERFORCE — 5 MIN — HANDOFF DELAY",
   },
 ] as const;
 
-function WorkflowStepCard({
-  step,
-  title,
-  before,
-  after,
-}: (typeof WORKFLOW_STEPS)[number]) {
-  return (
-    <div
-      data-workflow-card
-      className="group relative flex min-h-[11rem] flex-col justify-between overflow-hidden border border-[#E9E9E9] bg-white p-4 transition-colors duration-500 ease-[cubic-bezier(0.62,0.16,0.13,1.01)] transform-3d will-change-transform hover:bg-[#CCBEFF]/10 md:min-h-[20rem] md:p-6 lg:min-h-[22rem]"
-    >
-      <div className="relative z-10 flex flex-1 flex-col justify-between">
-        <div className="flex items-start justify-between gap-4">
-          <span className="font-heading text-2xl font-regular leading-none text-[#4F4F4F] md:text-6xl">
-            {step}
-          </span>
-          <div className="text-right">
-            <p className="font-mono text-[0.65rem] font-medium text-[#9A9A9A] line-through md:text-sm">
-              {before}
-            </p>
-            <p className="mt-0.5 font-heading text-sm font-medium text-[#2D3E9D] md:text-lg">
-              {after}
-            </p>
-          </div>
-        </div>
-        <p className="font-heading text-sm font-medium text-[#2D3E9D] md:text-lg">
-          {title}
-        </p>
-      </div>
-    </div>
-  );
-}
+type WorkflowStep = (typeof WORKFLOW_STEPS)[number];
 
-function SavingsSummaryCard() {
+function WorkflowRow({
+  item,
+  active,
+  hovered,
+  onActivate,
+}: {
+  item: WorkflowStep;
+  active: boolean;
+  hovered: boolean;
+  onActivate: () => void;
+}) {
+  const shutter =
+    "transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]";
+
   return (
-    <div
-      data-workflow-card
-      className="relative flex min-h-[11rem] flex-col items-end justify-end bg-[#CCBEFF]/10 p-4 transform-3d will-change-transform md:min-h-[20rem] md:p-6 lg:min-h-[22rem]"
+    <li
+      data-workflow-row
+      role="button"
+      tabIndex={0}
+      aria-expanded={active}
+      onMouseEnter={onActivate}
+      onFocus={onActivate}
+      onClick={onActivate}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onActivate();
+        }
+      }}
+      className="group relative grid cursor-pointer grid-cols-[minmax(0,1.35fr)_auto_minmax(0,0.65fr)] items-stretch gap-3 border-t border-white/25 outline-none md:gap-4 lg:gap-5"
     >
-      <p className="font-heading text-2xl font-regular leading-none text-[#4F4F4F] md:text-6xl">
-        107m
-      </p>
-      <p className="mt-2 font-heading text-[0.65rem] font-normal text-[#4F4F4F] md:text-xs">
-        Saved per submission
-      </p>
-    </div>
+      {/* Horizontal shutters — hover only, open from center like the vertical line */}
+      <span
+        className={`pointer-events-none absolute inset-x-0 top-0 z-20 h-[0.5px] scale-y-80 origin-center bg-white ${shutter} ${
+          hovered ? "scale-x-100" : "scale-x-0"
+        }`}
+        aria-hidden
+      />
+      <span
+        className={`pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[0.5px] scale-y-80 origin-center bg-white ${shutter} ${
+          hovered ? "scale-x-100" : "scale-x-0"
+        }`}
+        aria-hidden
+      />
+
+      {/* Left: without meta + title */}
+      <div className="relative flex min-w-0 items-center py-6 pr-1 md:py-8 md:pr-2 lg:py-9">
+        <p
+          className={`pointer-events-none absolute left-0 top-1/2 hidden max-w-40 -translate-y-1/2 text-left font-mono text-[0.5625rem] font-medium uppercase leading-relaxed tracking-[0.08em] text-white/55 transition-opacity duration-300 md:block md:max-w-52 md:text-[0.625rem] lg:max-w-56 ${
+            active ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          [ {item.meta} ]
+        </p>
+        <div className="w-full">
+          <span
+            className={`block text-right font-heading text-2xl font-medium leading-[1.15] tracking-tight transition-colors duration-300 sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12] ${
+              active ? "text-white" : "text-white/40"
+            }`}
+          >
+            {item.title}
+          </span>
+          <p
+            className={`mt-1 text-right font-mono text-[0.5625rem] uppercase tracking-[0.08em] text-white/50 transition-opacity duration-300 md:hidden ${
+              active ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            Without · {item.without}
+          </p>
+        </div>
+      </div>
+
+      {/* Number column stretches the full row height */}
+      <div className="relative z-10 flex items-center justify-center">
+        <span
+          className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-white/20"
+          aria-hidden
+        />
+        <span
+          className={`pointer-events-none absolute inset-y-0 left-1/2 w-px origin-top -translate-x-1/2 bg-white ${shutter} ${
+            active ? "scale-y-100" : "scale-y-0"
+          }`}
+          aria-hidden
+        />
+        <span
+          className={`relative flex h-6 w-8 shrink-0 items-center justify-center overflow-hidden border font-mono text-[0.625rem] font-medium tabular-nums md:h-7 md:w-9 md:text-[0.6875rem] ${
+            active ? "border-white/40" : "border-white/35"
+          }`}
+        >
+          <span className="absolute inset-0 bg-[#151f4d]" aria-hidden />
+          <span
+            className={`absolute inset-x-0 top-0 origin-top bg-white ${shutter} ${
+              active ? "h-full scale-y-100" : "h-full scale-y-0"
+            }`}
+            aria-hidden
+          />
+          <span
+            className={`relative z-10 transition-colors duration-300 ${
+              active ? "delay-150 text-[#151f4d]" : "text-white/70"
+            }`}
+          >
+            {item.step}
+          </span>
+        </span>
+      </div>
+
+      {/* Right: category + with CoverForce detail */}
+      <div className="relative flex min-w-0 items-center py-6 pl-1 md:py-8 md:pl-2 lg:py-9">
+        <div className="min-w-0">
+          <p
+            className={`font-mono text-[0.5625rem] font-medium uppercase tracking-[0.12em] transition-colors duration-300 md:text-[0.625rem] ${
+              active ? "text-white/80" : "text-white/45"
+            }`}
+          >
+            {item.category}
+          </p>
+          <p
+            className={`mt-1 font-heading text-xs font-regular leading-snug text-white/85 transition-all duration-300 md:text-sm ${
+              active
+                ? "translate-y-0 opacity-100"
+                : "pointer-events-none -translate-y-1 opacity-0"
+            }`}
+          >
+            {item.withLabel}
+          </p>
+        </div>
+      </div>
+    </li>
   );
 }
 
@@ -97,45 +191,45 @@ const RealWorkflow = () => {
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const [activeStep, setActiveStep] = useState(0);
+  const [hoveredStep, setHoveredStep] = useState<number | null>(null);
 
   useSectionHeaderReveal({
     scopeRef: sectionRef,
     headerRef,
     headingRef,
     descRef,
+    theme: "dark",
   });
 
   useGSAP(
     () => {
-      const grid = gridRef.current;
-      if (!grid) return;
+      const list = listRef.current;
+      if (!list) return;
 
-      const cards = gsap.utils.toArray<HTMLElement>("[data-workflow-card]", grid);
-      if (!cards.length) return;
+      const rows = gsap.utils.toArray<HTMLElement>("[data-workflow-row]", list);
+      if (!rows.length) return;
 
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        gsap.set(cards, { rotateY: 0, opacity: 1 });
+        gsap.set(rows, { opacity: 1, y: 0 });
         return;
       }
 
-      cards.forEach((card) => {
-        gsap.fromTo(
-          card,
-          { rotateY: 90, opacity: 0, transformOrigin: "left center" },
-          {
-            rotateY: 0,
-            opacity: 1,
-            ease: "none",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 92%",
-              end: "top 68%",
-              scrub: 0.5,
-              invalidateOnRefresh: true,
-            },
-          },
-        );
+      gsap.set(rows, { opacity: 0, y: 28 });
+
+      gsap.to(rows, {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        ease: "power3.out",
+        stagger: 0.08,
+        scrollTrigger: {
+          trigger: list,
+          start: "top 80%",
+          once: true,
+        },
+        onComplete: () => gsap.set(rows, { clearProps: "transform" }),
       });
 
       const lenis = window.lenis;
@@ -155,63 +249,67 @@ const RealWorkflow = () => {
         lenis?.off("scroll", onLenisScroll);
       };
     },
-    { scope: gridRef },
+    { scope: listRef },
   );
 
   return (
-    <section ref={sectionRef} className="bg-white text-[#0a143b]">
-      <Container borderColor="#53535380">
+    <section ref={sectionRef} className="bg-[#151f4d] text-white">
+      <Container borderColor="#FFFFFF33">
         <div className="py-16 md:py-20 lg:py-24">
           <div
             ref={headerRef}
             className="grid gap-8 lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-12"
           >
-            <div className="flex flex-col justify-end space-y-5">
+            <div className="flex flex-col items-start gap-6">
               <h2
                 ref={headingRef}
-                className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+                className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-white sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
               >
-                <span data-split>Move From </span>
-                <span data-split className="text-[#5B35E0]">
-                  115 Minutes
-                </span>
-                <span data-split> to </span>
-                <span data-split className="text-[#5B35E0]">
-                  8 Minutes
-                </span>
+                <span data-split>Move from 115 minutes</span>
+                <br />
+                <span data-split>to 8 minutes.</span>
               </h2>
-              <p
-                ref={descRef}
-                className="font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
-              >
-                AI replaces manual insurance workflows with faster, accurate
-                submission processing.
-              </p>
-              <RequestDemoButton variant="primary">
+              <RequestDemoButton variant="primary" surface="on-dark">
                 Request Demo
               </RequestDemoButton>
             </div>
 
-            <div className="flex max-w-md flex-col items-end gap-6 text-left lg:ml-auto">
+            <div className="flex max-w-md flex-col items-start text-left lg:ml-auto lg:items-end">
               <p
-                className="hidden font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:block"
+                ref={descRef}
+                className="font-sans font-regular text-sm leading-[1.4] text-white/75 md:text-[1.125rem] lg:text-right"
               >
-                AI replaces manual insurance workflows with faster, accurate
-                submission processing.
+                Without CoverForce vs with CoverForce — each step of submission,
+                side by side.
               </p>
             </div>
           </div>
 
-          <div
-            ref={gridRef}
-            className="mt-12 grid grid-cols-2 gap-3 md:mt-14 md:gap-4 lg:mt-16 lg:grid-cols-3"
-            style={{ perspective: "1200px" }}
+          <ul
+            ref={listRef}
+            className="relative mt-14 border-b border-white/25 md:mt-16 lg:mt-20"
+            onMouseLeave={() => {
+              setHoveredStep(null);
+              setActiveStep(0);
+            }}
           >
-            {WORKFLOW_STEPS.map((item) => (
-              <WorkflowStepCard key={item.step} {...item} />
+            {WORKFLOW_STEPS.map((item, index) => (
+              <WorkflowRow
+                key={item.step}
+                item={item}
+                active={activeStep === index}
+                hovered={hoveredStep === index}
+                onActivate={() => {
+                  setHoveredStep(index);
+                  setActiveStep(index);
+                }}
+              />
             ))}
-            <SavingsSummaryCard />
-          </div>
+          </ul>
+
+          <p className="mt-8 font-heading text-sm font-regular text-white/60 md:text-base">
+            <span className="text-white">107 minutes</span> saved per submission
+          </p>
         </div>
       </Container>
     </section>
