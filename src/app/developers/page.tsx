@@ -8,6 +8,7 @@ import Endpoints from "@/components/developers/Endpoints";
 import OperatingSystem from "@/components/solutions/developers/OperatingSystem";
 import { createPageMetadata } from "@/lib/seo";
 
+
 export const metadata = createPageMetadata("/developers");
 
 const DevelopersPage = () => {
@@ -16,8 +17,10 @@ const DevelopersPage = () => {
       <PageWrapper>
         <Hero />
         <Endpoints />
+         
         <OperatingSystem />
         <WhyCoverforce paddingTop={true} />
+         
         <Review />
         <CarrierResults />
       </PageWrapper>
