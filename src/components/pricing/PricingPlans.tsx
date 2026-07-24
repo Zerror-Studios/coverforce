@@ -14,6 +14,10 @@ import {
 
 gsap.registerPlugin(ScrollTrigger);
 
+/** Startup palette, darkened so white plan copy stays crisp (no wash/overlay). */
+const STARTUP_CARD_BACKGROUND =
+  "linear-gradient(45deg, #0A5C2E 0%, #0A6B54 33%, #0A5868 66%, #084A56 100%)";
+
 type PricingPlan = {
   id: string;
   title: string;
@@ -21,8 +25,13 @@ type PricingPlan = {
   description: string;
   features: string[];
   cta: { label: string; href: string };
-  background: CardBackground;
+  background: CardBackground | "startup-dark";
   tone: "light" | "dark";
+};
+
+const PLAN_BACKGROUNDS: Record<PricingPlan["background"], string> = {
+  ...CARD_BACKGROUND_STYLES,
+  "startup-dark": STARTUP_CARD_BACKGROUND,
 };
 
 const PLANS: PricingPlan[] = [
@@ -45,7 +54,7 @@ const PLANS: PricingPlan[] = [
       label: "Apply to our startup program",
       href: "/contact",
     },
-    background: "startup",
+    background: "startup-dark",
     tone: "dark",
   },
   {
@@ -118,7 +127,7 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
       <div className="way-card-body absolute inset-0 overflow-hidden rounded-md">
         <div
           className="absolute inset-0 rounded-md"
-          style={{ background: CARD_BACKGROUND_STYLES[plan.background] }}
+          style={{ background: PLAN_BACKGROUNDS[plan.background] }}
           aria-hidden
         />
       </div>
