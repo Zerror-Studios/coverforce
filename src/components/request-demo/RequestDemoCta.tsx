@@ -1,7 +1,6 @@
 "use client";
 
 import Button, { type ButtonStyleProps } from "@/components/common/Button";
-import RequestDemoButton from "@/components/request-demo/RequestDemoButton";
 import { isRequestDemoLabel } from "@/lib/requestDemo";
 
 type RequestDemoCtaProps = {
@@ -10,12 +9,10 @@ type RequestDemoCtaProps = {
 } & ButtonStyleProps;
 
 export default function RequestDemoCta({ label, href, ...props }: RequestDemoCtaProps) {
-  if (isRequestDemoLabel(label)) {
-    return <RequestDemoButton {...props}>{label}</RequestDemoButton>;
-  }
+  const destination = isRequestDemoLabel(label) ? "/contact" : href;
 
   return (
-    <Button href={href} {...props}>
+    <Button href={destination} {...props}>
       {label}
     </Button>
   );

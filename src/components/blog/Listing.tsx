@@ -44,9 +44,9 @@ const BASE_POSTS: BlogPost[] = [
     date: "October 16, 2025",
   },
   {
-    slug: "true-bindability-commercial-quoting",
+    slug: "coverforce-cb-insights-2025",
     category: "Insights",
-    title: "True Bindability in Commercial Quoting: Why It Matters",
+    title: "CoverForce Named to the 2025 CB Insights’ List of the 50 Most Innovative Insurtech Startups",
     image: "/images/blog/blog3.png",
     date: "October 16, 2025",
   },

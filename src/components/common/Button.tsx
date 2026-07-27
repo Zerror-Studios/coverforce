@@ -2,9 +2,10 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import type { ComponentProps } from "react";
+import type { ComponentProps, CSSProperties } from "react";
 import ButtonArrowIcon from "./ButtonArrowIcon";
 import ButtonText from "./ButtonText";
+import { PRIMARY_BUTTON_GRADIENT } from "@/data/wayCardStyles";
 
 export type ButtonVariant = "primary" | "secondary" | "outline";
 export type ButtonSize = "sm" | "md";
@@ -41,7 +42,7 @@ const BUTTON_HEIGHT =
   "group box-border inline-flex h-10 min-h-10 max-h-10 w-fit shrink-0 items-center rounded-[5px] font-heading tracking-[0.02em]";
 
 const variantSurfaceStyles: Record<`${ButtonVariant}-${ButtonSurface}`, string> = {
-  "primary-default": "border border-transparent bg-[#121C49] text-white",
+  "primary-default": "border border-transparent text-white",
   "secondary-default":
     "border border-[#121C49] bg-transparent text-[#121C49] transition-colors hover:bg-[#121C49]/[0.06]",
   "outline-default":
@@ -90,6 +91,7 @@ const Button = ({
   icon: Icon,
   className = "",
   onClick,
+  style,
   ...props
 }: ButtonProps) => {
   const [hovered, setHovered] = useState(false);
@@ -97,6 +99,10 @@ const Button = ({
   const sizes = sizeStyles[size];
   const variantClass = variantSurfaceStyles[`${variant}-${surface}`];
   const buttonClasses = `${BUTTON_HEIGHT} ${variantClass} ${sizes.button} ${balanced ? sizes.balanced : ""} ${className}`;
+  const buttonStyle: CSSProperties | undefined =
+    variant === "primary" && surface === "default"
+      ? { background: PRIMARY_BUTTON_GRADIENT, ...style }
+      : style;
 
   const hoverHandlers = {
     onMouseEnter: () => setHovered(true),
@@ -128,6 +134,7 @@ const Button = ({
       <Link
         href={href}
         className={buttonClasses}
+        style={buttonStyle}
         onClick={onClick}
         {...hoverHandlers}
         {...linkProps}
@@ -140,6 +147,7 @@ const Button = ({
   return (
     <button
       className={buttonClasses}
+      style={buttonStyle}
       onClick={onClick}
       {...hoverHandlers}
       {...(props as ComponentProps<"button">)}

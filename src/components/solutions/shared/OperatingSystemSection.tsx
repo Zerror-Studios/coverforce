@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type ComponentType, type ReactNode } from "react";
+import { useRef, type ComponentType, type CSSProperties, type ReactNode } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -41,6 +41,7 @@ export type OperatingSystemConfig = {
   ctaLabel?: string;
   ctaVariant?: "link" | "request-demo";
   statColor?: string;
+  statGradient?: string;
   showHeader?: boolean;
   showStats?: boolean;
   paddingTop?: boolean;
@@ -57,24 +58,55 @@ function OperatingStatBlock({
   stat,
   labelLines,
   color,
+  gradient,
 }: {
   stat: string;
   labelLines: [string, string];
   color: string;
+  gradient?: string;
 }) {
   const { value, suffix } = parseStatValue(stat);
+  const gradientStyle: CSSProperties | undefined = gradient
+    ? {
+        backgroundImage: gradient,
+        backgroundClip: "text",
+        WebkitBackgroundClip: "text",
+        color: "transparent",
+        WebkitTextFillColor: "transparent",
+      }
+    : undefined;
+
+  if (gradient) {
+    return (
+      <div className="operating-stat mt-10 flex items-center gap-4 md:mt-8 md:gap-5">
+        <span
+          className="operating-stat-gradient-text text-4xl font-heading font-bold tracking-tight md:text-5xl lg:text-[3.25rem]"
+          style={gradientStyle}
+          aria-label={stat}
+        >
+          {stat}
+        </span>
+        <span
+          className="operating-stat-label operating-stat-gradient-text font-heading text-base font-medium leading-[1.25] md:text-lg md:leading-[1.2]"
+          style={gradientStyle}
+        >
+          <span className="operating-stat-label-line block">{labelLines[0]}</span>
+          <span className="operating-stat-label-line block">{labelLines[1]}</span>
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className="operating-stat mt-10 flex items-center gap-4 md:mt-8 md:gap-5">
-      <span style={{ color }}>
-        <ScrollTriggeredOdometerStat
-          value={value}
-          suffix={suffix}
-          className="text-4xl font-heading font-bold tracking-tight md:text-5xl lg:text-[3.25rem]"
-          suffixClassName="font-heading font-bold"
-          ariaLabel={stat}
-        />
-      </span>
+      <ScrollTriggeredOdometerStat
+        value={value}
+        suffix={suffix}
+        className="text-4xl font-heading font-bold tracking-tight md:text-5xl lg:text-[3.25rem]"
+        suffixClassName="font-heading font-bold"
+        ariaLabel={stat}
+        style={{ color }}
+      />
       <span
         className="operating-stat-label font-heading text-base font-medium leading-[1.25] md:text-lg md:leading-[1.2]"
         style={{ color }}
@@ -93,6 +125,7 @@ export default function OperatingSystemSection({
   ctaLabel = "Start a quote",
   ctaVariant = "link",
   statColor = "#33259F",
+  statGradient,
   showHeader = true,
   showStats = true,
   paddingTop = false,
@@ -250,6 +283,7 @@ export default function OperatingSystemSection({
                         stat={row.stat}
                         labelLines={row.statLabelLines}
                         color={statColor}
+                        gradient={statGradient}
                       />
                     ) : null}
                   </div>

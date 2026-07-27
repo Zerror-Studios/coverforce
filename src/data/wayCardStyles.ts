@@ -142,6 +142,10 @@ export const CARD_ACCENT_COLORS: Record<CardBackground, string> = {
   carrier: `#${SOLUTION_GRADIENT_DEFS.carrier[0]!.hex}`,
 };
 
+/** Primary CTA — broker card dark blue dominant, subtle purple lift. */
+export const PRIMARY_BUTTON_GRADIENT =
+  "linear-gradient(135deg, #322696 0%, #322696 48%, #5E3FD0 100%)";
+
 export function withAlpha(hex: string, alpha: number): string {
   const { r, g, b } = hexToRgb(hex.replace("#", ""));
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;

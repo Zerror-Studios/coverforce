@@ -13,21 +13,18 @@ gsap.registerPlugin(ScrollTrigger);
 const Hero = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
       const container = containerRef.current;
-      const overlay = overlayRef.current;
       const section = sectionRef.current;
-      if (!container || !overlay || !section) return;
+      if (!container || !section) return;
 
       gsap.set(container, {
         y: 0,
         force3D: true,
         backfaceVisibility: "hidden",
       });
-      gsap.set(overlay, { opacity: 0, pointerEvents: "none" });
 
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const isMobile = window.matchMedia("(max-width: 767px)").matches;
@@ -57,19 +54,6 @@ const Hero = () => {
         force3D: true,
       });
 
-      const overlayTl = gsap.timeline({
-        scrollTrigger: {
-          ...scrollConfig,
-          start: "bottom center",
-          end: scrollEnd,
-        },
-      });
-
-      overlayTl.to(overlay, {
-        opacity: 0.85,
-        ease: "none",
-      });
-
       const lenis = window.lenis;
       let scrollPending = false;
       const onLenisScroll = () => {
@@ -88,8 +72,6 @@ const Hero = () => {
         lenis?.off("scroll", onLenisScroll);
         parallaxTl.scrollTrigger?.kill();
         parallaxTl.kill();
-        overlayTl.scrollTrigger?.kill();
-        overlayTl.kill();
       };
     },
     { scope: sectionRef },
@@ -113,7 +95,7 @@ const Hero = () => {
           sizes="100vw"
         />
         <div
-          className="absolute inset-0 bg-linear-to-t from-black/85 via-black/50 to-black/40"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[45%] bg-linear-to-t from-black/80 via-black/30 to-transparent sm:h-[40%]"
           aria-hidden
         />
 
@@ -128,12 +110,6 @@ const Hero = () => {
           </HeroReveal>
         </Container>
       </div>
-
-      <div
-        ref={overlayRef}
-        className="pointer-events-none absolute inset-0 z-20 bg-[#080808]"
-        aria-hidden
-      />
     </section>
   );
 };

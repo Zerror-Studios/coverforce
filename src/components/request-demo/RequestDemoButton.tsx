@@ -1,26 +1,25 @@
 "use client";
 
-import type { MouseEvent, MouseEventHandler } from "react";
-import Button, { type ButtonAsButtonProps } from "@/components/common/Button";
-import { useRequestDemo } from "@/contexts/RequestDemoContext";
+import type { MouseEventHandler, ReactNode } from "react";
+import Button, { type ButtonStyleProps } from "@/components/common/Button";
 
-type RequestDemoButtonProps = Omit<ButtonAsButtonProps, "onClick"> & {
-  onClick?: MouseEventHandler<HTMLButtonElement>;
+type RequestDemoButtonProps = ButtonStyleProps & {
+  children: ReactNode;
+  className?: string;
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
+  href?: string;
 };
 
-const RequestDemoButton = ({ onClick, ...props }: RequestDemoButtonProps) => {
-  const { open } = useRequestDemo();
-
+const RequestDemoButton = ({
+  children,
+  onClick,
+  href = "/contact",
+  ...props
+}: RequestDemoButtonProps) => {
   return (
-    <Button
-      {...props}
-      onClick={(event) => {
-        onClick?.(event as MouseEvent<HTMLButtonElement>);
-        if (!event.defaultPrevented) {
-          open();
-        }
-      }}
-    />
+    <Button href={href} onClick={onClick} {...props}>
+      {children}
+    </Button>
   );
 };
 

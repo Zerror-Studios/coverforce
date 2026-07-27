@@ -65,10 +65,10 @@ const ArrowNavButton = forwardRef<HTMLButtonElement, ArrowNavButtonProps>(
       <button
         ref={ref}
         type={type}
-        className={`group relative size-9 shrink-0 leading-none ${styles.root} ${className}`}
+        className={`group relative size-9 shrink-0 overflow-hidden rounded-[5px] leading-none ${styles.root} ${className}`}
         {...props}
       >
-        <span className="absolute inset-0 overflow-hidden">
+        <span className="absolute inset-0 overflow-hidden rounded-[5px]">
           <span
             className={`flex h-full w-[200%] backface-hidden transition-transform will-change-transform motion-reduce:transition-none ${HOVER_EASE} ${styles.iconShift}`}
           >

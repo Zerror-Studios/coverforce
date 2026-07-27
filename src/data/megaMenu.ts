@@ -203,10 +203,10 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
   },
   Company: {
     featured: {
-      title: "Watch the demo — explore the full platform",
-      href: "/",
-      video: "/videos/demo.mp4",
-      imageAlt: "CoverForce platform demo",
+      title: "CoverForce Named to the 2025 CB Insights",
+      href: "/blog/true-bindability-commercial-quoting",
+      image: "/images/blog/blog3.png",
+      imageAlt: "CoverForce Insurtech 50 2025 recognition",
     },
     cta: {
       label: "Explore Company",

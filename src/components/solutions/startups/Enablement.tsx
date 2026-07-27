@@ -370,7 +370,7 @@ const Enablement = () => {
 
   return (
     <section ref={sectionRef} className="bg-white text-[#0a143b]">
-      <Container borderColor="#53535380" borderBottom={true}>
+      <Container borderColor="#53535380">
         <div className="pt-16 md:pt-20 lg:pt-24 pb-8 md:pb-10 lg:pb-12">
           <div
             ref={headerRef}

@@ -2,6 +2,7 @@
 
 import OperatingSystemSection from "@/components/solutions/shared/OperatingSystemSection";
 import { createSolutionStepMock } from "@/components/solutions/shared/SolutionStepIllustration";
+import { PRIMARY_BUTTON_GRADIENT } from "@/data/wayCardStyles";
 
 export const wholesalersHeroCardMock = createSolutionStepMock(
   "/images/solution/wholesaler1.svg",
@@ -69,6 +70,7 @@ export default function OperatingSystem() {
       sectionDescription={operatingSystemDescription}
       ctaHref="/solutions/wholesalers"
       ctaLabel="Talk to sales"
+      statGradient={PRIMARY_BUTTON_GRADIENT}
       paddingTop={true}
       showHeader={true}
       rows={operatingRows}

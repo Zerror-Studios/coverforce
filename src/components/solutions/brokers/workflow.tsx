@@ -24,6 +24,18 @@ type WorkflowProps = {
   coverforceBackground?: CardBackground;
 };
 
+/** Workflow card only — keep saturated tones longer so white text stays readable. */
+const WORKFLOW_COVERFORCE_BACKGROUNDS: Partial<Record<CardBackground, string>> = {
+  wholesaler:
+    "linear-gradient(45deg, #0045FF 0%, #008EFF 28%, #008EFF 55%, #008EFF 72%, #008EFF 85%, #8FD7FF 94%, #C3EBFF 100%)",
+  broker:
+    "linear-gradient(45deg, #322696 0%, #7F44FF 28%, #7F44FF 55%, #7F44FF 72%, #A975FF 88%, #8E46FF 100%)",
+};
+
+function getCoverforceCardBackground(theme: CardBackground): string {
+  return WORKFLOW_COVERFORCE_BACKGROUNDS[theme] ?? CARD_BACKGROUND_STYLES[theme];
+}
+
 type ComparisonItem = {
   title: string;
   description: string;
@@ -85,19 +97,19 @@ function ComparisonPanel({
 
   return (
     <article
-      className="workflow-comparison-card way-card-shell relative flex min-h-[28rem] flex-col overflow-hidden rounded-md will-change-transform sm:min-h-[32rem] md:min-h-[36rem] lg:min-h-[40rem]"
+      className="workflow-comparison-card way-card-shell relative flex flex-col overflow-hidden rounded-md will-change-transform"
     >
       <div
         className="way-card-body absolute inset-0 overflow-hidden rounded-md"
         style={
           isToday
             ? { background: "#F5F5F7" }
-            : { background: CARD_BACKGROUND_STYLES[coverforceBackground] }
+            : { background: getCoverforceCardBackground(coverforceBackground) }
         }
         aria-hidden
       />
 
-      <div className="relative z-10 flex flex-1 flex-col px-6 py-8 sm:px-8 sm:py-10 md:px-10 md:py-12">
+      <div className="relative z-10 flex flex-col px-6 py-8 sm:px-8 sm:py-10 md:px-10 md:py-12">
         <EyebrowPill
           surface={isToday ? "light" : "dark"}
           shadow={isToday ? "white" : "default"}
@@ -106,7 +118,7 @@ function ComparisonPanel({
           {isToday ? "Traditional workflow tools" : "With CoverForce"}
         </EyebrowPill>
 
-        <div className="mt-auto flex flex-col gap-10 pt-16 sm:gap-12 sm:pt-20 md:gap-14 md:pt-24 lg:gap-16 lg:pt-28">
+        <div className="mt-6 flex flex-col gap-7 sm:mt-7 sm:gap-8 md:mt-8 md:gap-9">
           {items.map(({ title, description, Icon }) => (
             <div key={title} className="flex items-start gap-4 sm:gap-5">
               <span

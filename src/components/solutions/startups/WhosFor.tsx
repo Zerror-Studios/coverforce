@@ -6,7 +6,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Building2, Rocket, Briefcase } from "lucide-react";
 import Container from "@/components/common/Container";
-import Button from "@/components/common/Button";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import {
   CARD_BACKGROUND_STYLES,
@@ -26,15 +25,15 @@ type AudienceCard = {
 const audienceCards: AudienceCard[] = [
   {
     number: "01",
-    title: ["Stealth or", "funded teams"],
+    title: ["Stealth or VC", "funded teams"],
     description:
-      "You're building quietly, backed by investors, or part of a trusted accelerator program.",
+      "You're building in stealth, backed by investors, or part of an accelerator program.",
     Icon: Rocket,
     background: "startup",
   },
   {
     number: "02",
-    title: ["Studio-built", "companies"],
+    title: ["Incubated", "startups"],
     description:
       "Your company started inside a venture studio, foundry, or company builder and is now ready to launch or grow.",
     Icon: Building2,
@@ -64,7 +63,7 @@ function AudienceCardItem({
   return (
     <article
       ref={cardRef}
-      className="whos-for-card way-card-shell relative flex min-h-[22rem] flex-col overflow-hidden rounded-md text-white will-change-transform md:min-h-[26rem] lg:min-h-[28rem]"
+      className="whos-for-card way-card-shell relative flex flex-col overflow-hidden rounded-md text-white will-change-transform"
     >
       <div
         className="absolute inset-0"
@@ -72,7 +71,7 @@ function AudienceCardItem({
         aria-hidden
       />
 
-      <div className="pointer-events-none relative z-10 flex h-full min-h-[22rem] flex-col p-6 md:min-h-[26rem] md:p-8 lg:min-h-[28rem]">
+      <div className="pointer-events-none relative z-10 flex flex-col p-6 md:p-8">
         <div className="flex items-start justify-between gap-4">
           <h3 className="max-w-[15rem] text-2xl font-heading font-regular leading-[1.15] tracking-tight text-white sm:max-w-[18rem] sm:text-3xl md:text-4xl lg:text-3xl lg:leading-[1.15]">
             {title[0]}
@@ -86,7 +85,7 @@ function AudienceCardItem({
           />
         </div>
 
-        <div className="mt-auto">
+        <div className="mt-8 md:mt-10">
           <span className="font-mono text-xs font-medium tracking-wide text-white/70 md:text-sm">
             {number}
           </span>
@@ -165,36 +164,21 @@ const WhosFor = () => {
         <div className="flex flex-col gap-10 py-16 md:gap-12 md:py-20 lg:gap-14 lg:py-24">
           <div
             ref={headerRef}
-            className="flex flex-col gap-6 lg:grid lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-x-12 lg:gap-y-5"
+            className="flex max-w-3xl flex-col items-start"
           >
             <h2
               ref={headingRef}
-              className="order-1 max-w-sm text-2xl font-heading font-regular leading-[1.15] tracking-tight text-[#9AA8BC] sm:text-3xl md:text-4xl lg:col-start-1 lg:row-start-1 lg:text-3xl lg:leading-[1.15]"
+              className="text-2xl font-heading font-regular leading-[1.15] tracking-tight text-[#9AA8BC] sm:text-3xl md:text-4xl lg:text-[1.625rem] lg:leading-[1.15] lg:whitespace-nowrap"
             >
-              <span data-split>Built for founders who are </span>
-              <span
-                data-split
-                className="bg-linear-to-r from-[#A483FE] via-[#8B7CFF] to-[#C4B5FF] bg-clip-text text-transparent"
-              >
-                serious
-              </span>
-              <span data-split> about insurance.</span>
+              <span data-split>Built for founders who are serious about insurance.</span>
             </h2>
 
-            <div className="order-2 flex max-w-md flex-col items-start justify-end gap-6 text-left lg:col-start-2 lg:row-start-1 lg:ml-auto">
-              <p
-                ref={descRef}
-                className="font-sans text-sm font-regular leading-[1.4] text-[#D1D1D1] md:text-[1.125rem]"
-              >
-                If you meet the criteria, apply below.
-              </p>
-            </div>
-
-            <div className="order-3 lg:col-start-1 lg:row-start-2">
-              <Button href="/contact" surface="on-dark">
-                Apply to Startup Program
-              </Button>
-            </div>
+            <p
+              ref={descRef}
+              className="mt-4 max-w-md font-sans text-sm font-regular leading-[1.4] text-[#D1D1D1] md:mt-5 md:text-[1.125rem]"
+            >
+              If you meet the criteria, you're welcome to apply
+            </p>
           </div>
 
           <div
@@ -211,6 +195,12 @@ const WhosFor = () => {
               />
             ))}
           </div>
+
+          <p className="max-w-2xl font-sans text-sm font-regular leading-[1.45] text-white/60 md:text-[0.9375rem]">
+            <span className="font-medium text-white/75">Note:</span> B2B2B startups
+            — those building for brokers, agencies, and distribution partners — are
+            also a strong fit for this program.
+          </p>
         </div>
       </Container>
     </section>

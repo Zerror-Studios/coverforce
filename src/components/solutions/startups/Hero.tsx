@@ -47,9 +47,9 @@ const StartupHeroCard = () => (
 const Hero = () => (
   <SolutionScrollHero
     eyebrow="Startups"
-    title="The faster way to build a modern brokerage"
+    title="The fastest way to launch a commercial brokerage"
     titleClassName="max-w-xl text-3xl font-heading font-normal tracking-normal text-[#0a143b] md:text-4xl lg:text-6xl lg:leading-none xl:text-6xl"
-    description="CoverForce gives early-stage startups the infrastructure, carriers, and ecosystem support to go from zero to launch in days."
+    description="CoverForce gives early-stage startups the infrastructure, carriers, and ecosystem support to go from zero to a fully-launched insurance brokerage in days."
     primaryButtonHref="/contact"
     primaryButtonLabel="Apply to Startup Program"
     secondaryButtonHref="#launch"

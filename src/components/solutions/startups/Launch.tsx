@@ -1,129 +1,143 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import dynamic from "next/dynamic";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
+import Button from "@/components/common/Button";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
-import { CARD_ACCENT_COLORS, CARD_BACKGROUND_STYLES, CARD_UI_GRADIENT_STYLES, type CardBackground } from "@/data/wayCardStyles";
-
-const WholesalerMock = dynamic(() => import("@/components/home/WholesalerMock"), {
-  loading: () => <MockPlaceholder />,
-});
-
-const BrokerMockWithCardHover = dynamic(
-  () => import("@/components/home/BrokerMock").then((m) => ({ default: m.BrokerMockWithCardHover })),
-  { loading: () => <MockPlaceholder /> },
-);
-
-const StartupRecentActivityCard = dynamic(
-  () => import("@/components/solutions/startups/StartupRecentActivityCard"),
-  { loading: () => <MockPlaceholder /> },
-);
-
-function MockPlaceholder({ className = "max-w-[250px] sm:max-w-[290px]" }: { className?: string }) {
-  return (
-    <div
-      className={`mx-auto h-[240px] w-full animate-pulse rounded-2xl bg-white/10 sm:h-[280px] md:h-[260px] ${className}`}
-      aria-hidden
-    />
-  );
-}
+import {
+  CARD_ACCENT_COLORS,
+  CARD_BACKGROUND_STYLES,
+  CARD_UI_GRADIENT_STYLES,
+  type CardBackground,
+} from "@/data/wayCardStyles";
 
 type LaunchStep = {
   id: string;
   label: string;
   title: string;
   description: string;
-  cardTagline: string;
+  body: string[];
   background: CardBackground;
-  mock: ReactNode;
-  backgroundScene?: ReactNode;
-  mockShiftDown?: boolean;
 };
 
 const launchSteps: LaunchStep[] = [
   {
-    id: "license",
+    id: "entity",
     label: "STEP 01",
-    title: "Get Licensed",
-    description: "Secure producer and entity licenses with guided checklists.",
-    cardTagline: "Grow distribution efficiently",
-    background: "wholesaler",
-    mockShiftDown: true,
-    mock: <WholesalerMock />,
+    title: "Set Up Your Entity",
+    description:
+      "Form your LLC or S-Corp and get the legal foundation in place before anything else.",
+    body: [
+      "You'll need a registered business, an EIN, and a registered agent in each state you plan to operate in. Getting this right from day one matters — carriers and regulators will ask for documentation.",
+    ],
+    background: "developer",
   },
   {
-    id: "appointments",
+    id: "license",
     label: "STEP 02",
+    title: "Get Licensed",
+    description: "Secure producer and entity licenses with guided checklists.",
+    body: [
+      "Licensing requirements vary by state — each has its own exam, application, and renewal cadence. The two main portals used by regulators across the country are NIPR and Sircon.",
+    ],
+    background: "wholesaler",
+  },
+  {
+    id: "market",
+    label: "STEP 03",
     title: "Access the Market",
     description: "Accelerate carrier appointments through our partner network.",
-    cardTagline: "One workflow for every producer",
+    body: [
+      "Carrier appointments take time to secure for a new brokerage. Our market access partners let you quote and bind through their existing appointments so you're generating revenue from day one.",
+      "Startup Program members get preferred pricing from our market access partners. Start writing business on day one, not month six.",
+    ],
     background: "broker",
-    mockShiftDown: true,
-    mock: <BrokerMockWithCardHover />,
   },
   {
     id: "api",
-    label: "STEP 03",
+    label: "STEP 04",
     title: "Connect the API",
     description: "Plug into CoverForce and start quoting in days, not months.",
-    cardTagline: "Be present at the moment agents quote",
+    body: [
+      "One integration gives you real-time quoting and binding across commercial lines — GL, BOP, Workers' Comp, Professional Liability, and more. Our sandbox is ready from day one.",
+    ],
     background: "carrier",
-    mockShiftDown: true,
-    mock: (
-      <div className="w-full max-md:mt-10 max-md:sm:mt-12">
-        <StartupRecentActivityCard />
-      </div>
-    ),
+  },
+  {
+    id: "quote",
+    label: "STEP 05",
+    title: "Quote Your First Risk",
+    description:
+      "Submit an account, get real-time comparative quotes, and bind — all in one flow.",
+    body: [
+      "CoverForce handles appetite matching, form prefill, and comparative quoting across carriers. Your team stays focused on the client. Your first bound policy is closer than you think.",
+    ],
+    background: "startup",
   },
 ];
 
 type LaunchPreviewCardProps = {
   step: LaunchStep;
+  stepIndex: number;
+  onPrevious: () => void;
 };
 
-function LaunchPreviewCard({ step }: LaunchPreviewCardProps) {
+function LaunchPreviewCard({ step, stepIndex, onPrevious }: LaunchPreviewCardProps) {
   return (
-    <article className="launch-preview-card way-card-shell relative w-full text-white max-md:aspect-[4/5] max-md:min-h-0 [contain-intrinsic-size:auto_530px] md:min-h-[22rem] md:aspect-[580/530]">
+    <article className="launch-preview-card way-card-shell relative flex w-full flex-col overflow-hidden rounded-md text-white">
       <div
         className="way-card-body absolute inset-0 overflow-hidden rounded-md"
         style={{ background: CARD_BACKGROUND_STYLES[step.background] }}
-      >
-        {step.backgroundScene ? (
-          <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden" aria-hidden>
-            {step.backgroundScene}
-          </div>
-        ) : null}
-      </div>
+        aria-hidden
+      />
 
-      <div
-        className={`way-card-mock pointer-events-none absolute inset-0 z-10 flex items-center justify-center p-4 sm:p-5 md:p-6 ${
-          step.mockShiftDown ? "max-md:pt-[5.75rem] max-md:sm:pt-24 md:pt-28 lg:pt-32" : "max-md:pt-[5.75rem] max-md:sm:pt-24"
-        }`}
-      >
-        <div
-          className={`relative mx-auto flex h-full w-full max-w-full items-center justify-center max-md:scale-[0.82] max-md:origin-top ${
-            step.mockShiftDown ? "md:items-center md:justify-center" : "md:items-end md:justify-center md:pb-4"
-          }`}
-        >
-          {step.mock}
-        </div>
-      </div>
-
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 p-4 sm:p-5 md:p-8">
+      <div className="relative z-10 flex flex-col p-6 sm:p-8 md:min-h-[28rem] md:p-10">
         <EyebrowPill surface="dark" className="mb-0">
           {step.title}
         </EyebrowPill>
-        <p className="mt-4 max-w-[13rem] text-left font-heading text-lg font-medium leading-[1.12] tracking-tight text-white max-md:sm:text-xl sm:max-w-xs sm:text-3xl md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
-          {step.cardTagline}
+
+        <p className="mt-5 max-w-xl font-heading text-xl font-medium leading-[1.2] tracking-tight text-white sm:text-2xl md:text-[1.625rem] md:leading-[1.15]">
+          {step.description}
         </p>
+
+        <div className="mt-5 space-y-4 sm:mt-6">
+          {step.body.map((paragraph) => (
+            <p
+              key={paragraph}
+              className="max-w-xl font-sans text-sm font-regular leading-[1.55] text-white/85 md:text-[0.9375rem] md:leading-[1.6]"
+            >
+              {paragraph}
+            </p>
+          ))}
+        </div>
+
+        <div className="mt-auto flex items-center justify-between gap-4 border-t border-white/30 pt-6 sm:pt-8">
+          {stepIndex > 0 ? (
+            <button
+              type="button"
+              onClick={onPrevious}
+              className="font-sans text-sm font-medium text-white/90 transition-colors hover:text-white"
+            >
+              ← Previous
+            </button>
+          ) : (
+            <span aria-hidden />
+          )}
+          <Button href="/contact" surface="on-dark">
+            Apply now
+          </Button>
+        </div>
       </div>
     </article>
   );
 }
 
 const AUTO_TAB_MS = 3000;
+
+const LAUNCH_SECTION_TITLE = "From idea to first bind in five easy steps";
+const LAUNCH_SECTION_DESCRIPTION =
+  "Launching a brokerage used to be hard. We've made it easy by clarifying the steps, providing ready infrastructure, and ecosystem partnerships.";
 
 const Launch = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -159,84 +173,54 @@ const Launch = () => {
     <section id="launch" ref={sectionRef} className="bg-white text-[#0a143b]">
       <style>{`
         .launch-preview-card.way-card-shell {
-          --way-card-hover-scale: 1.03;
+          --way-card-hover-scale: 1.02;
         }
 
         .launch-preview-card .way-card-body {
           transition: transform 800ms cubic-bezier(0.165, 0.84, 0.44, 1);
           transform: translate3d(0, 0, 0) scale(1);
         }
-
-        .launch-preview-card .way-card-mock {
-          transition: none;
-          transform: none;
-        }
-
-        @media (prefers-reduced-motion: no-preference) {
-          @media (hover: hover) {
-            .launch-preview-card.way-card-shell:hover .way-card-mock {
-              transform: none;
-            }
-          }
-        }
       `}</style>
 
       <Container borderColor="#53535380">
-        <div ref={headerRef} className="space-y-3 py-10 lg:hidden">
+        <div
+          ref={headerRef}
+          className="flex flex-col gap-4 py-10 lg:grid lg:grid-cols-2 lg:items-end lg:justify-between lg:gap-x-12 lg:gap-y-5 lg:py-24"
+        >
           <h2
             ref={headingRef}
-            className="max-w-xs text-2xl font-heading font-regular leading-[1.2] tracking-tight text-[#0a143b]"
+            className="max-w-xs text-2xl font-heading font-regular leading-[1.2] tracking-tight text-[#0a143b] sm:max-w-md lg:text-[1.75rem] lg:leading-tight"
           >
-            <span data-split>From idea to first bind Three steps</span>
+            <span data-split>{LAUNCH_SECTION_TITLE}</span>
           </h2>
-          <p
-            ref={descRef}
-            className="max-w-sm font-sans text-sm font-regular leading-relaxed text-[#3E3E3E]"
-          >
-            Launching a brokerage used to be hard. We make it easier with ready
-            infrastructure and trusted partners.
-          </p>
+          <div className="max-w-sm text-left lg:ml-auto">
+            <p
+              ref={descRef}
+              className="font-sans text-sm font-regular leading-relaxed text-[#3E3E3E]"
+            >
+              {LAUNCH_SECTION_DESCRIPTION}
+            </p>
+          </div>
         </div>
 
-        {/* Mobile: step → card, stacked */}
-        <div className="flex flex-col gap-12 pb-10 lg:hidden">
-          {launchSteps.map((step) => (
-            <div key={step.id} className="flex flex-col gap-5">
-              <div className="border-t border-[#E5E7EB] py-4">
-                <p className="font-mono text-sm font-regular leading-relaxed text-[#151f4d]">
-                  {step.label}
-                </p>
-                <p className="mt-1 font-sans text-sm font-regular leading-relaxed text-[#151f4d]">
-                  {step.title}
-                </p>
-                <p className="mt-1.5 font-sans text-sm font-regular leading-relaxed text-[#6B7280]">
-                  {step.description}
-                </p>
-              </div>
-
-              <LaunchPreviewCard step={step} />
-            </div>
+        <div className="flex flex-col gap-8 pb-10 lg:hidden">
+          {launchSteps.map((step, index) => (
+            <LaunchPreviewCard
+              key={step.id}
+              step={step}
+              stepIndex={index}
+              onPrevious={() => selectStep(index - 1)}
+            />
           ))}
         </div>
 
-        {/* Desktop: click tabs to switch card */}
-        <div className="hidden grid-cols-7 items-stretch gap-16 py-24 xl:gap-23 lg:grid">
-          <div className="flex h-full min-h-0 flex-col lg:col-span-3">
-            <div className="shrink-0 space-y-5">
-              <h2 className="max-w-xs text-[1.75rem] font-heading font-regular leading-tight tracking-tight text-[#0a143b]">
-                <span data-split>From idea to first bind Three steps</span>
-              </h2>
-              <p className="max-w-sm font-sans text-sm font-regular leading-relaxed text-[#3E3E3E]">
-                Launching a brokerage used to be hard. We make it easier with ready
-                infrastructure and trusted partners.
-              </p>
-            </div>
-
+        <div className="hidden grid-cols-7 items-stretch gap-16 pb-24 xl:gap-23 lg:grid">
+          <div className="flex h-full min-h-0 lg:col-span-3">
             <div
               role="tablist"
               aria-label="Launch steps"
               aria-orientation="vertical"
-              className="mt-auto flex w-full max-w-sm flex-col gap-5 pt-10"
+              className="flex h-full w-full max-w-sm flex-col justify-center gap-4"
             >
               {launchSteps.map((step, index) => {
                 const isActive = activeStep === index;
@@ -252,7 +236,7 @@ const Launch = () => {
                     aria-selected={isActive}
                     aria-controls="launch-panel"
                     onClick={() => selectStep(index)}
-                    className={`group flex w-full items-start gap-5 rounded-xl border px-4 py-3.5 text-left outline-none transition-all duration-300 ease-out focus-visible:ring-2 focus-visible:ring-offset-2 ${
+                    className={`group flex w-full items-center gap-5 rounded-xl border px-4 py-3.5 text-left outline-none transition-all duration-300 ease-out focus-visible:ring-2 focus-visible:ring-offset-2 ${
                       isActive
                         ? "border-transparent text-white shadow-[0_8px_24px_rgba(10,20,59,0.12)]"
                         : "border-[color:var(--tab-accent)] bg-transparent"
@@ -273,25 +257,14 @@ const Launch = () => {
                     >
                       {index + 1}
                     </span>
-                    <span className="min-w-0 flex-1">
-                      <span
-                        className={`block font-sans text-base leading-snug transition-colors duration-300 ${
-                          isActive
-                            ? "font-semibold text-white"
-                            : "font-regular text-[color:var(--tab-accent)]"
-                        }`}
-                      >
-                        {step.title}
-                      </span>
-                      <span
-                        className={`mt-1 block font-sans text-sm leading-relaxed transition-colors duration-300 ${
-                          isActive
-                            ? "text-white/80"
-                            : "text-[#6B7280]"
-                        }`}
-                      >
-                        {step.description}
-                      </span>
+                    <span
+                      className={`min-w-0 flex-1 font-sans text-base leading-snug transition-colors duration-300 ${
+                        isActive
+                          ? "font-semibold text-white"
+                          : "font-regular text-[color:var(--tab-accent)]"
+                      }`}
+                    >
+                      {step.title}
                     </span>
                   </button>
                 );
@@ -305,7 +278,12 @@ const Launch = () => {
             aria-labelledby={`launch-tab-${active.id}`}
             className="flex h-full min-h-0 w-full flex-col lg:col-span-4"
           >
-            <LaunchPreviewCard key={active.id} step={active} />
+            <LaunchPreviewCard
+              key={active.id}
+              step={active}
+              stepIndex={activeStep}
+              onPrevious={() => selectStep(activeStep - 1)}
+            />
           </div>
         </div>
       </Container>

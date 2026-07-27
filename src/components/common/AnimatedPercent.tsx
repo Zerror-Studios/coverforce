@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type RefObject } from "react";
 import {
   MICRO_EASE,
   MICRO_ROLL_MS,
@@ -79,6 +79,7 @@ type AnimatedStatProps = {
   suffix?: string;
   suffixClassName?: string;
   className?: string;
+  style?: CSSProperties;
   ariaLabel?: string;
   /** When true, runs the digit roll animation */
   roll?: boolean;
@@ -90,6 +91,7 @@ export function AnimatedStat({
   suffix = "",
   suffixClassName = "",
   className = "",
+  style,
   ariaLabel,
   roll = false,
   rootRef: externalRef,
@@ -105,6 +107,7 @@ export function AnimatedStat({
     <span
       ref={rootRef}
       className={`inline-flex items-baseline leading-none ${className}`}
+      style={style}
       aria-label={ariaLabel ?? `${displayValue}${suffix}`}
     >
       <span className="inline-flex tabular-nums" aria-hidden>
@@ -301,12 +304,14 @@ export function ScrollTriggeredOdometerStat({
   suffix = "",
   className = "",
   suffixClassName = "",
+  style,
   ariaLabel,
 }: {
   value: number;
   suffix?: string;
   className?: string;
   suffixClassName?: string;
+  style?: CSSProperties;
   ariaLabel?: string;
 }) {
   const columns = useMemo(
@@ -326,6 +331,7 @@ export function ScrollTriggeredOdometerStat({
       suffix={suffix}
       suffixClassName={suffixClassName}
       className={className}
+      style={style}
       ariaLabel={ariaLabel ?? `${value}${suffix}`}
     />
   );

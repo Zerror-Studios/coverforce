@@ -1,11 +1,12 @@
-import WhyCoverforce from '@/components/home/WhyCoverforce'
-import Review from '@/components/home/Review'
 import React from 'react'
 import CarrierResults from '@/components/home/CarrierResults'
 import WhosFor from '@/components/solutions/startups/WhosFor'
 import ProgramOverview from '@/components/solutions/startups/ProgramOverview'
 import Launch from '@/components/solutions/startups/Launch'
 import Enablement from '@/components/solutions/startups/Enablement'
+import EducationalResources from '@/components/solutions/startups/EducationalResources'
+import StartupFaq from '@/components/solutions/startups/StartupFaq'
+import StartupTestimonials from '@/components/solutions/startups/StartupTestimonials'
 import Hero from '@/components/solutions/startups/Hero'
 import PageWrapper from '@/components/PageWrapper'
 import { createPageMetadata } from '@/lib/seo'
@@ -20,8 +21,9 @@ const page = () => {
         <ProgramOverview />
         <Launch />
         <Enablement />
-        <WhyCoverforce paddingTop={true} />
-        <Review />
+        <EducationalResources />
+        <StartupFaq />
+        <StartupTestimonials />
         <CarrierResults />
       </PageWrapper>
     </>
