@@ -5,12 +5,17 @@ import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ArrowNavButton from "../common/ArrowNavButton";
 import Container from "../common/Container";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 
 import "swiper/css";
 import "swiper/css/navigation";
+
+gsap.registerPlugin(ScrollTrigger);
 
 type Testimonial = {
   id: string;
@@ -121,6 +126,53 @@ const Review = () => {
   const swiperRef = useRef<SwiperType | null>(null);
 
   useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef, theme: "dark" });
+
+  useGSAP(
+    () => {
+      const section = sectionRef.current;
+      if (!section) return;
+
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reducedMotion) return;
+
+      let scrollTrigger: ScrollTrigger | null = null;
+      let rafId = 0;
+
+      const bindScrollTrigger = () => {
+        const swiper = swiperRef.current;
+        if (!swiper) {
+          rafId = window.requestAnimationFrame(bindScrollTrigger);
+          return;
+        }
+
+        scrollTrigger = ScrollTrigger.create({
+          trigger: section,
+          start: "bottom bottom",
+          end: "bottom center",
+          onUpdate: (self) => {
+            const nextIndex = self.progress >= 0.5 ? 1 : 0;
+            if (swiper.activeIndex <= 1 && swiper.activeIndex !== nextIndex) {
+              swiper.slideTo(nextIndex);
+            }
+          },
+        });
+      };
+
+      bindScrollTrigger();
+
+      const lenis = window.lenis;
+      const onLenisScroll = () => ScrollTrigger.update();
+      lenis?.on("scroll", onLenisScroll);
+      ScrollTrigger.refresh();
+
+      return () => {
+        window.cancelAnimationFrame(rafId);
+        scrollTrigger?.kill();
+        lenis?.off("scroll", onLenisScroll);
+      };
+    },
+    { scope: sectionRef },
+  );
 
   useEffect(() => {
     const swiper = swiperRef.current;

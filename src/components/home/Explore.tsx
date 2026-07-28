@@ -160,7 +160,7 @@ const Explore = () => {
             className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center"
           >
             <RequestDemoButton balanced surface="on-dark">
-              Request demo
+              Contact us
             </RequestDemoButton>
             <Button href="/" balanced variant="secondary" surface="on-dark">
               Book a call

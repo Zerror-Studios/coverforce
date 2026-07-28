@@ -244,7 +244,7 @@ const Stat = () => {
               ref={buttonsRef}
               className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center"
             >
-              <RequestDemoButton balanced>Request demo</RequestDemoButton>
+              <RequestDemoButton balanced>Contact us</RequestDemoButton>
               <Button href="/" balanced variant="secondary">
                 Book a call
               </Button>

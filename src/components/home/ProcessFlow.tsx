@@ -9,6 +9,7 @@ import EyebrowPill from "../common/EyebrowPill";
 import { processSteps } from "@/data/processSteps";
 import { RiArrowRightLine } from "@remixicon/react";
 import { applyWaveToChars, COLOR_THEMES } from "@/lib/animateSplitTextReveal";
+import { PRIMARY_BUTTON_GRADIENT } from "@/data/wayCardStyles";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -65,53 +66,102 @@ function ProcessStepVideo({
   );
 }
 
-function ProcessStepStrip({
+function ProcessStepNav({
   activeIndex,
-  topOffset,
   onSelect,
 }: {
   activeIndex: number;
-  topOffset: number;
   onSelect?: (index: number) => void;
 }) {
   return (
-    <div
-      className="pointer-events-none absolute inset-x-0 z-30 hidden lg:block"
-      style={{ top: topOffset }}
-    >
-      <div className="pointer-events-auto border-b border-[#E8ECF0]/80 bg-white/90 backdrop-blur-md">
-        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          <nav
-            aria-label="Process steps"
-            className="flex items-center justify-center gap-0 overflow-x-auto py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    <nav aria-label="Process steps" className="relative z-10 flex w-full items-stretch">
+      {processSteps.map((step, index) => {
+        const isActive = index === activeIndex;
+        const isFilled = index <= activeIndex;
+        const isLast = index === processSteps.length - 1;
+        const className = `flex min-w-0 flex-1 items-center justify-center px-2 py-3 text-center font-heading text-[0.6875rem] font-medium tracking-wide transition-colors duration-500 sm:text-xs md:py-3.5 md:text-sm ${
+          isFilled ? "text-white" : "text-[#9AA8BC]"
+        } ${!isLast ? "border-r border-[#E8ECF0]/35" : ""} ${
+          onSelect
+            ? isFilled
+              ? "hover:text-white/85"
+              : "hover:text-[#50617a]"
+            : ""
+        }`;
+
+        const label = (
+          <span className="flex min-w-0 items-center justify-center">
+            <span className={isActive ? "font-semibold" : "font-regular"}>
+              {index + 1}
+            </span>
+            <span className="ml-1 truncate sm:ml-1.5">{stepShortName(step.tag)}</span>
+          </span>
+        );
+
+        if (onSelect) {
+          return (
+            <button
+              key={step.id}
+              type="button"
+              onClick={() => onSelect(index)}
+              className={className}
+              aria-current={isActive ? "step" : undefined}
+            >
+              {label}
+            </button>
+          );
+        }
+
+        return (
+          <span
+            key={step.id}
+            className={className}
+            aria-current={isActive ? "step" : undefined}
           >
-            {processSteps.map((step, index) => {
-              const isActive = index === activeIndex;
-              return (
-                <div key={step.id} className="flex items-center">
-                  {index > 0 ? (
-                    <span className="mx-3 shrink-0 text-[#C5CCD6] select-none" aria-hidden>
-                      |
-                    </span>
-                  ) : null}
-                  <button
-                    type="button"
-                    onClick={() => onSelect?.(index)}
-                    className={`shrink-0 whitespace-nowrap font-heading text-xs font-medium tracking-wide transition-colors duration-300 md:text-sm ${
-                      isActive ? "text-[#151F4D]" : "text-[#9AA8BC] hover:text-[#50617a]"
-                    }`}
-                    aria-current={isActive ? "step" : undefined}
-                  >
-                    <span className={isActive ? "font-semibold" : "font-regular"}>
-                      {index + 1}
-                    </span>
-                    <span className="ml-1.5">{stepShortName(step.tag)}</span>
-                  </button>
-                </div>
-              );
-            })}
-          </nav>
-        </div>
+            {label}
+          </span>
+        );
+      })}
+    </nav>
+  );
+}
+
+function ProcessStepBar({
+  activeIndex,
+  onSelect,
+  className = "",
+}: {
+  activeIndex: number;
+  onSelect?: (index: number) => void;
+  className?: string;
+}) {
+  const progress = ((activeIndex + 1) / processSteps.length) * 100;
+
+  return (
+    <div
+      className={`relative w-full overflow-hidden border-t border-[#E8ECF0]/80 bg-[#F3F5F8] ${className}`}
+    >
+      <div
+        className="absolute inset-y-0 left-0 transition-[width] duration-500 ease-out"
+        style={{ width: `${progress}%`, background: PRIMARY_BUTTON_GRADIENT }}
+        aria-hidden
+      />
+      <ProcessStepNav activeIndex={activeIndex} onSelect={onSelect} />
+    </div>
+  );
+}
+
+function ProcessStepStrip({
+  activeIndex,
+  onSelect,
+}: {
+  activeIndex: number;
+  onSelect?: (index: number) => void;
+}) {
+  return (
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 hidden w-full lg:block">
+      <div className="pointer-events-auto w-full">
+        <ProcessStepBar activeIndex={activeIndex} onSelect={onSelect} />
       </div>
     </div>
   );
@@ -120,11 +170,9 @@ function ProcessStepStrip({
 function MobileProcessFlow({
   activeIndex,
   setActiveIndex,
-  headerOffset,
 }: {
   activeIndex: number;
   setActiveIndex: (index: number) => void;
-  headerOffset: number;
 }) {
   const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
 
@@ -149,41 +197,9 @@ function MobileProcessFlow({
   }, [setActiveIndex]);
 
   return (
-    <div className="flex flex-col gap-16 py-12 lg:hidden">
-      <div
-        className="sticky z-30 -mx-4 border-b border-[#E8ECF0]/80 bg-white/90 px-4 backdrop-blur-md sm:-mx-6 sm:px-6"
-        style={{ top: headerOffset }}
-      >
-        <nav
-          aria-label="Process steps"
-          className="flex items-center justify-start gap-0 overflow-x-auto py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {processSteps.map((step, index) => {
-            const isActive = index === activeIndex;
-            return (
-              <div key={step.id} className="flex items-center">
-                {index > 0 ? (
-                  <span className="mx-2.5 shrink-0 text-[#C5CCD6] select-none" aria-hidden>
-                    |
-                  </span>
-                ) : null}
-                <span
-                  className={`shrink-0 whitespace-nowrap font-heading text-xs font-medium tracking-wide transition-colors duration-300 ${
-                    isActive ? "text-[#151F4D]" : "text-[#9AA8BC]"
-                  }`}
-                >
-                  <span className={isActive ? "font-semibold" : "font-regular"}>
-                    {index + 1}
-                  </span>
-                  <span className="ml-1">{stepShortName(step.tag)}</span>
-                </span>
-              </div>
-            );
-          })}
-        </nav>
-      </div>
-
-      {processSteps.map((step, index) => (
+    <>
+      <div className="flex flex-col gap-16 py-12 pb-20 lg:hidden">
+        {processSteps.map((step, index) => (
         <div
           key={step.id}
           ref={(el) => {
@@ -218,31 +234,20 @@ function MobileProcessFlow({
             <ProcessStepVideo src={step.videoSrc} label={step.heading} />
           </div>
         </div>
-      ))}
-    </div>
+        ))}
+      </div>
+
+      <ProcessStepBar activeIndex={activeIndex} className="fixed inset-x-0 bottom-0 z-30 lg:hidden" />
+    </>
   );
 }
 
 const ProcessFlow = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeStep, setActiveStep] = useState(0);
-  const [headerOffset, setHeaderOffset] = useState(72);
   const stepStartTimesRef = useRef<number[]>([0]);
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
   const jumpingRef = useRef(false);
-
-  useEffect(() => {
-    const updateHeaderOffset = () => {
-      const nav =
-        document.querySelector<HTMLElement>("[data-site-nav]") ??
-        document.querySelector<HTMLElement>("header.site-view-header");
-      setHeaderOffset(nav?.offsetHeight || 72);
-    };
-
-    updateHeaderOffset();
-    window.addEventListener("resize", updateHeaderOffset);
-    return () => window.removeEventListener("resize", updateHeaderOffset);
-  }, []);
 
   useGSAP(
     () => {
@@ -476,7 +481,6 @@ const ProcessFlow = () => {
     >
       <ProcessStepStrip
         activeIndex={activeStep}
-        topOffset={headerOffset}
         onSelect={jumpToStep}
       />
 
@@ -484,7 +488,6 @@ const ProcessFlow = () => {
         <MobileProcessFlow
           activeIndex={activeStep}
           setActiveIndex={setActiveStep}
-          headerOffset={headerOffset}
         />
 
         <div className="hidden h-screen gap-12 lg:grid lg:grid-cols-2 lg:gap-16 xl:gap-20">

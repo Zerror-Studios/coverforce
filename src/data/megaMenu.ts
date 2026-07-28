@@ -229,12 +229,6 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
             icon: RiTeamLine,
           },
           {
-            label: "Contact",
-            href: "/contact",
-            description: "Talk with our team about demos and partnerships.",
-            icon: RiMailLine,
-          },
-          {
             label: "Blog",
             href: "/blog",
             description: "Product updates, guides, and industry perspective.",

@@ -9,14 +9,34 @@ import Container from "@/components/common/Container";
 import RequestDemoCta from "@/components/request-demo/RequestDemoCta";
 import {
   CARD_BACKGROUND_STYLES,
+  SOLUTION_GRAD_FLOW,
+  type GradFlowRgb,
   type CardBackground,
 } from "@/data/wayCardStyles";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/** Startup palette, darkened so white plan copy stays crisp (no wash/overlay). */
-const STARTUP_CARD_BACKGROUND =
-  "linear-gradient(45deg, #0A5C2E 0%, #0A6B54 33%, #0A5868 66%, #084A56 100%)";
+function deepen(color: GradFlowRgb, amount: number): GradFlowRgb {
+  const keep = 1 - amount;
+  return {
+    r: Math.round(color.r * keep),
+    g: Math.round(color.g * keep),
+    b: Math.round(color.b * keep),
+  };
+}
+
+const startupFlow = SOLUTION_GRAD_FLOW.startup;
+const STARTUP_HERO_PRICING_FLOW = {
+  color1: deepen(startupFlow.color3, 0.38),
+  color2: deepen(startupFlow.color2, 0.18),
+  color3: startupFlow.color1,
+};
+
+/** Same gradient family as the startup hero, with the left side kept deep for legibility. */
+const STARTUP_CARD_BACKGROUND = `linear-gradient(135deg,
+  rgb(${STARTUP_HERO_PRICING_FLOW.color1.r}, ${STARTUP_HERO_PRICING_FLOW.color1.g}, ${STARTUP_HERO_PRICING_FLOW.color1.b}) 0%,
+  rgb(${STARTUP_HERO_PRICING_FLOW.color2.r}, ${STARTUP_HERO_PRICING_FLOW.color2.g}, ${STARTUP_HERO_PRICING_FLOW.color2.b}) 52%,
+  rgb(${STARTUP_HERO_PRICING_FLOW.color3.r}, ${STARTUP_HERO_PRICING_FLOW.color3.g}, ${STARTUP_HERO_PRICING_FLOW.color3.b}) 100%)`;
 
 type PricingPlan = {
   id: string;

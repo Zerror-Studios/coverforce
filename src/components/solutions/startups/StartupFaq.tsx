@@ -139,20 +139,20 @@ export default function StartupFaq() {
         <div className="py-16 md:py-20 lg:py-24">
           <div
             ref={headerRef}
-            className="mx-auto flex max-w-2xl flex-col items-center text-center"
+            className="flex max-w-3xl flex-col items-start text-left"
           >
             <EyebrowPill surface="light" className="mb-0">
               FAQ
             </EyebrowPill>
             <h2
               ref={headingRef}
-              className="mt-5 text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#0a143b] sm:text-3xl md:text-4xl lg:text-[2rem] lg:leading-[1.12]"
+              className="mt-5 max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#0a143b] sm:text-3xl md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
             >
               <span data-split>Have questions? We got answers</span>
             </h2>
           </div>
 
-          <div className="mx-auto mt-12 max-w-3xl border-t border-dashed border-[#D1D5DB] md:mt-14">
+          <div className="mt-12 max-w-4xl border-t border-dashed border-[#D1D5DB] md:mt-14">
             {FAQ_ITEMS.map((item) => (
               <FaqAccordionItem
                 key={item.id}

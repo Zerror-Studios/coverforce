@@ -1,3 +1,7 @@
 export function isRequestDemoLabel(label: string) {
-  return /^request\s+(a\s+)?demo$/i.test(label.trim());
+  const normalized = label.trim();
+  return (
+    /^request\s+(a\s+)?demo$/i.test(normalized) ||
+    /^contact\s+us$/i.test(normalized)
+  );
 }

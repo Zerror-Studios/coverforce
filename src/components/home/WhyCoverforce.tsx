@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState, useEffect } from "react";
+import { useCallback, useRef, useState, useEffect, useLayoutEffect, useMemo } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -8,6 +8,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import Container from "../common/Container";
 import ArrowNavButton from "../common/ArrowNavButton";
+import Button from "../common/Button";
 import Image from "next/image";
 
 import "swiper/css";
@@ -71,11 +72,92 @@ const whySlides: WhySlide[] = [
       "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&h=1200&q=80",
     alt: "Secure data center infrastructure",
   },
+  {
+    id: "slide-5",
+    title: "Security & Resilience",
+    descriptionLines: [
+      "SOC 2 Type II certified, cloud-native, and built for enterprise scale —",
+      "giving Chase infrastructure that's secure, resilient, and ready",
+      "for FI-grade volume from day one.",
+    ],
+    image:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&h=1200&q=80",
+    alt: "Secure data center infrastructure",
+  },
+  {
+    id: "slide-6",
+    title: "Security & Resilience",
+    descriptionLines: [
+      "SOC 2 Type II certified, cloud-native, and built for enterprise scale —",
+      "giving Chase infrastructure that's secure, resilient, and ready",
+      "for FI-grade volume from day one.",
+    ],
+    image:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&h=1200&q=80",
+    alt: "Secure data center infrastructure",
+  },
+  {
+    id: "slide-7",
+    title: "Security & Resilience",
+    descriptionLines: [
+      "SOC 2 Type II certified, cloud-native, and built for enterprise scale —",
+      "giving Chase infrastructure that's secure, resilient, and ready",
+      "for FI-grade volume from day one.",
+    ],
+    image:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&h=1200&q=80",
+    alt: "Secure data center infrastructure",
+  },
 ];
 
-// Small delay before a hover actually switches the active slide — absorbs
-// fast mouse passes across slide edges so it doesn't flicker between slides.
-const HOVER_SWITCH_DELAY_MS = 90;
+const SLIDE_TRANSITION_MS = 1080;
+
+/** Progressive flex weights: big → small → smaller → thin slivers. */
+const SLIDE_FLEX_BY_VISUAL_INDEX = [17, 4, 2, 1, 0.4, 0.4, 0] as const;
+
+/**
+ * While a card expands: everything before it → 0, clicked card → active,
+ * everything after → default sizes for positions 2…n.
+ */
+function getExpandingFlex(visualIndex: number, expandingTarget: number) {
+  if (visualIndex < expandingTarget) return 0;
+  if (visualIndex === expandingTarget) return SLIDE_FLEX_BY_VISUAL_INDEX[0];
+
+  const offset = visualIndex - expandingTarget;
+  return (
+    SLIDE_FLEX_BY_VISUAL_INDEX[offset] ??
+    SLIDE_FLEX_BY_VISUAL_INDEX[SLIDE_FLEX_BY_VISUAL_INDEX.length - 1]
+  );
+}
+
+function getSlideFlex(visualIndex: number, expandingTarget: number | null) {
+  if (expandingTarget !== null) {
+    return getExpandingFlex(visualIndex, expandingTarget);
+  }
+
+  return (
+    SLIDE_FLEX_BY_VISUAL_INDEX[visualIndex] ??
+    SLIDE_FLEX_BY_VISUAL_INDEX[SLIDE_FLEX_BY_VISUAL_INDEX.length - 1]
+  );
+}
+
+function getSlideGapClass(
+  visualIndex: number,
+  expandingTarget: number | null,
+  total: number,
+) {
+  const flex = getSlideFlex(visualIndex, expandingTarget);
+  const nextFlex =
+    visualIndex < total - 1
+      ? getSlideFlex(visualIndex + 1, expandingTarget)
+      : 0;
+
+  if (flex === 0 || nextFlex === 0 || visualIndex === total - 1) {
+    return "why-slide--no-gap";
+  }
+
+  return "";
+}
 
 const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -84,39 +166,80 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
   const descRef = useRef<HTMLParagraphElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
-  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [expandingTarget, setExpandingTarget] = useState<number | null>(null);
+  const [suppressTransition, setSuppressTransition] = useState(false);
+  const commitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const orderedSlides = useMemo(
+    () => [...whySlides.slice(active), ...whySlides.slice(0, active)],
+    [active],
+  );
+  const activeSlide =
+    expandingTarget !== null
+      ? orderedSlides[expandingTarget]!
+      : whySlides[active]!;
+  const isExpanding = expandingTarget !== null;
 
-  const goTo = useCallback((index: number) => {
-    setActive((current) => (current === index ? current : index));
+  const clearCommitTimeout = useCallback(() => {
+    if (commitTimeoutRef.current) clearTimeout(commitTimeoutRef.current);
+    commitTimeoutRef.current = null;
   }, []);
+
+  const goTo = useCallback((index: number, options?: { animate?: boolean }) => {
+    clearCommitTimeout();
+    const animate = options?.animate ?? true;
+    if (!animate) setSuppressTransition(true);
+    setExpandingTarget(null);
+    setActive((current) => (current === index ? current : index));
+  }, [clearCommitTimeout]);
+
+  const beginExpand = useCallback(
+    (visualIndex: number, targetIndex: number) => {
+      clearCommitTimeout();
+      setExpandingTarget(visualIndex);
+      commitTimeoutRef.current = setTimeout(() => {
+        goTo(targetIndex, { animate: false });
+      }, SLIDE_TRANSITION_MS);
+    },
+    [clearCommitTimeout, goTo],
+  );
+
+  // Keep transitions off until the reorder DOM update is painted, then restore.
+  useLayoutEffect(() => {
+    if (!suppressTransition) return;
+    void trackRef.current?.offsetWidth;
+    requestAnimationFrame(() => {
+      void trackRef.current?.offsetWidth;
+      requestAnimationFrame(() => setSuppressTransition(false));
+    });
+  }, [suppressTransition, active]);
 
   const prev = useCallback(() => {
-    setActive((current) => (current - 1 + whySlides.length) % whySlides.length);
-  }, []);
+    if (isExpanding) return;
+    goTo((active - 1 + whySlides.length) % whySlides.length);
+  }, [active, goTo, isExpanding]);
 
   const next = useCallback(() => {
-    setActive((current) => (current + 1) % whySlides.length);
-  }, []);
+    if (isExpanding) return;
+    beginExpand(1, (active + 1) % whySlides.length);
+  }, [active, beginExpand, isExpanding]);
 
-  // Debounced hover activation: wait a beat before switching so a mouse
-  // just passing through on its way elsewhere doesn't trigger a swap.
-  const handleSlideMouseEnter = useCallback((index: number) => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    hoverTimeoutRef.current = setTimeout(() => {
-      goTo(index);
-    }, HOVER_SWITCH_DELAY_MS);
-  }, [goTo]);
+  const handleSlideClick = useCallback(
+    (visualIndex: number, slideIndex: number) => {
+      if (visualIndex === 0 || isExpanding) return;
+      if (getSlideFlex(visualIndex, null) === 0) return;
 
-  const handleTrackMouseLeave = useCallback(() => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-  }, []);
+      beginExpand(visualIndex, slideIndex);
+    },
+    [beginExpand, isExpanding],
+  );
 
   useEffect(
     () => () => {
-      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+      clearCommitTimeout();
     },
-    [],
+    [clearCommitTimeout],
   );
 
   useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef, descRef });
@@ -206,92 +329,71 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
       <style>{`
         .why-slider-track {
           display: flex;
-          gap: 12px;
           align-items: stretch;
           width: 100%;
+          max-width: 100%;
+          overflow: hidden;
           height: 340px;
+          contain: layout style;
         }
         @media (min-width: 640px) {
-          .why-slider-track { height: 380px; gap: 16px; }
+          .why-slider-track { height: 380px; }
         }
         @media (min-width: 1024px) {
-          .why-slider-track { height: 420px; gap: 20px; }
+          .why-slider-track { height: 420px; }
         }
 
         .why-slide {
           position: relative;
-          border-radius: 2px;
+          min-width: 0;
+          max-width: 100%;
+          border-radius: 10px;
           overflow: hidden;
-          flex-shrink: 0;
+          margin-right: 12px;
           background: #E3E3E3;
+          backface-visibility: hidden;
+          transform: translateZ(0);
           transition: flex 1.08s cubic-bezier(0.19, 1, 0.22, 1);
         }
-        .why-slide.is-active   { flex: 5 0 0; cursor: default; }
-        .why-slide.is-inactive { flex: 1 0 0; cursor: pointer; }
-
-        .why-slide img {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
+        @media (min-width: 640px) {
+          .why-slide { margin-right: 16px; }
         }
-
-        .why-slide-copy {
-          transition:
-            opacity 400ms cubic-bezier(0.19, 1, 0.22, 1),
-            transform 500ms cubic-bezier(0.19, 1, 0.22, 1);
+        @media (min-width: 1024px) {
+          .why-slide { margin-right: 20px; }
         }
-        .why-slide.is-inactive .why-slide-copy {
-          opacity: 0;
-          transform: translateY(20px);
+        .why-slide.why-slide--no-gap,
+        .why-slide:last-child {
+          margin-right: 0;
         }
-        .why-slide.is-active .why-slide-copy {
-          opacity: 1;
-          transform: translateY(0);
-          transition-delay: 180ms;
+        .why-slider-track--animating .why-slide {
+          will-change: flex;
         }
-
-        .why-slide-mask {
-          overflow: hidden;
+        .why-slider-track--no-transition .why-slide {
+          transition: none !important;
+          will-change: auto;
         }
-        .why-slide-title-inner,
-        .why-slide-description-line {
-          opacity: 0;
-          transform: translateY(110%);
-          transition:
-            opacity 400ms cubic-bezier(0.22, 1, 0.36, 1),
-            transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+        .why-slide.is-active { cursor: default; }
+        .why-slide.is-inactive { cursor: default; }
+        .why-slide.is-clickable { cursor: pointer; }
+        .why-slide.is-collapsed {
+          pointer-events: none;
+          margin-right: 0 !important;
+          transition: flex 1.08s cubic-bezier(0.19, 1, 0.22, 1),
+            margin-right 1.08s cubic-bezier(0.19, 1, 0.22, 1);
         }
-        .why-slide.is-active .why-slide-title-inner {
-          opacity: 1;
-          transform: translateY(0);
-          transition-delay: 220ms;
-        }
-        .why-slide.is-active .why-slide-description-line {
-          opacity: 1;
-          transform: translateY(0);
-          transition-delay: 300ms;
-        }
-        .why-slide.is-active p .why-slide-mask:nth-child(2) .why-slide-description-line {
-          transition-delay: 360ms;
-        }
-        .why-slide.is-active p .why-slide-mask:nth-child(3) .why-slide-description-line {
-          transition-delay: 420ms;
-        }
-        .why-slide.is-active p .why-slide-mask:nth-child(4) .why-slide-description-line {
-          transition-delay: 480ms;
+        .why-slide.is-zero {
+          pointer-events: none;
         }
 
         .why-swiper-slide {
           position: relative;
-          height: 340px;
+          height: 300px;
           overflow: hidden;
           border-radius: 2px;
           background: #E3E3E3;
         }
         @media (min-width: 640px) {
-          .why-swiper-slide { height: 380px; }
+          .why-swiper-slide { height: 360px; }
         }
       `}</style>
       <div ref={containerRef} className="relative z-10 overflow-hidden lg:will-change-transform">
@@ -364,36 +466,66 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                         alt={slide.alt}
                         draggable={false}
                       />
-                      <div
-                        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent"
-                        aria-hidden
-                      />
-                      <div className="absolute inset-x-0 bottom-0 z-10 p-5 text-white sm:p-7">
-                        <h3 className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
-                          {slide.title}
-                        </h3>
-                        <p className="mt-3 font-sans text-sm font-regular leading-[1.4] text-white/85 md:text-[1.125rem]">
-                          {slide.descriptionLines.join(" ")}
-                        </p>
-                      </div>
                     </article>
                   </SwiperSlide>
                 ))}
               </Swiper>
+
+              <div className="mt-6 flex flex-col gap-5">
+                <h3 className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#444444] sm:text-3xl sm:leading-[1.12]">
+                  {activeSlide.title}
+                </h3>
+                <p className="max-w-3xl font-sans text-sm font-regular leading-[1.4] text-[#50617a] md:text-[1.125rem]">
+                  {activeSlide.descriptionLines.join(" ")}
+                </p>
+                <Button href="/contact">Contact us</Button>
+              </div>
             </div>
 
             {/* ── Desktop: expanding slider ── */}
             <div className="relative mt-12 hidden md:mt-14 lg:mt-16 lg:block">
-              <div className="why-slider-track" onMouseLeave={handleTrackMouseLeave}>
-                {whySlides.map((slide, i) => (
+              <div
+                ref={trackRef}
+                className={`why-slider-track${
+                  isExpanding ? " why-slider-track--animating" : ""
+                }${suppressTransition ? " why-slider-track--no-transition" : ""}`}
+              >
+                {orderedSlides.map((slide, visualIndex) => {
+                  const slideIndex = whySlides.findIndex((item) => item.id === slide.id);
+                  const flexGrow = getSlideFlex(visualIndex, expandingTarget);
+                  const isZero = flexGrow === 0;
+                  const isActive = visualIndex === 0 && !isExpanding;
+                  const isCollapsed =
+                    isExpanding && expandingTarget !== null && visualIndex < expandingTarget;
+                  const isExpanded =
+                    isExpanding && expandingTarget !== null && visualIndex === expandingTarget;
+                  const isClickable =
+                    !isExpanding && visualIndex > 0 && !isZero;
+                  const gapClass = getSlideGapClass(
+                    visualIndex,
+                    expandingTarget,
+                    orderedSlides.length,
+                  );
+                  return (
                   <button
                     type="button"
                     key={slide.id}
-                    className={`why-slide text-left ${i === active ? "is-active" : "is-inactive"}`}
-                    onMouseEnter={() => handleSlideMouseEnter(i)}
-                    onFocus={() => goTo(i)}
-                    onClick={() => goTo(i)}
-                    aria-pressed={i === active}
+                    className={`why-slide text-left ${gapClass} ${
+                      isCollapsed
+                        ? "is-collapsed is-zero"
+                        : isZero
+                          ? "is-zero"
+                          : isExpanded || isActive
+                            ? "is-active"
+                            : isClickable
+                              ? "is-clickable is-inactive"
+                              : "is-inactive"
+                    }`}
+                    style={{ flex: `${flexGrow} 0 0` }}
+                    onClick={() => handleSlideClick(visualIndex, slideIndex)}
+                    aria-pressed={isExpanded || isActive}
+                    aria-hidden={isZero}
+                    tabIndex={isClickable ? 0 : -1}
                   >
                     <Image
                       width={1000}
@@ -404,28 +536,23 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                       alt={slide.alt}
                       draggable={false}
                     />
-                    <div
-                      className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/95 via-black/35 to-transparent"
-                      aria-hidden
-                    />
-                    <div className="why-slide-copy pointer-events-none absolute inset-x-0 bottom-0 z-20 max-w-3xl p-8 text-white lg:p-10">
-                      <div className="why-slide-mask">
-                        <h3 className="why-slide-title-inner max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
-                          {slide.title}
-                        </h3>
-                      </div>
-                      <p className={`mt-4 font-sans text-sm font-regular leading-[1.4] text-white/85 md:text-[1.125rem] ${i === 3 ? "max-w-2xl" : "max-w-xl"}`}>
-                        {slide.descriptionLines.map((line) => (
-                          <span key={line} className="why-slide-mask block">
-                            <span className="why-slide-description-line block">
-                              {line}
-                            </span>
-                          </span>
-                        ))}
-                      </p>
-                    </div>
                   </button>
-                ))}
+                )})}
+              </div>
+
+              <div className="mt-6 flex items-end justify-between gap-8 border-t border-[#E8E8EE] pt-6">
+                <div className="max-w-4xl">
+                  <h3 className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#444444] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
+                    {activeSlide.title}
+                  </h3>
+                  <p className="mt-4 max-w-3xl font-sans text-sm font-regular leading-[1.4] text-[#50617a] md:text-[1.125rem]">
+                    {activeSlide.descriptionLines.join(" ")}
+                  </p>
+                </div>
+
+                <Button href="/contact" className="shrink-0">
+                  Contact us
+                </Button>
               </div>
             </div>
           </div>

@@ -270,7 +270,7 @@ const RealWorkflow = () => {
                 <span data-split>to 8 minutes.</span>
               </h2>
               <RequestDemoButton variant="primary" surface="on-dark">
-                Request Demo
+                Contact us
               </RequestDemoButton>
             </div>
 

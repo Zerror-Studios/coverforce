@@ -94,8 +94,8 @@ export default function MapPoints() {
       alpArr[i] = Math.random() > 0.85 ? 0.3 : 0.8 + Math.random() * 0.2;
     }
 
-    const ny = [80, -4, 0];
-    const denver = [61, 24, 0];
+    const ny = [79, 15, 0];
+    const denver = [-74, 24, 0];
     return { positions: posArr, alphas: alpArr, nyCoords: ny, denverCoords: denver };
   }, []);
 

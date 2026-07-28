@@ -430,7 +430,7 @@ const Hero = () => {
               }`}
             >
               <RequestDemoButton balanced surface="on-dark" className="!min-w-0 !px-3.5 sm:!min-w-[148px] sm:!px-5">
-                Request Demo
+                Contact us
               </RequestDemoButton>
               <WatchDemoButton balanced variant="secondary" surface="on-dark" className="!min-w-0 !px-3.5 sm:!min-w-[148px] sm:!px-5">
                 Watch Demo

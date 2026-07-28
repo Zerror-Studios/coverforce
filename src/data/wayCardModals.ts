@@ -56,7 +56,7 @@ export const WAY_CARD_MODALS: Record<string, WayCardModalContent> = {
     description:
       "Move from idea to bindable quotes with a single platform that handles intake, carrier connectivity, and producer workflows.",
     primaryCta: { label: "Explore startup tools", href: "/solutions/startups" },
-    secondaryCta: { label: "Request a demo", href: "/" },
+    secondaryCta: { label: "Contact us", href: "/contact" },
     features: [
       "Go live without building carrier integrations",
       "One workflow for every producer",

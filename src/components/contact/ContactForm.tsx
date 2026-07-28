@@ -22,14 +22,14 @@ type FormDataState = {
   businessType: string[];
   problems: string;
   bookSize: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
   phoneCode: string;
   countryCode: string;
   phone: string;
   email: string;
   jobTitle: string;
   companyName: string;
+  heardAboutUs: string[];
 };
 
 type FieldErrors = Partial<Record<keyof FormDataState | "form", string>>;
@@ -61,21 +61,15 @@ function validateStep(step: number, data: FormDataState): FieldErrors {
   }
 
   if (step === 4) {
-    const firstName = data.firstName.trim();
-    const lastName = data.lastName.trim();
+    const fullName = data.fullName.trim();
     const email = data.email.trim();
     const jobTitle = data.jobTitle.trim();
     const companyName = data.companyName.trim();
     const fullPhone = buildFullPhone(data.phoneCode, data.phone);
 
-    if (!firstName) errors.firstName = "First name is required.";
-    else if (!NAME_PATTERN.test(firstName)) {
-      errors.firstName = "Enter a valid first name.";
-    }
-
-    if (!lastName) errors.lastName = "Last name is required.";
-    else if (!NAME_PATTERN.test(lastName)) {
-      errors.lastName = "Enter a valid last name.";
+    if (!fullName) errors.fullName = "Full name is required.";
+    else if (!NAME_PATTERN.test(fullName)) {
+      errors.fullName = "Enter a valid full name.";
     }
 
     if (!data.phone.trim()) {
@@ -100,6 +94,10 @@ function validateStep(step: number, data: FormDataState): FieldErrors {
     }
   }
 
+  if (step === 5 && data.heardAboutUs.length === 0) {
+    errors.heardAboutUs = "Please tell us how you heard about us.";
+  }
+
   return errors;
 }
 
@@ -115,14 +113,14 @@ const ContactForm = () => {
     businessType: [],
     problems: "",
     bookSize: "",
-    firstName: "",
-    lastName: "",
+    fullName: "",
     phoneCode: "+1",
     countryCode: "US",
     phone: "",
     email: "",
     jobTitle: "",
     companyName: "",
+    heardAboutUs: [],
   });
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -317,7 +315,7 @@ const ContactForm = () => {
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
     setSubmitError(null);
-    setStep((s) => Math.min(s + 1, 5));
+    setStep((s) => Math.min(s + 1, 6));
   };
 
   const prevStep = () => {
@@ -327,7 +325,7 @@ const ContactForm = () => {
   };
 
   const handleSubmit = async () => {
-    const errors = validateStep(4, formData);
+    const errors = validateStep(5, formData);
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) {
       setSubmitError("Please fix the highlighted fields before submitting.");
@@ -343,13 +341,13 @@ const ContactForm = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          firstName: formData.firstName.trim(),
-          lastName: formData.lastName.trim(),
+          fullName: formData.fullName.trim(),
           email: formData.email.trim(),
           jobTitle: formData.jobTitle.trim(),
           companyName: formData.companyName.trim(),
           problems: formData.problems.trim(),
           bookSize: formData.bookSize.trim(),
+          heardAboutUs: formData.heardAboutUs,
           phone: formData.phone.replace(/\D/g, ""),
           submittedAt: new Date().toISOString(),
         }),
@@ -360,7 +358,7 @@ const ContactForm = () => {
         throw new Error(result.error || "Something went wrong. Please try again.");
       }
 
-      setStep(5);
+      setStep(6);
     } catch (error) {
       setSubmitError(
         error instanceof Error ? error.message : "Something went wrong. Please try again.",
@@ -393,6 +391,21 @@ const ContactForm = () => {
     "$10M+",
   ];
 
+  const heardAboutUsOptions = [
+    "Search (Google, other engine)",
+    "AI Tool (Claude, ChatGPT, etc)",
+    "Blog post or article",
+    "Newsletter",
+    "Online advertisement",
+    "Referral from an existing CoverForce carrier",
+    "Referral from an existing CoverForce customer",
+    "Referral from an investor or advisor",
+    "Other referral (word of mouth, partner, integration, etc)",
+    "Event or conference",
+    "LinkedIn or social media",
+    "Other",
+  ];
+
   const countryCodes = getCountries()
     .map((country) => ({
       code: `+${getCountryCallingCode(country)}`,
@@ -410,6 +423,18 @@ const ContactForm = () => {
       return { ...prev, businessType: [...current, type] };
     });
     clearFieldError("businessType");
+    setSubmitError(null);
+  };
+
+  const toggleHeardAboutUs = (option: string) => {
+    setFormData((prev) => {
+      const current = prev.heardAboutUs;
+      if (current.includes(option)) {
+        return { ...prev, heardAboutUs: current.filter((o) => o !== option) };
+      }
+      return { ...prev, heardAboutUs: [...current, option] };
+    });
+    clearFieldError("heardAboutUs");
     setSubmitError(null);
   };
 
@@ -443,9 +468,9 @@ const ContactForm = () => {
             ref={contentRef}
             className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center justify-center text-center"
           >
-            {step > 0 && step < 5 && (
+            {step > 0 && step < 6 && (
               <div className="mb-8 text-sm font-medium uppercase tracking-widest text-white/60">
-                0{step} / <span className="opacity-30"> 04</span>
+                0{step} / <span className="opacity-30"> 05</span>
               </div>
             )}
 
@@ -599,41 +624,22 @@ const ContactForm = () => {
                 </h2>
 
                 <div className="mt-4 grid w-full grid-cols-1 gap-x-12 gap-y-10 text-left md:grid-cols-2">
-                  <div className="flex flex-col gap-2" data-animate-field>
+                  <div className="flex flex-col gap-2 md:col-span-2" data-animate-field>
                     <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
-                      FIRST NAME *
+                      FULL NAME *
                     </label>
                     <input
                       type="text"
-                      placeholder="Arjun"
-                      autoComplete="given-name"
-                      value={formData.firstName}
-                      onChange={(e) => updateData("firstName", e.target.value)}
-                      aria-invalid={Boolean(fieldErrors.firstName)}
-                      className={`w-full border-b bg-transparent pb-2 text-white outline-none transition-colors ${fieldBorderClass(Boolean(fieldErrors.firstName))}`}
+                      placeholder="Arjun Sharma"
+                      autoComplete="name"
+                      value={formData.fullName}
+                      onChange={(e) => updateData("fullName", e.target.value)}
+                      aria-invalid={Boolean(fieldErrors.fullName)}
+                      className={`w-full border-b bg-transparent pb-2 text-white outline-none transition-colors ${fieldBorderClass(Boolean(fieldErrors.fullName))}`}
                     />
-                    {fieldErrors.firstName && (
+                    {fieldErrors.fullName && (
                       <p className="text-xs text-red-300" role="alert">
-                        {fieldErrors.firstName}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex flex-col gap-2" data-animate-field>
-                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
-                      LAST NAME *
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Sharma"
-                      autoComplete="family-name"
-                      value={formData.lastName}
-                      onChange={(e) => updateData("lastName", e.target.value)}
-                      aria-invalid={Boolean(fieldErrors.lastName)}
-                      className={`w-full border-b bg-transparent pb-2 text-white outline-none transition-colors ${fieldBorderClass(Boolean(fieldErrors.lastName))}`}
-                    />
-                    {fieldErrors.lastName && (
-                      <p className="text-xs text-red-300" role="alert">
-                        {fieldErrors.lastName}
+                        {fieldErrors.fullName}
                       </p>
                     )}
                   </div>
@@ -797,13 +803,8 @@ const ContactForm = () => {
                   <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
                     GO BACK
                   </Button>
-                  <Button
-                    surface="on-dark"
-                    onClick={handleSubmit}
-                    balanced
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "SUBMITTING..." : "SUBMIT"}
+                  <Button surface="on-dark" onClick={goNext} balanced>
+                    NEXT
                   </Button>
                 </div>
                 {submitError && (
@@ -815,6 +816,57 @@ const ContactForm = () => {
             )}
 
             {step === 5 && (
+              <div className="flex w-full flex-col items-center">
+                <h2
+                  data-heading
+                  className="mb-12 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
+                >
+                  <span data-split>How did you hear about us?</span>
+                </h2>
+                <div className="flex w-full flex-wrap justify-center gap-4">
+                  {heardAboutUsOptions.map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      data-animate-btn
+                      onClick={() => toggleHeardAboutUs(option)}
+                      className={`rounded-[5px] border px-8 py-3 transition-colors ${
+                        formData.heardAboutUs.includes(option)
+                          ? "border-transparent bg-white text-[#2E2E2E]"
+                          : "border-white/40 bg-transparent text-white hover:bg-white/[0.08]"
+                      }`}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+                {fieldErrors.heardAboutUs && (
+                  <p className="mt-6 text-sm text-red-300" role="alert">
+                    {fieldErrors.heardAboutUs}
+                  </p>
+                )}
+                <div className="mt-16 flex w-full items-center justify-between" data-animate-btn>
+                  <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
+                    GO BACK
+                  </Button>
+                  <Button
+                    surface="on-dark"
+                    onClick={handleSubmit}
+                    balanced
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "SUBMITTING..." : "SUBMIT"}
+                  </Button>
+                </div>
+                {submitError && (
+                  <p className="mt-4 text-sm text-red-300" role="alert" data-animate-btn>
+                    {submitError}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {step === 6 && (
               <div className="flex w-full flex-col items-center">
                 <h2
                   data-heading

@@ -1,9 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { CheckCircle2, ChevronDown } from "lucide-react";
-import Container from "@/components/common/Container";
+import { CheckCircle2, ChevronDown } from "lucide-react";import Container from "@/components/common/Container";
 import Button from "@/components/common/Button";
 import EyebrowPill from "@/components/common/EyebrowPill";
 
@@ -83,52 +82,142 @@ function IndustryTiles({
   );
 }
 
+function formatDropdownLabel(option: string) {
+  if (/[a-z]/.test(option)) return option;
+
+  return option
+    .toLowerCase()
+    .replace(/(^|[\s\-/(])([a-z])/g, (_, prefix: string, char: string) => prefix + char.toUpperCase());
+}
+
 function FormSelect({
+  id,
   label,
   value,
   options,
+  onChange,
 }: {
+  id: string;
   label: string;
   value: string;
   options: readonly string[];
-  highlighted?: boolean;
+  onChange: (value: string) => void;
 }) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const listId = `${id}-listbox`;
+  const selected = options.includes(value) ? value : options[0];
+  const selectedLabel = formatDropdownLabel(selected);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onPointerDown = (event: globalThis.MouseEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
   return (
-    <label className="block cursor-pointer">
-      <span className="mb-2 block font-mono text-sm font-medium uppercase text-[#413CC0]">
+    <div ref={rootRef} className="relative block min-w-0">
+      <span
+        id={`${id}-label`}
+        className="mb-2 block font-mono text-sm font-medium uppercase text-[#413CC0]"
+      >
         {label}
       </span>
-      <div className="relative">
-        <select
-          defaultValue={value}
-          className="w-full appearance-none rounded-lg border border-[#DDDDDD] bg-white px-4 py-3.5 pr-10 font-heading text-sm font-medium text-[#1A1A1A] outline-none transition-colors hover:border-[#5348E0]/50 hover:ring-1 hover:ring-[#5B35E0]/20"
-        >
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+      <button
+        id={id}
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listId}
+        aria-labelledby={`${id}-label`}
+        onClick={() => setOpen((prev) => !prev)}
+        className={`box-border flex h-10 min-h-10 max-h-10 w-full items-center justify-between rounded-lg border bg-white px-4 text-left font-heading text-sm font-medium leading-none outline-none transition-colors ${
+          open
+            ? "border-[#5B35E0] text-[#1A1A1A] ring-1 ring-[#5B35E0]/20"
+            : "border-[#E4E7EC] text-[#1A1A1A] hover:border-[#5B35E0]/40"
+        }`}
+      >
+        <span className="truncate text-[#1A1A1A]">{selectedLabel}</span>
         <ChevronDown
-          className="pointer-events-none absolute right-3.5 top-1/2 size-4 -translate-y-1/2 text-[#9AA8BC]"
+          className={`ml-3 size-4 shrink-0 text-[#9AA8BC] transition-transform duration-200 ${
+            open ? "rotate-180" : ""
+          }`}
           aria-hidden
         />
-      </div>
-    </label>
+      </button>
+
+      {open ? (
+        <ul
+          id={listId}
+          role="listbox"
+          aria-labelledby={`${id}-label`}
+          data-lenis-prevent
+          className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-64 overflow-y-auto rounded-xl border border-[#E8ECF0] bg-white py-1 shadow-[0_12px_32px_rgba(10,20,59,0.1)]"
+        >
+          {options.map((option, index) => {
+            const isSelected = option === value;
+            return (
+              <li key={option} role="presentation">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => {
+                    onChange(option);
+                    setOpen(false);
+                  }}
+                  className={`flex w-full items-center px-4 py-3.5 text-left font-heading text-xs font-medium transition-colors md:text-sm ${
+                    index > 0 ? "border-t border-[#EEF1F5]" : ""
+                  } ${
+                    isSelected
+                      ? "bg-[#F5F3FF] text-[#2A297C]"
+                      : "text-[#111110] hover:bg-[#F7F8FA]"
+                  }`}
+                >
+                  {formatDropdownLabel(option)}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
+    </div>
   );
 }
 
-function MatchResultsCard({ industry }: { industry: string }) {
-  return (
+function MatchResultsCard({
+  industry,
+  state,
+  revenue,
+  employees,
+}: {
+  industry: string;
+  state: string;
+  revenue: string;
+  employees: string;
+}) {  return (
     <div className="rounded-2xl border border-[#ECEEF2] bg-white p-5 md:p-6 lg:p-7">
       <div className="border-b border-[#ECEEF2] pb-5">
         <p className="font-sans text-lg font-regular text-[#2A297C]">
           8 carriers matched
         </p>
         <p className="mt-1 font-mono text-sm font-medium uppercase text-[#444444]">
-          {industry} / FL / $1M-$5M / 10-49 EMPLOYEES
-        </p>
-      </div>
+          {industry} / {state} / {revenue} / {employees} employees
+        </p>      </div>
 
       <div className="py-5">
         <div className="mb-3 flex items-center justify-between gap-4">
@@ -207,7 +296,21 @@ function MatchResultsCard({ industry }: { industry: string }) {
 const CarrierMatch = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [industry, setIndustry] = useState<(typeof INDUSTRIES)[number]>("Restaurant");
+  const [revenue, setRevenue] = useState<string>(FORM_FIELDS[0].value);
+  const [state, setState] = useState<string>(FORM_FIELDS[1].value);
+  const [employees, setEmployees] = useState<string>(FORM_FIELDS[2].value);
 
+  const fieldSetters: Record<(typeof FORM_FIELDS)[number]["id"], (value: string) => void> = {
+    revenue: setRevenue,
+    state: setState,
+    employees: setEmployees,
+  };
+
+  const fieldValues: Record<(typeof FORM_FIELDS)[number]["id"], string> = {
+    revenue,
+    state,
+    employees,
+  };
   return (
     <section ref={sectionRef} className="bg-[#F6F8F9] text-[#0a143b]">
       <Container borderColor="#53535340">
@@ -240,12 +343,13 @@ const CarrierMatch = () => {
                 {FORM_FIELDS.map((field) => (
                   <FormSelect
                     key={field.id}
+                    id={field.id}
                     label={field.label}
-                    value={field.value}
+                    value={fieldValues[field.id]}
                     options={field.options}
+                    onChange={fieldSetters[field.id]}
                   />
                 ))}
-
                 <div className="mt-2">
                   <Button
                     type="submit"
@@ -258,8 +362,12 @@ const CarrierMatch = () => {
               </form>
             </div>
 
-            <MatchResultsCard industry={industry} />
-          </div>
+            <MatchResultsCard
+              industry={industry}
+              state={state}
+              revenue={revenue}
+              employees={employees}
+            />          </div>
         </div>
       </Container>
     </section>

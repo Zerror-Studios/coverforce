@@ -16,22 +16,21 @@ const Hero = () => {
   const formRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
-  const labelRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     const container = containerRef.current;
     const form = formRef.current;
     const map = mapRef.current;
     const glow = glowRef.current;
-    const label = labelRef.current;
     if (!container || !form || !map || !glow) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mapLayers = [map, glow];
+    // Keep a strip of the map visible under the form so it’s clear more content is below.
+    const mapPeekStart = 90;
 
-    gsap.set(mapLayers, { yPercent: 100 });
+    gsap.set(mapLayers, { yPercent: mapPeekStart });
     gsap.set(form, { autoAlpha: 1 });
-    if (label) gsap.set(label, { autoAlpha: 1 });
 
     if (reducedMotion) {
       gsap.set(mapLayers, { yPercent: 0 });
@@ -48,8 +47,7 @@ const Hero = () => {
       },
     });
 
-    // Map rises over the full scroll; form fades out smoothly in the first half
-    // so the fade stays visible above the map.
+    // Map rises from the peek position to fill the viewport; form fades in the first half.
     tl.to(
       mapLayers,
       {
@@ -67,18 +65,6 @@ const Hero = () => {
       },
       0,
     );
-
-    if (label) {
-      tl.to(
-        label,
-        {
-          autoAlpha: 0,
-          ease: "power2.out",
-          duration: 0.4,
-        },
-        0,
-      );
-    }
 
     const lenis = window.lenis;
     const onLenisScroll = () => ScrollTrigger.update();
@@ -106,30 +92,6 @@ const Hero = () => {
 
         <div ref={formRef} className="absolute inset-0 z-30 will-change-[opacity]">
           <ContactForm />
-
-          <div
-            ref={labelRef}
-            className="scroll-down-label pointer-events-none absolute inset-x-0 bottom-6 z-20 flex justify-center"
-          >
-            <div className="flex flex-col items-center gap-2 text-sm font-medium text-white/90">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="opacity-80 motion-safe:animate-bounce"
-                aria-hidden="true"
-              >
-                <path d="M12 5v14" />
-                <path d="M19 12l-7 7-7-7" />
-              </svg>
-              <span>Scroll down</span>
-            </div>
-          </div>
         </div>
 
         <div

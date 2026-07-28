@@ -11,14 +11,14 @@ interface ContactPayload {
   businessType: string[];
   problems: string;
   bookSize: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
   phoneCode: string;
   countryCode: string;
   phone: string;
   email: string;
   jobTitle: string;
   companyName: string;
+  heardAboutUs: string[];
   submittedAt: string;
 }
 
@@ -55,22 +55,23 @@ export async function POST(request: Request) {
       businessType: Array.isArray(body?.businessType) ? body.businessType.map(String) : [],
       problems: String(body?.problems ?? "").trim(),
       bookSize: String(body?.bookSize ?? "").trim(),
-      firstName: String(body?.firstName ?? "").trim(),
-      lastName: String(body?.lastName ?? "").trim(),
+      fullName: String(body?.fullName ?? "").trim(),
       phoneCode: String(body?.phoneCode ?? "").trim(),
       countryCode: String(body?.countryCode ?? "").trim(),
       phone: String(body?.phone ?? "").trim(),
       email: String(body?.email ?? "").trim(),
       jobTitle: String(body?.jobTitle ?? "").trim(),
       companyName: String(body?.companyName ?? "").trim(),
+      heardAboutUs: Array.isArray(body?.heardAboutUs)
+        ? body.heardAboutUs.map(String)
+        : [],
       submittedAt: String(body?.submittedAt ?? "").trim(),
     };
 
     const requiredFields: (keyof ContactPayload)[] = [
       "problems",
       "bookSize",
-      "firstName",
-      "lastName",
+      "fullName",
       "phone",
       "email",
       "jobTitle",
@@ -78,7 +79,11 @@ export async function POST(request: Request) {
     ];
 
     const missingField = requiredFields.find((field) => !payload[field]);
-    if (missingField || payload.businessType.length === 0) {
+    if (
+      missingField ||
+      payload.businessType.length === 0 ||
+      payload.heardAboutUs.length === 0
+    ) {
       return NextResponse.json({ error: "All required fields must be filled" }, { status: 400 });
     }
 
@@ -89,7 +94,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!isValidName(payload.firstName) || !isValidName(payload.lastName)) {
+    if (!isValidName(payload.fullName)) {
       return NextResponse.json({ error: "Please enter a valid name" }, { status: 400 });
     }
 
@@ -128,14 +133,14 @@ export async function POST(request: Request) {
 
     await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: "Sheet1!A:J",
+      range: "Sheet1!A:K",
       valueInputOption: "RAW",
       requestBody: {
         values: [
           [
             formattedDate,
-            payload.firstName,
-            payload.lastName,
+            payload.fullName,
+            "",
             payload.email,
             `${payload.phoneCode} ${payload.phone}`.trim(),
             payload.companyName,
@@ -143,6 +148,7 @@ export async function POST(request: Request) {
             payload.businessType.join(", "),
             payload.bookSize,
             payload.problems,
+            payload.heardAboutUs.join(", "),
           ],
         ],
       },
@@ -191,7 +197,7 @@ export async function POST(request: Request) {
                 <table width="100%" cellpadding="0" cellspacing="0" style="border-bottom:1px solid #f0ede8;padding-bottom:10px;margin-bottom:10px;">
                   <tr><td>
                     <p style="margin:0 0 2px;font-size:9px;color:#999;text-transform:uppercase;">Name</p>
-                    <p style="margin:0;font-size:12px;color:#111;font-weight:500;">${payload.firstName} ${payload.lastName}</p>
+                    <p style="margin:0;font-size:12px;color:#111;font-weight:500;">${payload.fullName}</p>
                   </td></tr>
                 </table>
 
@@ -229,6 +235,13 @@ export async function POST(request: Request) {
                   <tr><td>
                     <p style="margin:0 0 2px;font-size:9px;color:#999;text-transform:uppercase;">Book of business (GWP)</p>
                     <p style="margin:0;font-size:12px;color:#111;font-weight:500;">${payload.bookSize}</p>
+                  </td></tr>
+                </table>
+
+                <table width="100%" cellpadding="0" cellspacing="0" style="border-bottom:1px solid #f0ede8;padding-bottom:10px;margin-bottom:10px;">
+                  <tr><td>
+                    <p style="margin:0 0 2px;font-size:9px;color:#999;text-transform:uppercase;">How they heard about us</p>
+                    <p style="margin:0;font-size:12px;color:#111;font-weight:500;">${payload.heardAboutUs.join(", ")}</p>
                   </td></tr>
                 </table>
 

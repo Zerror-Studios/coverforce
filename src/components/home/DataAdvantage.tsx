@@ -57,12 +57,8 @@ const DataAdvantage = () => {
             {/* Underwriting data retention */}
             <article
               className="relative flex min-h-[28rem] w-full flex-col overflow-hidden rounded-sm text-white md:min-h-[36rem] lg:min-h-[37rem]"
-              style={{ background: CARD_BACKGROUND_STYLES.developer }}
+              style={{ background: CARD_BACKGROUND_STYLES.wholesaler }}
             >
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(51,37,159,0.15)_0%,rgba(0,0,0,0.72)_100%)]"
-              />
               <div className="relative z-10 flex flex-1 flex-col justify-between gap-8 p-6 md:p-8 lg:p-10">
                 <div className="space-y-2">
                   <AnimatedEightyFivePercent className="text-6xl font-heading font-medium leading-none tracking-tight text-white md:text-7xl" />

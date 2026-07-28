@@ -74,7 +74,7 @@ export default function SolutionScrollHero({
   description,
   titleClassName = "max-w-xl text-3xl font-heading font-normal leading-[1.12] tracking-tight text-[#0a143b] md:text-4xl lg:text-6xl lg:leading-[1.1] xl:text-6xl",
   primaryButtonHref = "/contact",
-  primaryButtonLabel = "Request demo",
+  primaryButtonLabel = "Contact us",
   secondaryButtonHref = "#workflow",
   secondaryButtonLabel = "How it works",
   feature,

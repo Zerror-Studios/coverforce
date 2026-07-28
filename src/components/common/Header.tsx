@@ -855,7 +855,7 @@ const Header = () => {
 
               <div className="relative z-10 hidden items-center lg:flex">
                 <RequestDemoButton surface={theme === "dark" ? "on-dark" : "default"}>
-                  Request demo
+                  Contact us
                 </RequestDemoButton>
               </div>
             </div>

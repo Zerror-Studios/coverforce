@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import {
   RiArrowUpDownLine,
   RiSearchLine,
@@ -10,86 +8,16 @@ import {
 import Button from "@/components/common/Button";
 import ButtonArrowIcon from "@/components/common/ButtonArrowIcon";
 import Container from "@/components/common/Container";
+import BlogCard from "@/components/blog/BlogCard";
+import { BASE_BLOG_POSTS, type BlogPost } from "@/data/blogPosts";
 
 function ButtonArrowLeftIcon({ className = "" }: { className?: string }) {
   return <ButtonArrowIcon className={`-scale-x-100 ${className}`} />;
 }
 
-type Category = "Insights" | "Case Study" | "News";
-
-type BlogPost = {
-  slug: string;
-  category: Category;
-  title: string;
-  image: string;
-  date: string;
-  wide?: boolean;
-};
+type Category = BlogPost["category"];
 
 type ListedPost = BlogPost & { listKey: string };
-
-const BASE_POSTS: BlogPost[] = [
-  {
-    slug: "wholesalers-embrace-apis",
-    category: "Insights",
-    title: "Wholesalers Must Embrace APIs to Stay Competitive",
-    image: "/images/blog/blog1.png",
-    date: "October 16, 2025",
-  },
-  {
-    slug: "hidden-costs-slow-submission-workflows",
-    category: "Insights",
-    title: "The Hidden Costs of Slow Submission Workflows in Commercial Insurance",
-    image: "/images/blog/blog2.png",
-    date: "October 16, 2025",
-  },
-  {
-    slug: "coverforce-cb-insights-2025",
-    category: "Insights",
-    title: "CoverForce Named to the 2025 CB Insights’ List of the 50 Most Innovative Insurtech Startups",
-    image: "/images/blog/blog3.png",
-    date: "October 16, 2025",
-  },
-  {
-    slug: "broker-codes-extended",
-    category: "Case Study",
-    title: "Broker Codes, Extended: Building a More Flexible Insurance Ecosystem",
-    image: "/images/blog/blog4.png",
-    date: "October 16, 2025",
-    wide: true,
-  },
-  {
-    slug: "venbrook-brooks-alliance",
-    category: "News",
-    title:
-      "Venbrook Wholesaler, Brooks Insurance, Strikes Alliance with CoverForce for On-Demand Quoting",
-    image: "/images/blog/blog5.png",
-    date: "October 16, 2025",
-    wide: true,
-  },
-  {
-    slug: "coverforce-cb-insights-2025",
-    category: "News",
-    title:
-      "CoverForce Named to the 2025 CB Insights' List of the 50 Most Innovative Insurtech Startups",
-    image: "/images/blog/blog6.png",
-    date: "October 16, 2025",
-  },
-  {
-    slug: "coverforce-nowcerts-instant-cois",
-    category: "News",
-    title: "CoverForce Partners With NowCerts to Launch Instant COIs",
-    image: "/images/blog/blog7.png",
-    date: "October 16, 2025",
-  },
-  {
-    slug: "coverforce-series-a-funding",
-    category: "News",
-    title: "CoverForce Secures $13 Million in Series A Funding Led by...",
-    image: "/images/blog/blog8.png",
-    date: "October 16, 2025",
-  },
-];
 
 /** Repeat + shuffle so each page of the demo catalog looks different. */
 const REPEAT_COUNT = 3;
@@ -123,7 +51,7 @@ function seededShuffle<T>(items: readonly T[], seed: number): T[] {
 
 function buildDemoCatalog(): ListedPost[] {
   return Array.from({ length: REPEAT_COUNT }, (_, copy) => {
-    const shuffled = seededShuffle(BASE_POSTS, 42 + copy * 97);
+    const shuffled = seededShuffle(BASE_BLOG_POSTS, 42 + copy * 97);
     const offset = (copy * 3) % shuffled.length;
     const rotated = [...shuffled.slice(offset), ...shuffled.slice(0, offset)];
 
@@ -143,31 +71,6 @@ const PAGE_SIZE = 8;
 const POSTS: ListedPost[] = buildDemoCatalog();
 const FILTERS = ["All", "Insights", "Case Study", "News"] as const;
 type Filter = (typeof FILTERS)[number];
-
-function BlogCard({ post }: { post: ListedPost }) {
-  return (
-    <Link
-      href={`/blog/${post.slug}`}
-      className="group flex flex-col"
-    >
-      <div className="relative w-full overflow-hidden rounded-md bg-[#F7F7FB]">
-        <div className="relative aspect-video w-full">
-          <Image
-            src={post.image}
-            alt={post.title}
-            fill
-            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          />
-        </div>
-      </div>
-
-      <h3 className="mt-3 font-heading text-base font-medium leading-snug text-[#0a143b] transition-colors group-hover:text-[#413CC0] md:text-lg">
-        {post.title}
-      </h3>
-    </Link>
-  );
-}
 
 function getVisiblePages(page: number, totalPages: number): Array<number | "ellipsis"> {
   if (totalPages <= 5) {
