@@ -150,3 +150,77 @@ export function withAlpha(hex: string, alpha: number): string {
   const { r, g, b } = hexToRgb(hex.replace("#", ""));
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
+
+const THREE_WAYS_WHEEL_THEMES: SolutionTheme[] = [
+  "wholesaler",
+  "broker",
+  "developer",
+  "startup",
+  "carrier",
+];
+
+export { THREE_WAYS_WHEEL_THEMES };
+
+export function getSolutionGradientStops(
+  theme: SolutionTheme,
+): readonly GradientStop[] {
+  return SOLUTION_GRADIENT_DEFS[theme];
+}
+
+export function wheelPieSliceClipPath(
+  startDeg: number,
+  endDeg: number,
+  radius = 71,
+): string {
+  const point = (deg: number) => {
+    const rad = ((deg - 90) * Math.PI) / 180;
+    const x = 50 + radius * Math.cos(rad);
+    const y = 50 + radius * Math.sin(rad);
+    return `${x.toFixed(4)}% ${y.toFixed(4)}%`;
+  };
+
+  return `polygon(50% 50%, ${point(startDeg)}, ${point(endDeg)})`;
+}
+
+function buildVerticalGradientStyle(stops: readonly GradientStop[]): string {
+  const body = stops.map(({ hex, pos }) => `#${hex} ${pos}%`).join(", ");
+  return `linear-gradient(180deg, ${body})`;
+}
+
+export const CARD_VERTICAL_BACKGROUND_STYLES: Record<SolutionTheme, string> = {
+  developer: buildVerticalGradientStyle(SOLUTION_GRADIENT_DEFS.developer),
+  wholesaler: buildVerticalGradientStyle(SOLUTION_GRADIENT_DEFS.wholesaler),
+  broker: buildVerticalGradientStyle(SOLUTION_GRADIENT_DEFS.broker),
+  startup: buildVerticalGradientStyle(SOLUTION_GRADIENT_DEFS.startup),
+  carrier: buildVerticalGradientStyle(SOLUTION_GRADIENT_DEFS.carrier),
+};
+
+/** Conic wheel wash — five wedges, each filled with a card's linear gradient stops along the arc. */
+export function buildThreeWaysWheelConicGradient(fromDeg = -90): string {
+  const segmentSize = 360 / THREE_WAYS_WHEEL_THEMES.length;
+  const parts: string[] = [];
+
+  THREE_WAYS_WHEEL_THEMES.forEach((theme, index) => {
+    const segStart = index * segmentSize;
+    SOLUTION_GRADIENT_DEFS[theme].forEach(({ hex, pos }) => {
+      parts.push(`#${hex} ${segStart + (pos / 100) * segmentSize}deg`);
+    });
+  });
+
+  return `conic-gradient(from ${fromDeg}deg, ${parts.join(", ")})`;
+}
+
+/** Vertical wheel wash using each Three Ways card gradient stop set, top → bottom. */
+export function buildThreeWaysWheelVerticalGradient(): string {
+  const parts: string[] = [];
+
+  THREE_WAYS_WHEEL_THEMES.forEach((theme, index) => {
+    const segStart = (index / THREE_WAYS_WHEEL_THEMES.length) * 100;
+    const segSize = 100 / THREE_WAYS_WHEEL_THEMES.length;
+    SOLUTION_GRADIENT_DEFS[theme].forEach(({ hex, pos }) => {
+      parts.push(`#${hex} ${segStart + (pos / 100) * segSize}%`);
+    });
+  });
+
+  return `linear-gradient(180deg, ${parts.join(", ")})`;
+}

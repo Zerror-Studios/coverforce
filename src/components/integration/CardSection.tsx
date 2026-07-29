@@ -8,6 +8,7 @@ import Container from "@/components/common/Container";
 import ToolWheel from "@/components/home/ToolWheel";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
+import { CARD_BACKGROUND_STYLES, CARD_VERTICAL_BACKGROUND_STYLES } from "@/data/wayCardStyles";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -64,18 +65,16 @@ const CardSection = () => {
 
           <div className="mx-auto mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-[#4F4F4F]">
             {[
-              { label: "AI / Automation", color: "#7F44FF" },
-              { label: "Data", color: "#0045FF" },
-              { label: "Cold Email", color: "#E25E2F" },
-              { label: "LinkedIn", color: "#008EFF" },
-              { label: "Cold Call", color: "#1ED5B3" },
-              { label: "Signals", color: "#30DF71" },
-              { label: "CRM", color: "#322696" },
+              { label: "Wholesalers", background: CARD_VERTICAL_BACKGROUND_STYLES.wholesaler },
+              { label: "Brokers", background: CARD_VERTICAL_BACKGROUND_STYLES.broker },
+              { label: "Developers", background: CARD_VERTICAL_BACKGROUND_STYLES.developer },
+              { label: "Startups", background: CARD_VERTICAL_BACKGROUND_STYLES.startup },
+              { label: "Carriers", background: CARD_VERTICAL_BACKGROUND_STYLES.carrier },
             ].map((item) => (
               <span key={item.label} className="flex items-center gap-1.5">
                 <span
                   className="inline-block size-2.5 rounded-full"
-                  style={{ backgroundColor: item.color }}
+                  style={{ background: item.background }}
                 />
                 {item.label}
               </span>
@@ -88,17 +87,18 @@ const CardSection = () => {
           >
             <div
               data-stat-card
-              className="flex flex-col rounded-md bg-[#F8F8F8] p-5 transform-3d will-change-transform lg:p-8"
+              className="flex flex-col overflow-hidden rounded-md p-5 text-white transform-3d will-change-transform lg:p-8"
+              style={{ background: CARD_BACKGROUND_STYLES.wholesaler }}
             >
-              <EyebrowPill surface="light">API Integrations</EyebrowPill>
-              <span className="mt-4 font-heading text-4xl font-regular leading-none tracking-tight text-[#4F4F4F] lg:text-6xl">
+              <EyebrowPill surface="dark">API Integrations</EyebrowPill>
+              <span className="mt-4 font-heading text-4xl font-regular leading-none tracking-tight text-white lg:text-6xl">
                 20+
               </span>
               <div className="mt-auto pt-6">
-                <p className="font-heading text-base font-medium leading-snug text-[#2D3E9D] lg:text-xl">
+                <p className="font-heading text-base font-medium leading-snug text-white lg:text-xl">
                   Direct carrier API connections
                 </p>
-                <p className="mt-2 text-sm leading-relaxed text-[#6B7280]">
+                <p className="mt-2 text-sm leading-relaxed text-white/80">
                   Real-time quoting, binding and policy issuance — no portals,
                   no rekeying. AMS, premium finance and compliance partners stay
                   in sync automatically.
@@ -108,17 +108,18 @@ const CardSection = () => {
 
             <div
               data-stat-card
-              className="flex flex-col rounded-md bg-[#F8F8F8] p-5 transform-3d will-change-transform lg:p-8"
+              className="flex flex-col overflow-hidden rounded-md p-5 text-white transform-3d will-change-transform lg:p-8"
+              style={{ background: CARD_BACKGROUND_STYLES.wholesaler }}
             >
-              <EyebrowPill surface="light">AI Agents</EyebrowPill>
-              <span className="mt-4 font-heading text-4xl font-regular leading-none tracking-tight text-[#4F4F4F] lg:text-6xl">
+              <EyebrowPill surface="dark">AI Agents</EyebrowPill>
+              <span className="mt-4 font-heading text-4xl font-regular leading-none tracking-tight text-white lg:text-6xl">
                 AI
               </span>
               <div className="mt-auto pt-6">
-                <p className="font-heading text-base font-medium leading-snug text-[#2D3E9D] lg:text-xl">
+                <p className="font-heading text-base font-medium leading-snug text-white lg:text-xl">
                   Intelligent workflow automation
                 </p>
-                <p className="mt-2 text-sm leading-relaxed text-[#6B7280]">
+                <p className="mt-2 text-sm leading-relaxed text-white/80">
                   Purpose-built AI agents read submissions, match appetite and
                   orchestrate the entire workflow — from intake to policy
                   delivery — so your team focuses on relationships.

@@ -17,6 +17,7 @@ import {
 import { animateLoaderWordsWave } from "@/lib/animateSplitTextReveal";
 import { GdpCounter } from "./GdpCounter";
 import ToolWheel from "./ToolWheel";
+import { CARD_VERTICAL_BACKGROUND_STYLES } from "@/data/wayCardStyles";
 
 const INTRO_TITLE_LINES = [
   ["AI-Native", "Insurance"],
@@ -157,9 +158,6 @@ const Hero = () => {
     if (statsWrapRef.current) {
       gsap.set(statsWrapRef.current, { autoAlpha: 0 });
     }
-    if (networkRef.current) {
-      gsap.set(networkRef.current, { autoAlpha: 0 });
-    }
     if (dataLinesRef.current) {
       gsap.set(dataLinesRef.current, { autoAlpha: 0 });
     }
@@ -268,7 +266,6 @@ const Hero = () => {
       if (gdpLineRef.current) gsap.set(gdpLineRef.current, { clearProps: "all" });
       if (buttonsRef.current) gsap.set(buttonsRef.current, { clearProps: "all" });
       if (statsWrapRef.current) gsap.set(statsWrapRef.current, { clearProps: "all" });
-      if (networkRef.current) gsap.set(networkRef.current, { clearProps: "all" });
       if (dataLinesRef.current) gsap.set(dataLinesRef.current, { clearProps: "all" });
       return;
     }
@@ -280,7 +277,6 @@ const Hero = () => {
         if (gdpLineRef.current) gsap.set(gdpLineRef.current, { clearProps: "all" });
         if (buttonsRef.current) gsap.set(buttonsRef.current, { clearProps: "all" });
         if (statsWrapRef.current) gsap.set(statsWrapRef.current, { clearProps: "all" });
-        if (networkRef.current) gsap.set(networkRef.current, { clearProps: "all" });
         if (dataLinesRef.current) gsap.set(dataLinesRef.current, { clearProps: "all" });
       },
     });
@@ -306,14 +302,6 @@ const Hero = () => {
         statsWrapRef.current,
         { autoAlpha: 1, duration: revealDur },
         0.05,
-      );
-    }
-
-    if (networkRef.current) {
-      tl.to(
-        networkRef.current,
-        { autoAlpha: 1, duration: revealDur, ease: "power2.out" },
-        0.08,
       );
     }
 
@@ -532,21 +520,44 @@ const Hero = () => {
 
         </div>
         {/* Network + distribution header */}
-        <div className="relative w-full pt-4 pb-8 sm:pt-6 sm:pb-10 md:pt-10 md:pb-14 lg:pb-16">
+        <div className="relative w-full pt-4 pb-6 sm:pt-6 sm:pb-8 md:pt-10 md:pb-10 lg:pb-12">
+          <div className="relative w-full">
+            <div
+              ref={networkRef}
+              data-hero-reveal
+              className="relative z-10 mx-auto aspect-square w-full max-w-[min(100%,720px)] motion-reduce:translate-y-0 motion-reduce:opacity-100"
+              aria-label="Deployment branch timeline"
+            >
+              <ToolWheel
+                className="h-full w-full max-w-none"
+                animateOnScroll
+                entranceReady={!introEnabled || introPhase === "done"}
+              />
+            </div>
+            <div className="relative z-10 mt-6 flex flex-col items-center gap-2.5 text-sm text-white/70 md:absolute md:right-0 md:top-1/2 md:mt-0 md:-translate-y-1/2 md:items-start lg:right-4 xl:right-8">
+              {[
+                { label: "Wholesalers", background: CARD_VERTICAL_BACKGROUND_STYLES.wholesaler },
+                { label: "Brokers", background: CARD_VERTICAL_BACKGROUND_STYLES.broker },
+                { label: "Developers", background: CARD_VERTICAL_BACKGROUND_STYLES.developer },
+                { label: "Startups", background: CARD_VERTICAL_BACKGROUND_STYLES.startup },
+                { label: "Carriers", background: CARD_VERTICAL_BACKGROUND_STYLES.carrier },
+              ].map((item) => (
+                <span key={item.label} className="flex items-center gap-1.5 whitespace-nowrap">
+                  <span
+                    className="inline-block size-2.5 shrink-0 rounded-full"
+                    style={{ background: item.background }}
+                  />
+                  {item.label}
+                </span>
+              ))}
+            </div>
+          </div>
           <h2
-            className={`relative z-10 mb-4 max-w-xl text-2xl font-heading font-medium leading-[1.15] tracking-tight sm:mb-6 sm:text-3xl sm:leading-[1.12] md:mb-8 md:text-4xl lg:mb-10 lg:text-[1.625rem] lg:leading-[1.12] ${theme.titleMuted}`}
+            className={`relative z-10 mx-auto mt-2 max-w-xl text-center text-2xl font-heading font-medium leading-[1.15] tracking-tight sm:mt-3 sm:text-3xl sm:leading-[1.12] md:mt-4 md:text-4xl lg:mt-5 lg:text-[1.625rem] lg:leading-[1.12] ${theme.titleMuted}`}
           >
             Commercial insurance distribution that gets smarter with every
             transaction
           </h2>
-          <div
-            ref={networkRef}
-            data-hero-reveal
-            className="relative z-10 mx-auto aspect-square w-full max-w-[min(100%,720px)] motion-reduce:translate-y-0 motion-reduce:opacity-100"
-            aria-label="Deployment branch timeline"
-          >
-            <ToolWheel className="h-full w-full max-w-none" />
-          </div>
         </div>
 
 
