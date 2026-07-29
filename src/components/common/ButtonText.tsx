@@ -7,13 +7,15 @@ type ButtonTextProps = {
   textClip: string;
   textLine: string;
   hovered: boolean;
+  /** Increment to replay the wave animation (hover or auto-pulse). */
+  playKey?: number;
 };
 
-const TOTAL_MS    = 650;
-const WAVE_HALF   = 0.28;  // wave radius in normalized [0..1] pixel-space
-const BLUR_MAX    = 2.0;
-const OPACITY_MIN = 0.20;
-const SCALE_MIN   = 0.85;
+const TOTAL_MS = 650;
+const WAVE_HALF = 0.28; // wave radius in normalized [0..1] pixel-space
+const BLUR_MAX = 2.0;
+const OPACITY_MIN = 0.2;
+const SCALE_MIN = 0.85;
 
 function bellCurve(dist: number): number {
   if (dist >= WAVE_HALF) return 0;
@@ -24,23 +26,29 @@ function bellCurve(dist: number): number {
 // Measure each char's center-x normalized to [0..1] across total text width
 function measureOffsets(chars: HTMLSpanElement[]): number[] {
   const rects = chars.map((c) => c.getBoundingClientRect());
-  const left  = rects[0].left;
-  const right  = rects[rects.length - 1].right;
+  const left = rects[0].left;
+  const right = rects[rects.length - 1].right;
   const total = right - left;
   return rects.map((r) => (r.left + r.width / 2 - left) / total);
 }
 
 function clearChar(c: HTMLSpanElement) {
-  c.style.scale   = "";
-  c.style.filter  = "";
+  c.style.scale = "";
+  c.style.filter = "";
   c.style.opacity = "";
 }
 
-const ButtonText = ({ children, textClip, textLine, hovered }: ButtonTextProps) => {
-  const textRef    = useRef<HTMLSpanElement>(null);
-  const charsRef   = useRef<HTMLSpanElement[]>([]);
+const ButtonText = ({
+  children,
+  textClip,
+  textLine,
+  hovered,
+  playKey = 0,
+}: ButtonTextProps) => {
+  const textRef = useRef<HTMLSpanElement>(null);
+  const charsRef = useRef<HTMLSpanElement[]>([]);
   const offsetsRef = useRef<number[] | null>(null); // pixel-based, measured lazily
-  const rafRef     = useRef<number | null>(null);
+  const rafRef = useRef<number | null>(null);
   const text = typeof children === "string" ? children : String(children);
 
   useLayoutEffect(() => {
@@ -52,11 +60,11 @@ const ButtonText = ({ children, textClip, textLine, hovered }: ButtonTextProps) 
 
     charsRef.current = [...text].map((ch) => {
       const span = document.createElement("span");
-      span.style.display         = "inline-block";
+      span.style.display = "inline-block";
       span.style.transformOrigin = "center center";
-      span.style.willChange      = "transform, filter, opacity";
+      span.style.willChange = "transform, filter, opacity";
       // CSS handles scale easing — JS only sets the value
-      span.style.transition      = "scale 0.15s cubic-bezier(0.4, 0, 0.2, 1)";
+      span.style.transition = "scale 0.15s cubic-bezier(0.4, 0, 0.2, 1)";
       span.textContent = ch === " " ? "\u00A0" : ch;
       el.appendChild(span);
       return span;
@@ -70,9 +78,13 @@ const ButtonText = ({ children, textClip, textLine, hovered }: ButtonTextProps) 
   useEffect(() => {
     const chars = charsRef.current;
     if (!chars.length) return;
-    if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
 
-    if (!hovered) {
+    const shouldPlay = hovered || playKey > 0;
+    if (!shouldPlay) {
       chars.forEach(clearChar);
       return;
     }
@@ -85,21 +97,21 @@ const ButtonText = ({ children, textClip, textLine, hovered }: ButtonTextProps) 
     }
     const offsets = offsetsRef.current;
 
-    const start      = performance.now();
+    const start = performance.now();
     // front sweeps from 0-WAVE_HALF → 1+WAVE_HALF (low→high offset = left→right)
     const frontStart = 0.0 - WAVE_HALF;
-    const frontEnd   = 1.0 + WAVE_HALF;
+    const frontEnd = 1.0 + WAVE_HALF;
 
     function frame(now: number) {
-      const t     = Math.min((now - start) / TOTAL_MS, 1);
+      const t = Math.min((now - start) / TOTAL_MS, 1);
       const front = frontStart + (frontEnd - frontStart) * t;
 
       chars.forEach((char, i) => {
         const dist = Math.abs(front - offsets[i]);
-        const d    = bellCurve(dist);
+        const d = bellCurve(dist);
 
-        char.style.scale   = d > 0.005 ? (1 - (1 - SCALE_MIN) * d).toFixed(4) : "";
-        char.style.filter  = d > 0.01  ? `blur(${(BLUR_MAX * d).toFixed(3)}px)` : "";
+        char.style.scale = d > 0.005 ? (1 - (1 - SCALE_MIN) * d).toFixed(4) : "";
+        char.style.filter = d > 0.01 ? `blur(${(BLUR_MAX * d).toFixed(3)}px)` : "";
         char.style.opacity = d > 0.005 ? (1 - (1 - OPACITY_MIN) * d).toFixed(4) : "";
       });
 
@@ -111,8 +123,10 @@ const ButtonText = ({ children, textClip, textLine, hovered }: ButtonTextProps) 
     }
 
     rafRef.current = requestAnimationFrame(frame);
-    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
-  }, [hovered]);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [hovered, playKey]);
 
   return (
     <span className={`block overflow-hidden ${textClip}`}>

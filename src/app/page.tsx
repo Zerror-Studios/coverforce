@@ -20,7 +20,7 @@ const HomePage = () => {
           <ThreeWays />
           <DistributionFlow />
           <ProcessFlow />
-          <WhyCoverforce />
+          <WhyCoverforce paddingTop={true} />
           <DataAdvantage />
           <div className="relative z-[1] h-0 overflow-visible">
             <SectionRadialGlow className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2" />
