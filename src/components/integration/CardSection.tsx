@@ -5,41 +5,18 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Container from "@/components/common/Container";
+import ToolWheel from "@/components/home/ToolWheel";
+import EyebrowPill from "@/components/common/EyebrowPill";
+import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type StatCard = {
-  value: string;
-  title: string;
-  tag: string;
-};
-
-const CARDS: StatCard[] = [
-  {
-    value: "20",
-    title: "Direct API integrations",
-    tag: "Carrier Integrations",
-  },
-  {
-    value: "6",
-    title: "Agency management sync",
-    tag: "AMS",
-  },
-  {
-    value: "2+",
-    title: "Finance quotes in the workflow",
-    tag: "Premium Financing",
-  },
-  {
-    value: "Live",
-    title: "Taxes, filings & surplus lines",
-    tag: "E&S Taxes & Compliance",
-  },
-];
-
 const CardSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef });
 
   useGSAP(
     () => {
@@ -72,38 +49,82 @@ const CardSection = () => {
     >
       <Container borderColor="#53535380">
         <div className="py-12 md:py-20 lg:py-24">
-          <p className="mx-auto max-w-2xl text-center font-sans text-sm font-regular leading-[1.55] text-[#50617a] md:text-base md:leading-[1.6]">
-            CoverForce is the universal integrations index for commercial
-            insurance — carriers, AMS, premium financing, and E&amp;S taxes &amp;
-            compliance in one place. Some connections are live on CoverForce
-            today; others are API-available or rolling out. Browse the directory
-            below for status by partner.
-          </p>
+          <div ref={headerRef} className="text-center">
+            <h2
+              ref={headingRef}
+              className="mx-auto max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[2.5rem] lg:leading-[1.12]"
+            >
+              <span data-split>The best integration stack for insurance.</span>
+            </h2>
+          </div>
+
+          <div className="mx-auto mt-10 w-full max-w-[min(100%,720px)] md:mt-14">
+            <ToolWheel className="h-full w-full max-w-none" showBackground />
+          </div>
+
+          <div className="mx-auto mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-[#4F4F4F]">
+            {[
+              { label: "AI / Automation", color: "#7F44FF" },
+              { label: "Data", color: "#0045FF" },
+              { label: "Cold Email", color: "#E25E2F" },
+              { label: "LinkedIn", color: "#008EFF" },
+              { label: "Cold Call", color: "#1ED5B3" },
+              { label: "Signals", color: "#30DF71" },
+              { label: "CRM", color: "#322696" },
+            ].map((item) => (
+              <span key={item.label} className="flex items-center gap-1.5">
+                <span
+                  className="inline-block size-2.5 rounded-full"
+                  style={{ backgroundColor: item.color }}
+                />
+                {item.label}
+              </span>
+            ))}
+          </div>
 
           <div
-            ref={gridRef}
-            className="mt-10 grid grid-cols-2 gap-2 sm:gap-3 md:mt-14 lg:mt-16 lg:grid-cols-4 lg:gap-3"
+            className="mt-10 grid gap-3 md:mt-14 md:grid-cols-2 lg:mt-16"
             style={{ perspective: "1200px" }}
           >
-            {CARDS.map((card) => (
-              <div
-                key={card.tag}
-                data-stat-card
-                className="flex min-h-[10.5rem] flex-col rounded-md bg-[#F8F8F8] p-4 transform-3d will-change-transform sm:min-h-[11.5rem] lg:h-86 lg:p-6"
-              >
-                <span className="font-heading text-3xl font-regular leading-none tracking-tight text-[#4F4F4F] lg:text-5xl">
-                  {card.value}
-                </span>
-                <div className="mt-auto">
-                  <p className="max-w-48 text-sm font-heading font-medium leading-snug text-[#2D3E9D] lg:text-xl">
-                    {card.title}
-                  </p>
-                  <p className="mt-1.5 text-[0.65rem] font-mono font-medium uppercase text-[#9A9A9A] lg:mt-2 lg:text-sm">
-                    {card.tag}
-                  </p>
-                </div>
+            <div
+              data-stat-card
+              className="flex flex-col rounded-md bg-[#F8F8F8] p-5 transform-3d will-change-transform lg:p-8"
+            >
+              <EyebrowPill surface="light">API Integrations</EyebrowPill>
+              <span className="mt-4 font-heading text-4xl font-regular leading-none tracking-tight text-[#4F4F4F] lg:text-6xl">
+                20+
+              </span>
+              <div className="mt-auto pt-6">
+                <p className="font-heading text-base font-medium leading-snug text-[#2D3E9D] lg:text-xl">
+                  Direct carrier API connections
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-[#6B7280]">
+                  Real-time quoting, binding and policy issuance — no portals,
+                  no rekeying. AMS, premium finance and compliance partners stay
+                  in sync automatically.
+                </p>
               </div>
-            ))}
+            </div>
+
+            <div
+              data-stat-card
+              className="flex flex-col rounded-md bg-[#F8F8F8] p-5 transform-3d will-change-transform lg:p-8"
+            >
+              <EyebrowPill surface="light">AI Agents</EyebrowPill>
+              <span className="mt-4 font-heading text-4xl font-regular leading-none tracking-tight text-[#4F4F4F] lg:text-6xl">
+                AI
+              </span>
+              <div className="mt-auto pt-6">
+                <p className="font-heading text-base font-medium leading-snug text-[#2D3E9D] lg:text-xl">
+                  Intelligent workflow automation
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-[#6B7280]">
+                  Purpose-built AI agents read submissions, match appetite and
+                  orchestrate the entire workflow — from intake to policy
+                  delivery — so your team focuses on relationships.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </Container>

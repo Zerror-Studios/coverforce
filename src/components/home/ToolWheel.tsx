@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 
 type ToolWheelProps = {
   className?: string;
+  showBackground?: boolean;
 };
 
 type Ramp = "purple" | "blue" | "amber" | "green";
@@ -112,10 +113,10 @@ const NODES: ToolNode[] = [
 // Ramp -> signal color. Tuned to sit next to the existing purple hub
 // (#ECE7FF) without introducing a new palette family.
 const RAMP_COLOR: Record<Ramp, string> = {
-  purple: "#8B7CF6",
-  blue: "#4F8EF7",
-  amber: "#F5A623",
-  green: "#34D399",
+  purple: "#7F44FF",
+  blue: "#0045FF",
+  amber: "#E25E2F",
+  green: "#30DF71",
 };
 
 const CX = 50;
@@ -153,9 +154,13 @@ function hexToRgba(hex: string, a: number) {
   return `rgba(${r},${g},${b},${a})`;
 }
 
-export default function ToolWheel({ className = "" }: ToolWheelProps) {
+export default function ToolWheel({
+  className = "",
+  showBackground = false,
+}: ToolWheelProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [hoveredLogo, setHoveredLogo] = useState<number | null>(null);
 
   const items = useMemo(
     () =>
@@ -250,9 +255,9 @@ export default function ToolWheel({ className = "" }: ToolWheelProps) {
         context.beginPath();
         context.moveTo(nearNode.x, nearNode.y);
         context.lineTo(nearHub.x, nearHub.y);
-        context.strokeStyle = dashed
-          ? "rgba(153,153,153,0.55)"
-          : "rgba(255,255,255,0.2)";
+        context.strokeStyle = showBackground
+          ? (dashed ? "rgba(0,0,0,0.18)" : "rgba(0,0,0,0.08)")
+          : (dashed ? "rgba(153,153,153,0.55)" : "rgba(255,255,255,0.2)");
         context.lineWidth = 1;
         context.setLineDash(dashed ? [3, 6] : []);
         context.stroke();
@@ -347,6 +352,18 @@ export default function ToolWheel({ className = "" }: ToolWheelProps) {
       className={`relative mx-auto aspect-square h-full w-full max-w-[720px] ${className}`}
       aria-label="Outbound tool stack radiating from a central AI hub"
     >
+      {showBackground ? (
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{
+            background:
+              "conic-gradient(from -90deg, #0045FF 0deg 54deg, #E25E2F 54deg 102deg, #008EFF 102deg 150deg, #1ED5B3 150deg 174deg, #30DF71 174deg 222deg, #322696 222deg 270deg, #7F44FF 270deg 342deg, #0045FF 342deg 360deg)",
+            opacity: 0.08,
+          }}
+          aria-hidden
+        />
+      ) : null}
+
       {/* Spokes + flowing signal particles */}
       <canvas
         ref={canvasRef}
@@ -355,7 +372,11 @@ export default function ToolWheel({ className = "" }: ToolWheelProps) {
       />
 
       {/* Hub — outer ring + inner logo circle */}
-      <div className="absolute top-1/2 left-1/2 z-10 flex aspect-square w-[14%] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#ECE7FF] bg-white">
+      <div
+        className={`absolute top-1/2 left-1/2 z-10 flex aspect-square w-[14%] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#ECE7FF] bg-white transition-transform duration-200 ${
+          hoveredLogo !== null ? "scale-105" : ""
+        }`}
+      >
         <div className="flex aspect-square w-[72%] items-center justify-center rounded-full bg-[#ECE7FF]">
           <Image
             src="/images/startups/center-logo.svg"
@@ -379,7 +400,7 @@ export default function ToolWheel({ className = "" }: ToolWheelProps) {
               transform: `rotate(${item.angle + 180}deg)`,
             }}
           >
-            <span className="absolute top-0 left-0 -translate-y-1/2 whitespace-nowrap text-xs font-medium leading-none text-white">
+            <span className={`absolute top-0 left-0 -translate-y-1/2 whitespace-nowrap text-xs font-medium leading-none ${showBackground ? "text-black" : "text-white"}`}>
               {item.name}
             </span>
           </div>
@@ -391,10 +412,12 @@ export default function ToolWheel({ className = "" }: ToolWheelProps) {
         {items.map((item, i) => (
           <div
             key={i}
-            className="absolute size-11 -translate-x-1/2 -translate-y-1/2"
+            className="group absolute size-11 -translate-x-1/2 -translate-y-1/2"
             style={{ left: `${item.pos.x}%`, top: `${item.pos.y}%` }}
+            onMouseEnter={() => setHoveredLogo(i)}
+            onMouseLeave={() => setHoveredLogo(null)}
           >
-            <div className="flex size-full items-center justify-center overflow-hidden rounded-md border border-[#D3D1C7] bg-white p-1.5">
+            <div className="flex size-full items-center justify-center overflow-hidden rounded-md border border-[#D3D1C7] bg-white p-1.5 transition-transform duration-200 group-hover:scale-110">
               <Image
                 src={item.iconSrc}
                 alt=""
@@ -404,7 +427,8 @@ export default function ToolWheel({ className = "" }: ToolWheelProps) {
               />
             </div>
             <div
-              className={`${OUTER_LABEL_CLASS[item.side]} max-w-[12rem] line-clamp-2 text-[11px] leading-tight text-white/70`}
+              className={`${OUTER_LABEL_CLASS[item.side]} w-[8.5rem] text-balance line-clamp-2 text-[11px] leading-tight opacity-0 transition-opacity duration-200 group-hover:opacity-100`}
+              style={{ color: showBackground ? RAMP_COLOR[item.ramp] : "rgba(255,255,255,0.7)" }}
             >
               {item.category}
             </div>

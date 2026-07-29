@@ -57,8 +57,10 @@ const Hero = () => (
     rightCard={<StartupHeroCard />}
     showSecondSection={false}
     showMarquee
+    marqueeVariant="pulsating"
     marqueeLogos={STARTUP_MARQUEE_LOGOS}
     marqueeSize="large"
+    marqueeLogosPerSet={4}
     gradFlow={STARTUP_HERO_GRAD_FLOW}
   />
 );
