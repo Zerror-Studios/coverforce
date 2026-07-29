@@ -97,10 +97,14 @@ const NodeCard = ({
   label,
   icon: Icon,
   anchor,
+  index,
+  reduceMotion,
 }: {
   label: string;
   icon: LucideIcon;
   anchor: NodeAnchor;
+  index: number;
+  reduceMotion: boolean;
 }) => (
   <div
     className="absolute"
@@ -108,17 +112,48 @@ const NodeCard = ({
       transform: anchorTransform(anchor),
     }}
   >
+    <style>{`
+      @keyframes bubble-pulse {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 1px 4px rgba(80,80,120,0.06);
+          border-color: #E5E7F0;
+        }
+        12% {
+          transform: scale(1.08);
+          box-shadow: 0 8px 24px rgba(148, 136, 228, 0.35), 0 0 12px rgba(148, 136, 228, 0.2);
+          border-color: #9488E4;
+        }
+        24% {
+          transform: scale(0.96);
+          box-shadow: 0 4px 12px rgba(148, 136, 228, 0.15);
+          border-color: #9488E4;
+        }
+        36% {
+          transform: scale(1);
+          box-shadow: 0 1px 4px rgba(80,80,120,0.06);
+          border-color: #E5E7F0;
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: 0 1px 4px rgba(80,80,120,0.06);
+          border-color: #E5E7F0;
+        }
+      }
+    `}</style>
     <div
       style={{
         background: "#fff",
         border: "1px solid #E5E7F0",
         borderRadius: 8,
-        padding: "8px 14px",
+        padding: "8px 8px 8px 8px",
         display: "flex",
         flexDirection: "column",
         gap: 7,
-        minWidth: 168,
         boxShadow: "0 1px 4px rgba(80,80,120,0.06)",
+        animation: reduceMotion ? "none" : "bubble-pulse 2.8s infinite",
+        animationDelay: reduceMotion ? "0s" : `${index * 0.35 + 2.95}s`,
+        transition: "border-color 0.2s, box-shadow 0.2s",
       }}
     >
       <div
@@ -150,14 +185,6 @@ const NodeCard = ({
         </div>
         {label}
       </div>
-      <div
-        style={{
-          width: "55%",
-          height: 3,
-          borderRadius: 2,
-          background: "#E8E8F4",
-        }}
-      />
     </div>
   </div>
 );
@@ -178,7 +205,6 @@ const MobileNodeCard = ({
         {label}
       </span>
     </div>
-    <div className="h-[3px] w-[55%] rounded-sm bg-[#E8E8F4]" />
   </div>
 );
 
@@ -501,7 +527,7 @@ const Enablement = () => {
             </div>
 
             {/* Node cards */}
-            {NODES.map((node) => {
+            {NODES.map((node, i) => {
               const pos = cardPositions[node.id] ?? node.position;
               return (
                 <div
@@ -517,6 +543,8 @@ const Enablement = () => {
                     label={node.label}
                     icon={node.icon}
                     anchor={node.anchor}
+                    index={i}
+                    reduceMotion={reduceMotion}
                   />
                 </div>
               );
