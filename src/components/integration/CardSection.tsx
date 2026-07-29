@@ -9,6 +9,10 @@ import ToolWheel from "@/components/home/ToolWheel";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import { CARD_BACKGROUND_STYLES, CARD_VERTICAL_BACKGROUND_STYLES } from "@/data/wayCardStyles";
+import {
+  IntegrationAutomationBg,
+  IntegrationCodeTypingBg,
+} from "@/components/integration/IntegrationStatCardBackgrounds";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -87,9 +91,11 @@ const CardSection = () => {
           >
             <div
               data-stat-card
-              className="flex flex-col overflow-hidden rounded-md p-5 text-white transform-3d will-change-transform lg:p-8"
+              className="relative flex flex-col overflow-hidden rounded-md p-5 text-white transform-3d will-change-transform lg:p-8"
               style={{ background: CARD_BACKGROUND_STYLES.wholesaler }}
             >
+              <IntegrationCodeTypingBg />
+              <div className="relative z-10 flex h-full flex-1 flex-col">
               <EyebrowPill surface="dark">API Integrations</EyebrowPill>
               <span className="mt-4 font-heading text-4xl font-regular leading-none tracking-tight text-white lg:text-6xl">
                 20+
@@ -104,13 +110,16 @@ const CardSection = () => {
                   in sync automatically.
                 </p>
               </div>
+              </div>
             </div>
 
             <div
               data-stat-card
-              className="flex flex-col overflow-hidden rounded-md p-5 text-white transform-3d will-change-transform lg:p-8"
+              className="relative flex flex-col overflow-hidden rounded-md p-5 text-white transform-3d will-change-transform lg:p-8"
               style={{ background: CARD_BACKGROUND_STYLES.wholesaler }}
             >
+              <IntegrationAutomationBg />
+              <div className="relative z-10 flex h-full flex-1 flex-col">
               <EyebrowPill surface="dark">AI Agents</EyebrowPill>
               <span className="mt-4 font-heading text-4xl font-regular leading-none tracking-tight text-white lg:text-6xl">
                 AI
@@ -124,6 +133,7 @@ const CardSection = () => {
                   orchestrate the entire workflow — from intake to policy
                   delivery — so your team focuses on relationships.
                 </p>
+              </div>
               </div>
             </div>
           </div>

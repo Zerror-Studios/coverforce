@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import Container from "@/components/common/Container";
+import EyebrowPill from "@/components/common/EyebrowPill";
 import { ScrollTriggeredOdometerStat } from "@/components/common/AnimatedPercent";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 
@@ -69,20 +70,38 @@ const IntegrationStats = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const descRef = useRef<HTMLParagraphElement>(null);
 
-  useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef });
+  useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef, descRef });
 
   return (
     <section ref={sectionRef} className="bg-white text-[#0a143b]">
       <Container borderColor="#53535380">
         <div className="py-12 md:py-16 lg:py-20">
-          <div ref={headerRef} className="mb-10 md:mb-12">
-            <h2
-              ref={headingRef}
-              className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
-            >
-              <span data-split>Key highlights</span>
-            </h2>
+          <div
+            ref={headerRef}
+            className="mb-10 grid gap-8 md:mb-12 lg:grid-cols-2 lg:items-end lg:justify-between lg:gap-12"
+          >
+            <div className="flex flex-col justify-end">
+              <EyebrowPill surface="light">Key highlights</EyebrowPill>
+              <h2
+                ref={headingRef}
+                className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+              >
+                <span data-split>Integration scale at a glance</span>
+              </h2>
+              <p
+                ref={descRef}
+                className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
+              >
+                Carriers, MGAs, and API-enabled products connected through
+                CoverForce — the numbers behind the platform.
+              </p>
+            </div>
+            <p className="hidden max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:block lg:text-right">
+              Carriers, MGAs, and API-enabled products connected through
+              CoverForce — the numbers behind the platform.
+            </p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4">
