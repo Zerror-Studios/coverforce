@@ -532,7 +532,7 @@ const Hero = () => {
 
         </div>
         {/* Network + distribution header */}
-        <div className="relative w-full overflow-hidden pt-4 sm:pt-6 md:pt-10">
+        <div className="relative w-full pt-4 pb-8 sm:pt-6 sm:pb-10 md:pt-10 md:pb-14 lg:pb-16">
           <h2
             className={`relative z-10 mb-4 max-w-xl text-2xl font-heading font-medium leading-[1.15] tracking-tight sm:mb-6 sm:text-3xl sm:leading-[1.12] md:mb-8 md:text-4xl lg:mb-10 lg:text-[1.625rem] lg:leading-[1.12] ${theme.titleMuted}`}
           >
@@ -542,10 +542,10 @@ const Hero = () => {
           <div
             ref={networkRef}
             data-hero-reveal
-            className="relative z-10 h-[220px] w-full overflow-hidden motion-reduce:translate-y-0 motion-reduce:opacity-100 sm:h-[280px] md:h-[340px] lg:h-[380px]"
+            className="relative z-10 mx-auto aspect-square w-full max-w-[min(100%,720px)] motion-reduce:translate-y-0 motion-reduce:opacity-100"
             aria-label="Deployment branch timeline"
           >
-            <BranchFlow className="h-full w-full" />
+            <BranchFlow className="h-full w-full max-w-none" />
           </div>
         </div>
 
