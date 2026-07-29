@@ -7,7 +7,6 @@ import WatchDemoButton from "@/components/common/WatchDemoButton";
 import Container from "../common/Container";
 import SectionRadialGlow from "../common/SectionRadialGlow";
 import HeroDataLines from "./HeroDataLines";
-import BranchFlow from "./BranchFlow";
 import {
   HOME_INTRO_EASE,
   HOME_INTRO_HERO_RISE_MS,
@@ -17,6 +16,7 @@ import {
 } from "@/contexts/HomeIntroContext";
 import { animateLoaderWordsWave } from "@/lib/animateSplitTextReveal";
 import { GdpCounter } from "./GdpCounter";
+import ToolWheel from "./ToolWheel";
 
 const INTRO_TITLE_LINES = [
   ["AI-Native", "Insurance"],
@@ -545,7 +545,7 @@ const Hero = () => {
             className="relative z-10 mx-auto aspect-square w-full max-w-[min(100%,720px)] motion-reduce:translate-y-0 motion-reduce:opacity-100"
             aria-label="Deployment branch timeline"
           >
-            <BranchFlow className="h-full w-full max-w-none" />
+            <ToolWheel className="h-full w-full max-w-none" />
           </div>
         </div>
 
