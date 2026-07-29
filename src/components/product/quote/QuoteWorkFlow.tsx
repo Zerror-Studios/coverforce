@@ -136,7 +136,7 @@ function WorkflowStepPanel({
 
       <div
         ref={imageRef}
-        className="relative mx-auto w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px]"
+        className="relative mx-auto w-full max-w-[350px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[800px]"
       >
         <Image
           src={step.image}

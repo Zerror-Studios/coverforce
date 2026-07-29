@@ -292,7 +292,7 @@ export default function OperatingSystemSection({
                     {row.transferTargetId ? (
                       <div
                         data-transfer-target={row.transferTargetId}
-                        className="hidden w-full max-w-[680px] min-h-[300px] lg:block lg:max-w-[720px] lg:min-h-[360px]"
+                        className="hidden w-full max-w-[800px] min-h-[300px] lg:block lg:max-w-[900px] lg:min-h-[360px]"
                         aria-hidden
                       />
                     ) : null}
