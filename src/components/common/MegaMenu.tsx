@@ -342,14 +342,14 @@ export default function MegaMenu({
                   });
                   onClose?.();
                 }}
-                className="group flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-3 text-left transition-colors duration-200 hover:bg-[#FAFAFA]"
+                className="group flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-xl bg-white p-3 text-left transition-colors duration-200 hover:bg-[#FAFAFA]"
               >
-                <div className="h-[12rem] shrink-0 overflow-hidden rounded-lg bg-[#0a143b] md:h-[10rem] lg:h-[10.5rem]">
+                <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-lg bg-[#F7F7FB]">
                   <video
                     ref={videoRef}
                     key={displayConfig.featured.video}
                     src={displayConfig.featured.video}
-                    className="pointer-events-none h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    className="pointer-events-none absolute inset-0 h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
                     autoPlay
                     muted
                     loop
@@ -368,15 +368,15 @@ export default function MegaMenu({
                 onClick={(e) =>
                   handleMenuLinkClick(e, displayConfig.featured.href, onClose, onNavigate)
                 }
-                className="group flex h-full flex-col overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-3 transition-colors duration-200 hover:bg-[#FAFAFA]"
+                className="group flex h-full flex-col overflow-hidden rounded-xl bg-white p-3 transition-colors duration-200 hover:bg-[#FAFAFA]"
               >
-                <div className="h-[12rem] shrink-0 overflow-hidden rounded-lg bg-[#0a143b] md:h-[10rem] lg:h-[10.5rem]">
+                <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-lg bg-[#F7F7FB]">
                   <Image
                     src={displayConfig.featured.image ?? "/images/mega-menu-promo.png"}
                     alt={displayConfig.featured.imageAlt ?? displayConfig.featured.title}
-                    width={480}
-                    height={448}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 26rem"
+                    className="object-contain transition-transform duration-300 group-hover:scale-[1.02]"
                   />
                 </div>
                 <p className="mt-3 px-0.5 font-heading text-sm font-regular leading-snug text-[#3D3D3D] transition-colors duration-200 group-hover:text-[#151F4D]">

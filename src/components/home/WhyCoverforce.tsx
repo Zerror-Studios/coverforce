@@ -8,8 +8,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import Container from "../common/Container";
 import ArrowNavButton from "../common/ArrowNavButton";
-import Button from "../common/Button";
 import Image from "next/image";
+import Link from "next/link";
 
 import "swiper/css";
 
@@ -21,6 +21,7 @@ type WhySlide = {
   descriptionLines: string[];
   image: string;
   alt: string;
+  href?: string;
 };
 
 const whySlides: WhySlide[] = [
@@ -74,46 +75,22 @@ const whySlides: WhySlide[] = [
   },
   {
     id: "slide-5",
-    title: "Security & Resilience",
+    title: "Recognized excellence and innovation",
     descriptionLines: [
-      "SOC 2 Type II certified, cloud-native, and built for enterprise scale —",
-      "giving Chase infrastructure that's secure, resilient, and ready",
-      "for FI-grade volume from day one.",
+      "Named to the 2025 CB Insights Insurtech 50 — an annual list honoring",
+      "the world's most innovative and high-impact insurtech companies",
+      "transforming insurance distribution.",
     ],
-    image:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&h=1200&q=80",
-    alt: "Secure data center infrastructure",
-  },
-  {
-    id: "slide-6",
-    title: "Security & Resilience",
-    descriptionLines: [
-      "SOC 2 Type II certified, cloud-native, and built for enterprise scale —",
-      "giving Chase infrastructure that's secure, resilient, and ready",
-      "for FI-grade volume from day one.",
-    ],
-    image:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&h=1200&q=80",
-    alt: "Secure data center infrastructure",
-  },
-  {
-    id: "slide-7",
-    title: "Security & Resilience",
-    descriptionLines: [
-      "SOC 2 Type II certified, cloud-native, and built for enterprise scale —",
-      "giving Chase infrastructure that's secure, resilient, and ready",
-      "for FI-grade volume from day one.",
-    ],
-    image:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&h=1200&q=80",
-    alt: "Secure data center infrastructure",
+    image: "/images/blog/blog3.png",
+    alt: "CoverForce Insurtech 50 2025 recognition",
+    href: "/blog/coverforce-cb-insights-2025",
   },
 ];
 
 const SLIDE_TRANSITION_MS = 1080;
 
-/** Progressive flex weights: big → small → smaller → thin slivers. */
-const SLIDE_FLEX_BY_VISUAL_INDEX = [17, 4, 2, 1, 0.4, 0.4, 0] as const;
+/** Progressive flex weights: big → small → smaller → thin sliver. */
+const SLIDE_FLEX_BY_VISUAL_INDEX = [17, 4, 2, 1, 0.4] as const;
 
 /**
  * While a card expands: everything before it → 0, clicked card → active,
@@ -157,6 +134,37 @@ function getSlideGapClass(
   }
 
   return "";
+}
+
+function ActiveSlideContent({ slide, compact = false }: { slide: WhySlide; compact?: boolean }) {
+  const titleClassName =
+    "max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#444444] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]";
+  const descriptionClassName = `max-w-3xl font-sans text-sm font-regular leading-[1.4] text-[#50617a] md:text-[1.125rem]${
+    compact ? "" : " mt-4"
+  }`;
+
+  if (slide.href) {
+    return (
+      <Link
+        href={slide.href}
+        className={`group block${compact ? " flex flex-col gap-5" : ""}`}
+      >
+        <h3
+          className={`${titleClassName} transition-colors duration-300 group-hover:text-[#0130BE]`}
+        >
+          {slide.title}
+        </h3>
+        <p className={descriptionClassName}>{slide.descriptionLines.join(" ")}</p>
+      </Link>
+    );
+  }
+
+  return (
+    <>
+      <h3 className={titleClassName}>{slide.title}</h3>
+      <p className={descriptionClassName}>{slide.descriptionLines.join(" ")}</p>
+    </>
+  );
 }
 
 const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
@@ -456,29 +464,39 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
               >
                 {whySlides.map((slide) => (
                   <SwiperSlide key={slide.id}>
-                    <article className="why-swiper-slide">
-                      <Image
-                        width={1000}
-                        height={1000}
-                        sizes="85vw"
-                        className="h-full w-full object-cover"
-                        src={slide.image}
-                        alt={slide.alt}
-                        draggable={false}
-                      />
-                    </article>
+                    {slide.href ? (
+                      <Link href={slide.href} className="block">
+                        <article className="why-swiper-slide">
+                          <Image
+                            width={1000}
+                            height={1000}
+                            sizes="85vw"
+                            className="h-full w-full object-cover"
+                            src={slide.image}
+                            alt={slide.alt}
+                            draggable={false}
+                          />
+                        </article>
+                      </Link>
+                    ) : (
+                      <article className="why-swiper-slide">
+                        <Image
+                          width={1000}
+                          height={1000}
+                          sizes="85vw"
+                          className="h-full w-full object-cover"
+                          src={slide.image}
+                          alt={slide.alt}
+                          draggable={false}
+                        />
+                      </article>
+                    )}
                   </SwiperSlide>
                 ))}
               </Swiper>
 
               <div className="mt-6 flex flex-col gap-5">
-                <h3 className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#444444] sm:text-3xl sm:leading-[1.12]">
-                  {activeSlide.title}
-                </h3>
-                <p className="max-w-3xl font-sans text-sm font-regular leading-[1.4] text-[#50617a] md:text-[1.125rem]">
-                  {activeSlide.descriptionLines.join(" ")}
-                </p>
-                <Button href="/contact">Contact us</Button>
+                <ActiveSlideContent slide={activeSlide} compact />
               </div>
             </div>
 
@@ -506,27 +524,18 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                     expandingTarget,
                     orderedSlides.length,
                   );
-                  return (
-                  <button
-                    type="button"
-                    key={slide.id}
-                    className={`why-slide text-left ${gapClass} ${
-                      isCollapsed
-                        ? "is-collapsed is-zero"
-                        : isZero
-                          ? "is-zero"
-                          : isExpanded || isActive
-                            ? "is-active"
-                            : isClickable
-                              ? "is-clickable is-inactive"
-                              : "is-inactive"
-                    }`}
-                    style={{ flex: `${flexGrow} 0 0` }}
-                    onClick={() => handleSlideClick(visualIndex, slideIndex)}
-                    aria-pressed={isExpanded || isActive}
-                    aria-hidden={isZero}
-                    tabIndex={isClickable ? 0 : -1}
-                  >
+                  const slideClassName = `why-slide text-left ${gapClass} ${
+                    isCollapsed
+                      ? "is-collapsed is-zero"
+                      : isZero
+                        ? "is-zero"
+                        : isExpanded || isActive
+                          ? "is-active"
+                          : isClickable
+                            ? "is-clickable is-inactive"
+                            : "is-inactive"
+                  }`;
+                  const slideImage = (
                     <Image
                       width={1000}
                       height={1000}
@@ -536,23 +545,42 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                       alt={slide.alt}
                       draggable={false}
                     />
+                  );
+
+                  if (slide.href && (isActive || isExpanded)) {
+                    return (
+                      <Link
+                        key={slide.id}
+                        href={slide.href}
+                        className={slideClassName}
+                        style={{ flex: `${flexGrow} 0 0` }}
+                        aria-current={isActive || isExpanded ? "true" : undefined}
+                      >
+                        {slideImage}
+                      </Link>
+                    );
+                  }
+
+                  return (
+                  <button
+                    type="button"
+                    key={slide.id}
+                    className={slideClassName}
+                    style={{ flex: `${flexGrow} 0 0` }}
+                    onClick={() => handleSlideClick(visualIndex, slideIndex)}
+                    aria-pressed={isExpanded || isActive}
+                    aria-hidden={isZero}
+                    tabIndex={isClickable ? 0 : -1}
+                  >
+                    {slideImage}
                   </button>
                 )})}
               </div>
 
               <div className="mt-6 flex items-end justify-between gap-8 border-t border-[#E8E8EE] pt-6">
                 <div className="max-w-4xl">
-                  <h3 className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#444444] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
-                    {activeSlide.title}
-                  </h3>
-                  <p className="mt-4 max-w-3xl font-sans text-sm font-regular leading-[1.4] text-[#50617a] md:text-[1.125rem]">
-                    {activeSlide.descriptionLines.join(" ")}
-                  </p>
+                  <ActiveSlideContent slide={activeSlide} />
                 </div>
-
-                <Button href="/contact" className="shrink-0">
-                  Contact us
-                </Button>
               </div>
             </div>
           </div>

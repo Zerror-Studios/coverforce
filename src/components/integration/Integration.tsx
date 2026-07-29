@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { RiSearchEyeLine } from "@remixicon/react";
 import { useGSAP } from "@gsap/react";
@@ -10,6 +11,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
+import ButtonArrowIcon from "@/components/common/ButtonArrowIcon";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,6 +23,134 @@ const LOGO_MAP: Record<string, string> = {
   Nationwide: "/images/integration/nationwide.svg",
   Coalition: "/images/integration/coalition.svg",
 };
+
+const INTEGRATION_LOGOS = [
+  "/images/integration/690221ad7f7ec7e8c24261dd_idw9JmZ4P2_1760337291940.png",
+  "/images/integration/6902411b80a9ec9119a9eda8_images (1).jpeg",
+  "/images/integration/690244d7a6cf2e74ae610747_61785058ade15b0495997231_logo-2.png",
+  "/images/integration/690248d41320bee289fb3c57_idVR-g0Qe7_1760336063437.png",
+  "/images/integration/690248d41320bee289fb3c57_idVR-g0Qe7_1760336063437-p-500.png",
+  "/images/integration/6902494cbfbe5140228c9e2e_id4DBhSanf_logos.png",
+  "/images/integration/69024beeb4a54e1e8af694a1_Property 1=Default.png",
+  "/images/integration/69024fb9474b2bc566d2cc3f_idqg1Zo9QN_1760334704976 1 (1).png",
+  "/images/integration/6902ff75299992a6dd5bf7f5_68fee642f92ceabc57f58dd8_b048bef1afb91101b299e837293d7343_great-american-1.jpg",
+  "/images/integration/69036a8292f78c35c13b3d8c_seneca-insurance.jpg",
+  "/images/integration/69037c006bbe13462d6eb495_State Auto Insurance Logo-p-500.webp",
+  "/images/integration/69049c04b20f819f20cd98bb_USLI Logo.png",
+  "/images/integration/6908d560e1380f5057ab841f_Axis.png",
+  "/images/integration/6908d5a7170beafac67c95e9_HSB.png",
+  "/images/integration/6908d5d4885aac68d28d7d43_The Hartford.png",
+  "/images/integration/6908d5e9a0862b9e56c20ddb_GenStar.png",
+  "/images/integration/6908d5f9b84be5d1b089325d_CoAction.png",
+  "/images/integration/6908d60ee3d209f5f2b7b075_IFG.png",
+  "/images/integration/6908d61acdc2647ebab0f38e_Accident Fund.png",
+  "/images/integration/6908d632a3a3e1a9184683f7_Doe & Emuss.png",
+  "/images/integration/6908d652c5416171f923064a_Killara.png",
+  "/images/integration/6908d70807c1b5fef0eb9b65_Core Specialty.png",
+  "/images/integration/6908d7241a971fabc9426e2b_Berley Net.png",
+  "/images/integration/6908d7ade086956d67ae15d3_RSUI.png",
+  "/images/integration/6908d813b05d9afef82c8174_Pathpoint.png",
+  "/images/integration/6908d8290ffddd62a5e0f3a0_Northfield.png",
+  "/images/integration/6908d8583440e9a4db98b649_Nautilus.png",
+  "/images/integration/6908d87bdd15a178cf40b9c0_Music.png",
+  "/images/integration/6908d8945638e8bda39aa30e_Main Street.png",
+  "/images/integration/6908d8aa7e0ec88da82d68ec_IAT.png",
+  "/images/integration/6908d8e447bcdc8846565b8c_Homesite.png",
+  "/images/integration/6908d922efad82601a67ce66_Crum.png",
+  "/images/integration/6908d93f3fa6d22abc9e2cb4_Counterpart.png",
+  "/images/integration/6908d95a7cd78e6be5ea6c7e_Corvus.png",
+  "/images/integration/6908d96ae1dd29eb1e8e2b61_CFC.png",
+  "/images/integration/6908d98e5a55d49b356ea110_Blitz.png",
+  "/images/integration/6908d99d1b574322357c44ca_Berley Management.png",
+  "/images/integration/6908d9b13ae2393e0c1ab5d3_Beazley.png",
+  "/images/integration/6908d9cc80bdc8768665723c_Atlantic.png",
+  "/images/integration/6908d9dd1792cb25620b4942_Ategrity.png",
+  "/images/integration/6908d9eea6df4552b10a4996_At Bay.png",
+  "/images/integration/6908da00e7966d61a43fa980_Arch.png",
+  "/images/integration/6908da1550edc74eff62af2b_Acuity.png",
+  "/images/integration/6908da2f24aac126aa433fe8_Republic.png",
+  "/images/integration/6908da4150c7b5be003f9986_Merchants.png",
+  "/images/integration/6908da5285fe10fae78777a4_Guard.png",
+  "/images/integration/6908da6aad8d8eaa56f41b59_First.png",
+  "/images/integration/6908da7b931ed077a7209020_BiBerk.png",
+  "/images/integration/6908da8cf4a35755bf097b10_Nationwide.png",
+  "/images/integration/6908daa0623c6c715582aabf_Markel.png",
+  "/images/integration/6908daba7d7eff694c6571d1_Liberty Mutual.png",
+  "/images/integration/6908dad4cd1f0801fc8b8894_Hiscox.png",
+  "/images/integration/6908db093440e9a4db99cccf_Employers.png",
+  "/images/integration/6908db55757010dacb69744d_CNA.png",
+  "/images/integration/6908db6adcca05fc2c46968b_Chubbs.png",
+  "/images/integration/6908db8062b2d1f6547ebfc5_Coalition.png",
+  "/images/integration/6908db8fa7a905334714f268_AmTrust.png",
+  "/images/integration/69099c206d7a8bbc29dd1e7c_Westfield_Logo 1.png",
+  "/images/integration/69099c3144a2ba3a25cf8973_Penn American GBLI Logo 1.png",
+  "/images/integration/69099cbda97fb126ea005603_pie-logo 1.png",
+  "/images/integration/69099d0df14f754619471063_Western World Logo 1.png",
+] as const;
+
+const INTEGRATION_LINKS = [
+  "https://www.accidentfund.com/",
+  "https://www.acuity.com/",
+  "https://amtrustfinancial.com/",
+  "https://insurance.archgroup.com/",
+  "https://www.at-bay.com/",
+  "https://www.ategrity.com/",
+  "https://atlanticcasualty.net/",
+  "https://www.axiscapital.com/",
+  "https://www.beazley.com/en-sg/",
+  "https://www.berkleymp.com/",
+  "https://berkleynet.com/",
+  "https://www.biberk.com/",
+  "https://www.blitzinsurance.com/",
+  "https://marketplace.btisinc.com/",
+  "https://www.ifgcompanies.com/",
+  "https://www.centurysurety.com/",
+  "https://www.cfc.com/en-gb/",
+  "https://www.chubb.com/us-en/",
+  "https://www.cna.com/",
+  "https://www.coactionspecialty.com/",
+  "https://www.coalitioninc.com/",
+  "https://corespecialty.com/",
+  "https://www.corvusinsurance.com/",
+  "https://coterieinsurance.com/",
+  "https://yourcounterpart.com/",
+  "https://cowbell.insure/",
+  "https://www.cfins.com/",
+  "https://doeandemuss.com/",
+  "https://www.elphasecure.com/",
+  "https://www.employers.com/",
+  "https://myfirstinsurance.com/",
+  "https://myfirstinsurance.com/",
+  "https://www.generalstar.com/",
+  "https://www.thehartford.com/",
+  "https://www.hiscox.com/",
+  "https://go.homesite.com/",
+  "https://www.munichre.com/hsb/en.html",
+  "https://www.iatinsurancegroup.com/",
+  "https://killaracyber.com/",
+  "https://www.libertymutual.com/",
+  "https://msainsurance.com/",
+  "https://www.markel.com/",
+  "https://www.merchantsgroup.com/",
+  "https://www.music-ins.com/",
+  "https://www.nationwide.com/",
+  "https://www.nautilusinsgroup.com/",
+  "https://www.northfieldins.com/",
+  "https://www.pathpoint.com/",
+  "https://penn-america.com/",
+  "https://www.pieinsurance.com/",
+  "https://www.pouchinsurance.com/",
+  "https://www.republicindemnity.com/",
+  "https://www.rsui.com/",
+  "https://www.senecainsurance.com/",
+  "https://www.stateauto.com/",
+  "https://www.thimble.com/",
+  "https://www.travelers.com/",
+  "https://www.usli.com/",
+  "https://www.westernworld.com/home",
+  "https://www.westernworld.com/home",
+  "https://www.westfieldinsurance.com/",
+] as const;
 
 type Market = "AD" | "ES";
 
@@ -38,6 +168,8 @@ type CarrierProduct = {
 
 type Carrier = {
   name: string;
+  logoSrc?: string;
+  website?: string;
   logoColor: string;
   status: "Live on CoverForce" | "API available";
   category: CategoryId;
@@ -52,11 +184,13 @@ type Tab = {
   count?: number;
 };
 
+const INTEGRATION_COUNT = INTEGRATION_LOGOS.length;
+
 const TABS: Tab[] = [
-  { id: "carriers", label: "Carriers & MGAs", count: 20 },
-  { id: "ams", label: "Agency Management", count: 4 },
-  { id: "finance", label: "Finance & Compliance", count: 3 },
-  { id: "ai", label: "Market Access", count: 3 },
+  { id: "carriers", label: "Carriers & MGAs", count: INTEGRATION_COUNT },
+  { id: "ams", label: "Agency Management", count: INTEGRATION_COUNT },
+  { id: "finance", label: "Finance & Compliance", count: INTEGRATION_COUNT },
+  { id: "ai", label: "Market Access", count: INTEGRATION_COUNT },
 ];
 
 function getTabLabel(tab: Tab) {
@@ -181,128 +315,11 @@ const BASE_CARRIERS: Carrier[] = [
   },
 ];
 
-const AMS_PARTNERS: Carrier[] = [
-  {
-    name: "NowCerts",
-    logoColor: "#1F2A6B",
-    status: "Live on CoverForce",
-    category: "ams",
-    lobs: ["WC", "BOP", "GL"],
-    products: [
-      { market: "AD", name: "AMS Sync" },
-      { market: "AD", name: "Policy Download" },
-    ],
-  },
-  {
-    name: "HawkSoft",
-    logoColor: "#111827",
-    status: "API available",
-    category: "ams",
-    lobs: ["WC", "BOP", "GL", "Auto"],
-    products: [
-      { market: "AD", name: "Agency Sync" },
-      { market: "ES", name: "E&S Feed" },
-    ],
-  },
-  {
-    name: "Applied Epic",
-    logoColor: "#1A4FA0",
-    status: "Live on CoverForce",
-    category: "ams",
-    lobs: ["WC", "BOP", "GL", "Cyber"],
-    products: [
-      { market: "AD", name: "Submission Push" },
-      { market: "AD", name: "Activity Sync" },
-    ],
-  },
-  {
-    name: "QQCatalyst",
-    logoColor: "#5B3DF5",
-    status: "API available",
-    category: "ams",
-    lobs: ["BOP", "GL", "Prof"],
-    products: [{ market: "AD", name: "Client Sync", availability: "request" }],
-  },
-];
-
-const FINANCE_PARTNERS: Carrier[] = [
-  {
-    name: "Premium Finance Co",
-    logoColor: "#1F2A6B",
-    status: "Live on CoverForce",
-    category: "finance",
-    lobs: ["WC", "BOP", "GL", "Auto"],
-    products: [
-      { market: "AD", name: "Premium Finance" },
-      { market: "ES", name: "E&S Finance" },
-    ],
-  },
-  {
-    name: "Compliance Hub",
-    logoColor: "#111827",
-    status: "API available",
-    category: "finance",
-    lobs: ["GL", "Cyber", "Prof"],
-    products: [
-      { market: "AD", name: "License Check" },
-      { market: "AD", name: "E&O Tracking", availability: "request" },
-    ],
-  },
-  {
-    name: "Surplus Lines Filing",
-    logoColor: "#1A4FA0",
-    status: "Live on CoverForce",
-    category: "finance",
-    lobs: ["GL", "Cyber"],
-    products: [{ market: "ES", name: "SL Filing" }],
-  },
-];
-
-const MARKET_ACCESS_PARTNERS: Carrier[] = [
-  {
-    name: "Clearance Exchange",
-    logoColor: "#5B3DF5",
-    status: "Live on CoverForce",
-    category: "ai",
-    lobs: ["WC", "BOP", "GL", "Cyber"],
-    products: [
-      { market: "AD", name: "Clearance API" },
-      { market: "ES", name: "E&S Clearance" },
-    ],
-  },
-  {
-    name: "Appetite Graph",
-    logoColor: "#F2C200",
-    status: "API available",
-    category: "ai",
-    lobs: ["WC", "BOP", "GL", "Prof", "Auto"],
-    products: [
-      { market: "AD", name: "Appetite Match" },
-      { market: "ES", name: "Wholesale Match", availability: "request" },
-    ],
-  },
-  {
-    name: "Bind Network",
-    logoColor: "#D8232A",
-    status: "Live on CoverForce",
-    category: "ai",
-    lobs: ["BOP", "GL", "Cyber"],
-    products: [{ market: "AD", name: "Instant Bind Path" }],
-  },
-];
-
-// Repeat the base set to fill the carriers directory (placeholder until real data lands).
-const CARRIER_DIRECTORY: Carrier[] = Array.from(
-  { length: 20 },
-  (_, i) => BASE_CARRIERS[i % BASE_CARRIERS.length]!,
-);
-
-const DIRECTORY: Carrier[] = [
-  ...CARRIER_DIRECTORY,
-  ...AMS_PARTNERS,
-  ...FINANCE_PARTNERS,
-  ...MARKET_ACCESS_PARTNERS,
-];
+const DIRECTORY: Carrier[] = INTEGRATION_LOGOS.map((logoSrc, i) => ({
+  ...BASE_CARRIERS[i % BASE_CARRIERS.length]!,
+  logoSrc,
+  website: INTEGRATION_LINKS[i],
+}));
 
 const StatusBadge = ({ status }: { status: Carrier["status"] }) => {
   if (status === "Live on CoverForce") {
@@ -363,19 +380,16 @@ const CarrierCard = ({ carrier }: { carrier: Carrier }) => {
 
       <div className="relative z-10 flex h-full flex-col rounded-[19px] bg-white p-4 transition-shadow duration-500 group-hover:shadow-[0_18px_40px_-28px_rgba(10,20,59,0.45)] md:p-6">
         <div className="flex items-start justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-3 sm:gap-3.5">
-            <span className="flex size-10 shrink-0 items-center justify-center transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105 sm:size-11">
+          <div className="flex min-w-0 items-center">
+            <span className="flex h-10 w-full max-w-[11rem] items-center justify-start transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.02] sm:h-11 sm:max-w-[12rem]">
               <Image
-                src={LOGO_MAP[carrier.name] ?? "/images/integration/amtrust.svg"}
+                src={carrier.logoSrc ?? LOGO_MAP[carrier.name] ?? "/images/integration/amtrust.svg"}
                 alt={carrier.name}
-                width={40}
-                height={40}
-                className="h-full w-full object-contain"
+                width={176}
+                height={44}
+                className="h-full w-full object-contain object-left"
               />
             </span>
-            <p className="text-sm font-sans font-bold leading-tight text-[#111110]">
-              {carrier.name}
-            </p>
           </div>
           <div className="shrink-0">
             <StatusBadge status={carrier.status} />
@@ -385,6 +399,7 @@ const CarrierCard = ({ carrier }: { carrier: Carrier }) => {
         <div className="mt-5 flex flex-wrap gap-2 md:mt-6">
           {carrier.products.map((product, idx) => {
             const requestable = product.availability === "request";
+            const isExcessSurplus = product.market === "ES";
             return (
               <span
                 key={`${product.name}-${idx}`}
@@ -394,16 +409,24 @@ const CarrierCard = ({ carrier }: { carrier: Carrier }) => {
                     : "Live on CoverForce"
                 }
                 className={`inline-flex w-fit max-w-full items-center gap-1.5 rounded-full py-1 pl-2.5 pr-4 text-xs font-sans font-medium tracking-wide transition-colors duration-300 ${
-                  requestable
-                    ? "border border-dashed border-[#C9B27A] bg-[#FBF6EC] text-[#8A6A22]"
-                    : "bg-[#F2F8FC] text-[#185FA5]/95 group-hover:bg-[#E8F2FA]"
+                  isExcessSurplus
+                    ? requestable
+                      ? "border border-dashed border-[#C9B7F6] bg-[#F7F1FF] text-[#6F3CC3] group-hover:bg-[#EFE4FF]"
+                      : "bg-[#F7F1FF] text-[#6F3CC3] group-hover:bg-[#EFE4FF]"
+                    : requestable
+                      ? "border border-dashed border-[#B8D4F2] bg-[#F2F8FC] text-[#185FA5]/95 group-hover:bg-[#E8F2FA]"
+                      : "bg-[#F2F8FC] text-[#185FA5]/95 group-hover:bg-[#E8F2FA]"
                 }`}
               >
                 <span
                   className={`size-1.5 shrink-0 rounded-full ${
                     requestable
-                      ? "bg-transparent ring-1 ring-[#C08A2B]"
-                      : "bg-[#4F8A2E]"
+                      ? isExcessSurplus
+                        ? "bg-transparent ring-1 ring-[#8B5CF6]"
+                        : "bg-transparent ring-1 ring-[#185FA5]"
+                      : isExcessSurplus
+                        ? "bg-[#8B5CF6]"
+                        : "bg-[#4F8A2E]"
                   }`}
                   aria-hidden
                 />
@@ -415,6 +438,15 @@ const CarrierCard = ({ carrier }: { carrier: Carrier }) => {
           })}
         </div>
 
+        <Link
+          href={carrier.website ?? "/contact"}
+          target={carrier.website ? "_blank" : undefined}
+          rel={carrier.website ? "noreferrer" : undefined}
+          className="mt-auto flex items-center gap-2 pt-5 text-sm font-heading font-medium text-[#2D3E9D] transition-colors hover:text-[#151F4D] md:pt-6"
+        >
+          Know more
+          <ButtonArrowIcon className="h-2 w-3 shrink-0 text-current" />
+        </Link>
       </div>
     </div>
   );
@@ -542,7 +574,6 @@ const Integration = () => {
 
   const filtered = useMemo(() => {
     return DIRECTORY.reduce<Carrier[]>((acc, entry) => {
-      if (entry.category !== activeTab) return acc;
       if (lob !== "All" && !entry.lobs.includes(lob)) return acc;
       if (status !== "All" && entry.status !== status) return acc;
 
@@ -556,105 +587,17 @@ const Integration = () => {
       acc.push(market === "All" ? entry : { ...entry, products });
       return acc;
     }, []);
-  }, [activeTab, lob, status, market]);
+  }, [lob, status, market]);
 
-  const resultLabel =
-    activeTab === "carriers"
-      ? "carriers shown"
-      : activeTab === "ams"
-        ? "AMS partners shown"
-        : activeTab === "finance"
-          ? "finance partners shown"
-          : "market access partners shown";
+  const resultLabel = "integrations shown";
 
   const gridRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
 
   useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef, descRef });
-
-  useGSAP(() => {
-    const container = containerRef.current;
-    const overlay = overlayRef.current;
-    const section = sectionRef.current;
-    if (!container || !overlay || !section) return;
-
-    gsap.set(container, {
-      y: 0,
-      scale: 1,
-      force3D: true,
-      transformOrigin: "50% 50%",
-      backfaceVisibility: "hidden",
-    });
-    gsap.set(overlay, { opacity: 0, pointerEvents: "none" });
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const isSmallDevice = window.matchMedia("(max-width: 1023px)").matches;
-    if (reducedMotion || isSmallDevice) return;
-
-    const getShift = () => container.offsetHeight/3;
-    const scrollEnd = "bottom -100%";
-    const scrollConfig = {
-      trigger: section,
-      scrub: 0.35,
-      invalidateOnRefresh: true,
-      fastScrollEnd: true,
-    };
-
-    const parallaxTl = gsap.timeline({
-      scrollTrigger: {
-        ...scrollConfig,
-        start: "bottom bottom",
-        end: scrollEnd,
-      },
-    });
-
-    parallaxTl.to(container, {
-      y: getShift,
-      scale: 0.8,
-      ease: "none",
-      force3D: true,
-    });
-
-    const overlayTl = gsap.timeline({
-      scrollTrigger: {
-        ...scrollConfig,
-        start: "bottom center",
-        end: scrollEnd,
-      },
-    });
-
-    overlayTl.to(overlay, {
-      opacity: 0.85,
-      ease: "none",
-    });
-
-    const lenis = window.lenis;
-    let scrollPending = false;
-    const onLenisScroll = () => {
-      if (scrollPending) return;
-      scrollPending = true;
-      requestAnimationFrame(() => {
-        ScrollTrigger.update();
-        scrollPending = false;
-      });
-    };
-    lenis?.on("scroll", onLenisScroll);
-
-    ScrollTrigger.refresh();
-
-    return () => {
-      lenis?.off("scroll", onLenisScroll);
-      parallaxTl.scrollTrigger?.kill();
-      parallaxTl.kill();
-      overlayTl.scrollTrigger?.kill();
-      overlayTl.kill();
-    };
-  }, { scope: sectionRef });
 
   useGSAP(
     () => {
@@ -686,7 +629,7 @@ const Integration = () => {
       ref={sectionRef}
       className="relative z-30 overflow-hidden bg-[#FBFCFF] text-[#0a143b]"
     >
-      <div ref={containerRef} className="relative z-10 overflow-hidden lg:will-change-transform">
+      <div className="relative z-10 overflow-hidden">
         <Container borderColor="#53535380">
           <div className="pb-12 pt-16 md:pb-24 md:pt-24">
             <div
@@ -699,7 +642,7 @@ const Integration = () => {
                   ref={headingRef}
                   className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
                 >
-                  <span data-split>One integration. The entire ecosystem.</span>
+                  <span data-split>2026 Carrier API Index</span>
                 </h2>
                 <p
                   ref={descRef}
@@ -763,7 +706,7 @@ const Integration = () => {
                 className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:mt-8 lg:grid-cols-3"
               >
                 {filtered.map((carrier, idx) => (
-                  <CarrierCard key={`${carrier.name}-${idx}`} carrier={carrier} />
+                  <CarrierCard key={carrier.logoSrc ?? `${carrier.name}-${idx}`} carrier={carrier} />
                 ))}
               </div>
             ) : (
@@ -795,11 +738,6 @@ const Integration = () => {
           </div>
         </Container>
       </div>
-      <div
-        ref={overlayRef}
-        className="pointer-events-none absolute inset-0 z-20 bg-[#080808]"
-        aria-hidden
-      />
     </section>
   );
 };

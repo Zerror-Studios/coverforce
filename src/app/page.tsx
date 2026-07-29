@@ -23,7 +23,7 @@ const HomePage = () => {
           <WhyCoverforce paddingTop={true} />
           <DataAdvantage />
           <div className="relative z-[1] h-0 overflow-visible">
-            <SectionRadialGlow className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2" />
+            <SectionRadialGlow className="absolute left-1/2 top-0 w-[min(44rem,80vw)] -translate-x-1/2 -translate-y-[74%] blur-[8rem] opacity-75" />
           </div>
           <Review />
           <CarrierResults />

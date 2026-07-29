@@ -1184,13 +1184,13 @@ function CarrierLogoCard({
       <div
         ref={glowRef}
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300"
-        aria-hidden
-      />
+      aria-hidden
+    />
       <div className="relative z-10 flex h-22 items-center justify-center overflow-hidden rounded-[19px] bg-white px-4 py-4 transition-shadow duration-500 group-hover:shadow-[0_18px_40px_-28px_rgba(10,20,59,0.45)] sm:h-24 md:h-28">
         {carrier.badge ? (
           <span className="absolute left-2 top-2 rounded bg-[#F4A261] px-1.5 py-0.5 font-mono text-[0.5625rem] font-semibold uppercase leading-none tracking-wide text-white">
             {carrier.badge}
-          </span>
+    </span>
         ) : null}
         <Image
           src={carrier.logo}
@@ -1262,7 +1262,7 @@ function FormSelect({
         {label}
       </span>
       <button
-        id={id}
+          id={id}
         type="button"
         aria-haspopup="listbox"
         aria-expanded={open}
@@ -1319,7 +1319,7 @@ function FormSelect({
           })}
         </ul>
       ) : null}
-    </div>
+      </div>
   );
 }
 
@@ -1456,14 +1456,14 @@ const Appetite = () => {
                     value={state}
                     options={STATES}
                     onChange={setState}
-                  />
-                  <Button
-                    type="submit"
-                    variant="primary"
+                    />
+                    <Button
+                      type="submit"
+                      variant="primary"
                     className="flex h-10 min-h-10 max-h-10 w-full items-center justify-center text-center"
-                  >
-                    Check Appetite
-                  </Button>
+                    >
+                      Check Appetite
+                    </Button>
                 </div>
 
               </form>
@@ -1484,9 +1484,9 @@ const Appetite = () => {
                     <CarrierLogoCard
                       key={`${carrier.name}-${carrier.badge ?? "admitted"}-${index}`}
                       carrier={carrier}
-                    />
-                  ))}
-                </div>
+                          />
+                        ))}
+                      </div>
               </div>
             </div>
           </div>

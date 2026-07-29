@@ -245,7 +245,7 @@ const Listing = () => {
   return (
     <section id="blog-listing" className="scroll-mt-20 bg-white text-[#0a143b]">
       <Container borderColor="#53535380">
-        <div className="pb-16 md:pb-20 lg:pb-24 pt-10 md:pt-14 lg:pt-16">
+        <div className="border-t border-[#E8E8EE] pb-16 pt-10 md:pb-20 md:pt-14 lg:pb-24 lg:pt-16">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-2">
               {FILTERS.map((filter) => {
