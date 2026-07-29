@@ -43,7 +43,7 @@ const WORKFLOW_STEPS = [
   {
     id: "underwriter-intelligence",
     label: "Underwriter Intelligence",
-    image: "/images/product/intelligence1.svg",
+    image: "/images/product/intelligence3.svg",
     width: 467,
     height: 410,
     headline: (
@@ -56,7 +56,7 @@ const WORKFLOW_STEPS = [
   {
     id: "carrier-performance",
     label: "Outcome Analytics",
-    image: "/images/product/intelligence3.svg",
+    image: "/images/product/intelligence4.svg",
     width: 442,
     height: 428,
     headline: (
@@ -69,7 +69,7 @@ const WORKFLOW_STEPS = [
   {
     id: "opportunity-visibility",
     label: "Opportunity Visibility",
-    image: "/images/product/intelligence4.svg",
+    image: "/images/product/intelligence5.svg",
     width: 479,
     height: 421,
     headline: (
@@ -85,7 +85,7 @@ const WORKFLOW_STEPS = [
   {
     id: "pipeline-visibility",
     label: "Pipeline Visibility",
-    image: "/images/product/intelligence4.svg",
+    image: "/images/product/intelligence6.svg",
     width: 479,
     height: 421,
     headline: (
@@ -152,7 +152,7 @@ function WorkflowStepPanel({
 
       <div
         ref={imageRef}
-        className="relative mx-auto w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px]"
+        className="relative mx-auto w-full max-w-[350px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[800px]"
       >
         <Image
           src={step.image}
