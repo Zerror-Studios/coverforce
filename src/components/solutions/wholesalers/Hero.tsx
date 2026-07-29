@@ -32,6 +32,7 @@ const Hero = () => (
     }
     rightCardTransferTargetId="wholesalers-step-1-card"
     showMarquee
+    marqueeVariant="pulsating"
     showSecondSection={false}
     gradFlow={SOLUTION_GRAD_FLOW.wholesaler}
   />

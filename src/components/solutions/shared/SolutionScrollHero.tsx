@@ -14,6 +14,7 @@ import {
   MarqueeRow,
   type MarqueeLogo,
 } from "@/components/solutions/wholesalers/MarqueeLine";
+import PulsatingLogoSet from "@/components/solutions/wholesalers/PulsatingLogoSet";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import type { GradFlowColors } from "@/data/wayCardStyles";
 import { GradFlow } from "gradflow";
@@ -55,8 +56,10 @@ type SolutionScrollHeroProps = {
   rightCardTransferTargetId?: string;
   gradFlow: GradFlowColors;
   showMarquee?: boolean;
+  marqueeVariant?: "scroll" | "pulsating";
   marqueeLogos?: readonly MarqueeLogo[];
   marqueeSize?: "default" | "large";
+  marqueeLogosPerSet?: number;
   showSecondSection?: boolean;
 };
 
@@ -90,8 +93,10 @@ export default function SolutionScrollHero({
   rightCardTransferTargetId,
   gradFlow,
   showMarquee = false,
+  marqueeVariant = "scroll",
   marqueeLogos,
   marqueeSize = "default",
+  marqueeLogosPerSet,
   showSecondSection = true,
 }: SolutionScrollHeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -115,6 +120,18 @@ export default function SolutionScrollHero({
     headingRef: featureHeaderHeadingRef,
     descRef: featureHeaderDescRef,
   });
+
+  const marqueeContent =
+    marqueeVariant === "pulsating" ? (
+      <PulsatingLogoSet
+        logos={marqueeLogos}
+        size={marqueeSize}
+        tone="light"
+        logosPerSet={marqueeLogosPerSet}
+      />
+    ) : (
+      <MarqueeRow logos={marqueeLogos} size={marqueeSize} tone="light" />
+    );
 
   useGSAP(
     () => {
@@ -283,7 +300,7 @@ export default function SolutionScrollHero({
 
               {showMarquee ? (
                 <div className="relative z-10 w-full shrink-0 pb-6 md:pb-8 lg:hidden">
-                  <MarqueeRow logos={marqueeLogos} size={marqueeSize} tone="light" />
+                  {marqueeContent}
                 </div>
               ) : null}
             </div>
@@ -427,9 +444,7 @@ export default function SolutionScrollHero({
 
           {showMarquee ? (
             <div className="pointer-events-none absolute inset-x-0 top-0 z-10 hidden h-svh flex-col justify-end pb-6 md:pb-8 lg:flex">
-              <div className="pointer-events-auto w-full">
-                <MarqueeRow logos={marqueeLogos} size={marqueeSize} tone="light" />
-              </div>
+              <div className="pointer-events-auto w-full">{marqueeContent}</div>
             </div>
           ) : null}
         </div>
