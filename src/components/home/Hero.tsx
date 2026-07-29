@@ -536,9 +536,6 @@ const Hero = () => {
             </div>
             <div className="relative z-10 mt-6 flex flex-col items-center gap-2.5 text-sm text-white/70 md:absolute md:right-0 md:top-1/2 md:mt-0 md:-translate-y-1/2 md:items-start lg:right-4 xl:right-8">
               {[
-                { label: "Wholesalers", background: CARD_VERTICAL_BACKGROUND_STYLES.wholesaler },
-                { label: "Brokers", background: CARD_VERTICAL_BACKGROUND_STYLES.broker },
-                { label: "Developers", background: CARD_VERTICAL_BACKGROUND_STYLES.developer },
                 { label: "Startups", background: CARD_VERTICAL_BACKGROUND_STYLES.startup },
                 { label: "Carriers", background: CARD_VERTICAL_BACKGROUND_STYLES.carrier },
               ].map((item) => (

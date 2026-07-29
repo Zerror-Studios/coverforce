@@ -266,6 +266,11 @@ function hexToRgba(hex: string, a: number) {
   return `rgba(${r},${g},${b},${a})`;
 }
 
+function signalDotColor(showBackground: boolean, rampColor: string, toHub: boolean) {
+  if (showBackground) return rampColor;
+  return toHub ? RAMP_COLOR.startup : RAMP_COLOR.carrier;
+}
+
 const ENTRANCE_START_NODE_NAME = "n8n";
 
 function getClockwiseSortedIndices(
@@ -488,11 +493,12 @@ export default function ToolWheel({
 
         // entrance dot travels center → icon for lower-half spokes
         if (item.isBelow && lineProgress < 1) {
+          const dotColor = signalDotColor(showBackground, item.color, false);
           context.beginPath();
           context.arc(lineX, lineY, 2.2, 0, Math.PI * 2);
           context.fillStyle = showBackground
             ? "rgba(255,255,255,0.95)"
-            : hexToRgba(item.color, 0.95);
+            : hexToRgba(dotColor, 0.95);
           context.fill();
         }
       });
@@ -511,11 +517,14 @@ export default function ToolWheel({
           const from = item.isBelow ? hubPt : nodePt;
           const to = item.isBelow ? nodePt : hubPt;
 
+          const toHub = !item.isBelow;
+          const dotColor = signalDotColor(showBackground, item.color, toHub);
+
           if (p.t >= 1) {
             p.t %= 1;
             p.v = 0.14 + Math.random() * 0.08;
             if (!item.isBelow) {
-              pulses.push({ r: 0, a: 0.55, color: item.color });
+              pulses.push({ r: 0, a: 0.55, color: dotColor });
             }
           }
           const pt = {
@@ -529,8 +538,8 @@ export default function ToolWheel({
           };
 
           const grad = context.createLinearGradient(tail.x, tail.y, pt.x, pt.y);
-          grad.addColorStop(0, hexToRgba(item.color, 0));
-          grad.addColorStop(1, hexToRgba(item.color, 0.9));
+          grad.addColorStop(0, hexToRgba(dotColor, 0));
+          grad.addColorStop(1, hexToRgba(dotColor, 0.9));
           context.beginPath();
           context.moveTo(tail.x, tail.y);
           context.lineTo(pt.x, pt.y);
@@ -540,7 +549,7 @@ export default function ToolWheel({
 
           context.beginPath();
           context.arc(pt.x, pt.y, 1.8, 0, Math.PI * 2);
-          context.fillStyle = hexToRgba(item.color, 0.95);
+          context.fillStyle = hexToRgba(dotColor, 0.95);
           context.fill();
         });
       }
