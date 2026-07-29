@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import Image from "next/image";
 
 type ToolWheelProps = {
@@ -109,6 +109,15 @@ const NODES: ToolNode[] = [
   },
 ];
 
+// Ramp -> signal color. Tuned to sit next to the existing purple hub
+// (#ECE7FF) without introducing a new palette family.
+const RAMP_COLOR: Record<Ramp, string> = {
+  purple: "#8B7CF6",
+  blue: "#4F8EF7",
+  amber: "#F5A623",
+  green: "#34D399",
+};
+
 const CX = 50;
 const CY = 50;
 const R_LINE_START = 7; // meets outer edge of center hub (w-[14%] → r = 7)
@@ -136,93 +145,214 @@ const OUTER_LABEL_CLASS: Record<"top" | "right" | "bottom" | "left", string> = {
   left: "absolute top-1/2 right-full mr-1.5 -translate-y-1/2 text-right",
 };
 
+function hexToRgba(hex: string, a: number) {
+  const h = hex.replace("#", "");
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
 export default function ToolWheel({ className = "" }: ToolWheelProps) {
-  const uid = useId().replace(/:/g, "");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
   const items = useMemo(
     () =>
       NODES.map((node, i) => {
         const angle = -78 + i * 24;
-        const start = polar(angle, R_LINE_START);
-        const end = polar(angle, R_LINE_END);
+        const start = polar(angle, R_LINE_START); // near hub
+        const end = polar(angle, R_LINE_END); // near node
         const pos = polar(angle, R_ITEM);
         const label = polar(angle, R_LABEL);
         const side = outerSide(angle);
-        return { ...node, angle, start, end, pos, label, side };
+        return {
+          ...node,
+          angle,
+          start,
+          end,
+          pos,
+          label,
+          side,
+          color: RAMP_COLOR[node.ramp],
+        };
       }),
     [],
   );
 
+  // Canvas-driven signal flow: gradient-trailed particles travel each spoke
+  // toward the hub, with a soft pulse ring firing on arrival. Same technique
+  // as the reference band (rAF loop, resize + intersection handling, reduced
+  // motion support) but drawn onto the existing radial layout instead of a
+  // top/bottom band, and colored per tool "ramp" instead of in/outbound.
+  useEffect(() => {
+    const containerEl = containerRef.current;
+    const canvasEl = canvasRef.current;
+    if (!containerEl || !canvasEl) return;
+
+    const ctx = canvasEl.getContext("2d");
+    if (!ctx) return;
+
+    const container: HTMLDivElement = containerEl;
+    const canvas: HTMLCanvasElement = canvasEl;
+    const context: CanvasRenderingContext2D = ctx;
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    type Particle = { itemIndex: number; t: number; v: number };
+    type Pulse = { r: number; a: number; color: string };
+
+    let W = 0;
+    let H = 0;
+    let dpr = 1;
+    let visible = true;
+    let raf = 0;
+    let last = performance.now();
+    let particles: Particle[] = [];
+    let pulses: Pulse[] = [];
+
+    function initParticles() {
+      particles = items.map((_, i) => ({
+        itemIndex: i,
+        t: (i * 0.137) % 1,
+        v: 0.14 + (i % 3) * 0.035,
+      }));
+    }
+
+    function toPx(pctX: number, pctY: number) {
+      return { x: (pctX / 100) * W, y: (pctY / 100) * H };
+    }
+
+    function resize() {
+      const rect = container.getBoundingClientRect();
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = rect.width;
+      H = rect.height;
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      canvas.style.width = `${W}px`;
+      canvas.style.height = `${H}px`;
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function draw(dt: number) {
+      context.clearRect(0, 0, W, H);
+      const hub = toPx(CX, CY);
+      const hubR = W * 0.07; // matches w-[14%] hub diameter
+
+      // static spokes, same styling as the original SVG version
+      items.forEach((item, i) => {
+        const nearNode = toPx(item.end.x, item.end.y);
+        const nearHub = toPx(item.start.x, item.start.y);
+        const dashed = i % 2 === 1;
+        context.beginPath();
+        context.moveTo(nearNode.x, nearNode.y);
+        context.lineTo(nearHub.x, nearHub.y);
+        context.strokeStyle = dashed
+          ? "rgba(153,153,153,0.55)"
+          : "rgba(255,255,255,0.2)";
+        context.lineWidth = 1;
+        context.setLineDash(dashed ? [3, 6] : []);
+        context.stroke();
+      });
+      context.setLineDash([]);
+
+      // flowing signals, node -> hub, gradient trail per ramp color
+      if (!reduceMotion) {
+        particles.forEach((p) => {
+          const item = items[p.itemIndex];
+          p.t += p.v * dt;
+          if (p.t >= 1) {
+            p.t %= 1;
+            p.v = 0.14 + Math.random() * 0.08;
+            pulses.push({ r: 0, a: 0.55, color: item.color });
+          }
+          const from = toPx(item.end.x, item.end.y); // node
+          const to = toPx(item.start.x, item.start.y); // hub
+          const pt = {
+            x: from.x + (to.x - from.x) * p.t,
+            y: from.y + (to.y - from.y) * p.t,
+          };
+          const tailT = Math.max(0, p.t - 0.12);
+          const tail = {
+            x: from.x + (to.x - from.x) * tailT,
+            y: from.y + (to.y - from.y) * tailT,
+          };
+
+          const grad = context.createLinearGradient(tail.x, tail.y, pt.x, pt.y);
+          grad.addColorStop(0, hexToRgba(item.color, 0));
+          grad.addColorStop(1, hexToRgba(item.color, 0.9));
+          context.beginPath();
+          context.moveTo(tail.x, tail.y);
+          context.lineTo(pt.x, pt.y);
+          context.strokeStyle = grad;
+          context.lineWidth = 1.6;
+          context.stroke();
+
+          context.beginPath();
+          context.arc(pt.x, pt.y, 1.8, 0, Math.PI * 2);
+          context.fillStyle = hexToRgba(item.color, 0.95);
+          context.fill();
+        });
+      }
+
+      // arrival pulses on the hub
+      pulses = pulses.filter((p) => p.a > 0.02);
+      pulses.forEach((p) => {
+        p.r += 34 * dt;
+        p.a *= 1 - 2.2 * dt;
+        context.beginPath();
+        context.arc(hub.x, hub.y, hubR + p.r, 0, Math.PI * 2);
+        context.strokeStyle = hexToRgba(p.color, p.a);
+        context.lineWidth = 1;
+        context.stroke();
+      });
+    }
+
+    function frame(now: number) {
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      if (visible) draw(reduceMotion ? 0 : dt);
+      raf = requestAnimationFrame(frame);
+    }
+
+    resize();
+    initParticles();
+    last = performance.now();
+    raf = requestAnimationFrame(frame);
+
+    const ro = new ResizeObserver(() => resize());
+    ro.observe(container);
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+      },
+      { threshold: 0.05 },
+    );
+    io.observe(container);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      io.disconnect();
+    };
+  }, [items]);
+
   return (
     <div
+      ref={containerRef}
       className={`relative mx-auto aspect-square h-full w-full max-w-[720px] ${className}`}
       aria-label="Outbound tool stack radiating from a central AI hub"
     >
-      {/* Spokes — CarrierResults-style lines + flowing dots toward center */}
-      <svg
-        className="absolute inset-0 h-full w-full overflow-visible"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="xMidYMid meet"
+      {/* Spokes + flowing signal particles */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 h-full w-full"
         aria-hidden
-      >
-        <defs>
-          {items.map((item, i) => (
-            <path
-              key={`def-${i}`}
-              id={`wheel-dot-${uid}-${i}`}
-              d={`M${item.end.x},${item.end.y} L${item.start.x},${item.start.y}`}
-            />
-          ))}
-        </defs>
-
-        {items.map((item, i) => {
-          const dashed = i % 2 === 1;
-          return (
-            <path
-              key={`line-${i}`}
-              d={`M${item.start.x},${item.start.y} L${item.end.x},${item.end.y}`}
-              fill="none"
-              stroke={dashed ? "rgb(153,153,153)" : "#FFFFFF33"}
-              strokeWidth={0.1}
-              strokeLinecap="butt"
-              strokeDasharray={dashed ? "0.25 0.9" : undefined}
-              strokeOpacity={1}
-            />
-          );
-        })}
-
-        {items.map((_, i) => {
-          const dur = `${(3 + (i % 3) * 0.3).toFixed(1)}s`;
-          const begin = `${(i * 0.22).toFixed(2)}s`;
-          return (
-            <circle key={`dot-${i}`} r={0.22} fill="#FFFFFF">
-              <animateMotion
-                dur={dur}
-                begin={begin}
-                repeatCount="indefinite"
-                rotate="none"
-              >
-                <mpath href={`#wheel-dot-${uid}-${i}`} />
-              </animateMotion>
-              <animate
-                attributeName="opacity"
-                values="0;1;1;0"
-                keyTimes="0;0.08;0.72;1"
-                dur={dur}
-                begin={begin}
-                repeatCount="indefinite"
-              />
-              <animate
-                attributeName="r"
-                values="0;0.22;0.22;0"
-                keyTimes="0;0.08;0.75;1"
-                dur={dur}
-                begin={begin}
-                repeatCount="indefinite"
-              />
-            </circle>
-          );
-        })}
-      </svg>
+      />
 
       {/* Hub — outer ring + inner logo circle */}
       <div className="absolute top-1/2 left-1/2 z-10 flex aspect-square w-[14%] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#ECE7FF] bg-white">
