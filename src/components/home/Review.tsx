@@ -30,7 +30,7 @@ const testimonials: Testimonial[] = [
   {
     id: "1",
     quote:
-      "The platform simplifies complex insurance workflows, improves accuracy, and helps our team respond to brokers with greater speed and confidence.",
+      "The platform simplifies complex insurance workflows, improves accuracy, and helps our team respond to brokers with greater speed and confidence. What used to take days of back-and-forth now happens in a single, unified flow — from submission intake through carrier matching to bind-ready quotes.",
     name: "Daniel Briggs",
     role: "Sr. Director of Sales",
     company: "Coalition",
@@ -40,7 +40,7 @@ const testimonials: Testimonial[] = [
   {
     id: "2",
     quote:
-      "We cut submission time while improving carrier matches, giving our underwriters more time to evaluate the opportunities that matter.",
+      "We cut submission time while improving carrier matches, giving our underwriters more time to evaluate the opportunities that matter. CoverForce surfaces the right appetite data upfront, so our team spends less time chasing dead ends and more time on risks we can actually bind.",
     name: "Sarah Chen",
     role: "VP of Underwriting",
     company: "Coalition",
@@ -50,7 +50,7 @@ const testimonials: Testimonial[] = [
   {
     id: "3",
     quote:
-      "CoverForce gives us one workflow from intake to bind—fewer errors, faster quotes, and less back-and-forth with carriers.",
+      "CoverForce gives us one workflow from intake to bind — fewer errors, faster quotes, and less back-and-forth with carriers. Our producers get real-time visibility into every submission, and leadership finally has a single source of truth across the entire distribution pipeline.",
     name: "Marcus Webb",
     role: "Head of Distribution",
     company: "Coalition",
@@ -75,42 +75,41 @@ function CoalitionLogo() {
 
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
-    <article className="relative flex min-h-[360px] flex-col overflow-hidden rounded-sm bg-white p-6 md:min-h-[440px] md:p-8 lg:min-h-[520px] lg:p-10">
-      <div
-        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_90%_80%_at_50%_0%,rgba(203,190,255,0.45),rgba(255,255,255,0.95)_72%)]"
-        aria-hidden
-      />
+    <article className="relative flex min-h-[300px] flex-col overflow-hidden rounded-sm bg-white p-5 md:min-h-[360px] md:p-7 lg:min-h-[400px] lg:p-8">
+   
 
       <div className="relative z-10 flex h-full flex-1 flex-col">
-        <div className="flex items-center gap-4 md:gap-5">
-          <div className="size-16 shrink-0 overflow-hidden md:size-20">
-            <Image
-              src={testimonial.avatar}
-              alt={testimonial.name}
-              width={80}
-              height={80}
-              className="size-full object-cover object-[50%_20%]"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <p className="font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[#303030] md:text-xs">
-              {testimonial.name}
-            </p>
-            <p className="font-mono text-[0.625rem] font-normal uppercase tracking-[0.12em] text-[#303030]/55 md:text-[0.6875rem]">
-              {testimonial.role}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-1 items-center px-2 md:px-4">
-          <blockquote className="max-w-3xl text-left text-2xl font-heading font-regular leading-[1.35] tracking-tight text-[#1a1a2e] md:text-3xl lg:text-4xl lg:leading-[1.3]">
+        <div className="flex flex-1 items-center">
+          <blockquote className="w-full max-w-4xl text-left text-xl font-heading font-regular leading-[1.35] tracking-tight text-[#1a1a2e] md:text-2xl lg:max-w-5xl lg:text-3xl lg:leading-[1.32]">
             &ldquo;{testimonial.quote}&rdquo;
           </blockquote>
         </div>
 
-        <div className="mt-8 flex justify-end md:mt-10">
-          <CoalitionLogo />
+        <div className="relative mt-6 md:mt-7">
+          <div className="pointer-events-none absolute bottom-0 right-0 z-0 opacity-90">
+            <CoalitionLogo />
+          </div>
+
+          <div className="relative z-10 flex min-w-0 max-w-[70%] items-center gap-4 md:gap-5">
+            <div className="size-16 shrink-0 overflow-hidden md:size-20">
+              <Image
+                src={testimonial.avatar}
+                alt={testimonial.name}
+                width={80}
+                height={80}
+                className="size-full object-cover object-[50%_20%]"
+              />
+            </div>
+
+            <div className="min-w-0 space-y-1">
+              <p className="font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[#303030] md:text-xs">
+                {testimonial.name}
+              </p>
+              <p className="font-mono text-[0.625rem] font-normal uppercase tracking-[0.12em] text-[#303030]/55 md:text-[0.6875rem]">
+                {testimonial.role}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </article>

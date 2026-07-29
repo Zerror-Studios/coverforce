@@ -66,7 +66,7 @@ function LatestStoryItem({ post }: { post: BlogPreview }) {
 const Hero = () => {
   return (
     <section className="bg-white text-[#0a143b]">
-      <Container borderColor="#53535380" borderBottom>
+      <Container borderColor="#53535380">
         <HeroReveal className="w-full pb-10 pt-28 md:pb-14 md:pt-36 lg:pb-16 lg:pt-24">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,17.5rem)] lg:items-start lg:gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,19rem)] xl:gap-8">
             <Link href={FEATURED_POST.href} className="group block w-full min-w-0 max-lg:max-w-none">
