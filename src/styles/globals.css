@@ -193,40 +193,30 @@ button {
   }
 }
 
-@keyframes logo-set-pulse {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
 .logo-set-item {
-  will-change: opacity;
-  opacity: 0.9;
+  will-change: opacity, transform;
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+  transition:
+    opacity 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.logo-set-item--idle {
-  animation: logo-set-pulse 2.4s ease-in-out infinite;
+.logo-set-item--hidden {
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+  transition: none;
+}
+
+.logo-set-item--enter,
+.logo-set-item--visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
 }
 
 .logo-set-item--exit {
-  animation: none;
   opacity: 0;
-  transition: opacity 0.65s ease;
-}
-
-.logo-set-item--enter-from {
-  animation: none;
-  opacity: 0;
-}
-
-.logo-set-item--enter-to {
-  animation: none;
-  opacity: 0.9;
-  transition: opacity 0.65s ease;
+  transform: translate3d(0, -8px, 0);
 }
 
 @keyframes logo-marquee-left {

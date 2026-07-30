@@ -261,6 +261,95 @@ const NODES: ToolNode[] = [
   },
 ];
 
+/** Carrier marks for upper-half / Carriers slots on the home wheel. */
+const CARRIER_LOGO_FILES = [
+  "68db80d8be07394c698f0c72_c5430f51b657bd0ff972da286c4be264_Property 1=Default (1).png",
+  "68db80d8f3d6515c7918886d_b00e6284238df42cd9436e8ca7d7c035_Property 1=Default (2).png",
+  "68db80d842a384de4eeb434d_54f8614075a66a7a30d1d5ea3a184be3_Property 1=Default (3).png",
+  "68db80d8c913e0400ef47a59_dece8e498a38e9fea87f8104dc908d25_Property 1=Default (4).png",
+  "68db80d84382bb971c6f7a8e_1fa88f07e585ca322412b4984775c7da_Property 1=Default (6).png",
+  "68db80d8942c9cc3d4b47792_26d9f23a1158995569ca33a3d876e078_Property 1=Default (7).png",
+  "68db80d82e3a92ff1556059d_39d8ff0956c32711b38e925748b36b6b_Property 1=Default (9).png",
+  "68db80d8d771fa26b6dccfb6_d8043d2faf4a6ce6788b023065beaa51_Property 1=Default (10).png",
+  "68db80d8a90ccfaf42bcc4be_ce9cdae545db4c26a0bebd1d9a452503_Property 1=Default (11).png",
+  "68db80d8cbb7f8ab52d73e17_e1236caaacd3875d47c57c223e78b85a_Property 1=Default (12).png",
+  "68db80d8e4545f315a582a23_d811604ed257bab6737348ed27d9411e_Property 1=Default.png",
+  "68ec91d546c6c49acfcd13ff_ff44ae82233274e3313bf9ffdf1c2418_Great_American-dark.png",
+] as const;
+
+function carrierLogoSrc(index: number) {
+  const file = CARRIER_LOGO_FILES[index % CARRIER_LOGO_FILES.length]!;
+  return `/images/carrier-logos/${encodeURIComponent(file)}`;
+}
+
+const STARTUP_LOGO_SRCS = [
+  "/images/startups/logos/anzen.png",
+  "/images/startups/logos/broker.png",
+  "/images/startups/logos/coverwatch.png",
+  "/images/startups/logos/harper.png",
+  "/images/startups/logos/latent.png",
+  "/images/startups/logos/rosella.png",
+  "/images/startups/logos/snapbind.png",
+  "/images/startups/logos/switchboard.png",
+] as const;
+
+function startupLogoSrc(index: number) {
+  return STARTUP_LOGO_SRCS[index % STARTUP_LOGO_SRCS.length]!;
+}
+
+/** Agency Management logos for the integration wheel (broker wedge). */
+const AMS_LOGO_SRCS = [
+  "/images/integration/6908d813b05d9afef82c8174_Pathpoint.png",
+  "/images/integration/6908d99d1b574322357c44ca_Berley Management.png",
+  "/images/integration/6908d7241a971fabc9426e2b_Berley Net.png",
+  "/images/integration/69099cbda97fb126ea005603_pie-logo 1.png",
+  "/images/integration/6908d87bdd15a178cf40b9c0_Music.png",
+  "/images/integration/6908d98e5a55d49b356ea110_Blitz.png",
+  "/images/integration/6908d8945638e8bda39aa30e_Main Street.png",
+  "/images/integration/6902494cbfbe5140228c9e2e_id4DBhSanf_logos.png",
+] as const;
+
+function amsLogoSrc(index: number) {
+  const src = AMS_LOGO_SRCS[index % AMS_LOGO_SRCS.length]!;
+  const parts = src.split("/");
+  const file = parts.pop()!;
+  return `${parts.join("/")}/${encodeURIComponent(file)}`;
+}
+
+/** Finance & Compliance logos for the integration wheel (developer wedge). */
+const FINANCE_LOGO_SRCS = [
+  "/images/integration/6908d93f3fa6d22abc9e2cb4_Counterpart.png",
+  "/images/integration/6908d96ae1dd29eb1e8e2b61_CFC.png",
+  "/images/integration/6908da6aad8d8eaa56f41b59_First.png",
+  "/images/integration/6908da4150c7b5be003f9986_Merchants.png",
+  "/images/integration/6908da5285fe10fae78777a4_Guard.png",
+  "/images/integration/6908da7b931ed077a7209020_BiBerk.png",
+  "/images/integration/6908d8aa7e0ec88da82d68ec_IAT.png",
+  "/images/integration/6908d8290ffddd62a5e0f3a0_Northfield.png",
+] as const;
+
+function financeLogoSrc(index: number) {
+  const src = FINANCE_LOGO_SRCS[index % FINANCE_LOGO_SRCS.length]!;
+  const parts = src.split("/");
+  const file = parts.pop()!;
+  return `${parts.join("/")}/${encodeURIComponent(file)}`;
+}
+
+const LOGO_ROTATE_MS = 4500;
+const LOGO_FADE_MS = 400;
+
+function wait(ms: number, signal: { cancelled: boolean }) {
+  return new Promise<void>((resolve) => {
+    const id = window.setTimeout(() => {
+      if (!signal.cancelled) resolve();
+    }, ms);
+    if (signal.cancelled) {
+      window.clearTimeout(id);
+      resolve();
+    }
+  });
+}
+
 const CX = 50;
 const CY = 50;
 const R_LINE_START = 7; // meets outer edge of center hub (w-[14%] → r = 7)
@@ -284,9 +373,10 @@ function hexToRgba(hex: string, a: number) {
   return `rgba(${r},${g},${b},${a})`;
 }
 
-function signalDotColor(showBackground: boolean, rampColor: string, toHub: boolean) {
+function signalDotColor(showBackground: boolean, rampColor: string, isBelow: boolean) {
   if (showBackground) return rampColor;
-  return toHub ? RAMP_COLOR.startup : RAMP_COLOR.carrier;
+  // Match side legend: upper = Carriers, lower = Startups
+  return isBelow ? RAMP_COLOR.startup : RAMP_COLOR.carrier;
 }
 
 const ENTRANCE_START_NODE_NAME = "n8n";
@@ -324,6 +414,14 @@ export default function ToolWheel({
   const spokeProgressRef = useRef<number[]>([]);
   const signalsEnabledRef = useRef(false);
   const [hoveredLogo, setHoveredLogo] = useState<number | null>(null);
+  const [carrierOffset, setCarrierOffset] = useState(0);
+  const [carrierOpaque, setCarrierOpaque] = useState(true);
+  const [startupOffset, setStartupOffset] = useState(0);
+  const [startupOpaque, setStartupOpaque] = useState(true);
+  const [amsOffset, setAmsOffset] = useState(0);
+  const [amsOpaque, setAmsOpaque] = useState(true);
+  const [financeOffset, setFinanceOffset] = useState(0);
+  const [financeOpaque, setFinanceOpaque] = useState(true);
 
   const items = useMemo(() => {
     const angles = getNodeAngleByIndex(showBackground);
@@ -331,6 +429,11 @@ export default function ToolWheel({
     const perWedge = showBackground
       ? Math.floor(NODES.length / themes.length)
       : NODES.length;
+
+    let upperSlot = 0;
+    let lowerSlot = 0;
+    let amsSlotIndex = 0;
+    let financeSlotIndex = 0;
 
     return NODES.map((node, i) => {
       const angle = angles[i]!;
@@ -342,21 +445,61 @@ export default function ToolWheel({
       const ramp = showBackground
         ? themes[Math.min(Math.floor(i / perWedge), themes.length - 1)]!
         : node.ramp;
+      const isBelow = pos.y > CY;
+
+      let iconSrc = node.iconSrc;
+      let carrierSlot: number | null = null;
+      let startupSlot: number | null = null;
+      let amsSlot: number | null = null;
+      let financeSlot: number | null = null;
+
+      if (!showBackground) {
+        if (isBelow) {
+          startupSlot = lowerSlot++;
+          iconSrc = startupLogoSrc(startupSlot);
+        } else {
+          carrierSlot = upperSlot++;
+          iconSrc = carrierLogoSrc(carrierSlot);
+        }
+      } else if (ramp === "carrier") {
+        carrierSlot = upperSlot++;
+        iconSrc = carrierLogoSrc(carrierSlot);
+      } else if (ramp === "startup") {
+        startupSlot = lowerSlot++;
+        iconSrc = startupLogoSrc(startupSlot);
+      } else if (ramp === "broker") {
+        // Agency Management
+        amsSlot = amsSlotIndex++;
+        iconSrc = amsLogoSrc(amsSlot);
+      } else if (ramp === "developer") {
+        // Finance & Compliance
+        financeSlot = financeSlotIndex++;
+        iconSrc = financeLogoSrc(financeSlot);
+      }
 
       return {
         ...node,
+        iconSrc,
+        carrierSlot,
+        startupSlot,
+        amsSlot,
+        financeSlot,
         ramp,
         angle,
         start,
         end,
         pos,
         color: RAMP_COLOR[ramp],
-        isBelow: pos.y > CY,
+        isBelow,
       };
     }).filter(Boolean) as Array<{
       name: string;
       category: string;
       iconSrc: string;
+      carrierSlot: number | null;
+      startupSlot: number | null;
+      amsSlot: number | null;
+      financeSlot: number | null;
       ramp: Ramp;
       angle: number;
       start: { x: number; y: number };
@@ -366,6 +509,148 @@ export default function ToolWheel({
       isBelow: boolean;
     }>;
   }, [showBackground]);
+
+  const upperCarrierCount = useMemo(
+    () => items.filter((item) => item.carrierSlot !== null).length,
+    [items],
+  );
+
+  const lowerStartupCount = useMemo(
+    () => items.filter((item) => item.startupSlot !== null).length,
+    [items],
+  );
+
+  const amsCount = useMemo(
+    () => items.filter((item) => item.amsSlot !== null).length,
+    [items],
+  );
+
+  const financeCount = useMemo(
+    () => items.filter((item) => item.financeSlot !== null).length,
+    [items],
+  );
+
+  useEffect(() => {
+    if (upperCarrierCount === 0) return;
+    if (CARRIER_LOGO_FILES.length <= 1) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const signal = { cancelled: false };
+    const step =
+      CARRIER_LOGO_FILES.length > upperCarrierCount ? upperCarrierCount : 1;
+
+    async function runCycle() {
+      while (!signal.cancelled) {
+        await wait(LOGO_ROTATE_MS, signal);
+        if (signal.cancelled) break;
+
+        setCarrierOpaque(false);
+        await wait(LOGO_FADE_MS, signal);
+        if (signal.cancelled) break;
+
+        setCarrierOffset(
+          (offset) => (offset + step) % CARRIER_LOGO_FILES.length,
+        );
+        setCarrierOpaque(true);
+      }
+    }
+
+    runCycle();
+
+    return () => {
+      signal.cancelled = true;
+    };
+  }, [upperCarrierCount]);
+
+  useEffect(() => {
+    if (lowerStartupCount === 0) return;
+    if (STARTUP_LOGO_SRCS.length <= 1) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const signal = { cancelled: false };
+    const step =
+      STARTUP_LOGO_SRCS.length > lowerStartupCount ? lowerStartupCount : 1;
+
+    async function runCycle() {
+      while (!signal.cancelled) {
+        await wait(LOGO_ROTATE_MS, signal);
+        if (signal.cancelled) break;
+
+        setStartupOpaque(false);
+        await wait(LOGO_FADE_MS, signal);
+        if (signal.cancelled) break;
+
+        setStartupOffset(
+          (offset) => (offset + step) % STARTUP_LOGO_SRCS.length,
+        );
+        setStartupOpaque(true);
+      }
+    }
+
+    runCycle();
+
+    return () => {
+      signal.cancelled = true;
+    };
+  }, [lowerStartupCount]);
+
+  useEffect(() => {
+    if (amsCount === 0) return;
+    if (AMS_LOGO_SRCS.length <= 1) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const signal = { cancelled: false };
+    const step = AMS_LOGO_SRCS.length > amsCount ? amsCount : 1;
+
+    async function runCycle() {
+      while (!signal.cancelled) {
+        await wait(LOGO_ROTATE_MS, signal);
+        if (signal.cancelled) break;
+
+        setAmsOpaque(false);
+        await wait(LOGO_FADE_MS, signal);
+        if (signal.cancelled) break;
+
+        setAmsOffset((offset) => (offset + step) % AMS_LOGO_SRCS.length);
+        setAmsOpaque(true);
+      }
+    }
+
+    runCycle();
+
+    return () => {
+      signal.cancelled = true;
+    };
+  }, [amsCount]);
+
+  useEffect(() => {
+    if (financeCount === 0) return;
+    if (FINANCE_LOGO_SRCS.length <= 1) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const signal = { cancelled: false };
+    const step = FINANCE_LOGO_SRCS.length > financeCount ? financeCount : 1;
+
+    async function runCycle() {
+      while (!signal.cancelled) {
+        await wait(LOGO_ROTATE_MS, signal);
+        if (signal.cancelled) break;
+
+        setFinanceOpaque(false);
+        await wait(LOGO_FADE_MS, signal);
+        if (signal.cancelled) break;
+
+        setFinanceOffset((offset) => (offset + step) % FINANCE_LOGO_SRCS.length);
+        setFinanceOpaque(true);
+      }
+    }
+
+    runCycle();
+
+    return () => {
+      signal.cancelled = true;
+    };
+  }, [financeCount]);
 
   useEffect(() => {
     spokeProgressRef.current = items.map(() => 0);
@@ -543,7 +828,7 @@ export default function ToolWheel({
 
         // entrance dot travels center → icon for lower-half spokes
         if (item.isBelow && lineProgress < 1) {
-          const dotColor = signalDotColor(showBackground, item.color, false);
+          const dotColor = signalDotColor(showBackground, item.color, item.isBelow);
           context.beginPath();
           context.arc(lineX, lineY, 2.2, 0, Math.PI * 2);
           context.fillStyle = showBackground
@@ -566,7 +851,7 @@ export default function ToolWheel({
           const nodePt = toPx(item.end.x, item.end.y);
           const from = p.toHub ? nodePt : hubPt;
           const to = p.toHub ? hubPt : nodePt;
-          const dotColor = signalDotColor(showBackground, item.color, p.toHub);
+          const dotColor = signalDotColor(showBackground, item.color, item.isBelow);
 
           if (p.t >= 1) {
             p.t %= 1;
@@ -681,28 +966,48 @@ export default function ToolWheel({
         </div>
       </div>
 
-      {/* Tool nodes - square rounded-md badges with brand icons */}
+      {/* Tool nodes - wide rounded badges so logos stay readable */}
       <div className="absolute inset-0">
-        {items.map((item, i) => (
-          <div
-            key={i}
-            data-tool-wheel-node={i}
-            className="group absolute size-11 -translate-x-1/2 -translate-y-1/2 opacity-0"
-            style={{ left: `${item.pos.x}%`, top: `${item.pos.y}%` }}
-            onMouseEnter={() => setHoveredLogo(i)}
-            onMouseLeave={() => setHoveredLogo(null)}
-          >
-            <div className="flex size-full items-center justify-center overflow-hidden rounded-md border border-[#D3D1C7] bg-white p-1.5 transition-transform duration-200 group-hover:scale-110">
-              <Image
-                src={item.iconSrc}
-                alt=""
-                width={28}
-                height={28}
-                className="size-full object-contain"
-              />
+        {items.map((item, i) => {
+          const src =
+            item.carrierSlot !== null
+              ? carrierLogoSrc(item.carrierSlot + carrierOffset)
+              : item.startupSlot !== null
+                ? startupLogoSrc(item.startupSlot + startupOffset)
+                : item.amsSlot !== null
+                  ? amsLogoSrc(item.amsSlot + amsOffset)
+                  : item.financeSlot !== null
+                    ? financeLogoSrc(item.financeSlot + financeOffset)
+                    : item.iconSrc;
+          const fading =
+            (item.carrierSlot !== null && !carrierOpaque) ||
+            (item.startupSlot !== null && !startupOpaque) ||
+            (item.amsSlot !== null && !amsOpaque) ||
+            (item.financeSlot !== null && !financeOpaque);
+
+          return (
+            <div
+              key={i}
+              data-tool-wheel-node={i}
+              className="group absolute h-10 w-16 -translate-x-1/2 -translate-y-1/2 opacity-0 sm:h-11 sm:w-[4.75rem] md:h-12 md:w-20"
+              style={{ left: `${item.pos.x}%`, top: `${item.pos.y}%` }}
+              onMouseEnter={() => setHoveredLogo(i)}
+              onMouseLeave={() => setHoveredLogo(null)}
+            >
+              <div className="flex size-full items-center justify-center overflow-hidden rounded-md border border-[#D3D1C7] bg-white px-1.5 py-1 transition-transform duration-200 group-hover:scale-110">
+                <Image
+                  src={src}
+                  alt=""
+                  width={64}
+                  height={36}
+                  className={`h-full w-full object-contain transition-opacity duration-[400ms] ease-out ${
+                    fading ? "opacity-0" : "opacity-100"
+                  }`}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

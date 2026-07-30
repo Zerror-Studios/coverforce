@@ -542,8 +542,8 @@ const Hero = () => {
             </div>
             <div className="relative z-10 mt-6 flex flex-col items-center gap-2.5 text-sm text-white/70 md:absolute md:right-0 md:top-1/2 md:mt-0 md:-translate-y-1/2 md:items-start lg:right-4 xl:right-8">
               {[
-                { label: "Startups", background: CARD_VERTICAL_BACKGROUND_STYLES.startup },
                 { label: "Carriers", background: CARD_VERTICAL_BACKGROUND_STYLES.carrier },
+                { label: "Startups", background: CARD_VERTICAL_BACKGROUND_STYLES.startup },
               ].map((item) => (
                 <span key={item.label} className="flex items-center gap-1.5 whitespace-nowrap">
                   <span

@@ -3,6 +3,7 @@
 import SolutionScrollHero from "@/components/solutions/shared/SolutionScrollHero";
 import SolutionHeroCards from "@/components/solutions/shared/SolutionHeroCards";
 import { SOLUTION_GRAD_FLOW } from "@/data/wayCardStyles";
+import { SOLUTION_HERO_LOGOS } from "@/data/solutionHeroLogos";
 
 const Hero = () => (
   <SolutionScrollHero
@@ -33,6 +34,9 @@ const Hero = () => (
     rightCardTransferTargetId="wholesalers-step-1-card"
     showMarquee
     marqueeVariant="pulsating"
+    marqueeLogos={SOLUTION_HERO_LOGOS}
+    marqueeSize="large"
+    marqueeLogosPerSet={4}
     showSecondSection={false}
     gradFlow={SOLUTION_GRAD_FLOW.wholesaler}
   />
