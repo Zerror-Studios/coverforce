@@ -208,7 +208,7 @@ function MobileProcessFlow({
           className="flex flex-col"
         >
           <div className="w-fit">
-            <EyebrowPill surface="light">{step.tag}</EyebrowPill>
+            <EyebrowPill background={PRIMARY_BUTTON_GRADIENT}>{step.tag}</EyebrowPill>
           </div>
           <h3 className="mt-3 max-w-lg pr-2 text-balance text-2xl font-heading font-regular leading-[1.2] tracking-tight text-[#0a143b] sm:text-3xl sm:leading-[1.15]">
             {step.heading}
@@ -220,7 +220,10 @@ function MobileProcessFlow({
                 key={point.id}
                 className="flex gap-4 border-b border-black/10 py-4 last:border-b-0"
               >
-                <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[#151F4D] bg-[#151F4D] text-white">
+                <span
+                  className="flex size-6 shrink-0 items-center justify-center rounded-full border border-transparent text-white"
+                  style={{ background: PRIMARY_BUTTON_GRADIENT }}
+                >
                   <RiArrowRightLine className="size-3" />
                 </span>
                 <p className="max-w-sm text-sm leading-relaxed font-heading font-regular text-[#0a143b] md:text-sm">
@@ -317,12 +320,18 @@ const ProcessFlow = () => {
         const prog = { v: 0 };
 
         if (icon) {
+          tl.set(
+            icon,
+            {
+              background: PRIMARY_BUTTON_GRADIENT,
+              borderColor: "transparent",
+            },
+            t,
+          );
           tl.to(
             icon,
             {
-              backgroundColor: POINT_ARROW,
               color: "#ffffff",
-              borderColor: POINT_ARROW,
               duration: CHAR_DUR * 1.2,
               ease: "power2.out",
             },
@@ -498,7 +507,10 @@ const ProcessFlow = () => {
                 className={`step${index + 1} flex h-screen flex-col justify-center`}
               >
                 <div className="w-fit">
-                  <EyebrowPill surface="light" className="mb-0">
+                  <EyebrowPill
+                    background={PRIMARY_BUTTON_GRADIENT}
+                    className="mb-0"
+                  >
                     {step.tag}
                   </EyebrowPill>
                 </div>
@@ -511,7 +523,7 @@ const ProcessFlow = () => {
                       key={feature.id}
                       className={`point${idx + 1} flex gap-4 border-b border-black/10 py-4`}
                     >
-                      <span className="point-icon flex size-6 shrink-0 items-center justify-center rounded-full border border-[#CCCCCC] text-[#CCCCCC]">
+                      <span className="point-icon flex size-6 shrink-0 items-center justify-center rounded-full border border-[#CCCCCC] bg-transparent text-[#CCCCCC]">
                         <RiArrowRightLine className="size-3" />
                       </span>
                       <ProcessPointText text={feature.text} />

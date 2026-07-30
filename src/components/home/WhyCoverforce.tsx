@@ -7,7 +7,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import Container from "../common/Container";
-import ArrowNavButton from "../common/ArrowNavButton";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -34,8 +33,8 @@ const whySlides: WhySlide[] = [
       "that keeps improving for Chase.",
     ],
     image:
-      "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1600&h=1200&q=80",
-    alt: "Abstract AI neural network visualization",
+      "https://images.unsplash.com/photo-1758843412266-e8661a80ada2?q=80&w=1228&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    alt: "Abstract blue and purple fluid gradient waves",
   },
   {
     id: "slide-2",
@@ -46,8 +45,8 @@ const whySlides: WhySlide[] = [
       "carrier relationships alone.",
     ],
     image:
-      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&h=1200&q=80",
-    alt: "Modern city skyline representing market scale",
+      "https://images.unsplash.com/photo-1778146006808-493fc1c2ea45?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    alt: "Abstract deep purple liquid waves",
   },
   {
     id: "slide-3",
@@ -58,8 +57,8 @@ const whySlides: WhySlide[] = [
       "and battle-tested.",
     ],
     image:
-      "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1600&h=1200&q=80",
-    alt: "Team collaborating on insurance technology strategy",
+      "https://images.unsplash.com/photo-1638272181967-7d3772a91265?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    alt: "Abstract cyan light geometric glow",
   },
   {
     id: "slide-4",
@@ -70,8 +69,8 @@ const whySlides: WhySlide[] = [
       "for FI-grade volume from day one.",
     ],
     image:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&h=1200&q=80",
-    alt: "Secure data center infrastructure",
+      "https://images.unsplash.com/photo-1777789062108-d88910b37faf?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    alt: "Abstract violet silk waves on black",
   },
   {
     id: "slide-5",
@@ -81,20 +80,23 @@ const whySlides: WhySlide[] = [
       "the world's most innovative and high-impact insurtech companies",
       "transforming insurance distribution.",
     ],
-    image: "/images/blog/blog3.png",
-    alt: "CoverForce Insurtech 50 2025 recognition",
+    image:
+      "https://images.unsplash.com/photo-1707324148764-99647364afa3?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    alt: "Abstract orange flowing ribbon waves",
     href: "/blog/coverforce-cb-insights-2025",
   },
 ];
 
 const SLIDE_TRANSITION_MS = 1080;
 
-/** Progressive flex weights: big → small → smaller → thin sliver. */
-const SLIDE_FLEX_BY_VISUAL_INDEX = [17, 4, 2, 1, 0.4] as const;
+/** Desktop shows 5 slots: 4 visible + always-zero right reserve for the next card. */
+const VISIBLE_SLIDE_COUNT = 5;
+const SLIDE_FLEX_BY_VISUAL_INDEX = [17, 4, 2, 1, 0] as const;
 
 /**
  * While a card expands: everything before it → 0, clicked card → active,
- * everything after → default sizes for positions 2…n.
+ * everything after → default sizes for the shifted positions.
+ * For next-step: [0, 17, 4, 2, 1] then commit remaps to [17, 4, 2, 1, 0].
  */
 function getExpandingFlex(visualIndex: number, expandingTarget: number) {
   if (visualIndex < expandingTarget) return 0;
@@ -125,9 +127,7 @@ function getSlideGapClass(
 ) {
   const flex = getSlideFlex(visualIndex, expandingTarget);
   const nextFlex =
-    visualIndex < total - 1
-      ? getSlideFlex(visualIndex + 1, expandingTarget)
-      : 0;
+    visualIndex < total - 1 ? getSlideFlex(visualIndex + 1, expandingTarget) : 0;
 
   if (flex === 0 || nextFlex === 0 || visualIndex === total - 1) {
     return "why-slide--no-gap";
@@ -162,72 +162,85 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
   const overlayRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(0);
+  const [rotation, setRotation] = useState(0);
   const [expandingTarget, setExpandingTarget] = useState<number | null>(null);
   const [suppressTransition, setSuppressTransition] = useState(false);
   const commitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingStepsRef = useRef(0);
+  const isExpandingRef = useRef(false);
+
+  // Monotonic rotation keys so wrap-around mounts the next card on the right
+  // (flex 0) instead of reusing the first card from the left.
   const orderedSlides = useMemo(
-    () => [...whySlides.slice(active), ...whySlides.slice(0, active)],
-    [active],
+    () =>
+      Array.from({ length: VISIBLE_SLIDE_COUNT }, (_, index) => {
+        const slide = whySlides[(rotation + index) % whySlides.length]!;
+        return {
+          slide,
+          key: `why-slot-${rotation + index}`,
+        };
+      }),
+    [rotation],
   );
+  const active = rotation % whySlides.length;
   const activeSlide =
     expandingTarget !== null
-      ? orderedSlides[expandingTarget]!
+      ? orderedSlides[expandingTarget]!.slide
       : whySlides[active]!;
   const isExpanding = expandingTarget !== null;
+  isExpandingRef.current = isExpanding;
 
   const clearCommitTimeout = useCallback(() => {
     if (commitTimeoutRef.current) clearTimeout(commitTimeoutRef.current);
     commitTimeoutRef.current = null;
   }, []);
 
-  const goTo = useCallback((index: number, options?: { animate?: boolean }) => {
+  const advanceOne = useCallback(() => {
+    if (isExpandingRef.current) return;
     clearCommitTimeout();
-    const animate = options?.animate ?? true;
-    if (!animate) setSuppressTransition(true);
-    setExpandingTarget(null);
-    setActive((current) => (current === index ? current : index));
+    setExpandingTarget(1);
+    commitTimeoutRef.current = setTimeout(() => {
+      // Commit without transition: leaving slide unmounts on the left,
+      // incoming slide mounts on the right as the always-zero reserve.
+      setSuppressTransition(true);
+      setExpandingTarget(null);
+      setRotation((current) => current + 1);
+    }, SLIDE_TRANSITION_MS);
   }, [clearCommitTimeout]);
 
-  const beginExpand = useCallback(
-    (visualIndex: number, targetIndex: number) => {
-      clearCommitTimeout();
-      setExpandingTarget(visualIndex);
-      commitTimeoutRef.current = setTimeout(() => {
-        goTo(targetIndex, { animate: false });
-      }, SLIDE_TRANSITION_MS);
-    },
-    [clearCommitTimeout, goTo],
-  );
-
   // Keep transitions off until the reorder DOM update is painted, then restore.
+  // Continue queued steps one-by-one for a continuous loop.
   useLayoutEffect(() => {
     if (!suppressTransition) return;
     void trackRef.current?.offsetWidth;
     requestAnimationFrame(() => {
       void trackRef.current?.offsetWidth;
-      requestAnimationFrame(() => setSuppressTransition(false));
+      requestAnimationFrame(() => {
+        setSuppressTransition(false);
+
+        if (pendingStepsRef.current > 0) {
+          pendingStepsRef.current -= 1;
+        }
+
+        if (pendingStepsRef.current > 0) {
+          window.setTimeout(() => {
+            advanceOne();
+          }, 48);
+        }
+      });
     });
-  }, [suppressTransition, active]);
-
-  const prev = useCallback(() => {
-    if (isExpanding) return;
-    goTo((active - 1 + whySlides.length) % whySlides.length);
-  }, [active, goTo, isExpanding]);
-
-  const next = useCallback(() => {
-    if (isExpanding) return;
-    beginExpand(1, (active + 1) % whySlides.length);
-  }, [active, beginExpand, isExpanding]);
+  }, [suppressTransition, rotation, advanceOne]);
 
   const handleSlideClick = useCallback(
-    (visualIndex: number, slideIndex: number) => {
+    (visualIndex: number) => {
       if (visualIndex === 0 || isExpanding) return;
       if (getSlideFlex(visualIndex, null) === 0) return;
 
-      beginExpand(visualIndex, slideIndex);
+      // Step forward one card at a time so wrapping stays continuous.
+      pendingStepsRef.current = visualIndex;
+      advanceOne();
     },
-    [beginExpand, isExpanding],
+    [advanceOne, isExpanding],
   );
 
   useEffect(
@@ -328,14 +341,24 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
           width: 100%;
           max-width: 100%;
           overflow: hidden;
-          height: 340px;
+          /* Fluid height: keeps proportion across screens without going tiny on desktop */
+          height: clamp(32rem, 68vh + 2vw, 44rem);
           contain: layout style;
         }
-        @media (min-width: 640px) {
-          .why-slider-track { height: 380px; }
+        @media (min-width: 1280px) {
+          .why-slider-track {
+            height: clamp(34rem, 70vh + 1.5vw, 46rem);
+          }
         }
-        @media (min-width: 1024px) {
-          .why-slider-track { height: 420px; }
+        @media (min-width: 1536px) {
+          .why-slider-track {
+            height: clamp(36rem, 68vh + 2vw, 48rem);
+          }
+        }
+        @media (max-height: 740px) and (min-width: 1024px) {
+          .why-slider-track {
+            height: clamp(24rem, 56vh, 32rem);
+          }
         }
 
         .why-slide {
@@ -382,13 +405,21 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
 
         .why-swiper-slide {
           position: relative;
-          height: 300px;
+          width: 100%;
           overflow: hidden;
           border-radius: 2px;
           background: #E3E3E3;
+          aspect-ratio: 4 / 5;
+          height: auto;
+          max-height: min(24rem, 62vh);
+          min-height: 13.75rem;
         }
         @media (min-width: 640px) {
-          .why-swiper-slide { height: 360px; }
+          .why-swiper-slide {
+            aspect-ratio: 5 / 6;
+            max-height: min(26rem, 58vh);
+            min-height: 16rem;
+          }
         }
       `}</style>
       <div ref={containerRef} className="relative z-10 overflow-hidden lg:will-change-transform">
@@ -433,7 +464,7 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                 spaceBetween={12}
                 slidesPerView={1.1}
                 speed={600}
-                onSlideChange={(swiper) => setActive(swiper.activeIndex)}
+                onSlideChange={(swiper) => setRotation(swiper.activeIndex)}
                 className="why-coverforce-swiper !overflow-visible"
               >
                 {whySlides.map((slide, slideIndex) => (
@@ -496,8 +527,7 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                   isExpanding ? " why-slider-track--animating" : ""
                 }${suppressTransition ? " why-slider-track--no-transition" : ""}`}
               >
-                {orderedSlides.map((slide, visualIndex) => {
-                  const slideIndex = whySlides.findIndex((item) => item.id === slide.id);
+                {orderedSlides.map(({ slide, key }, visualIndex) => {
                   const flexGrow = getSlideFlex(visualIndex, expandingTarget);
                   const isZero = flexGrow === 0;
                   const isActive = visualIndex === 0 && !isExpanding;
@@ -547,7 +577,7 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                   if (slide.href && (isActive || isExpanded)) {
                     return (
                       <Link
-                        key={slide.id}
+                        key={key}
                         href={slide.href}
                         className={slideClassName}
                         style={{ flex: `${flexGrow} 0 0` }}
@@ -561,10 +591,10 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                   return (
                   <button
                     type="button"
-                    key={slide.id}
+                    key={key}
                     className={slideClassName}
                     style={{ flex: `${flexGrow} 0 0` }}
-                    onClick={() => handleSlideClick(visualIndex, slideIndex)}
+                    onClick={() => handleSlideClick(visualIndex)}
                     aria-pressed={isExpanded || isActive}
                     aria-hidden={isZero}
                     tabIndex={isClickable ? 0 : -1}

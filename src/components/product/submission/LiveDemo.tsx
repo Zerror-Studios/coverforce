@@ -22,8 +22,8 @@ const LiveDemo = () => {
 
     return (
         <section ref={sectionRef} className="bg-[#151f4d] text-white">
-            <Container borderColor="#FFFFFF33" borderBottom={true}>
-                <div className="relative py-16 md:py-20 lg:py-24">
+            <Container borderColor="#FFFFFF33">
+                <div className="relative border-b border-[#FFFFFF33] py-16 md:py-20 lg:py-24">
                     <div className="relative z-10 flex flex-col gap-12 md:gap-14 lg:gap-16">
                         <div
                             ref={headerRef}

@@ -159,7 +159,15 @@ const THREE_WAYS_WHEEL_THEMES: SolutionTheme[] = [
   "carrier",
 ];
 
-export { THREE_WAYS_WHEEL_THEMES };
+/** Integration page wheel - 4 Category dropdown colors only. */
+const INTEGRATION_WHEEL_THEMES: SolutionTheme[] = [
+  "carrier",
+  "broker",
+  "developer",
+  "startup",
+];
+
+export { THREE_WAYS_WHEEL_THEMES, INTEGRATION_WHEEL_THEMES };
 
 export function getSolutionGradientStops(
   theme: SolutionTheme,

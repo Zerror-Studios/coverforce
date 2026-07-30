@@ -16,8 +16,6 @@ const WORKFLOW_STEPS = [
     id: "multi-carrier",
     label: "Enterprise Multi-Carrier Submission",
     image: "/images/product/quote1.svg",
-    width: 444,
-    height: 469,
     headline: (
       <>
         One application reaches{" "}
@@ -30,8 +28,6 @@ const WORKFLOW_STEPS = [
     id: "quote-comparison",
     label: "Bindable Quote Comparison",
     image: "/images/product/quote2.svg",
-    width: 442,
-    height: 432,
     headline: (
       <>
         Compare bindable quotes side by side with{" "}
@@ -44,8 +40,6 @@ const WORKFLOW_STEPS = [
     id: "bind-payment",
     label: "One-Click Bind & Payment",
     image: "/images/product/quote3.svg",
-    width: 444,
-    height: 469,
     headline: (
       <>
         Bind policies and collect payment in{" "}
@@ -58,8 +52,6 @@ const WORKFLOW_STEPS = [
     id: "compliance",
     label: "E&S Compliance Built In",
     image: "/images/product/quote4.svg",
-    width: 467,
-    height: 432,
     headline: (
       <>
         E&S compliance checks are built into every submission{" "}
@@ -71,8 +63,6 @@ const WORKFLOW_STEPS = [
     id: "ams-sync",
     label: "AMS Sync & Renewals",
     image: "/images/product/quote5.svg",
-    width: 444,
-    height: 469,
     headline: (
       <>
         Sync policies to your AMS and automate renewals{" "}
@@ -136,16 +126,17 @@ function WorkflowStepPanel({
 
       <div
         ref={imageRef}
-        className="relative mx-auto w-full max-w-[350px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[800px]"
+        className="relative mx-auto w-full max-w-[350px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[720px]"
       >
-        <Image
-          src={step.image}
-          alt={`${step.label} preview`}
-          width={step.width}
-          height={step.height}
-          className="h-auto w-full"
-          sizes="(max-width: 768px) 280px, 400px"
-        />
+        <div className="relative aspect-[3/2] w-full">
+          <Image
+            src={step.image}
+            alt={`${step.label} preview`}
+            fill
+            className="object-contain object-center"
+            sizes="(max-width: 640px) 350px, (max-width: 768px) 400px, (max-width: 1024px) 600px, 720px"
+          />
+        </div>
       </div>
     </article>
   );
@@ -199,10 +190,9 @@ const QuoteWorkFlow = () => {
       images.forEach((image) => {
         gsap.fromTo(
           image,
-          { y: 56, opacity: 0 },
+          { y: 56 },
           {
             y: 0,
-            opacity: 1,
             ease: "none",
             scrollTrigger: {
               trigger: image,
@@ -388,8 +378,8 @@ const QuoteWorkFlow = () => {
 
             {/* Desktop: sticky nav + scroll panels */}
             <div className="hidden gap-12 lg:grid lg:grid-cols-[minmax(16rem,22rem)_minmax(0,1fr)] lg:gap-16 xl:gap-20">
-              <aside className="lg:-ml-10 lg:sticky lg:top-28 lg:self-start">
-                <nav className="flex flex-col gap-0 lg:pl-0">
+              <aside className="lg:sticky lg:top-28 lg:self-start">
+                <nav className="flex flex-col gap-0">
                   {WORKFLOW_STEPS.map((step, index) => (
                     <NavItem
                       key={step.id}

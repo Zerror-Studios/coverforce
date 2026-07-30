@@ -8,6 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   CARD_ACCENT_COLORS,
   getSolutionGradientStops,
+  INTEGRATION_WHEEL_THEMES,
   THREE_WAYS_WHEEL_THEMES,
 } from "@/data/wayCardStyles";
 
@@ -39,14 +40,22 @@ const RAMP_COLOR: Record<Ramp, string> = {
   carrier: CARD_ACCENT_COLORS.carrier,
 };
 
-const WHEEL_SEGMENT_DEG = 360 / THREE_WAYS_WHEEL_THEMES.length;
 const WHEEL_START_DEG = -90;
 const WHEEL_WEDGE_PADDING_DEG = 14;
 
-function wedgeAnglesForCount(wedgeIndex: number, count: number) {
-  const start = WHEEL_START_DEG + wedgeIndex * WHEEL_SEGMENT_DEG + WHEEL_WEDGE_PADDING_DEG;
+function getWheelThemes(showBackground: boolean) {
+  // Integration wheel: blue wholesaler sits next to carrier as Carriers & MGAs.
+  return showBackground ? INTEGRATION_WHEEL_THEMES : THREE_WAYS_WHEEL_THEMES;
+}
+
+function wedgeAnglesForCount(
+  wedgeIndex: number,
+  count: number,
+  segmentDeg: number,
+) {
+  const start = WHEEL_START_DEG + wedgeIndex * segmentDeg + WHEEL_WEDGE_PADDING_DEG;
   const end =
-    WHEEL_START_DEG + (wedgeIndex + 1) * WHEEL_SEGMENT_DEG - WHEEL_WEDGE_PADDING_DEG;
+    WHEEL_START_DEG + (wedgeIndex + 1) * segmentDeg - WHEEL_WEDGE_PADDING_DEG;
 
   if (count <= 0) return [];
   if (count === 1) return [(start + end) / 2];
@@ -62,19 +71,30 @@ function getNodeAngleByIndex(showBackground: boolean) {
     return NODES.map((_, index) => -78 + index * 24);
   }
 
+  const themes = getWheelThemes(true);
+  const segmentDeg = 360 / themes.length;
   const angles = new Array<number>(NODES.length);
+  const perWedge = Math.floor(NODES.length / themes.length);
 
-  THREE_WAYS_WHEEL_THEMES.forEach((theme, wedgeIndex) => {
-    const nodeIndices: number[] = [];
-    NODES.forEach((node, index) => {
-      if (node.ramp === theme) nodeIndices.push(index);
-    });
+  let cursor = 0;
+  themes.forEach((theme, wedgeIndex) => {
+    const nodeIndices = Array.from({ length: perWedge }, (_, i) => cursor + i);
+    cursor += perWedge;
 
-    const wedgeAngles = wedgeAnglesForCount(wedgeIndex, nodeIndices.length);
+    const wedgeAngles = wedgeAnglesForCount(
+      wedgeIndex,
+      nodeIndices.length,
+      segmentDeg,
+    );
     nodeIndices.forEach((nodeIndex, index) => {
       angles[nodeIndex] = wedgeAngles[index]!;
     });
   });
+
+  // Drop leftovers so each of the 4 cones stays equal.
+  for (let i = cursor; i < NODES.length; i += 1) {
+    angles[i] = Number.NaN;
+  }
 
   return angles;
 }
@@ -95,7 +115,10 @@ function wheelWedgeArcPath(startDeg: number, endDeg: number, radius = 50, cx = 5
   return `M ${cx} ${cy} L ${p1.x} ${p1.y} A ${radius} ${radius} 0 ${largeArc} 1 ${p2.x} ${p2.y} Z`;
 }
 
-function WheelWedgeBackgrounds() {
+function WheelWedgeBackgrounds({ showBackground }: { showBackground: boolean }) {
+  const themes = getWheelThemes(showBackground);
+  const segmentDeg = 360 / themes.length;
+
   return (
     <svg
       className="absolute inset-0 h-full w-full"
@@ -107,7 +130,7 @@ function WheelWedgeBackgrounds() {
         <clipPath id="tool-wheel-circle-clip">
           <circle cx="50" cy="50" r="50" />
         </clipPath>
-        {THREE_WAYS_WHEEL_THEMES.map((theme) => (
+        {themes.map((theme) => (
           <linearGradient
             key={theme}
             id={`tool-wheel-wedge-${theme}`}
@@ -128,9 +151,9 @@ function WheelWedgeBackgrounds() {
         ))}
       </defs>
       <g clipPath="url(#tool-wheel-circle-clip)">
-        {THREE_WAYS_WHEEL_THEMES.map((theme, index) => {
-          const startDeg = WHEEL_START_DEG + index * WHEEL_SEGMENT_DEG;
-          const endDeg = startDeg + WHEEL_SEGMENT_DEG;
+        {themes.map((theme, index) => {
+          const startDeg = WHEEL_START_DEG + index * segmentDeg;
+          const endDeg = startDeg + segmentDeg;
 
           return (
             <path
@@ -243,11 +266,6 @@ const CY = 50;
 const R_LINE_START = 7; // meets outer edge of center hub (w-[14%] → r = 7)
 const R_LINE_END = 38;
 const R_ITEM = 38;
-const R_LABEL = 33;
-
-function iconNameAbove(pos: { y: number }) {
-  return pos.y < CY;
-}
 
 function nodePolar(angleDeg: number, radius: number, useWheelAngles: boolean) {
   if (useWheelAngles) {
@@ -309,25 +327,44 @@ export default function ToolWheel({
 
   const items = useMemo(() => {
     const angles = getNodeAngleByIndex(showBackground);
+    const themes = getWheelThemes(showBackground);
+    const perWedge = showBackground
+      ? Math.floor(NODES.length / themes.length)
+      : NODES.length;
 
     return NODES.map((node, i) => {
       const angle = angles[i]!;
+      if (!Number.isFinite(angle)) return null;
+
       const start = nodePolar(angle, R_LINE_START, showBackground);
       const end = nodePolar(angle, R_LINE_END, showBackground);
       const pos = nodePolar(angle, R_ITEM, showBackground);
-      const label = nodePolar(angle, R_LABEL, showBackground);
+      const ramp = showBackground
+        ? themes[Math.min(Math.floor(i / perWedge), themes.length - 1)]!
+        : node.ramp;
 
       return {
         ...node,
+        ramp,
         angle,
         start,
         end,
         pos,
-        label,
-        color: RAMP_COLOR[node.ramp],
+        color: RAMP_COLOR[ramp],
         isBelow: pos.y > CY,
       };
-    });
+    }).filter(Boolean) as Array<{
+      name: string;
+      category: string;
+      iconSrc: string;
+      ramp: Ramp;
+      angle: number;
+      start: { x: number; y: number };
+      end: { x: number; y: number };
+      pos: { x: number; y: number };
+      color: string;
+      isBelow: boolean;
+    }>;
   }, [showBackground]);
 
   useEffect(() => {
@@ -410,10 +447,7 @@ export default function ToolWheel({
   );
 
   // Canvas-driven signal flow: gradient-trailed particles travel each spoke
-  // toward the hub, with a soft pulse ring firing on arrival. Same technique
-  // as the reference band (rAF loop, resize + intersection handling, reduced
-  // motion support) but drawn onto the existing radial layout instead of a
-  // top/bottom band, and colored per tool "ramp" instead of in/outbound.
+  // both ways (icon → hub and hub → icon), with a soft pulse on hub arrival.
   useEffect(() => {
     const containerEl = containerRef.current;
     const canvasEl = canvasRef.current;
@@ -430,7 +464,13 @@ export default function ToolWheel({
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
-    type Particle = { itemIndex: number; t: number; v: number };
+    type Particle = {
+      itemIndex: number;
+      t: number;
+      v: number;
+      /** true = icon → hub, false = hub → icon */
+      toHub: boolean;
+    };
     type Pulse = { r: number; a: number; color: string };
 
     let W = 0;
@@ -443,11 +483,21 @@ export default function ToolWheel({
     let pulses: Pulse[] = [];
 
     function initParticles() {
-      particles = items.map((_, i) => ({
-        itemIndex: i,
-        t: (i * 0.137) % 1,
-        v: 0.14 + (i % 3) * 0.035,
-      }));
+      // Two signals per spoke so flow is bidirectional.
+      particles = items.flatMap((_, i) => [
+        {
+          itemIndex: i,
+          t: (i * 0.137) % 1,
+          v: 0.14 + (i % 3) * 0.035,
+          toHub: true,
+        },
+        {
+          itemIndex: i,
+          t: (i * 0.137 + 0.5) % 1,
+          v: 0.13 + ((i + 1) % 3) * 0.035,
+          toHub: false,
+        },
+      ]);
     }
 
     function toPx(pctX: number, pctY: number) {
@@ -504,7 +554,7 @@ export default function ToolWheel({
       });
       context.setLineDash([]);
 
-      // flowing signals - lower icons: hub → node; upper icons: node → hub
+      // flowing signals - every spoke runs both directions
       if (!reduceMotion && signalsEnabledRef.current) {
         particles.forEach((p) => {
           const item = items[p.itemIndex];
@@ -514,16 +564,14 @@ export default function ToolWheel({
           p.t += p.v * dt;
           const hubPt = toPx(item.start.x, item.start.y);
           const nodePt = toPx(item.end.x, item.end.y);
-          const from = item.isBelow ? hubPt : nodePt;
-          const to = item.isBelow ? nodePt : hubPt;
-
-          const toHub = !item.isBelow;
-          const dotColor = signalDotColor(showBackground, item.color, toHub);
+          const from = p.toHub ? nodePt : hubPt;
+          const to = p.toHub ? hubPt : nodePt;
+          const dotColor = signalDotColor(showBackground, item.color, p.toHub);
 
           if (p.t >= 1) {
             p.t %= 1;
-            p.v = 0.14 + Math.random() * 0.08;
-            if (!item.isBelow) {
+            p.v = 0.13 + Math.random() * 0.09;
+            if (p.toHub) {
               pulses.push({ r: 0, a: 0.55, color: dotColor });
             }
           }
@@ -605,7 +653,7 @@ export default function ToolWheel({
     >
       {showBackground ? (
         <div className="absolute inset-0 overflow-hidden rounded-full" aria-hidden>
-          <WheelWedgeBackgrounds />
+          <WheelWedgeBackgrounds showBackground />
         </div>
       ) : null}
 
@@ -635,10 +683,7 @@ export default function ToolWheel({
 
       {/* Tool nodes - square rounded-md badges with brand icons */}
       <div className="absolute inset-0">
-        {items.map((item, i) => {
-          const nameAbove = iconNameAbove(item.pos);
-
-          return (
+        {items.map((item, i) => (
           <div
             key={i}
             data-tool-wheel-node={i}
@@ -656,16 +701,8 @@ export default function ToolWheel({
                 className="size-full object-contain"
               />
             </div>
-            <span
-              className={`pointer-events-none absolute left-1/2 max-w-none -translate-x-1/2 whitespace-nowrap text-center text-[10px] font-medium leading-tight text-white ${
-                nameAbove ? "bottom-full mb-1.5" : "top-full mt-1.5"
-              }`}
-            >
-              {item.name}
-            </span>
           </div>
-          );
-        })}
+        ))}
       </div>
     </div>
   );

@@ -16,8 +16,6 @@ const WORKFLOW_STEPS = [
     id: "submission-intelligence",
     label: "Submission Intelligence",
     image: "/images/product/intelligence1.svg",
-    width: 467,
-    height: 410,
     headline: (
       <>
         Every field extracted from ACORDs and loss runs with{" "}
@@ -30,8 +28,6 @@ const WORKFLOW_STEPS = [
     id: "appetite-intelligence",
     label: "Appetite Intelligence",
     image: "/images/product/intelligence2.svg",
-    width: 446,
-    height: 418,
     headline: (
       <>
         Match risk to carrier appetite instantly with{" "}
@@ -44,8 +40,6 @@ const WORKFLOW_STEPS = [
     id: "underwriter-intelligence",
     label: "Underwriter Intelligence",
     image: "/images/product/intelligence3.svg",
-    width: 467,
-    height: 410,
     headline: (
       <>
         Rich underwriting questions and answers{" "}
@@ -57,8 +51,6 @@ const WORKFLOW_STEPS = [
     id: "carrier-performance",
     label: "Outcome Analytics",
     image: "/images/product/intelligence4.svg",
-    width: 442,
-    height: 428,
     headline: (
       <>
         Named outcome analytics that power{" "}
@@ -70,8 +62,6 @@ const WORKFLOW_STEPS = [
     id: "opportunity-visibility",
     label: "Opportunity Visibility",
     image: "/images/product/intelligence5.svg",
-    width: 479,
-    height: 421,
     headline: (
       <>
         Find new opportunities for expansion -{" "}
@@ -86,8 +76,6 @@ const WORKFLOW_STEPS = [
     id: "pipeline-visibility",
     label: "Pipeline Visibility",
     image: "/images/product/intelligence6.svg",
-    width: 479,
-    height: 421,
     headline: (
       <>
         Track every submission across producers with{" "}
@@ -153,16 +141,17 @@ function WorkflowStepPanel({
 
       <div
         ref={imageRef}
-        className="relative mx-auto w-full max-w-[350px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[800px]"
+        className="relative mx-auto w-full max-w-[350px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[720px]"
       >
-        <Image
-          src={step.image}
-          alt={`${step.label} preview`}
-          width={step.width}
-          height={step.height}
-          className="h-auto w-full"
-          sizes="(max-width: 768px) 280px, 400px"
-        />
+        <div className="relative aspect-[3/2] w-full">
+          <Image
+            src={step.image}
+            alt={`${step.label} preview`}
+            fill
+            className="object-contain object-center"
+            sizes="(max-width: 640px) 350px, (max-width: 768px) 400px, (max-width: 1024px) 600px, 720px"
+          />
+        </div>
       </div>
     </article>
   );
@@ -216,10 +205,9 @@ const IntelligenceWorkFlow = () => {
       images.forEach((image) => {
         gsap.fromTo(
           image,
-          { y: 56, opacity: 0 },
+          { y: 56 },
           {
             y: 0,
-            opacity: 1,
             ease: "none",
             scrollTrigger: {
               trigger: image,

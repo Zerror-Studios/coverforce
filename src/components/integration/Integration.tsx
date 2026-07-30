@@ -11,6 +11,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
+import Button from "@/components/common/Button";
 import ButtonArrowIcon from "@/components/common/ButtonArrowIcon";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -340,9 +341,30 @@ const StatusBadge = ({ status }: { status: Carrier["status"] }) => {
   );
 };
 
-const CarrierCard = ({ carrier }: { carrier: Carrier }) => {
+function getCategoryCardDescription(category: CategoryId, carrier: Carrier) {
+  switch (category) {
+    case "ams":
+      return `${carrier.name} supports agency management workflows for submissions, quoting, and downstream operational sync.`;
+    case "finance":
+      return `${carrier.name} fits into finance and compliance workflows for billing, premium finance, and filing operations.`;
+    case "ai":
+      return `${carrier.name} plugs into market access workflows to speed appetite checks, routing, and partner distribution.`;
+    default:
+      return "";
+  }
+}
+
+const CarrierCard = ({
+  carrier,
+  activeTab,
+}: {
+  carrier: Carrier;
+  activeTab: CategoryId;
+}) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
+  const showCarrierCapsule = activeTab === "carriers";
+  const cardDescription = getCategoryCardDescription(activeTab, carrier);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     const card = cardRef.current;
@@ -381,7 +403,7 @@ const CarrierCard = ({ carrier }: { carrier: Carrier }) => {
       <div className="relative z-10 flex h-full flex-col rounded-[19px] bg-white p-4 transition-shadow duration-500 group-hover:shadow-[0_18px_40px_-28px_rgba(10,20,59,0.45)] md:p-6">
         <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-center">
-            <span className="flex h-10 w-full max-w-[11rem] items-center justify-start transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.02] sm:h-11 sm:max-w-[12rem]">
+            <span className="flex h-10 w-full max-w-44 items-center justify-start transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.02] sm:h-11 sm:max-w-48">
               <Image
                 src={carrier.logoSrc ?? LOGO_MAP[carrier.name] ?? "/images/integration/amtrust.svg"}
                 alt={carrier.name}
@@ -396,53 +418,61 @@ const CarrierCard = ({ carrier }: { carrier: Carrier }) => {
           </div>
         </div>
 
-        <div className="mt-5 flex flex-wrap gap-2 md:mt-6">
-          {carrier.products.map((product, idx) => {
-            const requestable = product.availability === "request";
-            const isExcessSurplus = product.market === "ES";
-            return (
-              <span
-                key={`${product.name}-${idx}`}
-                title={
-                  requestable
-                    ? "Available to request - not yet live on CoverForce"
-                    : "Live on CoverForce"
-                }
-                className={`inline-flex w-fit max-w-full items-center gap-1.5 rounded-full py-1 pl-2.5 pr-4 text-xs font-sans font-medium tracking-wide transition-colors duration-300 ${
-                  isExcessSurplus
-                    ? requestable
-                      ? "border border-dashed border-[#C9B7F6] bg-[#F7F1FF] text-[#6F3CC3] group-hover:bg-[#EFE4FF]"
-                      : "bg-[#F7F1FF] text-[#6F3CC3] group-hover:bg-[#EFE4FF]"
-                    : requestable
-                      ? "border border-dashed border-[#B8D4F2] bg-[#F2F8FC] text-[#185FA5]/95 group-hover:bg-[#E8F2FA]"
-                      : "bg-[#F2F8FC] text-[#185FA5]/95 group-hover:bg-[#E8F2FA]"
-                }`}
-              >
+        {!showCarrierCapsule ? (
+          <p className="mt-4 line-clamp-2 min-h-11 max-w-88 font-sans text-sm leading-[1.4] text-[#50617a]">
+            {cardDescription}
+          </p>
+        ) : null}
+
+        {showCarrierCapsule ? (
+          <div className="mt-5 flex flex-wrap gap-2 md:mt-6">
+            {carrier.products.map((product, idx) => {
+              const requestable = product.availability === "request";
+              const isExcessSurplus = product.market === "ES";
+              return (
                 <span
-                  className={`size-1.5 shrink-0 rounded-full ${
+                  key={`${product.name}-${idx}`}
+                  title={
                     requestable
-                      ? isExcessSurplus
-                        ? "bg-transparent ring-1 ring-[#8B5CF6]"
-                        : "bg-transparent ring-1 ring-[#185FA5]"
-                      : isExcessSurplus
-                        ? "bg-[#8B5CF6]"
-                        : "bg-[#4F8A2E]"
+                      ? "Available to request - not yet live on CoverForce"
+                      : "Live on CoverForce"
+                  }
+                  className={`inline-flex w-fit max-w-full items-center gap-1.5 rounded-full py-1 pl-2.5 pr-4 text-xs font-sans font-medium tracking-wide transition-colors duration-300 ${
+                    isExcessSurplus
+                      ? requestable
+                        ? "border border-dashed border-[#C9B7F6] bg-[#F7F1FF] text-[#6F3CC3] group-hover:bg-[#EFE4FF]"
+                        : "bg-[#F7F1FF] text-[#6F3CC3] group-hover:bg-[#EFE4FF]"
+                      : requestable
+                        ? "border border-dashed border-[#B8D4F2] bg-[#F2F8FC] text-[#185FA5]/95 group-hover:bg-[#E8F2FA]"
+                        : "bg-[#F2F8FC] text-[#185FA5]/95 group-hover:bg-[#E8F2FA]"
                   }`}
-                  aria-hidden
-                />
-                <span className="truncate">
-                  {product.market} | {product.name}
+                >
+                  <span
+                    className={`size-1.5 shrink-0 rounded-full ${
+                      requestable
+                        ? isExcessSurplus
+                          ? "bg-transparent ring-1 ring-[#8B5CF6]"
+                          : "bg-transparent ring-1 ring-[#185FA5]"
+                        : isExcessSurplus
+                          ? "bg-[#8B5CF6]"
+                          : "bg-[#4F8A2E]"
+                    }`}
+                    aria-hidden
+                  />
+                  <span className="truncate">
+                    {product.market} | {product.name}
+                  </span>
                 </span>
-              </span>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        ) : null}
 
         <Link
           href={carrier.website ?? "/contact"}
           target={carrier.website ? "_blank" : undefined}
           rel={carrier.website ? "noreferrer" : undefined}
-          className="mt-auto flex items-center gap-2 pt-5 text-sm font-heading font-medium text-[#2D3E9D] transition-colors hover:text-[#151F4D] md:pt-6"
+          className="mt-auto ml-auto flex items-center gap-2 pt-5 text-right text-sm font-heading font-medium text-[#2D3E9D] transition-colors hover:text-[#151F4D] md:pt-6"
         >
           Know more
           <ButtonArrowIcon className="h-2 w-3 shrink-0 text-current" />
@@ -567,10 +597,12 @@ function FormSelect({
 }
 
 const Integration = () => {
+  const PAGE_SIZE = 12;
   const [activeTab, setActiveTab] = useState<CategoryId>("carriers");
   const [lob, setLob] = useState<string>("All");
   const [status, setStatus] = useState<string>("All");
   const [market, setMarket] = useState<string>("All");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const filtered = useMemo(() => {
     return DIRECTORY.reduce<Carrier[]>((acc, entry) => {
@@ -590,6 +622,8 @@ const Integration = () => {
   }, [lob, status, market]);
 
   const resultLabel = "integrations shown";
+  const visibleCards = filtered.slice(0, visibleCount);
+  const hasMoreCards = visibleCount < filtered.length;
 
   const gridRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
@@ -598,6 +632,10 @@ const Integration = () => {
   const descRef = useRef<HTMLParagraphElement>(null);
 
   useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef, descRef });
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [activeTab, lob, status, market]);
 
   useGSAP(
     () => {
@@ -701,14 +739,30 @@ const Integration = () => {
             </div>
 
             {filtered.length > 0 ? (
-              <div
-                ref={gridRef}
-                className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:mt-8 lg:grid-cols-3"
-              >
-                {filtered.map((carrier, idx) => (
-                  <CarrierCard key={carrier.logoSrc ?? `${carrier.name}-${idx}`} carrier={carrier} />
-                ))}
-              </div>
+              <>
+                <div
+                  ref={gridRef}
+                  className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:mt-8 lg:grid-cols-3"
+                >
+                  {visibleCards.map((carrier, idx) => (
+                    <CarrierCard
+                      key={carrier.logoSrc ?? `${carrier.name}-${idx}`}
+                      carrier={carrier}
+                      activeTab={activeTab}
+                    />
+                  ))}
+                </div>
+                {hasMoreCards ? (
+                  <div className="mt-6 flex justify-start lg:mt-8">
+                    <Button
+                      onClick={() => setVisibleCount((current) => current + PAGE_SIZE)}
+                      className="hover:scale-[1.02]"
+                    >
+                      Show more
+                    </Button>
+                  </div>
+                ) : null}
+              </>
             ) : (
               <div className="mt-8 flex flex-col items-center justify-center rounded-3xl border border-dashed border-[#53535380]/60 bg-[#FBFCFF] px-6 py-20 text-center">
                 <span className="flex size-14 items-center justify-center rounded-full bg-[#EEF0F9] text-[#2D3E9D]">

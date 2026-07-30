@@ -139,7 +139,7 @@ function DemoStepPanel({
 
       <div
         ref={imageRef}
-        className="relative w-full overflow-hidden rounded-xl border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.28)]"
+        className="relative mx-auto w-full max-w-[350px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[720px]"
       >
         <Image
           src={step.image}
@@ -147,7 +147,7 @@ function DemoStepPanel({
           width={740}
           height={320}
           className="h-auto w-full"
-          sizes="(max-width: 1280px) 100vw, 740px"
+          sizes="(max-width: 640px) 350px, (max-width: 768px) 400px, (max-width: 1024px) 600px, 720px"
         />
       </div>
     </article>
@@ -187,10 +187,9 @@ const DemoSteps = () => {
       images.forEach((image) => {
         gsap.fromTo(
           image,
-          { y: 40, opacity: 0 },
+          { y: 40 },
           {
             y: 0,
-            opacity: 1,
             ease: "none",
             scrollTrigger: {
               trigger: image,
@@ -294,8 +293,8 @@ const DemoSteps = () => {
 
           {/* Desktop: sticky nav + scroll panels */}
           <div className="hidden gap-12 lg:grid lg:grid-cols-[minmax(11rem,16rem)_minmax(0,1fr)] lg:gap-16 xl:gap-20">
-            <aside className="lg:-ml-10 lg:sticky lg:top-28 lg:self-start">
-              <nav className="flex flex-col gap-0 lg:pl-0">
+            <aside className="lg:sticky lg:top-28 lg:self-start">
+              <nav className="flex flex-col gap-0">
                 {DEMO_STEPS.map((step, index) => (
                   <NavItem
                     key={step.id}

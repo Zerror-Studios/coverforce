@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
-import { withAlpha } from "@/data/wayCardStyles";
+import { PRIMARY_BUTTON_GRADIENT, withAlpha } from "@/data/wayCardStyles";
 
 /** Brand navy - default accent for light pills (text, border, tinted bg). */
 const DEFAULT_ACCENT = "#151f4d";
 
 type EyebrowPillProps = {
   children: ReactNode;
-  /** Surface the pill sits on. "dark" = light pill on dark bg, "light" = navy-outlined pill on light bg. */
+  /** Surface the pill sits on. "dark" = light pill on dark bg, "light" = primary gradient on light bg. */
   surface?: "dark" | "light";
   className?: string;
   /** Override the default dot color (e.g. card gradient accent). */
@@ -38,11 +38,21 @@ export default function EyebrowPill({
   accent,
   shadow = "default",
 }: EyebrowPillProps) {
-  const useGradient = Boolean(background);
+  // Light-bg gray pills use the same primary CTA gradient as ProcessFlow.
+  const resolvedBackground =
+    background ??
+    (surface === "light" && !accent ? PRIMARY_BUTTON_GRADIENT : undefined);
+  const useGradient = Boolean(resolvedBackground);
   const resolvedAccent = accent ?? DEFAULT_ACCENT;
   const useAccent = !useGradient && surface === "light";
   const resolvedShadow =
-    shadow === "white" ? WHITE_SHADOW : useAccent ? LIGHT_SHADOW : DARK_SHADOW;
+    shadow === "white"
+      ? WHITE_SHADOW
+      : useGradient
+        ? DARK_SHADOW
+        : useAccent
+          ? LIGHT_SHADOW
+          : DARK_SHADOW;
 
   const baseClass =
     "mb-5 flex w-fit items-center justify-center gap-2.5 rounded-full px-3 py-1 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] md:text-[0.65rem]";
@@ -51,7 +61,7 @@ export default function EyebrowPill({
   let textClass = "";
 
   if (useGradient) {
-    wrapperStyle = { background, boxShadow: resolvedShadow };
+    wrapperStyle = { background: resolvedBackground, boxShadow: resolvedShadow };
     textClass = "text-white";
   } else if (useAccent) {
     // Soft tinted fill + blue inset highlight so the glass edge reads on gray

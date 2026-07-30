@@ -8,13 +8,19 @@ import Container from "@/components/common/Container";
 import ToolWheel from "@/components/home/ToolWheel";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
-import { CARD_BACKGROUND_STYLES, CARD_VERTICAL_BACKGROUND_STYLES } from "@/data/wayCardStyles";
+import {
+  CARD_VERTICAL_BACKGROUND_STYLES,
+} from "@/data/wayCardStyles";
 import {
   IntegrationAutomationBg,
   IntegrationCodeTypingBg,
 } from "@/components/integration/IntegrationStatCardBackgrounds";
 
 gsap.registerPlugin(ScrollTrigger);
+
+/** Stronger blue wash for integration stat cards - less pale/white at the end. */
+const INTEGRATION_STAT_CARD_BG =
+  "linear-gradient(45deg, #0038E0 0%, #0045FF 22%, #008EFF 55%, #008EFF 78%, #4AAFFF 100%)";
 
 const CardSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -63,17 +69,28 @@ const CardSection = () => {
             </h2>
           </div>
 
-          <div className="mx-auto mt-10 w-full max-w-[min(100%,720px)] md:mt-14">
+          <div className="mx-auto mt-10 w-full max-w-150 md:mt-14 lg:max-w-145">
             <ToolWheel className="h-full w-full max-w-none" showBackground />
           </div>
 
           <div className="mx-auto mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-[#4F4F4F]">
             {[
-              { label: "Wholesalers", background: CARD_VERTICAL_BACKGROUND_STYLES.wholesaler },
-              { label: "Brokers", background: CARD_VERTICAL_BACKGROUND_STYLES.broker },
-              { label: "Developers", background: CARD_VERTICAL_BACKGROUND_STYLES.developer },
-              { label: "Startups", background: CARD_VERTICAL_BACKGROUND_STYLES.startup },
-              { label: "Carriers", background: CARD_VERTICAL_BACKGROUND_STYLES.carrier },
+              {
+                label: "Carriers & MGAs",
+                background: CARD_VERTICAL_BACKGROUND_STYLES.carrier,
+              },
+              {
+                label: "Agency Management",
+                background: CARD_VERTICAL_BACKGROUND_STYLES.broker,
+              },
+              {
+                label: "Finance & Compliance",
+                background: CARD_VERTICAL_BACKGROUND_STYLES.developer,
+              },
+              {
+                label: "Market Access",
+                background: CARD_VERTICAL_BACKGROUND_STYLES.startup,
+              },
             ].map((item) => (
               <span key={item.label} className="flex items-center gap-1.5">
                 <span
@@ -91,8 +108,8 @@ const CardSection = () => {
           >
             <div
               data-stat-card
-              className="relative flex flex-col overflow-hidden rounded-md p-5 text-white transform-3d will-change-transform lg:p-8"
-              style={{ background: CARD_BACKGROUND_STYLES.wholesaler }}
+              className="relative flex min-h-72 flex-col overflow-hidden rounded-md p-5 text-white transform-3d will-change-transform md:min-h-80 lg:min-h-88 lg:p-8"
+              style={{ background: INTEGRATION_STAT_CARD_BG }}
             >
               <IntegrationCodeTypingBg />
               <div className="relative z-10 flex h-full flex-1 flex-col">
@@ -115,14 +132,14 @@ const CardSection = () => {
 
             <div
               data-stat-card
-              className="relative flex flex-col overflow-hidden rounded-md p-5 text-white transform-3d will-change-transform lg:p-8"
-              style={{ background: CARD_BACKGROUND_STYLES.wholesaler }}
+              className="relative flex min-h-72 flex-col overflow-hidden rounded-md p-5 text-white transform-3d will-change-transform md:min-h-80 lg:min-h-88 lg:p-8"
+              style={{ background: INTEGRATION_STAT_CARD_BG }}
             >
               <IntegrationAutomationBg />
               <div className="relative z-10 flex h-full flex-1 flex-col">
               <EyebrowPill surface="dark">AI Agents</EyebrowPill>
               <span className="mt-4 font-heading text-4xl font-regular leading-none tracking-tight text-white lg:text-6xl">
-                AI
+                AI Agent
               </span>
               <div className="mt-auto pt-6">
                 <p className="font-heading text-base font-medium leading-snug text-white lg:text-xl">

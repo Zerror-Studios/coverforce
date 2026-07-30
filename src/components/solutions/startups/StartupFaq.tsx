@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, type ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { RiAddLine, RiSubtractLine } from "@remixicon/react";
 import Container from "@/components/common/Container";
@@ -137,32 +138,48 @@ export default function StartupFaq() {
     <section ref={sectionRef} className="bg-white text-[#0a143b]">
       <Container borderColor="#53535380">
         <div className="py-16 md:py-20 lg:py-24">
-          <div
-            ref={headerRef}
-            className="flex max-w-3xl flex-col items-start text-left"
-          >
-            <EyebrowPill surface="light" className="mb-0">
-              FAQ
-            </EyebrowPill>
-            <h2
-              ref={headingRef}
-              className="mt-5 max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#0a143b] sm:text-3xl md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
-            >
-              <span data-split>Have questions? We got answers</span>
-            </h2>
-          </div>
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1.14fr)_minmax(0,0.86fr)] lg:items-start lg:gap-14">
+            <div>
+              <div
+                ref={headerRef}
+                className="flex max-w-3xl flex-col items-start text-left"
+              >
+                <EyebrowPill surface="light" className="mb-0">
+                  FAQ
+                </EyebrowPill>
+                <h2
+                  ref={headingRef}
+                  className="mt-5 max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#0a143b] sm:text-3xl md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+                >
+                  <span data-split>Have questions? We got answers</span>
+                </h2>
+              </div>
 
-          <div className="mt-12 max-w-4xl border-t border-dashed border-[#D1D5DB] md:mt-14">
-            {FAQ_ITEMS.map((item) => (
-              <FaqAccordionItem
-                key={item.id}
-                item={item}
-                isOpen={openId === item.id}
-                onToggle={() =>
-                  setOpenId((current) => (current === item.id ? null : item.id))
-                }
+              <div className="mt-12 max-w-4xl border-t border-dashed border-[#D1D5DB] md:mt-14">
+                {FAQ_ITEMS.map((item) => (
+                  <FaqAccordionItem
+                    key={item.id}
+                    item={item}
+                    isOpen={openId === item.id}
+                    onToggle={() =>
+                      setOpenId((current) => (current === item.id ? null : item.id))
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="relative overflow-hidden rounded-[28px] bg-[#EFF3FF]">
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(21,31,77,0.04),rgba(21,31,77,0.12))]" />
+              <Image
+                src="/images/careers/img3.webp"
+                alt="CoverForce team culture"
+                width={900}
+                height={1100}
+                className="relative h-full min-h-80 w-full object-cover object-center md:object-[73%_50%] lg:min-h-144 lg:max-h-144"
+                sizes="(min-width: 1024px) 34vw, 100vw"
               />
-            ))}
+            </div>
           </div>
         </div>
       </Container>

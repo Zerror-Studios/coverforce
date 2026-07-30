@@ -2,13 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const INK = "#0a143b";
-const INK_MUTED = "#151f4d";
-const INK_SOFT = "rgba(10, 20, 59, 0.55)";
-const INK_FAINT = "rgba(10, 20, 59, 0.35)";
+const INK = "#ffffff";
+const INK_MUTED = "rgba(255,255,255,0.88)";
+const INK_SOFT = "rgba(255,255,255,0.55)";
+const INK_FAINT = "rgba(255,255,255,0.35)";
 
-const CODE_LINE_CLASS = "text-[#151f4d]";
-const CODE_COMMENT_CLASS = "text-[#151f4d]/60";
+const CODE_LINE_CLASS = "text-white/90";
+const CODE_COMMENT_CLASS = "text-white/55";
 
 const CODE_LINES = [
   { text: "$ cf.submissions.create({", className: CODE_LINE_CLASS },
@@ -110,7 +110,7 @@ export function IntegrationCodeTypingBg() {
           <span className="size-2 rounded-full bg-[#FF5F57]/80" />
           <span className="size-2 rounded-full bg-[#FEBC2E]/80" />
           <span className="size-2 rounded-full bg-[#28C840]/80" />
-          <span className="ml-1.5 font-mono text-[8px] text-[#151f4d]/50 md:text-[9px]">api.ts</span>
+          <span className="ml-1.5 font-mono text-[8px] text-white/50 md:text-[9px]">api.ts</span>
         </div>
         <pre className="overflow-hidden font-mono text-[7px] leading-relaxed md:text-[8px] lg:text-[9px]">
           {completedLines.map((line, i) => (
@@ -121,7 +121,7 @@ export function IntegrationCodeTypingBg() {
           {activeMeta && !finished ? (
             <div className={activeMeta.className || CODE_LINE_CLASS}>
               {activeLine}
-              <span className="ml-px inline-block h-[1em] w-1 animate-pulse bg-[#151f4d] align-middle" />
+              <span className="ml-px inline-block h-[1em] w-1 animate-pulse bg-white align-middle" />
             </div>
           ) : null}
         </pre>
@@ -186,7 +186,7 @@ export function IntegrationAutomationBg() {
               cx="120"
               cy="88"
               r="48"
-              stroke="rgba(10,20,59,0.18)"
+              stroke="rgba(255,255,255,0.18)"
               strokeWidth="1"
               strokeDasharray="1 7"
               className="animate-[spin_28s_linear_infinite]"
@@ -230,19 +230,19 @@ export function IntegrationAutomationBg() {
         </g>
 
         {/* Input nodes */}
-        <rect x="22" y="26" width="52" height="28" rx="7" fill="rgba(10,20,59,0.07)" stroke={INK_MUTED} strokeOpacity="0.55" />
+        <rect x="22" y="26" width="52" height="28" rx="7" fill="rgba(255,255,255,0.1)" stroke={INK_MUTED} strokeOpacity="0.7" />
         <text x="48" y="43" textAnchor="middle" fill={INK_MUTED} fontSize="7.5" fontFamily="ui-monospace, monospace">
           Intake
         </text>
 
-        <rect x="166" y="26" width="52" height="28" rx="7" fill="rgba(10,20,59,0.07)" stroke={INK_MUTED} strokeOpacity="0.55" />
+        <rect x="166" y="26" width="52" height="28" rx="7" fill="rgba(255,255,255,0.1)" stroke={INK_MUTED} strokeOpacity="0.7" />
         <text x="192" y="43" textAnchor="middle" fill={INK_MUTED} fontSize="7.5" fontFamily="ui-monospace, monospace">
           Appetite
         </text>
 
         {/* AI hub */}
-        <circle cx="120" cy="88" r="22" fill="rgba(10,20,59,0.1)" stroke={INK} strokeWidth="1.4" />
-        <circle cx="120" cy="88" r="14" fill="rgba(10,20,59,0.14)" stroke={INK_MUTED} strokeWidth="1" className="animate-pulse" />
+        <circle cx="120" cy="88" r="22" fill="rgba(255,255,255,0.12)" stroke={INK} strokeWidth="1.4" />
+        <circle cx="120" cy="88" r="14" fill="rgba(255,255,255,0.16)" stroke={INK_MUTED} strokeWidth="1" className="animate-pulse" />
         <text x="120" y="86" textAnchor="middle" fill={INK} fontSize="8" fontFamily="ui-monospace, monospace" fontWeight="600">
           AI
         </text>
@@ -251,17 +251,17 @@ export function IntegrationAutomationBg() {
         </text>
 
         {/* Output nodes */}
-        <rect x="30" y="148" width="48" height="24" rx="6" fill="rgba(10,20,59,0.06)" stroke={INK_SOFT} />
+        <rect x="30" y="148" width="48" height="24" rx="6" fill="rgba(255,255,255,0.08)" stroke={INK_SOFT} />
         <text x="54" y="163" textAnchor="middle" fill={INK_SOFT} fontSize="7" fontFamily="ui-monospace, monospace">
           Quote
         </text>
 
-        <rect x="96" y="132" width="48" height="24" rx="6" fill="rgba(10,20,59,0.08)" stroke={INK_MUTED} strokeOpacity="0.65" />
+        <rect x="96" y="132" width="48" height="24" rx="6" fill="rgba(255,255,255,0.1)" stroke={INK_MUTED} strokeOpacity="0.75" />
         <text x="120" y="147" textAnchor="middle" fill={INK_MUTED} fontSize="7" fontFamily="ui-monospace, monospace">
           Bind
         </text>
 
-        <rect x="162" y="148" width="48" height="24" rx="6" fill="rgba(10,20,59,0.06)" stroke={INK_SOFT} />
+        <rect x="162" y="148" width="48" height="24" rx="6" fill="rgba(255,255,255,0.08)" stroke={INK_SOFT} />
         <text x="186" y="163" textAnchor="middle" fill={INK_SOFT} fontSize="7" fontFamily="ui-monospace, monospace">
           Sync
         </text>
