@@ -17,10 +17,8 @@ const DevelopersPage = () => {
       <PageWrapper>
         <Hero />
         <Endpoints />
-         
         <OperatingSystem />
         <WhyCoverforce paddingTop={true} />
-         
         <Review />
         <CarrierResults />
       </PageWrapper>

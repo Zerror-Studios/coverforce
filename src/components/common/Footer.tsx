@@ -253,9 +253,6 @@ const Footer = () => {
                   <RequestDemoButton balanced surface="on-dark" className="!min-w-0 !px-3.5 sm:!min-w-[148px] sm:!px-5">
                     Contact us
                   </RequestDemoButton>
-                  <Button href="/contact" balanced variant="secondary" surface="on-dark" className="!min-w-0 !px-3.5 sm:!min-w-[148px] sm:!px-5">
-                    Book a call
-                  </Button>
                 </div>
               </div>
             </div>

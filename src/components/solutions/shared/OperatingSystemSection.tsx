@@ -39,6 +39,8 @@ export type OperatingSystemConfig = {
   sectionDescription: string;
   ctaHref?: string;
   ctaLabel?: string;
+  ctaTarget?: string;
+  ctaRel?: string;
   ctaVariant?: "link" | "request-demo";
   statColor?: string;
   statGradient?: string;
@@ -123,6 +125,8 @@ export default function OperatingSystemSection({
   sectionDescription,
   ctaHref = "/contact",
   ctaLabel = "Start a quote",
+  ctaTarget,
+  ctaRel,
   ctaVariant = "link",
   statColor = "#33259F",
   statGradient,
@@ -216,7 +220,7 @@ export default function OperatingSystemSection({
     <section ref={sectionRef} className="relative z-10 min-h-screen bg-white text-[#0a143b]">
       <ShrimpLineAnimation className="h-full" />
       <ShrimpLineAnimation2 className="h-full" />
-      <Container borderColor="#53535380" borderBottom={true}>
+      <Container borderColor="#53535380">
         <div className={paddingTop ? "pt-16 pb-16 md:pt-20 md:pb-20 lg:pt-24 lg:pb-24" : "pt-0 pb-16 md:pb-20 lg:pb-24"}>
           {showHeader ? (
             <div
@@ -243,7 +247,9 @@ export default function OperatingSystemSection({
                 {ctaVariant === "request-demo" ? (
                   <RequestDemoButton>{ctaLabel}</RequestDemoButton>
                 ) : (
-                  <Button href={ctaHref}>{ctaLabel}</Button>
+                  <Button href={ctaHref} target={ctaTarget} rel={ctaRel}>
+                    {ctaLabel}
+                  </Button>
                 )}
               </div>
             </div>

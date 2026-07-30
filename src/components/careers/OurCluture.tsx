@@ -39,32 +39,33 @@ const IMAGE_HEIGHTS = {
 const cultureItems: CultureItem[] = [
   {
     src: "/images/careers/img1.webp",
-    alt: "Team meeting collaboration",
+    alt: "CoverForce team celebrating together at an ISU Steadfast event",
     caption:
-      "Built on collaboration — we ship together, share context freely, and win as one team.",
+      "We show up for partners and each other — nights like this are part of how we build lasting industry relationships.",
     placement: "lg:col-span-5 lg:row-span-6",
     imageHeight: "large",
   },
   {
     src: "/images/careers/img2.webp",
-    alt: "Colleagues discussing work",
+    alt: "CoverForce booth showcasing AI-powered distribution at a trade show",
     caption:
-      "A culture people stick with — we keep attrition around 2%, because the work and the team are worth staying for.",
+      "From submission intake to quote, bind, and data intelligence — our platform story, live on the show floor.",
     placement: "lg:col-span-7 lg:col-start-6 lg:row-span-6 lg:row-start-1",
     imageHeight: "large",
   },
   {
     src: "/images/careers/img3.webp",
-    alt: "Team outdoor adventure",
-    caption: "Tight feedback loops and shared ownership keep collaboration high and handoffs low.",
+    alt: "CoverForce on stage at Insurtech Insights USA conference",
+    caption:
+      "Sharing what we are building with the industry — stages like Insurtech Insights keep us close to the market.",
     placement: "lg:col-span-6 lg:row-span-3 lg:row-start-7 lg:mt-10 xl:mt-12",
     imageHeight: "medium",
   },
   {
     src: "/images/careers/img4.webp",
-    alt: "Global team gathering outdoors",
+    alt: "Team lunch outdoors on a rooftop terrace",
     caption:
-      "People stay because they grow here — low attrition, high trust, real impact on customers.",
+      "The work is serious. The people are not — shared meals and time off-screen keep the team grounded.",
     placement: "lg:col-span-6 lg:col-start-7 lg:row-span-3 lg:row-start-9",
     imageHeight: "medium",
   },
@@ -73,15 +74,17 @@ const cultureItems: CultureItem[] = [
 const bottomCulturePair = {
   left: {
     src: "/images/careers/img5.webp",
-    alt: "Diverse team group photo",
-    caption: "Collaboration first — from product to support, we build side by side.",
+    alt: "CoverForce team group photo at a conference gathering",
+    caption:
+      "One team, many roles — product, sales, and leadership side by side wherever the industry gathers.",
     placement: "",
     imageHeight: "large" as const,
   },
   right: {
     src: "/images/careers/img6.webp",
-    alt: "Team in modern office space",
-    caption: "~2% attrition. A team that chooses to keep building together.",
+    alt: "CoverForce teammates at the company insurtech booth",
+    caption:
+      "Builders on the booth — explaining the API to quote and bind, one conversation at a time.",
     placement: "",
     imageHeight: "medium" as const,
   },
@@ -261,9 +264,9 @@ const OurCluture = () => {
                 ref={descRef}
                 className="font-sans font-regular text-sm leading-[1.4] text-white/75 md:text-[1.125rem]"
               >
-                Our culture is built on collaboration — and it shows in how we
-                work and stay. With ~2% attrition, people stick around to keep
-                building together.
+                Our culture is built in the room — with partners, on stages,
+                at booths, and over shared meals. These are the moments that
+                shape how we work together.
               </p>
             </div>
           </div>

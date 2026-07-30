@@ -53,8 +53,10 @@ export default function OperatingSystem({
     <OperatingSystemSection
       sectionTitle={<>{operatingSystemTitle}</>}
       sectionDescription={operatingSystemDescription}
-      ctaHref="/developers#endpoints"
+      ctaHref="https://developer.coverforce.com/docs/coverforce-api/lxj5tz15jwgjy-authentication"
       ctaLabel="View API docs"
+      ctaTarget="_blank"
+      ctaRel="noreferrer"
       paddingTop={true}
       showHeader={showHeader}
       showStats={false}

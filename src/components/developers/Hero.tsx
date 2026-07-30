@@ -58,10 +58,13 @@ const Hero = () => {
             </p>
 
             <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center">
-              <RequestDemoButton balanced surface="on-dark">
-                Request API access
-              </RequestDemoButton>
-              <Button href="#endpoints" balanced variant="secondary" surface="on-dark">
+              <Button
+                href="https://developer.coverforce.com/docs/coverforce-api/lxj5tz15jwgjy-authentication"
+                target="_blank"
+                rel="noreferrer"
+                balanced
+                surface="on-dark"
+              >
                 Read the docs
               </Button>
             </div>

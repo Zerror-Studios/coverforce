@@ -16,7 +16,7 @@ const Content = () => {
   return (
     <section className="bg-white text-[#444444]">
       <Container borderColor="#53535380" >
-        <div className="mx-auto max-w-4xl border-t border-b border-[#E8E8EE] pt-10 pb-16 md:pt-14 md:pb-20 lg:pt-16 lg:pb-24">
+        <div className="mx-auto max-w-4xl border-b border-[#E8E8EE] pb-16 md:pb-20 lg:pb-24">
           <article className="space-y-4 text-[0.9375rem] leading-[1.75] text-[#444444] [&_a]:text-[#413CC0] [&_a]:underline [&_a]:underline-offset-2">
             <p>
               Today, CoverForce, the first independent API to deliver instant

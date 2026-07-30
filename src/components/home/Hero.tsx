@@ -30,10 +30,10 @@ type StatItem = {
 };
 
 const stats: StatItem[] = [
-  { value: "140K+", label: "AI-labeled Carrier Interactions" },
+  { value: "350,000+", label: "AI-labeled Carrier Interactions" },
   { value: "40+", label: "Carrier & MGA Integrations" },
   { value: "15,000+", label: "Agencies on Platform" },
-  { value: "110K+", label: "Submissions" },
+  { value: "110,000+", label: "Submissions" },
 ];
 
 const heroTheme = {
@@ -521,6 +521,12 @@ const Hero = () => {
         </div>
         {/* Network + distribution header */}
         <div className="relative w-full pt-4 pb-6 sm:pt-6 sm:pb-8 md:pt-10 md:pb-10 lg:pb-12">
+          <h2
+            className={`relative z-10 mx-auto mb-2 max-w-xl text-center text-2xl font-heading font-medium leading-[1.15] tracking-tight sm:mb-3 sm:text-3xl sm:leading-[1.12] md:mb-4 md:text-4xl lg:mb-5 lg:text-[1.625rem] lg:leading-[1.12] ${theme.titleMuted}`}
+          >
+            Commercial insurance distribution that gets smarter with every
+            transaction
+          </h2>
           <div className="relative w-full">
             <div
               ref={networkRef}
@@ -549,12 +555,6 @@ const Hero = () => {
               ))}
             </div>
           </div>
-          <h2
-            className={`relative z-10 mx-auto mt-2 max-w-xl text-center text-2xl font-heading font-medium leading-[1.15] tracking-tight sm:mt-3 sm:text-3xl sm:leading-[1.12] md:mt-4 md:text-4xl lg:mt-5 lg:text-[1.625rem] lg:leading-[1.12] ${theme.titleMuted}`}
-          >
-            Commercial insurance distribution that gets smarter with every
-            transaction
-          </h2>
         </div>
 
 
