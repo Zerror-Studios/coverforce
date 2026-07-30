@@ -74,7 +74,7 @@ const WORKFLOW_STEPS = [
     height: 421,
     headline: (
       <>
-        Find new opportunities for expansion —{" "}
+        Find new opportunities for expansion -{" "}
         <span className="text-[#9AA8BC]">
           verticals, locations, products, and MGA opportunities
         </span>{" "}

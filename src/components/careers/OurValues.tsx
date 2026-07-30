@@ -56,7 +56,7 @@ const VALUE_CARDS: ValueCard[] = [
   {
     id: "ownership",
     label: "Ownership",
-    body: "We take full responsibility for outcomes — from first idea to lasting customer impact.",
+    body: "We take full responsibility for outcomes - from first idea to lasting customer impact.",
     background: "developer",
   },
   {
@@ -74,13 +74,13 @@ const VALUE_CARDS: ValueCard[] = [
   {
     id: "frugality",
     label: "Frugality",
-    body: "We focus on what yields real customer benefit and ROI — spending energy where it matters most.",
+    body: "We focus on what yields real customer benefit and ROI - spending energy where it matters most.",
     background: "startup",
   },
   {
     id: "customer-obsession",
     label: "Customer Obsession",
-    body: "Every decision starts with the customer — their workflow, their trust, and their success.",
+    body: "Every decision starts with the customer - their workflow, their trust, and their success.",
     background: "carrier",
   },
 ];
@@ -132,6 +132,8 @@ const OurValues = () => {
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
+  const stickyContentRef = useRef<HTMLDivElement>(null);
+  const cardsViewportRef = useRef<HTMLDivElement>(null);
   const cardsGridRef = useRef<HTMLDivElement>(null);
 
   useSectionHeaderReveal({
@@ -143,8 +145,11 @@ const OurValues = () => {
 
   useGSAP(
     () => {
+      const section = sectionRef.current;
+      const stickyContent = stickyContentRef.current;
+      const viewport = cardsViewportRef.current;
       const grid = cardsGridRef.current;
-      if (!grid) return;
+      if (!section || !stickyContent || !viewport || !grid) return;
 
       const cards = gsap.utils.toArray<HTMLElement>(".values-card", grid);
       if (!cards.length) return;
@@ -156,6 +161,7 @@ const OurValues = () => {
         return;
       }
 
+      const mm = gsap.matchMedia();
       gsap.set(cards, { opacity: 0, x: 72 });
 
       const revealTl = gsap.timeline({
@@ -176,6 +182,31 @@ const OurValues = () => {
         clearProps: "transform",
       });
 
+      mm.add("(min-width: 1024px)", () => {
+        const getShift = () => Math.max(0, grid.scrollWidth - viewport.clientWidth);
+        const horizontalTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: () => `+=${getShift()}`,
+            scrub: 1,
+            pin: stickyContent,
+            invalidateOnRefresh: true,
+            anticipatePin: 1,
+          },
+        });
+
+        horizontalTl.to(grid, {
+          x: () => -getShift(),
+          ease: "none",
+        });
+
+        return () => {
+          horizontalTl.scrollTrigger?.kill();
+          horizontalTl.kill();
+        };
+      });
+
       const lenis = window.lenis;
       let scrollPending = false;
       const onLenisScroll = () => {
@@ -192,6 +223,7 @@ const OurValues = () => {
 
       return () => {
         lenis?.off("scroll", onLenisScroll);
+        mm.revert();
         revealTl.scrollTrigger?.kill();
         revealTl.kill();
       };
@@ -212,7 +244,10 @@ const OurValues = () => {
         }
       `}</style>
       <Container borderColor="#53535380" className="relative z-10">
-        <div className="flex flex-col gap-10 py-16 md:py-20 lg:gap-14 lg:py-24">
+        <div
+          ref={stickyContentRef}
+          className="flex flex-col gap-10 py-16 md:py-20 lg:gap-14 lg:py-24"
+        >
           <div
             ref={headerRef}
             className="grid gap-8 lg:grid-cols-2 lg:items-end lg:justify-between lg:gap-12"
@@ -240,13 +275,17 @@ const OurValues = () => {
             </div>
           </div>
 
-          <div
-            ref={cardsGridRef}
-            className="grid gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8"
-          >
-            {VALUE_CARDS.map((card) => (
-              <ValueCardItem key={card.id} card={card} />
-            ))}
+          <div ref={cardsViewportRef} className="relative overflow-hidden lg:min-h-[32rem]">
+            <div
+              ref={cardsGridRef}
+              className="grid gap-4 sm:grid-cols-2 md:gap-6 lg:flex lg:w-max lg:gap-8"
+            >
+              {VALUE_CARDS.map((card) => (
+                <div key={card.id} className="lg:w-[24rem] lg:flex-none">
+                  <ValueCardItem card={card} />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </Container>

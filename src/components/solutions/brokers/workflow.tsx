@@ -24,7 +24,7 @@ type WorkflowProps = {
   coverforceBackground?: CardBackground;
 };
 
-/** Workflow card only — keep saturated tones longer so white text stays readable. */
+/** Workflow card only - keep saturated tones longer so white text stays readable. */
 const WORKFLOW_COVERFORCE_BACKGROUNDS: Partial<Record<CardBackground, string>> = {
   wholesaler:
     "linear-gradient(45deg, #0045FF 0%, #008EFF 28%, #008EFF 55%, #008EFF 72%, #008EFF 85%, #8FD7FF 94%, #C3EBFF 100%)",
@@ -52,7 +52,7 @@ const todayItems: ComparisonItem[] = [
   {
     title: "Blind Submission Routing",
     description:
-      "Submissions go to carriers without appetite checks — producers waste days quoting risks that won't bind.",
+      "Submissions go to carriers without appetite checks - producers waste days quoting risks that won't bind.",
     Icon: RiRouteLine,
   },
   {

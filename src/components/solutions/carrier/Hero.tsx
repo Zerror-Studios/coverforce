@@ -8,7 +8,7 @@ const Hero = () => (
   <SolutionScrollHero
     eyebrow="Carrier and MGAs"
     title="Be present at the moment agents quote"
-    description="Brokers are moving to multi-carrier platforms. CoverForce puts your products in the quoting flow, reaching 15,000+ agencies through one integration — live in 30 days."
+    description="Brokers are moving to multi-carrier platforms. CoverForce puts your products in the quoting flow, reaching 15,000+ agencies through one integration - live in 30 days."
     secondaryButtonHref="#workflow"
     secondaryButtonLabel="How it works"
     rightCard={

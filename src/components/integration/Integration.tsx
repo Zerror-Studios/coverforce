@@ -173,7 +173,7 @@ type Carrier = {
   logoColor: string;
   status: "Live on CoverForce" | "API available";
   category: CategoryId;
-  /** Used for LOB filters only — not shown on cards */
+  /** Used for LOB filters only - not shown on cards */
   lobs: string[];
   products: CarrierProduct[];
 };
@@ -405,7 +405,7 @@ const CarrierCard = ({ carrier }: { carrier: Carrier }) => {
                 key={`${product.name}-${idx}`}
                 title={
                   requestable
-                    ? "Available to request — not yet live on CoverForce"
+                    ? "Available to request - not yet live on CoverForce"
                     : "Live on CoverForce"
                 }
                 className={`inline-flex w-fit max-w-full items-center gap-1.5 rounded-full py-1 pl-2.5 pr-4 text-xs font-sans font-medium tracking-wide transition-colors duration-300 ${
@@ -648,12 +648,12 @@ const Integration = () => {
                   ref={descRef}
                   className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
                 >
-                  The universal index of CoverForce integrations — carriers, AMS,
+                  The universal index of CoverForce integrations - carriers, AMS,
                   premium finance, E&amp;S compliance, and AI in one place.
                 </p>
               </div>
               <p className="hidden max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:block lg:text-right">
-                The universal index of CoverForce integrations — carriers, AMS,
+                The universal index of CoverForce integrations - carriers, AMS,
                 premium finance, E&amp;S compliance, and AI in one place.
               </p>
             </div>

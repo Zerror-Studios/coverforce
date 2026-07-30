@@ -98,7 +98,7 @@ const Hero = () => {
 
     const spacerRect = spacer.getBoundingClientRect();
     const titleRect = title.getBoundingClientRect();
-    // Align the title's TOP with the spacer's top — this matches where the
+    // Align the title's TOP with the spacer's top - this matches where the
     // title settles after clearProps (absolute top-0), so it doesn't shift
     // down at the end of the rise. (Title is slightly taller than the spacer.)
     moveTargetRef.current = {
@@ -425,7 +425,7 @@ const Hero = () => {
               </WatchDemoButton>
             </div>
           </div>
-          {/* ── Stats — below the fold ── */}
+          {/* ── Stats - below the fold ── */}
           <div
             ref={statsWrapRef}
             data-hero-reveal

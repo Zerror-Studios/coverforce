@@ -22,7 +22,7 @@ const SLIDES: HeroSlide[] = [
     label: "Predictive intelligence",
     title: (
       <>
-        Know who is in the market —
+        Know who is in the market -
         <br />
         and who isn&apos;t
       </>
@@ -46,7 +46,7 @@ const SLIDES: HeroSlide[] = [
     label: "Predictive intelligence",
     title: (
       <>
-        It&apos;s your underwriting data —
+        It&apos;s your underwriting data -
         <br />
         stand up an MGA?
       </>

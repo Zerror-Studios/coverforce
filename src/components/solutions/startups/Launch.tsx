@@ -29,7 +29,7 @@ const launchSteps: LaunchStep[] = [
     description:
       "Form your LLC or S-Corp and get the legal foundation in place before anything else.",
     body: [
-      "You'll need a registered business, an EIN, and a registered agent in each state you plan to operate in. Getting this right from day one matters — carriers and regulators will ask for documentation.",
+      "You'll need a registered business, an EIN, and a registered agent in each state you plan to operate in. Getting this right from day one matters - carriers and regulators will ask for documentation.",
     ],
     background: "developer",
   },
@@ -39,7 +39,7 @@ const launchSteps: LaunchStep[] = [
     title: "Get Licensed",
     description: "Secure producer and entity licenses with guided checklists.",
     body: [
-      "Licensing requirements vary by state — each has its own exam, application, and renewal cadence. The two main portals used by regulators across the country are NIPR and Sircon.",
+      "Licensing requirements vary by state - each has its own exam, application, and renewal cadence. The two main portals used by regulators across the country are NIPR and Sircon.",
     ],
     background: "wholesaler",
   },
@@ -60,7 +60,7 @@ const launchSteps: LaunchStep[] = [
     title: "Connect the API",
     description: "Plug into CoverForce and start quoting in days, not months.",
     body: [
-      "One integration gives you real-time quoting and binding across commercial lines — GL, BOP, Workers' Comp, Professional Liability, and more. Our sandbox is ready from day one.",
+      "One integration gives you real-time quoting and binding across commercial lines - GL, BOP, Workers' Comp, Professional Liability, and more. Our sandbox is ready from day one.",
     ],
     background: "carrier",
   },
@@ -69,7 +69,7 @@ const launchSteps: LaunchStep[] = [
     label: "STEP 05",
     title: "Quote Your First Risk",
     description:
-      "Submit an account, get real-time comparative quotes, and bind — all in one flow.",
+      "Submit an account, get real-time comparative quotes, and bind - all in one flow.",
     body: [
       "CoverForce handles appetite matching, form prefill, and comparative quoting across carriers. Your team stays focused on the client. Your first bound policy is closer than you think.",
     ],

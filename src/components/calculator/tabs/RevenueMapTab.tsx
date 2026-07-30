@@ -53,7 +53,7 @@ export default function RevenueMapTab({ results }: { results: CalculationResult 
         </CalculatorKpiRow>
       </CalculatorSection>
 
-      {/* Full Book — segmented premium mix */}
+      {/* Full Book - segmented premium mix */}
       <CalculatorSection>
         <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
@@ -64,7 +64,7 @@ export default function RevenueMapTab({ results }: { results: CalculationResult 
               Your Full Book
             </h3>
             <p className={`mt-1.5 ${calcPara}`}>
-              Segmented by line of business — sized to your premium mix.
+              Segmented by line of business - sized to your premium mix.
             </p>
           </div>
           <div className="shrink-0 sm:text-right">
@@ -227,7 +227,7 @@ export default function RevenueMapTab({ results }: { results: CalculationResult 
                 Personal {100 - inputs.commPct}%
               </span>
             </div>
-            CoverForce does not currently serve personal lines — but showing this premium helps executives see the full scope of the digital transformation gap.
+            CoverForce does not currently serve personal lines - but showing this premium helps executives see the full scope of the digital transformation gap.
           </div>
 
           <div className="flex flex-col gap-4 font-sans">
@@ -262,9 +262,9 @@ export default function RevenueMapTab({ results }: { results: CalculationResult 
       <CalculatorSection className="flex flex-col gap-5 font-sans">
         {lobBreakdown.persTotal > 0 && (
           <div className={calcPara}>
-            <div className={`mb-1 flex items-center gap-1.5 ${calcSubheading}`}><Lightbulb className="size-4 text-[#6B6B6B]" /> {fmtM(lobBreakdown.persTotal)} in Personal Lines — the size of the gap</div>
+            <div className={`mb-1 flex items-center gap-1.5 ${calcSubheading}`}><Lightbulb className="size-4 text-[#6B6B6B]" /> {fmtM(lobBreakdown.persTotal)} in Personal Lines - the size of the gap</div>
             <div className={calcSubpara}>
-              {inputs.companyName} is managing <strong className="text-[#444444]">{fmtM(lobBreakdown.persTotal)}</strong> ({100 - inputs.commPct}% of book) in personal lines without a CoverForce equivalent. While CoverForce can't help here today, this premium represents the scale of the digital workflow problem you're solving in commercial — and it signals how much operational leverage is still on the table.
+              {inputs.companyName} is managing <strong className="text-[#444444]">{fmtM(lobBreakdown.persTotal)}</strong> ({100 - inputs.commPct}% of book) in personal lines without a CoverForce equivalent. While CoverForce can't help here today, this premium represents the scale of the digital workflow problem you're solving in commercial - and it signals how much operational leverage is still on the table.
             </div>
           </div>
         )}
@@ -272,7 +272,7 @@ export default function RevenueMapTab({ results }: { results: CalculationResult 
           <div className={calcPara}>
             <div className={`mb-1 flex items-center gap-1.5 ${calcSubheading}`}><AlertCircle className="size-4 text-[#444444]" /> {fmtM(commOffPremium)} in commercial lines not yet in scope</div>
             <div className={calcSubpara}>
-              You've toggled off some commercial LOBs — that's <strong className="text-[#444444]">{fmtM(commOffPremium)}</strong> in commercial premium still handled manually. Turning these on expands the CoverForce opportunity to the full <strong className="text-[#444444]">{fmtM(lobBreakdown.commTotal)}</strong> commercial book.
+              You've toggled off some commercial LOBs - that's <strong className="text-[#444444]">{fmtM(commOffPremium)}</strong> in commercial premium still handled manually. Turning these on expands the CoverForce opportunity to the full <strong className="text-[#444444]">{fmtM(lobBreakdown.commTotal)}</strong> commercial book.
             </div>
           </div>
         )}
@@ -282,7 +282,7 @@ export default function RevenueMapTab({ results }: { results: CalculationResult 
               <CheckCircle2 className="size-4 text-[#6B6B6B]" /> {fmtM(lobBreakdown.cfReachable)} in premium CoverForce can transform today
             </div>
             <div className={calcSubpara}>
-              At a {inputs.commissionRate}% commission rate, <strong className="text-[#444444]">{fmtM(lobBreakdown.cfReachable)}</strong> in addressable premium represents <strong className="text-[#444444]">{fmtM(lobBreakdown.cfReachable * inputs.commissionRate / 100)}</strong> in annual commission — the base that compounds with every new policy written.
+              At a {inputs.commissionRate}% commission rate, <strong className="text-[#444444]">{fmtM(lobBreakdown.cfReachable)}</strong> in addressable premium represents <strong className="text-[#444444]">{fmtM(lobBreakdown.cfReachable * inputs.commissionRate / 100)}</strong> in annual commission - the base that compounds with every new policy written.
             </div>
           </div>
         )}

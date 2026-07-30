@@ -218,7 +218,7 @@ export async function POST(request: Request) {
                 <table width="100%" cellpadding="0" cellspacing="0" style="border-bottom:1px solid #f0ede8;padding-bottom:10px;margin-bottom:10px;">
                   <tr><td>
                     <p style="margin:0 0 2px;font-size:9px;color:#999;text-transform:uppercase;">Company / Title</p>
-                    <p style="margin:0;font-size:12px;color:#111;font-weight:500;">${payload.companyName} — ${payload.jobTitle}</p>
+                    <p style="margin:0;font-size:12px;color:#111;font-weight:500;">${payload.companyName} - ${payload.jobTitle}</p>
                   </td></tr>
                 </table>
 

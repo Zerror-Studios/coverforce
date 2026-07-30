@@ -8,7 +8,7 @@ export function exportToCSV(results: CalculationResult, companyName: string) {
   const { years, inputs, lobBreakdown } = results;
   const dateStr = new Date().toISOString().split('T')[0];
 
-  let csv = `CoverForce ROI Analysis — ${companyName},,\nPrepared: ${dateStr},,\n,,\n`;
+  let csv = `CoverForce ROI Analysis - ${companyName},,\nPrepared: ${dateStr},,\n,,\n`;
 
   // 1. INPUTS
   csv += `METRIC,VALUE,NOTES\nBUSINESS PROFILE,,\n`;
@@ -21,20 +21,20 @@ export function exportToCSV(results: CalculationResult, companyName: string) {
   csv += `Monthly Quote Volume,${inputs.quoteVol},Quotes generated per month\n`;
   csv += `Current Bind Rate,${inputs.bindCurrent}%,Current quote-to-bind conversion\n`;
   csv += `Bind Rate With CoverForce,${inputs.bindCF}%,Expected bind rate with CF\n`;
-  csv += `Minutes per Quote — Current,${inputs.minCurrent},Time per quote today\n`;
-  csv += `Minutes per Quote — CoverForce,${inputs.minCF},Time per quote with CF\n`;
+  csv += `Minutes per Quote - Current,${inputs.minCurrent},Time per quote today\n`;
+  csv += `Minutes per Quote - CoverForce,${inputs.minCF},Time per quote with CF\n`;
   csv += `Blended Staff Hourly Cost,"${fmtM(inputs.hourlyCost).replace('M', '')}",Blended hourly rate\n`;
   csv += `Number of Producers / Underwriters,${inputs.staffCount},Staff generating quotes\n,,\n`;
 
   csv += `QUALITY & COMPLIANCE,,\n`;
-  csv += `Manual Error Rate — Current,${inputs.errorCurrent}%,% of quotes with errors\n`;
-  csv += `Manual Error Rate — CoverForce,${inputs.errorCF}%,Expected error rate with CF\n`;
+  csv += `Manual Error Rate - Current,${inputs.errorCurrent}%,% of quotes with errors\n`;
+  csv += `Manual Error Rate - CoverForce,${inputs.errorCF}%,Expected error rate with CF\n`;
   csv += `Cost per Error / Rework,"${fmtM(inputs.costPerError).replace('M', '')}",Rework + compliance cost per error\n,,\n`;
 
   csv += `TECHNOLOGY INVESTMENT,,\n`;
   csv += `CoverForce Implementation Fee,"${fmtM(inputs.implFee)}",One-time onboarding fee\n`;
   csv += `CoverForce Monthly Platform Fee,"${fmtM(inputs.monthlyFee)}",Monthly subscription\n`;
-  csv += `In-House Build Cost — Year 1,"${fmtM(inputs.buildYear1)}",Estimated custom build cost\n`;
+  csv += `In-House Build Cost - Year 1,"${fmtM(inputs.buildYear1)}",Estimated custom build cost\n`;
   csv += `In-House Annual Maintenance,"${fmtM(inputs.buildAnnual)}",Annual maintenance & support\n`;
   csv += `IT Hourly Rate,"${fmtM(inputs.itRate).replace('M', '')}",Internal IT / dev hourly rate\n`;
   csv += `IT Hours / Month,${inputs.itHours},Monthly IT overhead for platform\n`;
@@ -44,7 +44,7 @@ export function exportToCSV(results: CalculationResult, companyName: string) {
   csv += `Projection Period (Years),${inputs.projYears},Years to model\n,,\n`;
 
   // 2. WATERFALL
-  csv += `CoverForce ROI Waterfall — ${companyName},,,,,,,,,,,,\n,,,,,,,,,,,,\n`;
+  csv += `CoverForce ROI Waterfall - ${companyName},,,,,,,,,,,,\n,,,,,,,,,,,,\n`;
   csv += `Year,New Business Premium,Renewal Premium,Incremental Premium,Commission Earned,Bind Lift Revenue,Time Savings Value,Productivity Reinvestment,Error Reduction,IT Labor Savings,Total Annual Value,CoverForce Cost,Net ROI\n`;
 
   years.forEach(yr => {
@@ -56,7 +56,7 @@ export function exportToCSV(results: CalculationResult, companyName: string) {
   csv += `${inputs.projYears}-YEAR TOTAL,"${sum(y => y.newBizThisYear)}","${sum(y => y.renewalsThisYear)}","${sum(y => y.incrementalPremium)}","${sum(y => y.commOnIncremental)}","${sum(y => y.addlRevBind)}","${sum(y => y.timeSavingsVal)}","${sum(y => y.productivityReinvest)}","${sum(y => y.errorSavings)}","${sum(y => y.itSavings)}","${fmtM(results.doNothing)}","${fmtM(results.totalCFSpend)}","${fmtM(results.totalROI)}"\n,,\n`;
 
   // 3. BUILD VS BUY
-  csv += `Build vs. Buy Analysis — ${companyName},,,,\n${inputs.projYears}-Year Total Cost Comparison,,,,\n,,,,\n`;
+  csv += `Build vs. Buy Analysis - ${companyName},,,,\n${inputs.projYears}-Year Total Cost Comparison,,,,\n,,,,\n`;
   csv += `Line Item,Build In-House,CoverForce,Savings,Notes\n`;
   const itAnn = inputs.itHours * 12 * inputs.itRate;
   csv += `Year 1 Dev & Setup,"${fmtM(inputs.buildYear1)}","${fmtM(inputs.implFee + inputs.monthlyFee * 12)}","${fmtM(inputs.buildYear1 - (inputs.implFee + inputs.monthlyFee * 12))}",Custom engineering + QA\n`;
@@ -74,7 +74,7 @@ export function exportToCSV(results: CalculationResult, companyName: string) {
   csv += `${inputs.projYears}-YR TOTAL MISSED,"${fmtM(results.doNothing)}","${fmtM(results.doNothing)}",,\n,,\n`;
 
   // 4. SUMMARY
-  csv += `CoverForce ROI Summary — ${companyName},,\nPrepared: ${dateStr} | ${inputs.projYears}-Year Projection,,\n,,\n`;
+  csv += `CoverForce ROI Summary - ${companyName},,\nPrepared: ${dateStr} | ${inputs.projYears}-Year Projection,,\n,,\n`;
   csv += `KEY METRICS,,\n`;
   csv += `5-Year Net ROI,"${fmtM(results.totalROI)}",Total value minus CoverForce spend\n`;
   csv += `ROI Multiple,${results.roiMult.toFixed(1)}x,Return on every dollar invested\n`;
@@ -122,7 +122,7 @@ export function copyShareText(results: CalculationResult, companyName: string) {
   const { projYears, commissionRate } = results.inputs;
   const yr1 = results.years[0];
 
-  const text = `CoverForce ROI Summary — ${companyName}
+  const text = `CoverForce ROI Summary - ${companyName}
 
 ${projYears}-Year Net ROI: ${fmtM(results.totalROI)}
 ROI Multiple: ${results.roiMult.toFixed(1)}x

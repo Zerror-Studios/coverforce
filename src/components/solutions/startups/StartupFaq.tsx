@@ -27,7 +27,7 @@ const FAQ_ITEMS: FaqItem[] = [
     content: (
       <>
         <p>
-          Neither. CoverForce is neutral infrastructure — we are not a broker of record,
+          Neither. CoverForce is neutral infrastructure - we are not a broker of record,
           and we do not offer our own market access solution. We don&apos;t take positions
           in the market or compete with the brokerages and MGAs we serve.
         </p>
@@ -35,7 +35,7 @@ const FAQ_ITEMS: FaqItem[] = [
           Instead, we partner with established market access providers who offer carrier
           appointments to startups that aren&apos;t yet appointed directly. Those partners
           set their own terms and pricing; CoverForce negotiates preferred rates on behalf
-          of Startup Program members. Our role is to connect the dots — not to own the
+          of Startup Program members. Our role is to connect the dots - not to own the
           relationship between a startup and its carriers.
         </p>
       </>
@@ -50,7 +50,7 @@ const FAQ_ITEMS: FaqItem[] = [
         <p>
           The primary requirement is a commitment to offering preferred pricing to
           CoverForce customers. Our Startup Program members are early-stage brokerages that
-          are price-sensitive and volume-driven — partners who offer competitive,
+          are price-sensitive and volume-driven - partners who offer competitive,
           transparent pricing get the most out of the relationship.
         </p>
         <p>

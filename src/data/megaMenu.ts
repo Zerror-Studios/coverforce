@@ -64,7 +64,7 @@ export type MegaMenuConfig = {
 export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
   Product: {
     featured: {
-      title: "Watch the demo — from intake to bind in minutes",
+      title: "Watch the demo - from intake to bind in minutes",
       href: "/product/submission-intake",
       video: "/videos/demo.mp4",
       imageAlt: "CoverForce platform demo",
@@ -131,7 +131,7 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
   },
   Solutions: {
     featured: {
-      title: "Watch the demo — see CoverForce in action",
+      title: "Watch the demo - see CoverForce in action",
       href: "/solutions/startups",
       video: "/videos/demo.mp4",
       imageAlt: "CoverForce platform demo",

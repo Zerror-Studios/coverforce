@@ -78,7 +78,7 @@ function buildGradientStyle(stops: readonly GradientStop[]): string {
   return `linear-gradient(45deg, ${body})`;
 }
 
-/** Dark→mid slice of a card wash — for pills, CTAs, and ticks (avoids pale/white ends). */
+/** Dark→mid slice of a card wash - for pills, CTAs, and ticks (avoids pale/white ends). */
 function buildUiChromeGradient(stops: readonly GradientStop[]): string {
   const midIndex = Math.max(1, Math.floor((stops.length - 1) / 2));
   const slice = stops.slice(0, midIndex + 1);
@@ -142,7 +142,7 @@ export const CARD_ACCENT_COLORS: Record<CardBackground, string> = {
   carrier: `#${SOLUTION_GRADIENT_DEFS.carrier[0]!.hex}`,
 };
 
-/** Primary CTA — broker card dark blue dominant, subtle purple lift. */
+/** Primary CTA - broker card dark blue dominant, subtle purple lift. */
 export const PRIMARY_BUTTON_GRADIENT =
   "linear-gradient(135deg, #322696 0%, #322696 48%, #5E3FD0 100%)";
 
@@ -195,7 +195,7 @@ export const CARD_VERTICAL_BACKGROUND_STYLES: Record<SolutionTheme, string> = {
   carrier: buildVerticalGradientStyle(SOLUTION_GRADIENT_DEFS.carrier),
 };
 
-/** Conic wheel wash — five wedges, each filled with a card's linear gradient stops along the arc. */
+/** Conic wheel wash - five wedges, each filled with a card's linear gradient stops along the arc. */
 export function buildThreeWaysWheelConicGradient(fromDeg = -90): string {
   const segmentSize = 360 / THREE_WAYS_WHEEL_THEMES.length;
   const parts: string[] = [];

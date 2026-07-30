@@ -62,7 +62,7 @@ function buildDemoCatalog(): ListedPost[] {
       title:
         copy === 0
           ? post.title
-          : `${post.title.replace(/\.\.\.$/, "")} — Vol. ${copy + 1}`,
+          : `${post.title.replace(/\.\.\.$/, "")} - Vol. ${copy + 1}`,
     }));
   }).flat();
 }

@@ -61,7 +61,7 @@ export const operatingRows = [
 
 export const operatingSystemTitle = "Precision engineering for professional workflow";
 export const operatingSystemDescription =
-  "See how fragmented broker workflows compare to CoverForce — from delegated intake through bind, on one platform built to scale your wholesale operation.";
+  "See how fragmented broker workflows compare to CoverForce - from delegated intake through bind, on one platform built to scale your wholesale operation.";
 
 export default function OperatingSystem() {
   return (

@@ -113,7 +113,7 @@ function RingProgress({
 export default function ComplianceInfrastructureMock() {
   return (
     <div className="relative mx-auto w-full max-w-[440px] min-h-[360px] overflow-visible pb-6 md:min-h-[390px] md:pb-8">
-      {/* Back card — top-left */}
+      {/* Back card - top-left */}
       <div className="absolute left-0 top-0 z-0 w-[94%] overflow-hidden rounded-2xl border border-[#E8EAEF] bg-white p-4 pb-12 shadow-[0_8px_40px_rgba(0,0,0,0.08)] md:p-5 md:pb-14">
         <div className="flex items-center justify-between gap-3">
           <p className="font-heading text-sm font-semibold text-[#3C3B3B] md:text-base">
@@ -178,7 +178,7 @@ export default function ComplianceInfrastructureMock() {
         </div>
       </div>
 
-      {/* Front card — bottom-right overlap */}
+      {/* Front card - bottom-right overlap */}
       <div className="absolute right-0 top-[10.5rem] z-10 w-[72%] overflow-hidden rounded-2xl border border-[#E8EAEF] bg-white shadow-[0_12px_48px_rgba(0,0,0,0.12)] md:top-[11.25rem] md:w-[70%]">
         <div className="border-b border-[#F3F4F6] px-4 py-3 md:px-5">
           <p className="inline-flex items-center gap-2 font-heading text-sm font-semibold text-[#3C3B3B] md:text-base">

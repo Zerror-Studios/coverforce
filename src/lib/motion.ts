@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-/** Crisp micro-interaction ease — quick roll, soft settle */
+/** Crisp micro-interaction ease - quick roll, soft settle */
 export const MICRO_EASE = "cubic-bezier(0.33, 1, 0.68, 1)";
 
 export const MICRO_ROLL_MS = 1650;

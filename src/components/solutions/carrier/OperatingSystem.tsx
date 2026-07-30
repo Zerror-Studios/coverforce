@@ -13,7 +13,7 @@ export const operatingRows = [
     id: "integration",
     heading: "One Integration Across Your Distribution",
     description:
-      "One API connects your products to wholesalers, brokers, and high-growth startups nationwide — no separate partnerships required.",
+      "One API connects your products to wholesalers, brokers, and high-growth startups nationwide - no separate partnerships required.",
     Mock: carrierHeroCardMock,
     transferTargetId: "carrier-step-1-card",
   },
@@ -45,7 +45,7 @@ export const operatingRows = [
 
 export const operatingSystemTitle = "Built for Carrier Distribution at Scale";
 export const operatingSystemDescription =
-  "Reach wholesalers, brokers, and high-growth startups from one integration — and grow with CoverForce’s Startup Program.";
+  "Reach wholesalers, brokers, and high-growth startups from one integration - and grow with CoverForce’s Startup Program.";
 
 export default function OperatingSystem() {
   return (

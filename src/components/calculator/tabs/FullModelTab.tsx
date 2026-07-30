@@ -34,7 +34,7 @@ export default function FullModelTab({ results }: { results: CalculationResult }
     <div className="flex flex-col gap-5 duration-500 animate-in fade-in slide-in-from-bottom-4 md:gap-6">
       <CalculatorSection>
         <h3 className={calcHeading}>
-          Full Financial Model — {inputs.projYears} Year Projection
+          Full Financial Model - {inputs.projYears} Year Projection
         </h3>
         <p className={`mb-5 mt-1.5 ${calcPara}`}>
           Detailed breakdown of value drivers, costs, and compounding effects.

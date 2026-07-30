@@ -53,7 +53,7 @@ const INFRA_FEATURES = [
 export default function ProductDigitizationMock() {
   return (
     <div className="relative mx-auto w-full max-w-[440px] min-h-[340px] overflow-visible pb-4 md:min-h-[370px] md:pb-6">
-      {/* Back card — Product Digitization, top-right */}
+      {/* Back card - Product Digitization, top-right */}
       <div className="absolute right-0 top-0 z-0 w-[94%] rounded-2xl border border-[#E8EAEF] bg-white p-4  shadow-[0_8px_40px_rgba(0,0,0,0.08)] md:p-5">
         <div className="flex items-center justify-between gap-3">
           <p className="truncate font-heading text-sm font-semibold text-[#3C3B3B] md:text-base">
@@ -107,7 +107,7 @@ export default function ProductDigitizationMock() {
           ))}
         </div>
 
-        {/* Floating menu — right edge */}
+        {/* Floating menu - right edge */}
         <div className="absolute right-0 top-[3.25rem] z-20 w-[7.5rem] pl-1 overflow-hidden rounded-md bg-white shadow-[0_8px_24px_rgba(0,0,0,0.1)] md:top-[7.5rem] md:w-32">
           {MENU_ITEMS.map((item) => {
             const Icon = item.icon;
@@ -130,7 +130,7 @@ export default function ProductDigitizationMock() {
         </div>
       </div>
 
-      {/* Front card — Insurance Infrastructure, bottom-left overlap */}
+      {/* Front card - Insurance Infrastructure, bottom-left overlap */}
       <div className="absolute -left-10 top-[14rem] z-10 w-[88%] overflow-hidden rounded-2xl border border-[#E8EAEF] bg-white shadow-[0_12px_48px_rgba(0,0,0,0.12)] md:top-[14rem] md:w-[88%]">
         <div className="px-4 pt-4 md:px-5 md:pt-4">
           <div className="flex items-start justify-between gap-3">

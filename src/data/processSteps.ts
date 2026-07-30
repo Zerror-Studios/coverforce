@@ -41,7 +41,7 @@ export const processSteps: ProcessStep[] = [
     points: [
       { id: "p1", text: "AI extracts and enriches data from ACORD forms into complete application fields." },
       { id: "p2", text: "Classification codes and underwriting answers are mapped intelligently." },
-      { id: "p3", text: "Intelligent prefill completes applications across carrier formats — using 350k+ datapoints." },
+      { id: "p3", text: "Intelligent prefill completes applications across carrier formats - using 350k+ datapoints." },
     ],
     videoSrc: "/videos/process2.mp4",
   },
@@ -70,7 +70,7 @@ export const processSteps: ProcessStep[] = [
   {
     id: "step-05",
     tag: "05 Bind",
-    heading: "From quote to bound policy — in one click.",
+    heading: "From quote to bound policy - in one click.",
     points: [
       { id: "p1", text: "Select the best quote and bind the policy in one click." },
       { id: "p2", text: "Complete payment and premium finance inside the same workflow." },

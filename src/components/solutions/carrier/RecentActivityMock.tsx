@@ -130,7 +130,7 @@ function ActionBadge({ approved }: { approved: boolean }) {
 export default function RecentActivityMock() {
   return (
     <div className="relative mx-auto w-full max-w-[440px] min-h-[340px] overflow-visible pb-6 md:min-h-[370px] md:pb-8">
-      {/* Back card — top-left */}
+      {/* Back card - top-left */}
       <div className="absolute left-0 top-0 z-0 w-[94%] overflow-hidden rounded-2xl border border-[#E8EAEF] bg-white p-4 shadow-[0_8px_40px_rgba(0,0,0,0.08)] md:p-5">
         <div className="flex items-center justify-between gap-3">
           <p className="font-heading text-sm font-semibold text-[#3C3B3B] md:text-base">
@@ -195,7 +195,7 @@ export default function RecentActivityMock() {
         </div>
       </div>
 
-      {/* Front card — bottom-right overlap */}
+      {/* Front card - bottom-right overlap */}
       <div className="absolute right-0 top-[9.5rem] z-10 w-[58%] overflow-hidden rounded-2xl border border-[#E8EAEF] bg-white shadow-[0_12px_48px_rgba(0,0,0,0.12)] md:top-[10.25rem] md:w-[56%]">
         <AccessControlChart />
       </div>

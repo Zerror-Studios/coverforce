@@ -329,7 +329,7 @@ const CarrierMatch = () => {
                   CoverForce Carrier Match
                 </h3>
                 <p className="mt-3 max-w-md font-sans text-sm leading-relaxed text-[#444444] md:text-base">
-                  Adjust the risk details and find matching carriers — try it live
+                  Adjust the risk details and find matching carriers - try it live
                   below.
                 </p>
               </div>

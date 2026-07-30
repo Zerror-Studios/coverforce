@@ -18,7 +18,7 @@ export default function InactionTab({ results }: { results: CalculationResult })
       
       <CalculatorSection>
         <h3 className={calcHeading}>The Cost of Waiting 12 Months</h3>
-        <p className={`mb-5 mt-1.5 ${calcPara}`}>Software implementations are often delayed due to competing priorities. But in insurance, deferring digitisation doesn't just defer revenue — it permanently erases it because the renewal compounding clock starts a year late.</p>
+        <p className={`mb-5 mt-1.5 ${calcPara}`}>Software implementations are often delayed due to competing priorities. But in insurance, deferring digitisation doesn't just defer revenue - it permanently erases it because the renewal compounding clock starts a year late.</p>
         
         <CalculatorKpiCard
           label="Total Value Lost to a 12-Month Delay"
@@ -31,7 +31,7 @@ export default function InactionTab({ results }: { results: CalculationResult })
 
         <div className="mb-6 font-sans">
           <div className="mb-2 flex justify-between font-sans text-xs font-medium text-[#444444]">
-            <span>Deploy Now — Full {inputs.projYears}-Year ROI</span>
+            <span>Deploy Now - Full {inputs.projYears}-Year ROI</span>
             <span className="font-heading font-medium text-[#5B35E0]">{fmtM(totalROI)}</span>
           </div>
           <div className="relative h-2.5 overflow-hidden rounded-full bg-[#F0F0F4]">
@@ -43,7 +43,7 @@ export default function InactionTab({ results }: { results: CalculationResult })
         
         <div className="font-sans">
           <div className="mb-2 flex justify-between font-sans text-xs font-medium text-[#444444]">
-            <span>Wait 12 Months — Adjusted ROI</span>
+            <span>Wait 12 Months - Adjusted ROI</span>
             <span className="font-heading font-medium text-[#F43F5E]">{fmtM(delayedROI)}</span>
           </div>
           <div className="relative flex h-2.5 overflow-hidden rounded-full bg-[#F0F0F4]">

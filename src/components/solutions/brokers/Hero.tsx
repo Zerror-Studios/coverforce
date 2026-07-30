@@ -9,7 +9,7 @@ const Hero = () => (
     eyebrow="Brokers"
     title="Place business more profitably."
     titleClassName="max-w-xl text-3xl font-heading font-normal tracking-normal text-[#0a143b] md:text-4xl lg:text-6xl lg:leading-none xl:text-6xl"
-    description="CoverForce helps every producer place risks faster, with better carrier fit and less wasted effort — so your firm keeps more premium and more margin."
+    description="CoverForce helps every producer place risks faster, with better carrier fit and less wasted effort - so your firm keeps more premium and more margin."
     primaryButtonHref="/contact"
     primaryButtonLabel="Start a quote"
     secondaryButtonHref="#workflow"

@@ -27,7 +27,7 @@ const FILE_TYPES = [
 export default function AiDocumentReaderMock() {
   return (
     <div className="relative mx-auto w-full max-w-[440px] min-h-[300px] overflow-visible pb-2 md:min-h-[320px] md:pb-4">
-      {/* Back card — top-right */}
+      {/* Back card - top-right */}
       <div className="absolute right-0 top-0 z-0 w-[88%] rounded-2xl border border-[#E8EAEF] bg-white p-4 shadow-[0_8px_40px_rgba(0,0,0,0.08)] md:p-4 ">
         <div className="border-b border-dashed border-[#E5E7EB] pb-3 flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-1">
@@ -73,7 +73,7 @@ export default function AiDocumentReaderMock() {
         </div>
       </div>
 
-      {/* Front card — bottom-left overlap, top sits on status row */}
+      {/* Front card - bottom-left overlap, top sits on status row */}
       <div className="absolute -left-8 top-[10rem] z-10 w-[86%] overflow-hidden rounded-2xl border border-[#E8EAEF] bg-white shadow-[0_12px_48px_rgba(0,0,0,0.12)] md:-left-10 md:top-[11rem] md:w-[85%]">
         <div className="flex items-center justify-between gap-3 px-4 py-5">
           <p className="inline-flex items-center gap-1.5 font-heading text-sm font-semibold text-[#3C3B3B] md:text-sm">

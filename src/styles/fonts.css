@@ -1,4 +1,4 @@
-/* Inter — body & UI (default) */
+/* Inter - body & UI (default) */
 @font-face {
   font-family: "Inter";
   src: url("/fonts/inter/Inter-Thin-BETA.otf") format("opentype");
@@ -126,7 +126,7 @@
   font-display: swap;
 }
 
-/* Poppins — headings / display */
+/* Poppins - headings / display */
 @font-face {
   font-family: "Poppins";
   src: url("/fonts/poppins/Poppins-Thin.ttf") format("truetype");
@@ -254,7 +254,7 @@
   font-display: swap;
 }
 
-/* DM Mono — labels / eyebrows / mono UI */
+/* DM Mono - labels / eyebrows / mono UI */
 @font-face {
   font-family: "DM Mono";
   src: url("/fonts/dm-mono-2/DMMono-Light.ttf") format("truetype");

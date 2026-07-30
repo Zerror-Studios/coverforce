@@ -120,7 +120,7 @@ function normalizeSplitLayout(chars: HTMLSpanElement[], words: HTMLSpanElement[]
     });
 }
 
-/** Wave fill per word — keeps spaces between mask wrappers untouched */
+/** Wave fill per word - keeps spaces between mask wrappers untouched */
 export function animateLoaderWordsWave(
     line: HTMLElement,
     options: SplitTextWaveTimelineOptions = {},

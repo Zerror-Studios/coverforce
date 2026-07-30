@@ -67,7 +67,7 @@ export default function CompoundingTab({ results }: { results: CalculationResult
         </h3>
         <p className={`mb-5 mt-1.5 ${calcPara}`}>
           Every policy written this year renews next year. That renewal stacks on top of next
-          year&apos;s new business. This is the structural value of acting now vs. waiting — the
+          year&apos;s new business. This is the structural value of acting now vs. waiting - the
           compounding clock starts on day one.
         </p>
 
@@ -109,7 +109,7 @@ export default function CompoundingTab({ results }: { results: CalculationResult
 
       <CalculatorSection>
         <h3 className={calcHeading}>
-          New Business vs. Renewal Stack — Growing Annuity
+          New Business vs. Renewal Stack - Growing Annuity
         </h3>
         <p className={`mb-5 mt-1.5 ${calcPara}`}>
           The renewal band expands every year, demonstrating the annuity effect of acting now.
@@ -165,7 +165,7 @@ export default function CompoundingTab({ results }: { results: CalculationResult
           <strong className="mb-1 block font-heading font-medium text-[#444444]">Key Insight:</strong>
           By Year {inputs.projYears}, the renewal book represents{" "}
           <strong className="text-[#444444]">{pct(renewalPercentage)}</strong> of total incremental
-          premium — meaning growth is increasingly automatic. The total {inputs.projYears}-year
+          premium - meaning growth is increasingly automatic. The total {inputs.projYears}-year
           commission on compounding new premium is{" "}
           <strong className="text-[#444444]">{fmtM(commTotal)}</strong>.
         </div>

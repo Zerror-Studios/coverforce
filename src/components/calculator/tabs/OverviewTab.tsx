@@ -100,7 +100,7 @@ export default function OverviewTab({ results }: { results: CalculationResult })
 
       {/* Chart */}
       <CalculatorPanel
-        title="Total Value by Year — All Sources"
+        title="Total Value by Year - All Sources"
         description="Stacked by value driver. Compounding premium commissions dominate as the renewal stack builds."
       >
         <div className="h-[300px] w-full font-sans">
@@ -134,12 +134,12 @@ export default function OverviewTab({ results }: { results: CalculationResult })
         </p>
         <p className="mb-3">
           That is a <strong className="text-[#444444]">{roiMult.toFixed(1)}x return</strong> with payback in <strong className="text-[#444444]">{payback.toFixed(1)} months</strong>. 
-          Year 1 alone generates <strong className="text-[#444444]">{fmtM(yr1?.totalValue)}</strong> — {((yr1?.totalValue / totalCFSpend) * 100).toFixed(0)}% of the total {inputs.projYears}-year investment recovered in the first year.
+          Year 1 alone generates <strong className="text-[#444444]">{fmtM(yr1?.totalValue)}</strong> - {((yr1?.totalValue / totalCFSpend) * 100).toFixed(0)}% of the total {inputs.projYears}-year investment recovered in the first year.
         </p>
         <p>
           The compounding renewal stack is the key driver: every dollar of new premium written this year renews at {inputs.renewalRate}%, 
           stacking on next year's new business to create an expanding annuity that grows automatically. Waiting 12 months to deploy means 
-          <strong className="text-[#444444]"> {fmtM(yr1?.totalValue)}</strong> in Year 1 value is permanently foregone — not deferred.
+          <strong className="text-[#444444]"> {fmtM(yr1?.totalValue)}</strong> in Year 1 value is permanently foregone - not deferred.
         </p>
       </CalculatorPanel>
     </div>

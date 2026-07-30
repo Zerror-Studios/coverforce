@@ -139,7 +139,7 @@ const ACORD_INFO = {
   coverage: "5 coverages",
 } as const;
 
-/** Same content on every slide — avoids wrap/height jumps during transition */
+/** Same content on every slide - avoids wrap/height jumps during transition */
 const ACORD_INFO_SLIDES = [ACORD_INFO, ACORD_INFO, ACORD_INFO] as const;
 
 const AVATARS = [

@@ -24,7 +24,7 @@ const world = feature(topoData, topoData.objects.countries);
 const projection = geoNaturalEarth1()
   .center([10, 40])       // Shift center slightly north so NA is vertically centered
   .rotate([100, 0])      // Rotate so ~100°W (center of NA) is at center
-  .scale(350)            // Large scale — NA fills center, others extend out
+  .scale(350)            // Large scale - NA fills center, others extend out
   .translate([0, 0]);    // Origin at 0,0 for Three.js
 
 const pts = [];
@@ -53,6 +53,6 @@ for (let x = -xRange; x <= xRange; x += spacing) {
 
 console.log(`Generated ${count} dots`);
 
-// Save as compact JSON — just a flat array of [x,y,x,y,...] pairs
+// Save as compact JSON - just a flat array of [x,y,x,y,...] pairs
 writeFileSync(join(__dirname, 'mapDots.json'), JSON.stringify(pts));
 console.log('Saved to mapDots.json');

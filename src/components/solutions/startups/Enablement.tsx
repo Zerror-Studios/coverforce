@@ -448,7 +448,7 @@ const Enablement = () => {
             </div>
           </div>
 
-          {/* Desktop diagram — unchanged at lg+ */}
+          {/* Desktop diagram - unchanged at lg+ */}
           <div
             ref={wrapRef}
             className="relative mt-12 w-full max-lg:hidden md:mt-14 lg:mt-16 aspect-16/13 max-h-[640px] min-h-[420px]"

@@ -133,7 +133,7 @@ export default function DeveloperTerminalBg() {
           <span className="size-2.5 rounded-full bg-[#FF5F57]/80" />
           <span className="size-2.5 rounded-full bg-[#FEBC2E]/80" />
           <span className="size-2.5 rounded-full bg-[#28C840]/80" />
-          <span className="ml-2 font-mono text-[10px] text-white/35 md:text-xs">coverforce — zsh</span>
+          <span className="ml-2 font-mono text-[10px] text-white/35 md:text-xs">coverforce - zsh</span>
         </div>
 
         <pre

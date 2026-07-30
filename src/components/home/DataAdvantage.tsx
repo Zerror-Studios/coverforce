@@ -29,15 +29,15 @@ const DataAdvantage = () => {
                 ref={headingRef}
                 className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#9AA8BC] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
               >
-                <span data-split>Intelligence Built on Data</span>
+                <span data-split>Intelligence built on data</span>
                 <br />
-                <span data-split>no One Else has</span>
+                <span data-split>no one else has</span>
               </h2>
               <p
                 ref={descRef}
                 className="font-sans font-regular text-sm leading-[1.4] text-white/80 md:text-[1.125rem] lg:hidden"
               >
-                Market intelligence and rich underwriting data — now visible so
+                Market intelligence and rich underwriting data - now visible so
                 every placement, remarket, and service touch gets smarter.
               </p>
               <Button href="/product/intelligence#coming-soon" surface="on-dark">
@@ -47,7 +47,7 @@ const DataAdvantage = () => {
 
             <div className="max-w-md text-left lg:ml-auto">
               <p className="hidden font-sans font-regular text-sm leading-[1.4] text-white/80 md:text-[1.125rem] lg:block">
-                Market intelligence and rich underwriting data — now visible so
+                Market intelligence and rich underwriting data - now visible so
                 every placement, remarket, and service touch gets smarter.
               </p>
             </div>
@@ -72,13 +72,13 @@ const DataAdvantage = () => {
                     Retain underwriting data to streamline policy remarket and service
                   </h3>
                   <p className="max-w-sm text-sm font-sans font-regular leading-relaxed text-white/80">
-                    Keep rich underwriting history with every account — so renewals, remarkets, and service run up to 85% faster.
+                    Keep rich underwriting history with every account - so renewals, remarkets, and service run up to 85% faster.
                   </p>
                 </div>
               </div>
             </article>
 
-            {/* Placement / decline intelligence — keep RHS video */}
+            {/* Placement / decline intelligence - keep RHS video */}
             <article className="relative flex min-h-[28rem] w-full flex-col justify-between overflow-hidden rounded-sm p-6 md:min-h-[36rem] md:p-8 lg:min-h-[37rem] lg:p-10">
               <video
                 src="/carrier.mp4"
@@ -94,10 +94,10 @@ const DataAdvantage = () => {
               <div className="relative z-10 flex min-h-0 flex-1 flex-col justify-between gap-10">
                 <div className="space-y-2">
                   <h3 className="max-w-xs text-3xl font-heading font-medium md:text-3xl">
-                    Know where to place — and who&apos;s declining you.
+                    Know where to place - and who&apos;s declining you.
                   </h3>
                   <p className="max-w-[18rem] text-sm font-sans font-regular leading-relaxed text-white">
-                    See which carriers will quote a risk before you submit — and which ones will decline.
+                    See which carriers will quote a risk before you submit - and which ones will decline.
                   </p>
                 </div>
 

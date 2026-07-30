@@ -271,7 +271,7 @@ const RealWorkflow = () => {
         const startAt = startProgress * totalSteps;
         const duration = (endProgress - startProgress) * totalSteps;
 
-        // Activate row text — opacity 0.3 → 1 in sync with badge passing
+        // Activate row text - opacity 0.3 → 1 in sync with badge passing
         if (textContainers.length) {
           tl.to(
             textContainers,
@@ -330,7 +330,7 @@ const RealWorkflow = () => {
   );
 
   return (
-    <section ref={sectionRef} className="bg-[#151f4d] text-white pb-32">
+    <section ref={sectionRef} className="bg-[#151f4d] pb-52 text-white md:pb-56 lg:pb-64">
       <Container borderColor="#FFFFFF33">
         <div className="py-16 md:py-20 lg:py-24">
           <div
@@ -356,7 +356,7 @@ const RealWorkflow = () => {
                 ref={descRef}
                 className="font-sans font-regular text-sm leading-[1.4] text-white/75 md:text-[1.125rem] lg:text-right"
               >
-                Without CoverForce vs with CoverForce — each step of submission,
+                Without CoverForce vs with CoverForce - each step of submission,
                 side by side.
               </p>
             </div>
@@ -367,17 +367,17 @@ const RealWorkflow = () => {
             className="relative mt-14 border-b border-white/25 md:mt-16 lg:mt-20"
           >
 
-              <div className="grid grid-cols-[1fr_0.2fr_1fr]">
+              <div className="mb-4 grid grid-cols-[1fr_0.2fr_1fr] md:mb-5 lg:mb-6">
                 <div className="">
                   <p className=" text-base font-heading font-medium leading-[1.15] tracking-tight text-white sm:text-3xl sm:leading-[1.12] md:text-lg lg:text-[1.625rem] lg:leading-[1.12]">
-                    With Coverforce
+                    With CoverForce
                   </p>
                 </div>
                 <div className="flex items-center justify-center relative">
                   <div className="fil_paren absolute w-[2px] h-[40rem] lg:h-[48rem] top-[100%]">
                     <div className="fil_line w-full h-[0%] bg-white flex justify-center items-end">
                       <div className="anim_box h-0 w-0 bg-white shrink-0 flex items-center justify-center overflow-hidden">
-                        {/* Summary card content — visible when expanded */}
+                        {/* Summary card content - visible when expanded */}
                         <div className="anim_box_content opacity-0 text-center px-6 flex flex-col items-center justify-center gap-2">
                           <p className="font-heading text-lg md:text-[1.375rem] font-semibold leading-snug tracking-tight text-[#151f4d] whitespace-normal max-w-[22rem]">
                             107 minutes saved <br /> per submission with 
@@ -397,7 +397,7 @@ const RealWorkflow = () => {
                 </div>
                 <div className="text-end">
                   <p className=" text-base font-heading font-medium leading-[1.15] tracking-tight text-white sm:text-3xl sm:leading-[1.12] md:text-lg lg:text-[1.625rem] lg:leading-[1.12]">
-                    Without Coverforce
+                    Without CoverForce
                   </p>
                 </div>
               </div>

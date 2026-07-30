@@ -282,7 +282,7 @@ export default function Sidebar({
         <div className="my-4 border-t border-[#535353]/10" />
 
         <p className={`mb-2 ${calcEyebrow}`}>
-          Commercial lines — CF can help
+          Commercial lines - CF can help
         </p>
         <div className="mb-4 flex flex-col gap-1.5 font-sans">
           {LOB_COMMERCIAL.map((lob) => {
@@ -319,7 +319,7 @@ export default function Sidebar({
         </div>
 
         <p className={`mb-2 mt-4 ${calcEyebrow}`}>
-          Personal lines — quantify pain only
+          Personal lines - quantify pain only
         </p>
         <div className="flex flex-col gap-1.5 font-sans">
           {LOB_PERSONAL.map((lob) => {
@@ -427,8 +427,8 @@ export default function Sidebar({
         <InputRow label="Monthly quote volume" prop="quoteVol" step={50} />
         <InputRow label="Current bind rate" prop="bindCurrent" suffix="%" step={1} />
         <InputRow label="Bind rate with CoverForce" prop="bindCF" suffix="%" step={1} />
-        <InputRow label="Minutes per quote — current" prop="minCurrent" suffix="min" step={5} />
-        <InputRow label="Minutes per quote — CoverForce" prop="minCF" suffix="min" step={1} />
+        <InputRow label="Minutes per quote - current" prop="minCurrent" suffix="min" step={5} />
+        <InputRow label="Minutes per quote - CoverForce" prop="minCF" suffix="min" step={1} />
         <InputRow label="Blended staff hourly cost" prop="hourlyCost" prefix="$" step={5} />
         <InputRow
           label="Number of producers / underwriters"
@@ -443,8 +443,8 @@ export default function Sidebar({
         open={openSection === "quality"}
         onToggle={() => toggleSection("quality")}
       >
-        <InputRow label="Manual error rate — current" prop="errorCurrent" suffix="%" step={0.5} />
-        <InputRow label="Manual error rate — CoverForce" prop="errorCF" suffix="%" step={0.5} />
+        <InputRow label="Manual error rate - current" prop="errorCurrent" suffix="%" step={0.5} />
+        <InputRow label="Manual error rate - CoverForce" prop="errorCF" suffix="%" step={0.5} />
         <InputRow label="Cost per error / rework event" prop="costPerError" prefix="$" step={25} />
       </SidebarAccordion>
 

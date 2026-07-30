@@ -29,7 +29,7 @@ const whySlides: WhySlide[] = [
     id: "slide-1",
     title: "AI Investments",
     descriptionLines: [
-      "AI-first infrastructure that gets smarter with every quote —",
+      "AI-first infrastructure that gets smarter with every quote -",
       "driving higher bind rates and a customer experience",
       "that keeps improving for Chase.",
     ],
@@ -54,7 +54,7 @@ const whySlides: WhySlide[] = [
     title: "Carrier Knowledge",
     descriptionLines: [
       "60+ live integrations and deep institutional know-how mean",
-      "CoverForce launches in weeks — on rails already built",
+      "CoverForce launches in weeks - on rails already built",
       "and battle-tested.",
     ],
     image:
@@ -65,7 +65,7 @@ const whySlides: WhySlide[] = [
     id: "slide-4",
     title: "Security & Resilience",
     descriptionLines: [
-      "SOC 2 Type II certified, cloud-native, and built for enterprise scale —",
+      "SOC 2 Type II certified, cloud-native, and built for enterprise scale -",
       "giving Chase infrastructure that's secure, resilient, and ready",
       "for FI-grade volume from day one.",
     ],
@@ -77,7 +77,7 @@ const whySlides: WhySlide[] = [
     id: "slide-5",
     title: "Recognized excellence and innovation",
     descriptionLines: [
-      "Named to the 2025 CB Insights Insurtech 50 — an annual list honoring",
+      "Named to the 2025 CB Insights Insurtech 50 - an annual list honoring",
       "the world's most innovative and high-impact insurtech companies",
       "transforming insurance distribution.",
     ],
@@ -137,34 +137,21 @@ function getSlideGapClass(
 }
 
 function ActiveSlideContent({ slide, compact = false }: { slide: WhySlide; compact?: boolean }) {
-  const titleClassName =
-    "max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#444444] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]";
   const descriptionClassName = `max-w-3xl font-sans text-sm font-regular leading-[1.4] text-[#50617a] md:text-[1.125rem]${
-    compact ? "" : " mt-4"
+    compact ? "" : " mt-2"
   }`;
 
   if (slide.href) {
     return (
-      <Link
-        href={slide.href}
-        className={`group block${compact ? " flex flex-col gap-5" : ""}`}
-      >
-        <h3
-          className={`${titleClassName} transition-colors duration-300 group-hover:text-[#0130BE]`}
-        >
-          {slide.title}
-        </h3>
-        <p className={descriptionClassName}>{slide.descriptionLines.join(" ")}</p>
+      <Link href={slide.href} className="group block">
+        <p className={`${descriptionClassName} transition-colors duration-300 group-hover:text-[#0130BE]`}>
+          {slide.descriptionLines.join(" ")}
+        </p>
       </Link>
     );
   }
 
-  return (
-    <>
-      <h3 className={titleClassName}>{slide.title}</h3>
-      <p className={descriptionClassName}>{slide.descriptionLines.join(" ")}</p>
-    </>
-  );
+  return <p className={descriptionClassName}>{slide.descriptionLines.join(" ")}</p>;
 }
 
 const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
@@ -333,7 +320,7 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
   }, { scope: sectionRef });
   return (
     <section ref={sectionRef} className="relative z-30 overflow-hidden bg-white text-[#0a143b]">
-      {/* Slider CSS — scoped to this section */}
+      {/* Slider CSS - scoped to this section */}
       <style>{`
         .why-slider-track {
           display: flex;
@@ -415,15 +402,17 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
               <div className="flex flex-col justify-end space-y-5">
                 <h2
                   ref={headingRef}
-                  className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+                  className="max-w-2xl text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
                 >
-                  <span data-split>Infrastructure to Run Your Distribution Not a Tool to Quote One Risk.</span>
+                  <span data-split>Infrastructure to run your distribution</span>
+                  <br />
+                  <span data-split>not a tool to quote one risk.</span>
                 </h2>
                 <p
                   ref={descRef}
                   className="font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
                 >
-                  Insurance distribution should work like infrastructure — just
+                  Insurance distribution should work like infrastructure - just
                   like Stripe for payments or Plaid for identity.
                 </p>
               </div>
@@ -432,37 +421,22 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                 <p
                   className="hidden font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:block"
                 >
-                  Insurance distribution should work like infrastructure — just
+                  Insurance distribution should work like infrastructure - just
                   like Stripe for payments or Plaid for identity.
                 </p>
-                <div className="hidden w-full flex-wrap items-center justify-end gap-3 lg:flex">
-                  <div className="flex items-center gap-3">
-                    <ArrowNavButton
-                      direction="prev"
-                      tone="light"
-                      aria-label="Previous slide"
-                      onClick={prev}
-                    />
-                    <ArrowNavButton
-                      direction="next"
-                      tone="light"
-                      aria-label="Next slide"
-                      onClick={next}
-                    />
-                  </div>
-                </div>
               </div>
             </div>
 
             {/* ── Mobile: normal Swiper ── */}
-            <div className="relative mt-12 md:mt-14 lg:hidden">
+            <div className="relative mt-8 md:mt-10 lg:hidden">
               <Swiper
                 spaceBetween={12}
                 slidesPerView={1.1}
                 speed={600}
+                onSlideChange={(swiper) => setActive(swiper.activeIndex)}
                 className="why-coverforce-swiper !overflow-visible"
               >
-                {whySlides.map((slide) => (
+                {whySlides.map((slide, slideIndex) => (
                   <SwiperSlide key={slide.id}>
                     {slide.href ? (
                       <Link href={slide.href} className="block">
@@ -476,6 +450,13 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                             alt={slide.alt}
                             draggable={false}
                           />
+                          {active === slideIndex ? (
+                            <div className="absolute inset-x-0 bottom-0 z-10 bg-linear-to-t from-black/70 via-black/20 to-transparent px-4 pb-4 pt-10">
+                              <h3 className="max-w-[14rem] font-heading text-lg font-medium leading-[1.12] tracking-tight text-white sm:max-w-[18rem] sm:text-xl">
+                                {slide.title}
+                              </h3>
+                            </div>
+                          ) : null}
                         </article>
                       </Link>
                     ) : (
@@ -489,19 +470,26 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                           alt={slide.alt}
                           draggable={false}
                         />
+                        {active === slideIndex ? (
+                          <div className="absolute inset-x-0 bottom-0 z-10 bg-linear-to-t from-black/70 via-black/20 to-transparent px-4 pb-4 pt-10">
+                            <h3 className="max-w-[14rem] font-heading text-lg font-medium leading-[1.12] tracking-tight text-white sm:max-w-[18rem] sm:text-xl">
+                              {slide.title}
+                            </h3>
+                          </div>
+                        ) : null}
                       </article>
                     )}
                   </SwiperSlide>
                 ))}
               </Swiper>
 
-              <div className="mt-6 flex flex-col gap-5">
+              <div className="mt-4 flex flex-col gap-3">
                 <ActiveSlideContent slide={activeSlide} compact />
               </div>
             </div>
 
             {/* ── Desktop: expanding slider ── */}
-            <div className="relative mt-12 hidden md:mt-14 lg:mt-16 lg:block">
+            <div className="relative mt-8 hidden md:mt-10 lg:mt-12 lg:block">
               <div
                 ref={trackRef}
                 className={`why-slider-track${
@@ -536,15 +524,24 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                             : "is-inactive"
                   }`;
                   const slideImage = (
-                    <Image
-                      width={1000}
-                      height={1000}
-                      sizes="25vw"
-                      className="h-full w-full object-cover"
-                      src={slide.image}
-                      alt={slide.alt}
-                      draggable={false}
-                    />
+                    <>
+                      <Image
+                        width={1000}
+                        height={1000}
+                        sizes="25vw"
+                        className="h-full w-full object-cover"
+                        src={slide.image}
+                        alt={slide.alt}
+                        draggable={false}
+                      />
+                      {isActive || isExpanded ? (
+                        <div className="absolute inset-x-0 bottom-0 z-10 bg-linear-to-t from-black/70 via-black/20 to-transparent px-5 pb-5 pt-14">
+                          <h3 className="max-w-[14rem] font-heading text-lg font-medium leading-[1.12] tracking-tight text-white lg:max-w-[16rem] lg:text-[1.375rem]">
+                            {slide.title}
+                          </h3>
+                        </div>
+                      ) : null}
+                    </>
                   );
 
                   if (slide.href && (isActive || isExpanded)) {
@@ -577,7 +574,7 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                 )})}
               </div>
 
-              <div className="mt-6 flex items-end justify-between gap-8 border-t border-[#E8E8EE] pt-6">
+              <div className="mt-4 flex items-end justify-between gap-8">
                 <div className="max-w-4xl">
                   <ActiveSlideContent slide={activeSlide} />
                 </div>

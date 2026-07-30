@@ -100,7 +100,7 @@ button {
       var(--page-transition-delay) both;
   }
 
-  /* Pricing hero is navy — fade only so no white gap shows under a Y slide. */
+  /* Pricing hero is navy - fade only so no white gap shows under a Y slide. */
   html[data-page-enter="pricing"] ::view-transition-new(page-content) {
     animation: site-page-fade-in var(--page-transition-in) var(--page-transition-enter-ease)
       var(--page-transition-delay) both;
@@ -937,7 +937,7 @@ button {
   }
 }
 
-/* Gradient stat text — same dark blue → purple as primary buttons */
+/* Gradient stat text - same dark blue → purple as primary buttons */
 .operating-stat-gradient-text {
   background-image: linear-gradient(135deg, #322696 0%, #322696 48%, #5e3fd0 100%);
   background-clip: text;

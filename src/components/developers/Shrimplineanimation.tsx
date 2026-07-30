@@ -26,11 +26,11 @@ interface ShrimpLineAnimationProps {
  *   - Copy 2: horizontally flipped via scaleX(-1) (draws right -> left).
  *
  * The wrapper sizes itself to its content (2 copies + gap) instead of being
- * pinned to the parent's height, so the gap never gets clipped off — no
+ * pinned to the parent's height, so the gap never gets clipped off - no
  * more `absolute inset-0 h-full` + overflow-hidden cutting off the second
  * copy or the space between them.
  *
- * Both copies share ONE scroll-scrubbed timeline — copy 2's draw-in starts
+ * Both copies share ONE scroll-scrubbed timeline - copy 2's draw-in starts
  * right where copy 1's finishes, as the user scrolls through the parent
  * section.
  *

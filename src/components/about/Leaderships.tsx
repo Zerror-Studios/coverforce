@@ -22,6 +22,7 @@ type Leader = {
   role: string;
   bio: string;
   image: string;
+  imageClassName?: string;
   linkedin?: string;
 };
 
@@ -31,7 +32,7 @@ const foundersRow: Leader[] = [
     name: "Behram Dinshaw",
     role: "Chairman & Co-Founder",
     bio: "Former Travelers executive with 25+ years in insurance leadership.",
-    image: "/images/about/behram.png",
+    image: "/images/about/behram.webp",
     linkedin: "https://www.linkedin.com/in/behram-m-dinshaw-77760b6/",
   },
   {
@@ -39,7 +40,7 @@ const foundersRow: Leader[] = [
     name: "Cyrus Karai",
     role: "CEO & Co-Founder",
     bio: "Former Credit Suisse and PwC leader with a Wharton MBA.",
-    image: "/images/about/cyrus.png",
+    image: "/images/about/cyrus.webp",
     linkedin: "https://www.linkedin.com/in/cyrus-karai/",
   },
   {
@@ -47,7 +48,7 @@ const foundersRow: Leader[] = [
     name: "Kaivan Wadia",
     role: "CTO & Co-Founder",
     bio: "Former Amazon engineering leader experienced in scaling platforms.",
-    image: "/images/about/kaivan.png",
+    image: "/images/about/kaivan.webp",
     linkedin: "https://www.linkedin.com/in/kaivanwadia/",
   },
 ];
@@ -58,7 +59,7 @@ const advisoryRow: Leader[] = [
     name: "Bill Bloom",
     role: "Advisory Board",
     bio: "Former technology executive at The Hartford and Travelers.",
-    image: "/images/about/bill.png",
+    image: "/images/about/bill.webp",
     linkedin: "https://www.linkedin.com/in/bill-bloom-ab141aa/",
   },
   {
@@ -66,7 +67,7 @@ const advisoryRow: Leader[] = [
     name: "Patrick Kinney",
     role: "Advisory Board",
     bio: "Former Travelers executive and Keystone CEO.",
-    image: "/images/about/patrick.png",
+    image: "/images/about/patrick.webp",
     linkedin: "https://www.linkedin.com/in/p-kinney/",
   },
   {
@@ -74,14 +75,15 @@ const advisoryRow: Leader[] = [
     name: "TJ Ryan",
     role: "Advisory Board",
     bio: "Insurance advisor modernizing commercial distribution.",
-    image: "/images/about/tj.png",
+    image: "/images/about/tj.webp",
+    imageClassName: "scale-[1.3] origin-bottom object-bottom",
   },
   {
     id: "brad-brown",
     name: "Brad Brown",
     role: "Advisory Board",
     bio: "McKinsey Senior Partner Emeritus and former FinTech leader.",
-    image: "/images/about/brad.png",
+    image: "/images/about/brad.webp",
     linkedin: "https://www.linkedin.com/in/bradfordtbrown/",
   },
 ];
@@ -114,7 +116,7 @@ function LeaderCard({ leader }: { leader: Leader }) {
             alt={leader.name}
             width={248}
             height={366}
-            className="relative h-auto w-full"
+            className={`relative h-auto w-full object-cover ${leader.imageClassName ?? ""}`}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
         </div>

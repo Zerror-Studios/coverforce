@@ -105,7 +105,7 @@ const CardSection = () => {
                   Direct carrier API connections
                 </p>
                 <p className="mt-2 text-sm leading-relaxed text-white/80">
-                  Real-time quoting, binding and policy issuance — no portals,
+                  Real-time quoting, binding and policy issuance - no portals,
                   no rekeying. AMS, premium finance and compliance partners stay
                   in sync automatically.
                 </p>
@@ -130,8 +130,8 @@ const CardSection = () => {
                 </p>
                 <p className="mt-2 text-sm leading-relaxed text-white/80">
                   Purpose-built AI agents read submissions, match appetite and
-                  orchestrate the entire workflow — from intake to policy
-                  delivery — so your team focuses on relationships.
+                  orchestrate the entire workflow - from intake to policy
+                  delivery - so your team focuses on relationships.
                 </p>
               </div>
               </div>

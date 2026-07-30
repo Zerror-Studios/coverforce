@@ -73,7 +73,7 @@ const AVATARS = [
 export default function AiExtractedDetailsMock() {
   return (
     <div className="relative mx-auto w-full max-w-[440px] min-h-[320px] overflow-visible pb-4 md:min-h-[350px] md:pb-6">
-      {/* Back card — top-right */}
+      {/* Back card - top-right */}
       <div className="absolute right-0 top-0 z-0 w-[94%] rounded-2xl border border-[#E8EAEF] bg-white p-4 shadow-[0_8px_40px_rgba(0,0,0,0.08)] md:p-5">
         <div className="flex items-center justify-between gap-3 border-b border-dashed border-[#E5E7EB] pb-3">
           <p className="inline-flex items-center gap-1.5 font-heading text-[0.65rem] font-semibold tracking-wide text-[#3C3B3B] md:text-sm">
@@ -122,7 +122,7 @@ export default function AiExtractedDetailsMock() {
         </div>
       </div>
 
-      {/* Front card — bottom-left overlap */}
+      {/* Front card - bottom-left overlap */}
       <div className="absolute -left-10 top-[8.25rem] z-10 w-[85%] overflow-hidden rounded-2xl border border-[#E8EAEF] bg-white shadow-[0_12px_48px_rgba(0,0,0,0.12)] md:top-[13rem] md:w-[80%]">
         <div className="flex items-center justify-between gap-3 px-4 py-3">
           <p className="inline-flex items-center gap-2 font-heading text-sm font-semibold text-[#3C3B3B] md:text-base">

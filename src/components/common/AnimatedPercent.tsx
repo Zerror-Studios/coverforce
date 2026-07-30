@@ -364,7 +364,7 @@ export default function AnimatedPercent({
   );
 }
 
-/** 85% slide-up (Data Advantage — remarket & service) */
+/** 85% slide-up (Data Advantage - remarket & service) */
 export function AnimatedEightyFivePercent({
   className = "",
   tensDuration = 1700,
@@ -441,7 +441,7 @@ export function AnimatedSixtyPercentHover({
   );
 }
 
-/** 60% slide-up (Brokers / Startups mock) — scroll only */
+/** 60% slide-up (Brokers / Startups mock) - scroll only */
 export function AnimatedSixtyPercent({ className = "" }: { className?: string }) {
   return (
     <ScrollTriggeredAnimatedStat

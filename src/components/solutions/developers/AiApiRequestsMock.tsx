@@ -50,7 +50,7 @@ function ApiRequestsChart() {
 export default function AiApiRequestsMock() {
   return (
     <div className="relative mx-auto w-full max-w-[440px] min-h-[340px] overflow-visible pb-4 md:min-h-[370px] md:pb-6">
-      {/* Back card — top-right */}
+      {/* Back card - top-right */}
       <div className="absolute right-0 top-0 z-0 w-[94%] rounded-2xl border border-[#E8EAEF] bg-white p-4 pb-10 shadow-[0_8px_40px_rgba(0,0,0,0.08)] md:p-5 md:pb-12">
         <div className="flex items-center justify-between gap-3">
           <p className="inline-flex items-center gap-1.5 font-heading text-sm font-medium text-[#3C3B3B] md:text-base">
@@ -74,7 +74,7 @@ export default function AiApiRequestsMock() {
         <ApiRequestsChart />
       </div>
 
-      {/* Front card — bottom-left overlap */}
+      {/* Front card - bottom-left overlap */}
       <div className="absolute left-0 top-[9.5rem] z-10 w-[86%] overflow-hidden rounded-2xl border border-[#E8EAEF] bg-white shadow-[0_12px_48px_rgba(0,0,0,0.12)] md:top-[10.25rem] md:w-[84%]">
         <div className="flex items-center justify-between gap-3 px-4 py-3 md:px-5">
           <p className="inline-flex items-center gap-2 font-heading text-sm font-semibold text-[#3C3B3B] md:text-base">

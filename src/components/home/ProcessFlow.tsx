@@ -433,7 +433,7 @@ const ProcessFlow = () => {
     const starts = stepStartTimesRef.current;
     const total = Math.max(tl.duration(), 0.001);
     const stepStart = starts[index] ?? 0;
-    // Small absolute nudge past the boundary — do NOT use a % of the gap to the
+    // Small absolute nudge past the boundary - do NOT use a % of the gap to the
     // next step (that gap includes a long panel scroll and overshoots badly).
     const targetTime = gsap.utils.clamp(0, total, stepStart + 0.2);
     const progress = targetTime / total;

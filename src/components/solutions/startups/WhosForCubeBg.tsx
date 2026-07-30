@@ -12,7 +12,7 @@ const PLANE_SIZE = "min(68vw, 25rem)";
 const PLANE_GAP = `calc((${PLANE_SIZE}) / 4)`;
 const DOT_COLOR = "rgba(197, 205, 216, 0.9)";
 
-/** Pyramid ring radii (% of plane) — small → large across Z stack */
+/** Pyramid ring radii (% of plane) - small → large across Z stack */
 const PYRAMID_RADII = [28, 38, 48, 58, 68];
 const DOT_SPACING = 2.1;
 const GRID_COLS = 16;
@@ -85,7 +85,7 @@ function buildMorphDots(planeIndex: number): MorphDot[] {
       }
     });
 
-    // Always create the full ring — never skip a slot when the grid is exhausted
+    // Always create the full ring - never skip a slot when the grid is exhausted
     if (best >= 0) {
       used.add(best);
       dots.push({
@@ -268,7 +268,7 @@ export default function WhosForCubeBg() {
       };
 
       const settleToRings = () => {
-        // Pause at the live spin pose — never reset to 0
+        // Pause at the live spin pose - never reset to 0
         spinTweenRef.current?.pause();
         spinTweenRef.current?.kill();
         spinTweenRef.current = null;

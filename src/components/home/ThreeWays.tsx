@@ -98,7 +98,7 @@ type WayCardConfig = Omit<WayCardProps, "children" | "onOpen"> & {
   modalPreview: ReactNode;
 };
 
-// Updated WAY_CARDS — remove lightStrip entries
+// Updated WAY_CARDS - remove lightStrip entries
 const WAY_CARDS: WayCardConfig[] = [
   {
     label: "Wholesalers",
@@ -489,7 +489,7 @@ export default function ThreeWays() {
               ref={descRef}
               className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:text-left"
             >
-              Wholesalers, brokers, carriers, startups, and builders — CoverForce
+              Wholesalers, brokers, carriers, startups, and builders - CoverForce
               adapts to how each team works, without changing the platform underneath.
             </p>
           </div>

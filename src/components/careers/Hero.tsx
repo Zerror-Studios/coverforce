@@ -107,11 +107,11 @@ const Hero = () => {
         className="relative h-full w-full overflow-hidden will-change-transform"
       >
         <Image
-          src="/images/careers/hero.PNG"
+          src="/images/careers/hero.webp"
           alt="careers-hero"
           fill
           priority
-          className="object-cover object-center"
+          className="object-cover object-center lg:object-[50%_60%]"
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-black/30" aria-hidden />

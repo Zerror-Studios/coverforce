@@ -62,7 +62,7 @@ const COLS: Record<2 | 3 | 4, string> = {
   4: "md:grid-cols-4",
 };
 
-/** Divider-separated KPI row — analytics-style, no boxes. */
+/** Divider-separated KPI row - analytics-style, no boxes. */
 export function CalculatorKpiRow({
   children,
   cols = 3,
@@ -117,7 +117,7 @@ export function CalculatorKpiCard({
   );
 }
 
-/** Compact metric in a divider row — same analytics layout. */
+/** Compact metric in a divider row - same analytics layout. */
 export function CalculatorStatCard({
   label,
   value,

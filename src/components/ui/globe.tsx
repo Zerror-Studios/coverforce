@@ -75,7 +75,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
   const groupRef = useRef<Group | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Stable defaults object — only rebuilt when globeConfig actually changes
+  // Stable defaults object - only rebuilt when globeConfig actually changes
   const defaultProps = useMemo(
     () => ({
       pointSize: 0.7,
@@ -236,7 +236,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
     globeConfig.tone,
   ]);
 
-  // Handle rings animation with cleanup — lighter cadence and lighter payload
+  // Handle rings animation with cleanup - lighter cadence and lighter payload
   useEffect(() => {
     if (!globeRef.current || !isInitialized || !data || defaultProps.maxRings <= 0) return;
 

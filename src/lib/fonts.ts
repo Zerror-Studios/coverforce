@@ -2,15 +2,15 @@
  * Tailwind font family utilities (see globals.css @theme).
  *
  * @example
- * // Body copy — Inter (also default on <body>)
+ * // Body copy - Inter (also default on <body>)
  * <p className="font-sans text-base font-normal">Paragraph text</p>
  *
  * @example
- * // Page / section titles — Poppins
+ * // Page / section titles - Poppins
  * <h1 className="font-heading text-5xl font-semibold">Hero headline</h1>
  *
  * @example
- * // Eyebrows & labels — DM Mono
+ * // Eyebrows & labels - DM Mono
  * <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em]">
  *   Built for your role
  * </p>
@@ -22,11 +22,11 @@
  * <span className="font-mono font-normal">DM Mono 400</span>
  */
 export const fontFamily = {
-  /** Inter — body, paragraphs, UI */
+  /** Inter - body, paragraphs, UI */
   sans: "font-sans",
-  /** Poppins — headings, display */
+  /** Poppins - headings, display */
   heading: "font-heading",
-  /** DM Mono — eyebrows, tags, code-like labels */
+  /** DM Mono - eyebrows, tags, code-like labels */
   mono: "font-mono",
 } as const;
 
@@ -38,5 +38,5 @@ export const eyebrowClass =
 export const headingClass =
   "font-heading font-semibold leading-tight tracking-tight";
 
-/** Common body (Inter — optional; body already uses Inter) */
+/** Common body (Inter - optional; body already uses Inter) */
 export const bodyClass = "font-sans leading-relaxed";

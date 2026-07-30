@@ -61,13 +61,13 @@ const OurStory = () => {
                 CoverForce was born out of a simple observation: commercial insurance needed
                 digital enablers. Despite being a trillion-dollar industry, the process of
                 quoting, binding, and managing insurance policies remained slow, fragmented,
-                and paper-heavy — costing agents time, limiting carriers&apos; reach, and
+                and paper-heavy - costing agents time, limiting carriers&apos; reach, and
                 frustrating business owners.
               </p>
               <p data-split className="text-base font-heading font-regular leading-[1.5] text-[#454545] sm:text-lg md:text-4xl md:leading-[1.12] lg:text-[1.6rem] lg:leading-[1.12]">
                 In 2020, we saw an opportunity to reimagine the infrastructure stack of
                 insurance. The vision was clear: create a single API and platform that could
-                connect agents, platforms, and carriers seamlessly — making commercial
+                connect agents, platforms, and carriers seamlessly - making commercial
                 insurance distribution as simple and instant as any modern digital transaction.
               </p>
               <p data-split className="text-base font-heading font-regular leading-[1.5] text-[#454545] sm:text-lg md:text-4xl md:leading-[1.12] lg:text-[1.6rem] lg:leading-[1.12]">

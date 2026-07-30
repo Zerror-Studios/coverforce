@@ -114,7 +114,7 @@ export default function BrokerCodeControlsMock({
           : ""
       }`}
     >
-      {/* Broker card — back layer */}
+      {/* Broker card - back layer */}
       <div className="relative z-0 w-full max-w-[420px] overflow-hidden rounded-2xl border border-[#E8EAEF] bg-white px-4 shadow-[0_8px_40px_rgba(0,0,0,0.08)]">
         <div className="flex items-center justify-between gap-3 border-b border-dashed border-[#000000]/10 py-4">
           <p className="font-heading text-lg font-semibold text-[#3C3B3B] md:text-base">

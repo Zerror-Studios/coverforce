@@ -47,7 +47,7 @@ export default function EducationalResources() {
                 className="font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem]"
               >
                 Launching a brokerage means learning a new language fast. These resources
-                are written specifically for insurtech founders — no fluff, no assumed
+                are written specifically for insurtech founders - no fluff, no assumed
                 knowledge.
               </p>
             </div>

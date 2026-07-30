@@ -39,7 +39,7 @@ const TESTIMONIALS: Testimonial[] = [
   {
     id: "3",
     quote:
-      "CoverForce gives us one workflow from intake to bind—fewer errors, faster quotes, and less back-and-forth with carriers.",
+      "CoverForce gives us one workflow from intake to bind-fewer errors, faster quotes, and less back-and-forth with carriers.",
     name: "Marcus Webb",
     role: "Head of Distribution",
     company: "Coalition",

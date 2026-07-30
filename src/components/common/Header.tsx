@@ -478,7 +478,7 @@ const Header = () => {
   // Glass blur: white content over dark sections, black over light.
   const lightOverHero =
     displayPathname.startsWith("/blog") || displayPathname.startsWith("/author");
-  // Mega menu panel is white — keep header chrome white while it's open/closing.
+  // Mega menu panel is white - keep header chrome white while it's open/closing.
   const forceLightHeader =
     mobileMenuOpen || Boolean(activeMenu) || Boolean(renderedMenu);
   const theme = forceLightHeader

@@ -37,10 +37,10 @@ const WIN_W = 640;
 const WIN_H = 500;
 const WIN_TITLE_H = 42;
 const DUR = 500;
-// DPR is read lazily inside setupCanvas — never at module scope, which would
+// DPR is read lazily inside setupCanvas - never at module scope, which would
 // run during SSR and either crash or hardcode a value.
 
-// Magnification config — tuned to match macOS dock proportions
+// Magnification config - tuned to match macOS dock proportions
 const DOCK_ICON_BASE = 68;
 const DOCK_ICON_PEAK = 112;
 const DOCK_MAG_RANGE = 160;
@@ -266,7 +266,7 @@ const MacWindow = ({
 };
 
 // ─── Magnified Dock Icon ──────────────────────────────────────────────────────
-// This component uses framer-motion's useSpring/useTransform — both produce
+// This component uses framer-motion's useSpring/useTransform - both produce
 // floating-point values whose last-digit precision can differ between Node
 // (server) and V8 (client), which causes hydration mismatches. So this whole
 // component only renders client-side via the `mounted` flag in <GenieEffect>.
@@ -274,6 +274,7 @@ function MagnifiedDockIcon({
   app,
   isActive,
   showDot,
+  hinted,
   disabled,
   btnRef,
   onClick,
@@ -282,6 +283,7 @@ function MagnifiedDockIcon({
   app: App;
   isActive: boolean;
   showDot: boolean;
+  hinted: boolean;
   disabled: boolean;
   btnRef: (el: HTMLButtonElement | null) => void;
   onClick: () => void;
@@ -330,7 +332,11 @@ function MagnifiedDockIcon({
             height: size,
             cursor: disabled ? "default" : "pointer",
           }}
-          className="relative flex shrink-0 items-end justify-center border-none bg-transparent p-0"
+          className={`relative flex shrink-0 items-end justify-center border-none bg-transparent p-0 ${
+            hinted
+              ? "animate-[live-demo-dock-pulse_3s_ease-in-out_infinite] hover:[animation-play-state:paused]"
+              : ""
+          }`}
         >
           <motion.div
             style={{
@@ -366,6 +372,7 @@ function MacDock({
   apps,
   activeApp,
   phase,
+  pulseHint,
   isAnimating,
   snapshotsReady,
   dockRefs,
@@ -374,6 +381,7 @@ function MacDock({
   apps: App[];
   activeApp: number | null;
   phase: Phase;
+  pulseHint: boolean;
   isAnimating: boolean;
   snapshotsReady: boolean;
   dockRefs: MutableRefObject<(HTMLButtonElement | null)[]>;
@@ -425,6 +433,7 @@ function MacDock({
             app={a}
             isActive={activeApp === i}
             showDot={phase === "open" && activeApp === i}
+            hinted={pulseHint}
             disabled={isAnimating || !snapshotsReady}
             btnRef={(el) => {
               dockRefs.current[i] = el;
@@ -452,14 +461,14 @@ function SnapshotStage({
   useEffect(() => {
     let cancelled = false;
 
-    // Capture work — runs after the page has painted.
+    // Capture work - runs after the page has painted.
     const run = async () => {
       try {
         // Wait one more frame so the offscreen MacWindows have laid out.
         await new Promise((r) => requestAnimationFrame(() => r(null)));
         if (cancelled) return;
 
-        // Parallel snapshots — html-to-image's bottleneck is the Image
+        // Parallel snapshots - html-to-image's bottleneck is the Image
         // element rasterizing the SVG, which the browser does off the main
         // thread, so capturing in parallel is faster than sequential without
         // overwhelming anything.
@@ -554,6 +563,7 @@ export default function GenieEffect() {
   const [activeApp, setActiveApp] = useState<number | null>(null);
   const [winPos, setWinPos] = useState<Pt>({ x: 0, y: 0 });
   const [snapshotsReady, setSnapshotsReady] = useState(false);
+  const [pulseHint, setPulseHint] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   // `containerRef` is the source of truth for layout coordinates. All
@@ -574,6 +584,23 @@ export default function GenieEffect() {
   const handleSnapshotsReady = useCallback((canvases: HTMLCanvasElement[]) => {
     offRef.current = canvases;
     setSnapshotsReady(true);
+  }, []);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setPulseHint(entry.isIntersecting);
+      },
+      { threshold: 0.45 },
+    );
+
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   // All position helpers below resolve against the container's bounding rect.
@@ -673,7 +700,7 @@ export default function GenieEffect() {
         // flushSync forces React to commit the MacWindow into the DOM
         // synchronously, before clearCanvas runs. Without this, setPhase
         // batches and the canvas would clear one frame BEFORE the MacWindow
-        // mounts — the page background shows through that gap, producing
+        // mounts - the page background shows through that gap, producing
         // the white-shutter flash. With flushSync, by the time clearCanvas
         // runs the MacWindow (z-40) is already on top of the canvas (z-30),
         // so the clear is visually invisible.
@@ -786,6 +813,14 @@ export default function GenieEffect() {
       ref={containerRef}
       className="relative w-full min-h-[650px] h-[min(85vh,860px)] select-none"
     >
+      <style>{`
+        @keyframes blink { 0%,49% { opacity: 1 } 50%,100% { opacity: 0 } }
+        @keyframes live-demo-dock-pulse {
+          0%, 100% { transform: translateY(0) scale(1); }
+          30% { transform: translateY(-6px) scale(1.06); }
+          60% { transform: translateY(0) scale(1.02); }
+        }
+      `}</style>
       <div className="absolute inset-0 overflow-hidden">
       <img
         src="/macos.png"
@@ -793,8 +828,6 @@ export default function GenieEffect() {
         aria-hidden="true"
         className="absolute inset-0 w-full h-full object-cover"
       />
-
-      <style>{`@keyframes blink { 0%,49% { opacity: 1 } 50%,100% { opacity: 0 } }`}</style>
 
       {/* Aurora blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -830,7 +863,7 @@ export default function GenieEffect() {
         />
       </div>
 
-      {/* Menubar — safe to SSR (no motion values, no client-only state) */}
+      {/* Menubar - safe to SSR (no motion values, no client-only state) */}
       <div
         className="absolute top-0 left-0 right-0 flex items-center justify-between px-3"
         style={{
@@ -850,14 +883,14 @@ export default function GenieEffect() {
 
       </div>
 
-      {/* Genie canvas — outside clipped scene so the warp isn't cut off */}
+      {/* Genie canvas - outside clipped scene so the warp isn't cut off */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 pointer-events-none"
         style={{ width: "100%", height: "100%", zIndex: 30 }}
       />
 
-      {/* Live MacWindow — only renders when phase is open/closing */}
+      {/* Live MacWindow - only renders when phase is open/closing */}
       {(phase === "open" || phase === "closing") && app && (
         <MacWindow
           app={app}
@@ -869,7 +902,7 @@ export default function GenieEffect() {
         />
       )}
 
-      {/* Everything below is gated on `mounted` — server skips it entirely,
+      {/* Everything below is gated on `mounted` - server skips it entirely,
           client renders it after the first effect fires. */}
       {mounted && (
         <>
@@ -879,6 +912,7 @@ export default function GenieEffect() {
             apps={APPS}
             activeApp={activeApp}
             phase={phase}
+            pulseHint={pulseHint}
             isAnimating={isAnimating}
             snapshotsReady={snapshotsReady}
             dockRefs={dockRefs}

@@ -11,7 +11,7 @@ type OpticalFiberProps = {
   fanSpread?: number;
   /** Multiplier for how far fibers extend from the origin. */
   fanReach?: number;
-  /** Camera field of view — wider helps fit a broad arc. */
+  /** Camera field of view - wider helps fit a broad arc. */
   fov?: number;
   /** Compresses vertical reach without affecting horizontal spread. */
   fanHeight?: number;
@@ -21,7 +21,7 @@ type OpticalFiberProps = {
   color?: string;
   /** Enable bottom-center origin glow (3D sprites + CSS halo). */
   originGlow?: boolean;
-  /** Fade in the CSS halo — used by home intro on dark hero. */
+  /** Fade in the CSS halo - used by home intro on dark hero. */
   glowVisible?: boolean;
   /** Bloom the fan open like a flower as the section scrolls into view. */
   bloomOnScroll?: boolean;

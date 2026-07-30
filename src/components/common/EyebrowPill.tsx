@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { withAlpha } from "@/data/wayCardStyles";
 
-/** Brand navy — default accent for light pills (text, border, tinted bg). */
+/** Brand navy - default accent for light pills (text, border, tinted bg). */
 const DEFAULT_ACCENT = "#151f4d";
 
 type EyebrowPillProps = {
@@ -25,7 +25,7 @@ const DARK_SHADOW =
 const WHITE_SHADOW =
   "0 2px 6px -1px #ffffff55, 0 1px 2px #ffffff40, 0 .5px .5px #ffffff50, 0 2px 8px #ffffff0a inset, 0 1px 3px #ffffff1a inset, 0 .5px .5px #ffffff1f inset";
 
-/** Blue inset highlight — readable on light/gray surfaces where white inset disappears */
+/** Blue inset highlight - readable on light/gray surfaces where white inset disappears */
 const LIGHT_SHADOW =
   "0 1px 2px -1px #151f4d14, 0 1px 1px #151f4d0f, 0 2px 8px #413CC018 inset, 0 1px 3px #151f4d22 inset, 0 .5px .5px #5B35E028 inset";
 

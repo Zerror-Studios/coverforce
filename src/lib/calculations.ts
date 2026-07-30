@@ -158,7 +158,7 @@ export function getLOBBreakdown(inputs: CalculatorInputs): LOBBreakdown {
   // CoverForce-reachable = commercial LOBs that are toggled ON
   let cfReachable = commLOBs.filter(l => l.on).reduce((s, l) => s + l.premium, 0);
   
-  // Other LOB — manually entered
+  // Other LOB - manually entered
   let otherPrem = 0;
   if (otherLobName && otherLobPct > 0) {
     otherPrem = commTotal * (otherLobPct / commActPctSum);
@@ -248,7 +248,7 @@ export function compute(inputs: CalculatorInputs): CalculationResult {
     const hoursSaved = ((minCurrent - minCF) * quoteVol * 12) / 60;
     const timeSavingsVal = hoursSaved * hourly;
 
-    // Productivity reinvestment — hours freed × 40% redeployed to revenue-gen at 50% productivity uplift
+    // Productivity reinvestment - hours freed × 40% redeployed to revenue-gen at 50% productivity uplift
     const productivityReinvest = hoursSaved * hourly * 0.4;
 
     // Error reduction

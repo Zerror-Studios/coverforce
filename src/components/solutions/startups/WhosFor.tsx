@@ -198,7 +198,7 @@ const WhosFor = () => {
 
           <p className="max-w-2xl font-sans text-sm font-regular leading-[1.45] text-white/60 md:text-[0.9375rem]">
             <span className="font-medium text-white/75">Note:</span> B2B2B startups
-            — those building for brokers, agencies, and distribution partners — are
+            - those building for brokers, agencies, and distribution partners - are
             also a strong fit for this program.
           </p>
         </div>

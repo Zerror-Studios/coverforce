@@ -1425,7 +1425,7 @@ const Appetite = () => {
               ref={descRef}
               className="mx-auto mt-5 max-w-xl font-sans font-regular text-sm leading-[1.4] text-white/80 md:text-[1.125rem]"
             >
-              Check carrier appetite for any class code — powered by 140K+
+              Check carrier appetite for any class code - powered by 140K+
               proprietary carrier interactions.
             </p>
           </div>

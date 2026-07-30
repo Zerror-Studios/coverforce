@@ -504,7 +504,7 @@ export default function ToolWheel({
       });
       context.setLineDash([]);
 
-      // flowing signals — lower icons: hub → node; upper icons: node → hub
+      // flowing signals - lower icons: hub → node; upper icons: node → hub
       if (!reduceMotion && signalsEnabledRef.current) {
         particles.forEach((p) => {
           const item = items[p.itemIndex];
@@ -616,7 +616,7 @@ export default function ToolWheel({
         aria-hidden
       />
 
-      {/* Hub — outer ring + inner logo circle */}
+      {/* Hub - outer ring + inner logo circle */}
       <div
         className={`absolute top-1/2 left-1/2 z-10 flex aspect-square w-[14%] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#ECE7FF] bg-white transition-transform duration-200 ${
           hoveredLogo !== null ? "scale-105" : ""
@@ -633,7 +633,7 @@ export default function ToolWheel({
         </div>
       </div>
 
-      {/* Tool nodes — square rounded-md badges with brand icons */}
+      {/* Tool nodes - square rounded-md badges with brand icons */}
       <div className="absolute inset-0">
         {items.map((item, i) => {
           const nameAbove = iconNameAbove(item.pos);

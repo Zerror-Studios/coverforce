@@ -79,7 +79,7 @@ function AvatarStack() {
 export default function ConnectedSourcesMock() {
   return (
     <div className="relative mx-auto w-full max-w-[440px] min-h-[340px] overflow-visible pb-6 md:min-h-[370px] md:pb-8">
-      {/* Back card — top-left */}
+      {/* Back card - top-left */}
       <div className="absolute left-0 top-0 z-0 w-[94%] overflow-hidden rounded-2xl border border-[#E8EAEF] bg-white p-4 shadow-[0_8px_40px_rgba(0,0,0,0.08)] md:p-5">
         <div className="flex items-center justify-between gap-3">
           <p className="font-heading text-sm font-semibold text-[#3C3B3B] md:text-base">
@@ -131,7 +131,7 @@ export default function ConnectedSourcesMock() {
         </div>
       </div>
 
-      {/* Front card — bottom-right overlap */}
+      {/* Front card - bottom-right overlap */}
       <div className="absolute -right-4 top-[9.75rem] z-10 w-[72%] md:top-[13rem] md:w-[90%]">
         <ApiEndpointSummaryMock />
       </div>

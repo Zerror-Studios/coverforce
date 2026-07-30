@@ -31,7 +31,7 @@ const milestones: Milestone[] = [
     year: "2022",
     title: "Partnered with ISU",
     description:
-      "Our first customer — partnered with ISU Steadfast to build CoverForce from the ground up.",
+      "Our first customer - partnered with ISU Steadfast to build CoverForce from the ground up.",
   },
   {
     src: "/images/about/mil2.webp",
@@ -47,7 +47,7 @@ const milestones: Milestone[] = [
     year: "2025",
     title: "Launched E&S",
     description:
-      "Introduced CoverForce to a broader audience — now powering 4 of the top 10 U.S. wholesalers.",
+      "Introduced CoverForce to a broader audience - now powering 4 of the top 10 U.S. wholesalers.",
   },
   {
     src: "/images/about/mil4.webp",

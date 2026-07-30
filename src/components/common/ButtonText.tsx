@@ -63,7 +63,7 @@ const ButtonText = ({
       span.style.display = "inline-block";
       span.style.transformOrigin = "center center";
       span.style.willChange = "transform, filter, opacity";
-      // CSS handles scale easing — JS only sets the value
+      // CSS handles scale easing - JS only sets the value
       span.style.transition = "scale 0.15s cubic-bezier(0.4, 0, 0.2, 1)";
       span.textContent = ch === " " ? "\u00A0" : ch;
       el.appendChild(span);

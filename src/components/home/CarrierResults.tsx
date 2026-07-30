@@ -191,7 +191,7 @@ const CarrierResults = () => {
             {/*
               Original SVG kept pixel-perfect.
               Triangles/squares removed (display:none groups dropped).
-              Dots added via animateMotion on <defs> path refs —
+              Dots added via animateMotion on <defs> path refs -
               one dot from the right edge flowing left to center,
               one from the left edge flowing right to center,
               both shrink+fade at the midpoint.
@@ -297,7 +297,7 @@ const CarrierResults = () => {
                   </g>
                 </g>
 
-                {/* Outer solid curves — top */}
+                {/* Outer solid curves - top */}
                 <g transform="matrix(1,0,0,1,1170.1409912109375,129.27499389648438)" opacity="1" style={{ display: "block" }}>
                   <g opacity="1" transform="matrix(1,0,0,1,0,0)">
                     <path strokeLinecap="butt" strokeLinejoin="miter" fillOpacity="0" strokeMiterlimit="4" stroke="#FFFFFF33" strokeWidth="1" d=" M450.1409912109375,-120.7249984741211 C450.1409912109375,-120.7249984741211 380.1409912109375,-120.7249984741211 380.1409912109375,-120.7249984741211 C-67.81500244140625,-120.7249984741211 11.258999824523926,120.7249984741211 -349.8590087890625,120.7249984741211 C-349.8590087890625,120.7249984741211 -450.1409912109375,120.7249984741211 -450.1409912109375,120.7249984741211" />
@@ -414,7 +414,7 @@ const CarrierResults = () => {
               <div ref={headerRef} className="flex flex-col justify-end space-y-5">
                 <h2
                   ref={headingRef}
-                  className="max-w-md text-2xl font-heading font-regular leading-tight tracking-tight text-[#9AA8BC] md:text-3xl lg:text-3xl lg:leading-[1.15]"
+                  className="max-w-2xl text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#9AA8BC] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
                 >
                   <span data-split>Carrier results that</span>
                   <br />

@@ -1,4 +1,4 @@
-/** Shared ROI calculator design tokens — neutral dashboard, site-aligned. */
+/** Shared ROI calculator design tokens - neutral dashboard, site-aligned. */
 
 export const calcText = "#444444";
 export const calcTextMuted = "#6B6B6B";
@@ -74,7 +74,7 @@ export const calcTextClass = "text-[#444444]";
 export const calcMutedClass = "text-[#6B6B6B]";
 export const calcSoftClass = "text-[#8A8A8A]";
 
-/** Chart / progress palette — colorful, site-aligned. */
+/** Chart / progress palette - colorful, site-aligned. */
 export const calcChart = {
   purple: "#5B35E0",
   purpleSoft: "#7B5CFF",

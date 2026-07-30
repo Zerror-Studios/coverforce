@@ -30,7 +30,7 @@ const testimonials: Testimonial[] = [
   {
     id: "1",
     quote:
-      "The platform simplifies complex insurance workflows, improves accuracy, and helps our team respond to brokers with greater speed and confidence. What used to take days of back-and-forth now happens in a single, unified flow — from submission intake through carrier matching to bind-ready quotes.",
+      "The platform simplifies complex insurance workflows, improves accuracy, and helps our team respond to brokers with greater speed and confidence. What used to take days of back-and-forth now happens in a single, unified flow - from submission intake through carrier matching to bind-ready quotes.",
     name: "Daniel Briggs",
     role: "Sr. Director of Sales",
     company: "Coalition",
@@ -50,7 +50,7 @@ const testimonials: Testimonial[] = [
   {
     id: "3",
     quote:
-      "CoverForce gives us one workflow from intake to bind — fewer errors, faster quotes, and less back-and-forth with carriers. Our producers get real-time visibility into every submission, and leadership finally has a single source of truth across the entire distribution pipeline.",
+      "CoverForce gives us one workflow from intake to bind - fewer errors, faster quotes, and less back-and-forth with carriers. Our producers get real-time visibility into every submission, and leadership finally has a single source of truth across the entire distribution pipeline.",
     name: "Marcus Webb",
     role: "Head of Distribution",
     company: "Coalition",
@@ -196,12 +196,11 @@ const Review = () => {
           >
             <h2
               ref={headingRef}
-              className="max-w-md text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#9AA8BC] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+              className="max-w-2xl text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#9AA8BC] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
             >
-              <span data-split>Why Commercial Insurance</span>{" "}
-              <span data-split>
-                Teams Trust CoverForce for Smarter Workflows
-              </span>
+              <span data-split>Why commercial insurance teams</span>
+              <br />
+              <span data-split>trust CoverForce for smarter workflows</span>
             </h2>
 
             <div className="flex shrink-0 items-center gap-3">
