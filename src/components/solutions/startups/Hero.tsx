@@ -39,7 +39,7 @@ const StartupHeroCard = () => (
     alt="Startup program dashboard preview"
     width={543}
     height={569}
-    className="relative z-10 mx-auto h-auto w-full max-w-[420px]"
+    className="relative z-10 mx-auto h-auto w-full max-w-[550px]"
     priority
   />
 );

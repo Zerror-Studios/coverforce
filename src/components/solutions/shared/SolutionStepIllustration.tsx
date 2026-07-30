@@ -10,7 +10,7 @@ type SolutionStepIllustrationProps = {
 
 function SolutionStepIllustration({ src, alt }: SolutionStepIllustrationProps) {
   return (
-    <div className="relative mx-auto flex w-full max-w-[680px] items-center justify-center px-2 lg:max-w-[720px]">
+    <div className="relative mx-auto flex w-full max-w-[680px] scale-150 items-center justify-center px-2 lg:max-w-[720px]">
       <Image
         src={src}
         alt={alt}

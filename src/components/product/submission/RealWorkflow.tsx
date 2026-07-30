@@ -382,7 +382,7 @@ const RealWorkflow = () => {
                           <p className="font-heading text-lg md:text-[1.375rem] font-semibold leading-snug tracking-tight text-[#151f4d] whitespace-normal max-w-[22rem]">
                             107 minutes saved <br /> per submission with 
                           </p>
-                          <div className="relative w-32 h-6 flex shrink-0">
+                          <div className="relative w-44 h-10 flex shrink-0">
                             <Image
                               src="/Coverforce_logo_blue.svg"
                               alt="CoverForce Logo"
