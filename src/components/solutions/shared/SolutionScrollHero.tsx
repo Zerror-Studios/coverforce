@@ -163,9 +163,15 @@ export default function SolutionScrollHero({
           };
 
           const updateCardPosition = (progress: number) => {
+            // Land at shared step size; hero stays at its own width until transfer
+            const targetScale = targetRect.width / sourceRect.width;
             const x = gsap.utils.interpolate(0, targetRect.left - sourceRect.left, progress);
-            const y = gsap.utils.interpolate(0, targetRect.top - sourceRect.top - 80, progress);
-            const scale = gsap.utils.interpolate(1, targetRect.width / sourceRect.width, progress);
+            const endY =
+              targetRect.top -
+              sourceRect.top +
+              (targetRect.height - sourceRect.height * targetScale) / 2;
+            const y = gsap.utils.interpolate(0, endY, progress);
+            const scale = gsap.utils.interpolate(1, targetScale, progress);
 
             gsap.set(card, { x, y, scale, transformOrigin: "top left" });
           };

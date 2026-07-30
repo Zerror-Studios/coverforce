@@ -16,6 +16,7 @@ import {
 import OperatingPlatformMock from "@/components/solutions/brokers/OperatingPlatformMock";
 import OperatingAiMock from "@/components/solutions/brokers/OperatingAiMock";
 import OperatingVisibilityMock from "@/components/solutions/brokers/OperatingVisibilityMock";
+import { SOLUTION_STEP_TRANSFER_TARGET_CLASS } from "@/components/solutions/shared/SolutionStepIllustration";
 import ShrimpLineAnimation from "@/components/developers/Shrimplineanimation";
 import ShrimpLineAnimation2 from "@/components/developers/Shrimplineanimation2";
 
@@ -298,7 +299,7 @@ export default function OperatingSystemSection({
                     {row.transferTargetId ? (
                       <div
                         data-transfer-target={row.transferTargetId}
-                        className="hidden w-full max-w-[800px] min-h-[300px] lg:block lg:max-w-[900px] lg:min-h-[360px]"
+                        className={SOLUTION_STEP_TRANSFER_TARGET_CLASS}
                         aria-hidden
                       />
                     ) : null}

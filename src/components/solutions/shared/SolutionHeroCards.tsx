@@ -60,7 +60,7 @@ export default function SolutionHeroCards({
           cardOneStartY: number;
         },
       ) => {
-        const baseY = progress * config.baseY;
+        const baseY = (1 - progress) * config.baseY;
         const extraY = gsap.utils.interpolate(config.startY, 0, progress);
         const extraX = gsap.utils.interpolate(config.startX, 0, progress);
         const centerY = gsap.utils.interpolate(config.startCenterY, 0, progress);
@@ -163,7 +163,7 @@ export default function SolutionHeroCards({
       ref={rootRef}
       className="relative mx-auto w-full max-w-[min(100%,420px)] pb-12 will-change-transform sm:pb-16 md:pb-14"
     >
-      <div ref={cardOneRef} className="relative scale-120 z-10  w-full will-change-transform">
+      <div ref={cardOneRef} className="relative z-10 w-full will-change-transform">
         <Image
           src={cardOne.src}
           alt={cardOne.alt}
@@ -175,7 +175,7 @@ export default function SolutionHeroCards({
       </div>
       <div
         ref={cardTwoRef}
-      className="relative scale-120 z-20 -ml-8 mt-6 w-[94%] max-w-[360px] will-change-transform sm:-ml-10 sm:mt-8 md:absolute md:bottom-20 md:-left-4 md:mt-0 md:w-[88%] lg:-left-6 lg:w-[86%]"
+        className="relative z-20 -ml-8 mt-6 w-[94%] max-w-[360px] will-change-transform sm:-ml-10 sm:mt-8 md:absolute md:bottom-20 md:-left-4 md:mt-0 md:w-[88%] lg:-left-6 lg:w-[86%]"
       >
         <Image
           src={cardTwo.src}
