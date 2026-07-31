@@ -10,80 +10,11 @@ import EyebrowPill from "@/components/common/EyebrowPill";
 import SectionRadialGlow from "@/components/common/SectionRadialGlow";
 import { containerPadding, getBottomBorderStyle } from "@/components/common/containerStyles";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
+import type { JobCategory, JobListing } from "@/lib/doverJobs";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type JobListing = {
-  title: string;
-  location: string;
-  type: string;
-  href: string;
-  target?: "_blank";
-  rel?: string;
-};
-
-type JobCategory = {
-  name: string;
-  jobs: JobListing[];
-};
-
-const jobCategories: JobCategory[] = [
-  {
-    name: "Engineering Roles",
-    jobs: [
-      {
-        title: "Founding AI Engineer",
-        location: "Remote [India]",
-        type: "Full Time",
-        href: "https://app.dover.com/apply/CoverForce/c55c4cef-cf3e-40a5-982c-320db7f3e310/?rs=76643084",
-        target: "_blank",
-        rel: "noopener noreferrer",
-      },
-      {
-        title: "Software Engineer – Backend",
-        location: "Remote [India]",
-        type: "Full Time",
-        href: "https://app.dover.com/apply/CoverForce/bc645e74-d00e-4f3c-8818-12761092eb58/?rs=76643084",
-        target: "_blank",
-        rel: "noopener noreferrer",
-      },
-    ],
-  },
-  {
-    name: "More Jobs",
-    jobs: [
-      {
-        title: "Business Analyst: Carrier Data, Integrations & Automation (Commercial Insurance)",
-        location: "Remote [India]",
-        type: "Full Time",
-        href: "https://app.dover.com/apply/CoverForce/e6d4296f-bc88-4e48-993c-31cc2ea3662c/?rs=76643084",
-        target: "_blank",
-        rel: "noopener noreferrer",
-      },
-      {
-        title: "Marketing Associate",
-        location: "Hybrid [New York City, NY]",
-        type: "Full Time",
-        href: "https://app.dover.com/apply/CoverForce/48c77e04-ee97-4e43-9d05-04ca25b2ebdb/?rs=76643084",
-        target: "_blank",
-        rel: "noopener noreferrer",
-      },
-      {
-        title: "Software Engineer – Frontend",
-        location: "Remote [India]",
-        type: "Full Time",
-        href: "https://app.dover.com/apply/CoverForce/85f2fe65-5da6-4f20-8578-ad060b8efa36/?rs=76643084",
-        target: "_blank",
-        rel: "noopener noreferrer",
-      },
-    ],
-  },
-];
-
 const BORDER_COLOR = "#FFFFFF33";
-
-const GRADIENT_TEXT =
-  "bg-gradient-to-r from-[#B482FF] via-[#C4B5FD] to-[#E9E4FF] bg-clip-text text-transparent";
 
 const TABLE_GRID =
   "lg:grid lg:grid-cols-[minmax(0,1fr)_16rem_8rem_auto] lg:gap-x-6";
@@ -139,13 +70,17 @@ function JobCategoryBlock({ category }: { category: JobCategory }) {
       </div>
 
       {category.jobs.map((job) => (
-        <JobRow key={`${category.name}-${job.title}`} job={job} />
+        <JobRow key={job.id} job={job} />
       ))}
     </div>
   );
 }
 
-const Positions = () => {
+type PositionsProps = {
+  categories: JobCategory[];
+};
+
+const Positions = ({ categories }: PositionsProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -275,7 +210,7 @@ const Positions = () => {
         overlayTl?.kill();
       };
     },
-    { scope: sectionRef },
+    { scope: sectionRef, dependencies: [categories] },
   );
 
   return (
@@ -306,9 +241,17 @@ const Positions = () => {
             </div>
 
             <div ref={positionsListRef} className="mt-14 md:mt-16 lg:mt-20">
-              {jobCategories.map((category) => (
-                <JobCategoryBlock key={category.name} category={category} />
-              ))}
+              {categories.length > 0 ? (
+                categories.map((category) => (
+                  <JobCategoryBlock key={category.name} category={category} />
+                ))
+              ) : (
+                <p
+                  className={`${containerPadding} font-sans text-sm text-white/70 md:text-base`}
+                >
+                  No open positions right now. Check back soon.
+                </p>
+              )}
             </div>
           </div>
         </Container>

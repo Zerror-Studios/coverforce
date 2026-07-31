@@ -26,19 +26,19 @@ type WhySlide = {
 const whySlides: WhySlide[] = [
   {
     id: "slide-1",
-    title: "AI Investments",
+    title: "1. AI Investments",
     descriptionLines: [
       "AI-first infrastructure that gets smarter with every quote -",
       "driving higher bind rates and a customer experience",
       "that keeps improving for Chase.",
     ],
     image:
-      "https://images.unsplash.com/photo-1758843412266-e8661a80ada2?q=80&w=1228&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "/images/why/ai.avif",
     alt: "Abstract blue and purple fluid gradient waves",
   },
   {
     id: "slide-2",
-    title: "Market Power",
+    title: "2. Market Power",
     descriptionLines: [
       "The largest bindable carrier network in the market means",
       "Chase inherits access on day one, instead of negotiating",
@@ -50,19 +50,19 @@ const whySlides: WhySlide[] = [
   },
   {
     id: "slide-3",
-    title: "Carrier Knowledge",
+    title: "3. Carrier Knowledge",
     descriptionLines: [
       "60+ live integrations and deep institutional know-how mean",
       "CoverForce launches in weeks - on rails already built",
       "and battle-tested.",
     ],
     image:
-      "https://images.unsplash.com/photo-1638272181967-7d3772a91265?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "/images/why/carrier.avif",
     alt: "Abstract cyan light geometric glow",
   },
   {
     id: "slide-4",
-    title: "Security & Resilience",
+    title: "4. Security & Resilience",
     descriptionLines: [
       "SOC 2 Type II certified, cloud-native, and built for enterprise scale -",
       "giving Chase infrastructure that's secure, resilient, and ready",
@@ -74,15 +74,14 @@ const whySlides: WhySlide[] = [
   },
   {
     id: "slide-5",
-    title: "Recognized excellence and innovation",
+    title: "5. Recognized excellence and innovation",
     descriptionLines: [
       "Named to the 2025 CB Insights Insurtech 50 - an annual list honoring",
       "the world's most innovative and high-impact insurtech companies",
       "transforming insurance distribution.",
     ],
-    image:
-      "https://images.unsplash.com/photo-1707324148764-99647364afa3?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    alt: "Abstract orange flowing ribbon waves",
+    image: "/images/blog/blog3.png",
+    alt: "CoverForce Insurtech 50 2025 recognition",
     href: "/blog/coverforce-cb-insights-2025",
   },
 ];

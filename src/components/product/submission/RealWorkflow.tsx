@@ -218,6 +218,13 @@ const RealWorkflow = () => {
 
       const totalSteps = rows.length;
 
+      gsap.set(animBox, {
+        transformOrigin: "top center",
+        left: "50%",
+        xPercent: -50,
+        x: 0,
+      });
+
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: filParen,
@@ -299,7 +306,7 @@ const RealWorkflow = () => {
         }
       });
 
-      // After line completes → expand anim_box into a white summary card
+      // After line reaches the bottom tip → expand anim_box downward from its top
       tl.to(
         animBox,
         {
@@ -374,15 +381,15 @@ const RealWorkflow = () => {
                   </p>
                 </div>
                 <div className="flex items-center justify-center relative">
-                  <div className="fil_paren absolute w-[2px] h-[40rem] lg:h-[48rem] top-[100%]">
-                    <div className="fil_line w-full h-[0%] bg-white flex justify-center items-end">
-                      <div className="anim_box h-0 w-0 bg-white shrink-0 flex items-center justify-center overflow-hidden">
+                  <div className="fil_paren absolute top-[calc(100%+1rem)] h-[36rem] w-[2px] overflow-visible md:top-[calc(100%+1.25rem)] lg:top-[calc(100%+1.5rem)] lg:h-[42rem]">
+                    <div className="fil_line relative h-[0%] w-full bg-white">
+                      <div className="anim_box absolute top-full left-1/2 flex h-0 w-0 shrink-0 origin-top items-center justify-center overflow-hidden bg-white">
                         {/* Summary card content - visible when expanded */}
-                        <div className="anim_box_content opacity-0 text-center px-6 flex flex-col items-center justify-center gap-2">
-                          <p className="font-heading text-lg md:text-[1.375rem] font-semibold leading-snug tracking-tight text-[#151f4d] whitespace-normal max-w-[22rem]">
-                            107 minutes saved <br /> per submission with 
+                        <div className="anim_box_content flex flex-col items-center justify-center gap-2 px-6 text-center opacity-0">
+                          <p className="max-w-[22rem] whitespace-normal font-heading text-lg font-semibold leading-snug tracking-tight text-[#151f4d] md:text-[1.375rem]">
+                            107 minutes saved <br /> per submission with
                           </p>
-                          <div className="relative w-44 h-10 flex shrink-0">
+                          <div className="relative flex h-10 w-44 shrink-0">
                             <Image
                               src="/Coverforce_logo_blue.svg"
                               alt="CoverForce Logo"
