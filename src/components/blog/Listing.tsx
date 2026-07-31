@@ -9,66 +9,13 @@ import Button from "@/components/common/Button";
 import ButtonArrowIcon from "@/components/common/ButtonArrowIcon";
 import Container from "@/components/common/Container";
 import BlogCard from "@/components/blog/BlogCard";
-import { BASE_BLOG_POSTS, type BlogPost } from "@/data/blogPosts";
+import type { BlogPost } from "@/data/blogPosts";
 
 function ButtonArrowLeftIcon({ className = "" }: { className?: string }) {
   return <ButtonArrowIcon className={`-scale-x-100 ${className}`} />;
 }
 
-type Category = BlogPost["category"];
-
-type ListedPost = BlogPost & { listKey: string };
-
-/** Repeat + shuffle so each page of the demo catalog looks different. */
-const REPEAT_COUNT = 3;
-
-const DEMO_DATES = [
-  "October 16, 2025",
-  "September 28, 2025",
-  "August 12, 2025",
-  "July 3, 2025",
-  "June 18, 2025",
-  "May 9, 2025",
-  "April 22, 2025",
-  "March 5, 2025",
-] as const;
-
-function seededShuffle<T>(items: readonly T[], seed: number): T[] {
-  const arr = [...items];
-  let state = seed % 2147483647;
-  if (state <= 0) state += 2147483646;
-
-  for (let i = arr.length - 1; i > 0; i -= 1) {
-    state = (state * 16807) % 2147483647;
-    const j = state % (i + 1);
-    const tmp = arr[i]!;
-    arr[i] = arr[j]!;
-    arr[j] = tmp;
-  }
-
-  return arr;
-}
-
-function buildDemoCatalog(): ListedPost[] {
-  return Array.from({ length: REPEAT_COUNT }, (_, copy) => {
-    const shuffled = seededShuffle(BASE_BLOG_POSTS, 42 + copy * 97);
-    const offset = (copy * 3) % shuffled.length;
-    const rotated = [...shuffled.slice(offset), ...shuffled.slice(0, offset)];
-
-    return rotated.map((post, index) => ({
-      ...post,
-      listKey: `copy${copy + 1}-${post.slug}-${index}`,
-      date: DEMO_DATES[(copy * PAGE_SIZE + index) % DEMO_DATES.length]!,
-      title:
-        copy === 0
-          ? post.title
-          : `${post.title.replace(/\.\.\.$/, "")} - Vol. ${copy + 1}`,
-    }));
-  }).flat();
-}
-
-const PAGE_SIZE = 8;
-const POSTS: ListedPost[] = buildDemoCatalog();
+const PAGE_SIZE = 9;
 const FILTERS = ["All", "Insights", "Case Study", "News"] as const;
 type Filter = (typeof FILTERS)[number];
 
@@ -206,13 +153,18 @@ function Pagination({
   );
 }
 
-const Listing = () => {
+type ListingProps = {
+  posts: BlogPost[];
+};
+
+const Listing = ({ posts }: ListingProps) => {
   const [activeFilter, setActiveFilter] = useState<Filter>("All");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [sortNewest, setSortNewest] = useState(true);
 
   const filteredPosts = useMemo(() => {
-    return POSTS.filter((post) => {
+    const filtered = posts.filter((post) => {
       const matchesFilter =
         activeFilter === "All" || post.category === activeFilter;
       const matchesQuery = post.title
@@ -220,13 +172,19 @@ const Listing = () => {
         .includes(query.trim().toLowerCase());
       return matchesFilter && matchesQuery;
     });
-  }, [activeFilter, query]);
+
+    return [...filtered].sort((a, b) => {
+      const aTime = Date.parse(a.date) || 0;
+      const bTime = Date.parse(b.date) || 0;
+      return sortNewest ? bTime - aTime : aTime - bTime;
+    });
+  }, [activeFilter, posts, query, sortNewest]);
 
   const totalPages = Math.max(1, Math.ceil(filteredPosts.length / PAGE_SIZE));
 
   useEffect(() => {
     setPage(1);
-  }, [activeFilter, query]);
+  }, [activeFilter, query, sortNewest]);
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
@@ -283,8 +241,9 @@ const Listing = () => {
               </div>
               <button
                 type="button"
+                onClick={() => setSortNewest((prev) => !prev)}
                 className="flex size-9 shrink-0 items-center justify-center rounded-full border border-[#E6E6E6] bg-white text-[#50617a] transition-colors hover:border-[#413CC0] hover:text-[#413CC0]"
-                aria-label="Sort"
+                aria-label={sortNewest ? "Sort oldest first" : "Sort newest first"}
               >
                 <RiArrowUpDownLine className="size-4" />
               </button>
@@ -295,7 +254,7 @@ const Listing = () => {
             <>
               <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:mt-12 lg:grid-cols-3">
                 {pagedPosts.map((post) => (
-                  <BlogCard key={post.listKey} post={post} />
+                  <BlogCard key={post.slug} post={post} />
                 ))}
               </div>
 

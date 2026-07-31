@@ -82,7 +82,7 @@ const whySlides: WhySlide[] = [
     ],
     image: "/images/blog/blog3.png",
     alt: "CoverForce Insurtech 50 2025 recognition",
-    href: "/blog/coverforce-cb-insights-2025",
+    href: "/blog/coverforce-named-to-the-2025-cb-insights-list-of-the-50-most-innovative-insurtech-startups",
   },
 ];
 

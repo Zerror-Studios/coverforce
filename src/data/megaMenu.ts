@@ -64,7 +64,7 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
   Product: {
     featured: {
       title: "CoverForce Named to the 2025 CB Insights",
-      href: "/blog/coverforce-cb-insights-2025",
+      href: "/blog/coverforce-named-to-the-2025-cb-insights-list-of-the-50-most-innovative-insurtech-startups",
       image: "/images/blog/blog3.png",
       imageAlt: "CoverForce Insurtech 50 2025 recognition",
     },
@@ -131,7 +131,7 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
   Solutions: {
     featured: {
       title: "CoverForce Named to the 2025 CB Insights",
-      href: "/blog/coverforce-cb-insights-2025",
+      href: "/blog/coverforce-named-to-the-2025-cb-insights-list-of-the-50-most-innovative-insurtech-startups",
       image: "/images/blog/blog3.png",
       imageAlt: "CoverForce Insurtech 50 2025 recognition",
     },
@@ -203,7 +203,7 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
   Company: {
     featured: {
       title: "CoverForce Named to the 2025 CB Insights",
-      href: "/blog/coverforce-cb-insights-2025",
+      href: "/blog/coverforce-named-to-the-2025-cb-insights-list-of-the-50-most-innovative-insurtech-startups",
       image: "/images/blog/blog3.png",
       imageAlt: "CoverForce Insurtech 50 2025 recognition",
     },
@@ -239,16 +239,16 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
         title: "Latest Blogs",
         links: [
           {
-            label: "CoverForce and the Future of Insurance Distribution",
-            href: "/blog/coverforce-and-the-future-of-insurance-distribution",
+            label: "Why the Future of Insurance Distribution Belongs to the Connectors",
+            href: "/blog/why-the-future-of-insurance-distribution-belongs-to-the-connectors",
             description: "How CoverForce is transforming insurance distribution.",
             icon: RiUserStarLine,
             multiline: true,
           },
           {
-            label: "How to Use CoverForce to Automate Your Insurance Distribution",
-            href: "/blog/how-to-use-coverforce-to-automate-your-insurance-distribution",
-            description: "How to use CoverForce to automate your insurance distribution.",
+            label: "Wholesalers Must Embrace APIs to Stay Competitive",
+            href: "/blog/wholesalers-must-embrace-apis-to-stay-competitive-e0c5c",
+            description: "Why surplus lines wholesalers need API-driven distribution.",
             icon: RiNewspaperLine,
             multiline: true,
           },

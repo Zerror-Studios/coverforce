@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import CmsImage from "@/components/common/CmsImage";
 import Container from "@/components/common/Container";
 
 type MorePost = {
@@ -8,30 +8,12 @@ type MorePost = {
   image: string;
 };
 
-const POSTS: MorePost[] = [
-  {
-    slug: "coverforce-cb-insights-2025",
-    title: "CoverForce Named to the 2025 CB Insights' List of the...",
-    image: "/images/blog/blog6.png",
-  },
-  {
-    slug: "coverforce-nowcerts-instant-cois",
-    title: "CoverForce Partners With NowCerts to Launch Instant...",
-    image: "/images/blog/blog7.png",
-  },
-  {
-    slug: "coverforce-series-a-funding",
-    title: "CoverForce Secures $13 Million in Series A Funding L...",
-    image: "/images/blog/blog8.png",
-  },
-];
-
 function MoreCard({ post }: { post: MorePost }) {
   return (
     <Link href={`/blog/${post.slug}`} className="group flex flex-col">
       <div className="relative w-full overflow-hidden rounded-md bg-[#F7F7FB]">
         <div className="relative aspect-video w-full">
-          <Image
+          <CmsImage
             src={post.image}
             alt={post.title}
             fill
@@ -50,9 +32,13 @@ function MoreCard({ post }: { post: MorePost }) {
 
 const MoreBlogs = ({
   title = "More Insights on Shaping the Future of Insurance",
+  posts = [],
 }: {
   title?: string;
+  posts?: MorePost[];
 }) => {
+  if (!posts.length) return null;
+
   return (
     <section className="bg-white text-[#0a143b]">
       <Container borderColor="#53535380">
@@ -62,7 +48,7 @@ const MoreBlogs = ({
           </h2>
 
           <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:mt-10 lg:grid-cols-3">
-            {POSTS.map((post) => (
+            {posts.map((post) => (
               <MoreCard key={post.slug} post={post} />
             ))}
           </div>

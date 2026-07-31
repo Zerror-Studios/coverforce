@@ -1,4 +1,4 @@
-import Image from "next/image";
+import CmsImage from "@/components/common/CmsImage";
 import Link from "next/link";
 import type { BlogPost } from "@/data/blogPosts";
 
@@ -11,7 +11,7 @@ export default function BlogCard({ post }: BlogCardProps) {
     <Link href={`/blog/${post.slug}`} className="group flex flex-col">
       <div className="relative w-full overflow-hidden rounded-md bg-[#F7F7FB]">
         <div className="relative aspect-video w-full">
-          <Image
+          <CmsImage
             src={post.image}
             alt={post.title}
             fill

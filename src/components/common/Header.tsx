@@ -947,7 +947,11 @@ const Header = () => {
                     <div className="px-6 pb-4 pt-6">
                       <button
                         type="button"
-                        onClick={() => handleNavigate("/blog/coverforce-cb-insights-2025")}
+                        onClick={() =>
+                          handleNavigate(
+                            "/blog/coverforce-named-to-the-2025-cb-insights-list-of-the-50-most-innovative-insurtech-startups"
+                          )
+                        }
                         className="group flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-3 text-left transition-colors duration-200 hover:bg-[#FAFAFA]"
                       >
                         <div className="relative h-[10rem] shrink-0 overflow-hidden rounded-lg bg-[#F7F7FB]">
