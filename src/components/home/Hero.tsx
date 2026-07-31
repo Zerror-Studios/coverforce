@@ -15,6 +15,7 @@ import {
   useHomeIntro,
 } from "@/contexts/HomeIntroContext";
 import { animateLoaderWordsWave } from "@/lib/animateSplitTextReveal";
+import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import { GdpCounter } from "./GdpCounter";
 import ToolWheel from "./ToolWheel";
 import { CARD_VERTICAL_BACKGROUND_STYLES } from "@/data/wayCardStyles";
@@ -84,12 +85,21 @@ const Hero = () => {
   const gdpLineRef = useRef<HTMLDivElement | null>(null);
   const dataLinesRef = useRef<HTMLDivElement | null>(null);
   const networkRef = useRef<HTMLDivElement | null>(null);
+  const networkHeaderRef = useRef<HTMLDivElement | null>(null);
+  const networkHeadingRef = useRef<HTMLHeadingElement | null>(null);
   const revealAnimatedRef = useRef(false);
 
   const [activeIndex, setActiveIndex] = useState(1);
   const [indicator, setIndicator] = useState({ left: 0, width: 0 });
 
   const statCount = useMemo(() => stats.length, []);
+
+  useSectionHeaderReveal({
+    scopeRef: sectionRef,
+    headerRef: networkHeaderRef,
+    headingRef: networkHeadingRef,
+    theme: "dark",
+  });
 
   const centerIntroTitle = () => {
     const spacer = titleSpacerRef.current;
@@ -526,12 +536,18 @@ const Hero = () => {
 
         </div>
         {/* Network + distribution header */}
-        <div className="relative w-full pt-4 pb-6 sm:pt-6 sm:pb-8 md:pt-10 md:pb-10 lg:pb-12">
+        <div
+          ref={networkHeaderRef}
+          className="relative w-full pt-4 pb-6 sm:pt-6 sm:pb-8 md:pt-10 md:pb-10 lg:pb-12"
+        >
           <h2
+            ref={networkHeadingRef}
             className={`relative z-10 mx-auto mb-2 max-w-xl text-center text-2xl font-heading font-medium leading-[1.15] tracking-tight sm:mb-3 sm:text-3xl sm:leading-[1.12] md:mb-4 md:text-4xl lg:mb-5 lg:text-[1.625rem] lg:leading-[1.12] ${theme.titleMuted}`}
           >
-            Commercial insurance distribution that gets smarter with every
-            transaction
+            <span data-split>
+              Commercial insurance distribution that gets smarter with every
+              transaction
+            </span>
           </h2>
           <div className="relative w-full">
             <div
@@ -549,7 +565,7 @@ const Hero = () => {
             <div className="relative z-10 mt-6 flex flex-col items-center gap-2.5 text-sm text-white/70 md:absolute md:right-0 md:top-1/2 md:mt-0 md:-translate-y-1/2 md:items-start lg:right-4 xl:right-8">
               {[
                 { label: "Carriers", background: CARD_VERTICAL_BACKGROUND_STYLES.carrier },
-                { label: "Startups", background: CARD_VERTICAL_BACKGROUND_STYLES.startup },
+                { label: "Distributors", background: CARD_VERTICAL_BACKGROUND_STYLES.startup },
               ].map((item) => (
                 <span key={item.label} className="flex items-center gap-1.5 whitespace-nowrap">
                   <span

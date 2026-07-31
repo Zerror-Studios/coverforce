@@ -337,6 +337,7 @@ function financeLogoSrc(index: number) {
 
 const LOGO_ROTATE_MS = 4500;
 const LOGO_FADE_MS = 400;
+const LOGO_JITTER_MS = 3200;
 
 function wait(ms: number, signal: { cancelled: boolean }) {
   return new Promise<void>((resolve) => {
@@ -348,6 +349,94 @@ function wait(ms: number, signal: { cancelled: boolean }) {
       resolve();
     }
   });
+}
+
+function pickNextLogoIndex(
+  poolSize: number,
+  current: number,
+  usedElsewhere: Set<number>,
+) {
+  if (poolSize <= 1) return 0;
+
+  const candidates = Array.from({ length: poolSize }, (_, i) => i).filter(
+    (i) => i !== current,
+  );
+  if (candidates.length === 0) return current;
+
+  const unused = candidates.filter((i) => !usedElsewhere.has(i));
+  const pool = unused.length > 0 ? unused : candidates;
+  return pool[Math.floor(Math.random() * pool.length)]!;
+}
+
+function useIndependentLogoRotation(slotCount: number, poolSize: number) {
+  const [indices, setIndices] = useState<number[]>(() =>
+    Array.from({ length: slotCount }, (_, i) =>
+      poolSize > 0 ? i % poolSize : 0,
+    ),
+  );
+  const [opaque, setOpaque] = useState<boolean[]>(() =>
+    Array.from({ length: slotCount }, () => true),
+  );
+
+  useEffect(() => {
+    setIndices(
+      Array.from({ length: slotCount }, (_, i) =>
+        poolSize > 0 ? i % poolSize : 0,
+      ),
+    );
+    setOpaque(Array.from({ length: slotCount }, () => true));
+  }, [slotCount, poolSize]);
+
+  useEffect(() => {
+    if (slotCount === 0 || poolSize <= 1) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const signal = { cancelled: false };
+
+    async function runSlot(slot: number) {
+      await wait(Math.random() * LOGO_ROTATE_MS, signal);
+
+      while (!signal.cancelled) {
+        await wait(
+          LOGO_ROTATE_MS + Math.random() * LOGO_JITTER_MS,
+          signal,
+        );
+        if (signal.cancelled) break;
+
+        setOpaque((prev) => {
+          const next = [...prev];
+          next[slot] = false;
+          return next;
+        });
+        await wait(LOGO_FADE_MS, signal);
+        if (signal.cancelled) break;
+
+        setIndices((prev) => {
+          const used = new Set(
+            prev.filter((_, index) => index !== slot),
+          );
+          const next = [...prev];
+          next[slot] = pickNextLogoIndex(poolSize, prev[slot] ?? 0, used);
+          return next;
+        });
+        setOpaque((prev) => {
+          const next = [...prev];
+          next[slot] = true;
+          return next;
+        });
+      }
+    }
+
+    for (let slot = 0; slot < slotCount; slot += 1) {
+      void runSlot(slot);
+    }
+
+    return () => {
+      signal.cancelled = true;
+    };
+  }, [slotCount, poolSize]);
+
+  return { indices, opaque };
 }
 
 const CX = 50;
@@ -375,7 +464,7 @@ function hexToRgba(hex: string, a: number) {
 
 function signalDotColor(showBackground: boolean, rampColor: string, isBelow: boolean) {
   if (showBackground) return rampColor;
-  // Match side legend: upper = Carriers, lower = Startups
+  // Match side legend: upper = Carriers, lower = Distributors
   return isBelow ? RAMP_COLOR.startup : RAMP_COLOR.carrier;
 }
 
@@ -414,14 +503,6 @@ export default function ToolWheel({
   const spokeProgressRef = useRef<number[]>([]);
   const signalsEnabledRef = useRef(false);
   const [hoveredLogo, setHoveredLogo] = useState<number | null>(null);
-  const [carrierOffset, setCarrierOffset] = useState(0);
-  const [carrierOpaque, setCarrierOpaque] = useState(true);
-  const [startupOffset, setStartupOffset] = useState(0);
-  const [startupOpaque, setStartupOpaque] = useState(true);
-  const [amsOffset, setAmsOffset] = useState(0);
-  const [amsOpaque, setAmsOpaque] = useState(true);
-  const [financeOffset, setFinanceOffset] = useState(0);
-  const [financeOpaque, setFinanceOpaque] = useState(true);
 
   const items = useMemo(() => {
     const angles = getNodeAngleByIndex(showBackground);
@@ -530,127 +611,14 @@ export default function ToolWheel({
     [items],
   );
 
-  useEffect(() => {
-    if (upperCarrierCount === 0) return;
-    if (CARRIER_LOGO_FILES.length <= 1) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const signal = { cancelled: false };
-    const step =
-      CARRIER_LOGO_FILES.length > upperCarrierCount ? upperCarrierCount : 1;
-
-    async function runCycle() {
-      while (!signal.cancelled) {
-        await wait(LOGO_ROTATE_MS, signal);
-        if (signal.cancelled) break;
-
-        setCarrierOpaque(false);
-        await wait(LOGO_FADE_MS, signal);
-        if (signal.cancelled) break;
-
-        setCarrierOffset(
-          (offset) => (offset + step) % CARRIER_LOGO_FILES.length,
-        );
-        setCarrierOpaque(true);
-      }
-    }
-
-    runCycle();
-
-    return () => {
-      signal.cancelled = true;
-    };
-  }, [upperCarrierCount]);
-
-  useEffect(() => {
-    if (lowerStartupCount === 0) return;
-    if (STARTUP_LOGO_SRCS.length <= 1) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const signal = { cancelled: false };
-    const step =
-      STARTUP_LOGO_SRCS.length > lowerStartupCount ? lowerStartupCount : 1;
-
-    async function runCycle() {
-      while (!signal.cancelled) {
-        await wait(LOGO_ROTATE_MS, signal);
-        if (signal.cancelled) break;
-
-        setStartupOpaque(false);
-        await wait(LOGO_FADE_MS, signal);
-        if (signal.cancelled) break;
-
-        setStartupOffset(
-          (offset) => (offset + step) % STARTUP_LOGO_SRCS.length,
-        );
-        setStartupOpaque(true);
-      }
-    }
-
-    runCycle();
-
-    return () => {
-      signal.cancelled = true;
-    };
-  }, [lowerStartupCount]);
-
-  useEffect(() => {
-    if (amsCount === 0) return;
-    if (AMS_LOGO_SRCS.length <= 1) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const signal = { cancelled: false };
-    const step = AMS_LOGO_SRCS.length > amsCount ? amsCount : 1;
-
-    async function runCycle() {
-      while (!signal.cancelled) {
-        await wait(LOGO_ROTATE_MS, signal);
-        if (signal.cancelled) break;
-
-        setAmsOpaque(false);
-        await wait(LOGO_FADE_MS, signal);
-        if (signal.cancelled) break;
-
-        setAmsOffset((offset) => (offset + step) % AMS_LOGO_SRCS.length);
-        setAmsOpaque(true);
-      }
-    }
-
-    runCycle();
-
-    return () => {
-      signal.cancelled = true;
-    };
-  }, [amsCount]);
-
-  useEffect(() => {
-    if (financeCount === 0) return;
-    if (FINANCE_LOGO_SRCS.length <= 1) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const signal = { cancelled: false };
-    const step = FINANCE_LOGO_SRCS.length > financeCount ? financeCount : 1;
-
-    async function runCycle() {
-      while (!signal.cancelled) {
-        await wait(LOGO_ROTATE_MS, signal);
-        if (signal.cancelled) break;
-
-        setFinanceOpaque(false);
-        await wait(LOGO_FADE_MS, signal);
-        if (signal.cancelled) break;
-
-        setFinanceOffset((offset) => (offset + step) % FINANCE_LOGO_SRCS.length);
-        setFinanceOpaque(true);
-      }
-    }
-
-    runCycle();
-
-    return () => {
-      signal.cancelled = true;
-    };
-  }, [financeCount]);
+  const { indices: carrierIndices, opaque: carrierOpaque } =
+    useIndependentLogoRotation(upperCarrierCount, CARRIER_LOGO_FILES.length);
+  const { indices: startupIndices, opaque: startupOpaque } =
+    useIndependentLogoRotation(lowerStartupCount, STARTUP_LOGO_SRCS.length);
+  const { indices: amsIndices, opaque: amsOpaque } =
+    useIndependentLogoRotation(amsCount, AMS_LOGO_SRCS.length);
+  const { indices: financeIndices, opaque: financeOpaque } =
+    useIndependentLogoRotation(financeCount, FINANCE_LOGO_SRCS.length);
 
   useEffect(() => {
     spokeProgressRef.current = items.map(() => 0);
@@ -971,19 +939,28 @@ export default function ToolWheel({
         {items.map((item, i) => {
           const src =
             item.carrierSlot !== null
-              ? carrierLogoSrc(item.carrierSlot + carrierOffset)
+              ? carrierLogoSrc(
+                  carrierIndices[item.carrierSlot] ?? item.carrierSlot,
+                )
               : item.startupSlot !== null
-                ? startupLogoSrc(item.startupSlot + startupOffset)
+                ? startupLogoSrc(
+                    startupIndices[item.startupSlot] ?? item.startupSlot,
+                  )
                 : item.amsSlot !== null
-                  ? amsLogoSrc(item.amsSlot + amsOffset)
+                  ? amsLogoSrc(amsIndices[item.amsSlot] ?? item.amsSlot)
                   : item.financeSlot !== null
-                    ? financeLogoSrc(item.financeSlot + financeOffset)
+                    ? financeLogoSrc(
+                        financeIndices[item.financeSlot] ?? item.financeSlot,
+                      )
                     : item.iconSrc;
           const fading =
-            (item.carrierSlot !== null && !carrierOpaque) ||
-            (item.startupSlot !== null && !startupOpaque) ||
-            (item.amsSlot !== null && !amsOpaque) ||
-            (item.financeSlot !== null && !financeOpaque);
+            (item.carrierSlot !== null &&
+              carrierOpaque[item.carrierSlot] === false) ||
+            (item.startupSlot !== null &&
+              startupOpaque[item.startupSlot] === false) ||
+            (item.amsSlot !== null && amsOpaque[item.amsSlot] === false) ||
+            (item.financeSlot !== null &&
+              financeOpaque[item.financeSlot] === false);
 
           return (
             <div
