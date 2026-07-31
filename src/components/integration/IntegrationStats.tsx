@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, type CSSProperties } from "react";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import { ScrollTriggeredOdometerStat } from "@/components/common/AnimatedPercent";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
+import { PRIMARY_BUTTON_GRADIENT } from "@/data/wayCardStyles";
 
 const STATS = [
   {
@@ -34,32 +35,48 @@ const STATS = [
 ] as const;
 
 const VALUE_CLASS =
-  "text-4xl font-heading font-medium tracking-tight text-[#111110] md:text-5xl lg:text-[3.25rem]";
+  "font-heading text-[1.35rem] font-regular tracking-tight md:text-3xl lg:text-4xl";
+
+const LABEL_CLASS =
+  "operating-stat-gradient-text max-w-[11rem] text-center font-sans text-[0.68rem] font-regular leading-relaxed md:max-w-[12rem] md:text-lg";
+
+const VALUE_COLOR_STYLE: CSSProperties = {
+  color: "#5E3FD0",
+};
+
+const LABEL_GRADIENT_STYLE: CSSProperties = {
+  backgroundImage: PRIMARY_BUTTON_GRADIENT,
+};
 
 function StatCell({
   stat,
-  showDivider,
+  showLeftDivider,
+  showRightDivider,
 }: {
   stat: (typeof STATS)[number];
-  showDivider: boolean;
+  showLeftDivider: boolean;
+  showRightDivider: boolean;
 }) {
   return (
     <div
-      className={`relative flex flex-col items-center justify-center px-4 py-10 text-center md:px-6 md:py-12 lg:py-14 ${
-        showDivider
+      className={`relative flex flex-col items-center justify-center gap-1.5 px-4 py-10 text-center md:gap-2 md:px-6 md:py-12 lg:py-14 ${
+        showLeftDivider
           ? "before:absolute before:left-0 before:top-1/2 before:hidden before:h-[58%] before:w-px before:-translate-y-1/2 before:bg-[#D8DCE8] md:before:block"
+          : ""
+      } ${
+        showRightDivider
+          ? "after:absolute after:right-0 after:top-1/2 after:hidden after:h-[58%] after:w-px after:-translate-y-1/2 after:bg-[#D8DCE8] md:after:block"
           : ""
       }`}
     >
-      <div className="flex min-h-[3.25rem] items-end justify-center md:min-h-[3.75rem]">
-        <ScrollTriggeredOdometerStat
-          value={stat.value}
-          className={VALUE_CLASS}
-          ariaLabel={stat.ariaLabel}
-        />
-      </div>
+      <ScrollTriggeredOdometerStat
+        value={stat.value}
+        className={VALUE_CLASS}
+        style={VALUE_COLOR_STYLE}
+        ariaLabel={stat.ariaLabel}
+      />
 
-      <p className="mt-3 max-w-[11rem] text-sm font-sans font-regular leading-snug text-[#6B7280] md:mt-4 md:max-w-[12rem] md:text-[0.9375rem]">
+      <p className={LABEL_CLASS} style={LABEL_GRADIENT_STYLE}>
         {stat.label}
       </p>
     </div>
@@ -106,7 +123,12 @@ const IntegrationStats = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-4">
             {STATS.map((stat, index) => (
-              <StatCell key={stat.id} stat={stat} showDivider={index > 0} />
+              <StatCell
+                key={stat.id}
+                stat={stat}
+                showLeftDivider
+                showRightDivider={index === STATS.length - 1}
+              />
             ))}
           </div>
         </div>

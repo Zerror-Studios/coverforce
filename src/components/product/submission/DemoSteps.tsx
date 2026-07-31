@@ -139,7 +139,7 @@ function DemoStepPanel({
 
       <div
         ref={imageRef}
-        className="relative mx-auto w-full max-w-[350px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[720px]"
+        className="relative mr-auto w-full max-w-[350px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[720px]"
       >
         <Image
           src={step.image}
@@ -211,7 +211,7 @@ const DemoSteps = () => {
     const refs = isLg ? panelRefs : mobilePanelRefs;
     refs.current[index]?.scrollIntoView({
       behavior: "smooth",
-      block: isLg ? "center" : "start",
+      block: "start",
     });
   }, []);
 
@@ -241,7 +241,7 @@ const DemoSteps = () => {
         },
         {
           root: null,
-          rootMargin: isLg ? "-35% 0px -35% 0px" : "-20% 0px -45% 0px",
+          rootMargin: isLg ? "-20% 0px -55% 0px" : "-20% 0px -45% 0px",
           threshold: [0, 0.25, 0.5, 0.75, 1],
         },
       );
@@ -321,7 +321,7 @@ const DemoSteps = () => {
                   imageRef={(el) => {
                     imageRefs.current[index] = el;
                   }}
-                  className="flex min-h-screen flex-col justify-center gap-10 py-16 first:pt-0 last:pb-0 md:gap-12"
+                  className="flex flex-col gap-10 pb-16 last:pb-0 md:gap-12 md:pb-20 lg:pb-24"
                 />
               ))}
             </div>

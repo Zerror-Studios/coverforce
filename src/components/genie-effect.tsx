@@ -274,7 +274,6 @@ function MagnifiedDockIcon({
   app,
   isActive,
   showDot,
-  hinted,
   disabled,
   btnRef,
   onClick,
@@ -283,7 +282,6 @@ function MagnifiedDockIcon({
   app: App;
   isActive: boolean;
   showDot: boolean;
-  hinted: boolean;
   disabled: boolean;
   btnRef: (el: HTMLButtonElement | null) => void;
   onClick: () => void;
@@ -332,11 +330,7 @@ function MagnifiedDockIcon({
             height: size,
             cursor: disabled ? "default" : "pointer",
           }}
-          className={`relative flex shrink-0 items-end justify-center border-none bg-transparent p-0 ${
-            hinted
-              ? "animate-[live-demo-dock-pulse_3s_ease-in-out_infinite] hover:[animation-play-state:paused]"
-              : ""
-          }`}
+          className="relative flex shrink-0 items-end justify-center border-none bg-transparent p-0"
         >
           <motion.div
             style={{
@@ -368,6 +362,9 @@ function MagnifiedDockIcon({
 }
 
 // ─── macOS Dock Bar ───────────────────────────────────────────────────────────
+const DOCK_WAVE_MS = 2200;
+const DOCK_WAVE_PAUSE_MS = 700;
+
 function MacDock({
   apps,
   activeApp,
@@ -388,6 +385,55 @@ function MacDock({
   onOpen: (idx: number) => void;
 }) {
   const mouseX = useMotionValue(Infinity);
+  const hoveringRef = useRef(false);
+
+  // Drive the same magnification path as hover: a virtual cursor travels
+  // left → right across the dock so icons and the dock container grow together.
+  useEffect(() => {
+    if (!pulseHint) {
+      if (!hoveringRef.current) mouseX.set(Infinity);
+      return;
+    }
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    let raf = 0;
+    const startedAt = performance.now();
+
+    const tick = (now: number) => {
+      if (!hoveringRef.current) {
+        const buttons = dockRefs.current.filter(
+          (btn): btn is HTMLButtonElement => btn != null,
+        );
+
+        if (buttons.length >= 1) {
+          const first = buttons[0].getBoundingClientRect();
+          const last = buttons[buttons.length - 1]!.getBoundingClientRect();
+          const startX = first.left + first.width / 2;
+          const endX = last.left + last.width / 2;
+          const period = DOCK_WAVE_MS + DOCK_WAVE_PAUSE_MS;
+          const elapsed = (now - startedAt) % period;
+
+          if (elapsed <= DOCK_WAVE_MS) {
+            const p = elapsed / DOCK_WAVE_MS;
+            mouseX.set(lerp(startX, endX, p));
+          } else {
+            mouseX.set(Infinity);
+          }
+        }
+      }
+
+      raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(raf);
+      if (!hoveringRef.current) mouseX.set(Infinity);
+    };
+  }, [pulseHint, mouseX, dockRefs]);
 
   const dockHeight = useTransform(mouseX, (mx) => {
     let maxSize = DOCK_ICON_BASE;
@@ -416,8 +462,14 @@ function MacDock({
   return (
     <TooltipProvider delayDuration={400}>
       <motion.div
-        onMouseMove={(e) => mouseX.set(e.clientX)}
-        onMouseLeave={() => mouseX.set(Infinity)}
+        onMouseMove={(e) => {
+          hoveringRef.current = true;
+          mouseX.set(e.clientX);
+        }}
+        onMouseLeave={() => {
+          hoveringRef.current = false;
+          mouseX.set(Infinity);
+        }}
         className="absolute bottom-3 bg-[#303030]/20 rounded-2xl left-1/2 z-50 flex -translate-x-1/2 items-end"
         style={{
           height: dockHeightSpring,
@@ -433,7 +485,6 @@ function MacDock({
             app={a}
             isActive={activeApp === i}
             showDot={phase === "open" && activeApp === i}
-            hinted={pulseHint}
             disabled={isAnimating || !snapshotsReady}
             btnRef={(el) => {
               dockRefs.current[i] = el;
@@ -815,11 +866,6 @@ export default function GenieEffect() {
     >
       <style>{`
         @keyframes blink { 0%,49% { opacity: 1 } 50%,100% { opacity: 0 } }
-        @keyframes live-demo-dock-pulse {
-          0%, 100% { transform: translateY(0) scale(1); }
-          30% { transform: translateY(-6px) scale(1.06); }
-          60% { transform: translateY(0) scale(1.02); }
-        }
       `}</style>
       <div className="absolute inset-0 overflow-hidden">
       <img

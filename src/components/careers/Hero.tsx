@@ -111,21 +111,21 @@ const Hero = () => {
           alt="careers-hero"
           fill
           priority
-          className="object-cover object-center lg:object-[50%_60%]"
+          className="object-cover object-center lg:object-[50%_63%]"
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-black/30" aria-hidden />
 
         <Container
           borderColor="#FFFFFF33"
-          className="relative flex h-svh min-h-svh items-center justify-center"
+          className="relative flex h-svh min-h-svh items-center justify-center pt-16 md:pt-20 lg:pt-24"
         >
           <HeroReveal className="flex max-w-4xl flex-col items-center text-center">
-            <EyebrowPill surface="dark" className="mx-auto mb-0">
+            <EyebrowPill surface="dark" className="mx-auto">
               Careers
             </EyebrowPill>
 
-            <h1 className="mt-4 text-4xl font-heading font-normal leading-[1.08] tracking-tight md:text-5xl lg:whitespace-nowrap lg:text-6xl lg:leading-[1.05] xl:text-6xl">
+            <h1 className="text-4xl font-heading font-normal leading-[1.08] tracking-tight md:text-5xl lg:whitespace-nowrap lg:text-6xl lg:leading-[1.05] xl:text-6xl">
               Join a team of
               <br />
               Industry Experts

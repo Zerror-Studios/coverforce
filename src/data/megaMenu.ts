@@ -37,7 +37,6 @@ export type MegaMenuFeatured = {
   title: string;
   href: string;
   image?: string;
-  video?: string;
   imageAlt?: string;
   subtitle?: string;
 };
@@ -64,10 +63,10 @@ export type MegaMenuConfig = {
 export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
   Product: {
     featured: {
-      title: "Watch the demo - from intake to bind in minutes",
-      href: "/product/submission-intake",
-      video: "/videos/demo.mp4",
-      imageAlt: "CoverForce platform demo",
+      title: "CoverForce Named to the 2025 CB Insights",
+      href: "/blog/coverforce-cb-insights-2025",
+      image: "/images/blog/blog3.png",
+      imageAlt: "CoverForce Insurtech 50 2025 recognition",
     },
     cta: {
       label: "Explore Product",
@@ -131,10 +130,10 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
   },
   Solutions: {
     featured: {
-      title: "Watch the demo - see CoverForce in action",
-      href: "/solutions/startups",
-      video: "/videos/demo.mp4",
-      imageAlt: "CoverForce platform demo",
+      title: "CoverForce Named to the 2025 CB Insights",
+      href: "/blog/coverforce-cb-insights-2025",
+      image: "/images/blog/blog3.png",
+      imageAlt: "CoverForce Insurtech 50 2025 recognition",
     },
     cta: {
       label: "Explore Solutions",
@@ -204,7 +203,7 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
   Company: {
     featured: {
       title: "CoverForce Named to the 2025 CB Insights",
-      href: "/blog/true-bindability-commercial-quoting",
+      href: "/blog/coverforce-cb-insights-2025",
       image: "/images/blog/blog3.png",
       imageAlt: "CoverForce Insurtech 50 2025 recognition",
     },

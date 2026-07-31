@@ -26,8 +26,17 @@ const CardSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const cardsHeaderRef = useRef<HTMLDivElement>(null);
+  const cardsHeadingRef = useRef<HTMLHeadingElement>(null);
+  const cardsDescRef = useRef<HTMLParagraphElement>(null);
 
   useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef });
+  useSectionHeaderReveal({
+    scopeRef: sectionRef,
+    headerRef: cardsHeaderRef,
+    headingRef: cardsHeadingRef,
+    descRef: cardsDescRef,
+  });
 
   useGSAP(
     () => {
@@ -69,88 +78,120 @@ const CardSection = () => {
             </h2>
           </div>
 
-          <div className="mx-auto mt-10 w-full max-w-150 md:mt-14 lg:max-w-145">
-            <ToolWheel className="h-full w-full max-w-none" showBackground />
-          </div>
-
-          <div className="mx-auto mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-[#4F4F4F]">
-            {[
-              {
-                label: "Carriers & MGAs",
-                background: CARD_VERTICAL_BACKGROUND_STYLES.carrier,
-              },
-              {
-                label: "Agency Management",
-                background: CARD_VERTICAL_BACKGROUND_STYLES.broker,
-              },
-              {
-                label: "Finance & Compliance",
-                background: CARD_VERTICAL_BACKGROUND_STYLES.developer,
-              },
-              {
-                label: "Market Access",
-                background: CARD_VERTICAL_BACKGROUND_STYLES.startup,
-              },
-            ].map((item) => (
-              <span key={item.label} className="flex items-center gap-1.5">
+          <div className="relative mt-10 w-full md:mt-14">
+            <div className="relative z-10 mx-auto aspect-square w-full max-w-150 lg:max-w-145">
+              <ToolWheel className="h-full w-full max-w-none" showBackground />
+            </div>
+            <div className="relative z-10 mt-6 flex flex-col items-center gap-2.5 text-sm text-[#4F4F4F] md:absolute md:right-0 md:top-1/2 md:mt-0 md:-translate-y-1/2 md:items-start lg:right-4 xl:right-8">
+              {[
+                {
+                  label: "Carriers & MGAs",
+                  background: CARD_VERTICAL_BACKGROUND_STYLES.carrier,
+                },
+                {
+                  label: "Agency Management",
+                  background: CARD_VERTICAL_BACKGROUND_STYLES.broker,
+                },
+                {
+                  label: "Finance & Compliance",
+                  background: CARD_VERTICAL_BACKGROUND_STYLES.developer,
+                },
+                {
+                  label: "Market Access",
+                  background: CARD_VERTICAL_BACKGROUND_STYLES.startup,
+                },
+              ].map((item) => (
                 <span
-                  className="inline-block size-2.5 rounded-full"
-                  style={{ background: item.background }}
-                />
-                {item.label}
-              </span>
-            ))}
+                  key={item.label}
+                  className="flex items-center gap-1.5 whitespace-nowrap"
+                >
+                  <span
+                    className="inline-block size-2.5 shrink-0 rounded-full"
+                    style={{ background: item.background }}
+                  />
+                  {item.label}
+                </span>
+              ))}
+            </div>
           </div>
 
           <div
-            className="mt-10 grid gap-3 md:mt-14 md:grid-cols-2 lg:mt-16"
+            ref={cardsHeaderRef}
+            className="mt-14 grid gap-8 md:mt-20 lg:mt-24 lg:grid-cols-2 lg:items-end lg:justify-between lg:gap-12"
+          >
+            <div className="flex flex-col justify-end">
+              <EyebrowPill surface="light">APIs &amp; AI Agents</EyebrowPill>
+              <h2
+                ref={cardsHeadingRef}
+                className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+              >
+                <span data-split>We integrate with APIs and AI agents.</span>
+              </h2>
+              <p
+                ref={cardsDescRef}
+                className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
+              >
+                Direct carrier API connections and purpose-built AI agents -
+                quoting, binding, and workflow automation in one stack.
+              </p>
+            </div>
+            <p className="hidden max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:block lg:text-right">
+              Direct carrier API connections and purpose-built AI agents -
+              quoting, binding, and workflow automation in one stack.
+            </p>
+          </div>
+
+          <div
+            className="mt-10 grid gap-4 md:mt-12 md:grid-cols-2 md:gap-5 lg:mt-14 lg:gap-6"
             style={{ perspective: "1200px" }}
           >
             <div
               data-stat-card
-              className="relative flex min-h-72 flex-col overflow-hidden rounded-md p-5 text-white transform-3d will-change-transform md:min-h-80 lg:min-h-88 lg:p-8"
+              className="relative flex min-h-88 flex-col overflow-hidden rounded-md p-6 text-white transform-3d will-change-transform md:min-h-96 md:p-8 lg:min-h-112 lg:p-10"
               style={{ background: INTEGRATION_STAT_CARD_BG }}
             >
               <IntegrationCodeTypingBg />
               <div className="relative z-10 flex h-full flex-1 flex-col">
-              <EyebrowPill surface="dark">API Integrations</EyebrowPill>
-              <span className="mt-4 font-heading text-4xl font-regular leading-none tracking-tight text-white lg:text-6xl">
-                20+
-              </span>
-              <div className="mt-auto pt-6">
-                <p className="font-heading text-base font-medium leading-snug text-white lg:text-xl">
-                  Direct carrier API connections
-                </p>
-                <p className="mt-2 text-sm leading-relaxed text-white/80">
-                  Real-time quoting, binding and policy issuance - no portals,
-                  no rekeying. AMS, premium finance and compliance partners stay
-                  in sync automatically.
-                </p>
-              </div>
+                <h3 className="font-heading text-2xl font-regular leading-[1.15] tracking-tight text-white md:text-3xl lg:text-4xl lg:leading-[1.1]">
+                  Direct Carrier API
+                  <br />
+                  connections
+                </h3>
+                <div className="mt-auto pt-8">
+                  <p className="font-heading text-lg font-medium leading-snug text-white/90 md:text-xl lg:text-2xl">
+                    20+ API integrations
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-white/80 md:text-base">
+                    Real-time quoting, binding and policy issuance - no portals,
+                    no rekeying. AMS, premium finance and compliance partners stay
+                    in sync automatically.
+                  </p>
+                </div>
               </div>
             </div>
 
             <div
               data-stat-card
-              className="relative flex min-h-72 flex-col overflow-hidden rounded-md p-5 text-white transform-3d will-change-transform md:min-h-80 lg:min-h-88 lg:p-8"
+              className="relative flex min-h-88 flex-col overflow-hidden rounded-md p-6 text-white transform-3d will-change-transform md:min-h-96 md:p-8 lg:min-h-112 lg:p-10"
               style={{ background: INTEGRATION_STAT_CARD_BG }}
             >
               <IntegrationAutomationBg />
               <div className="relative z-10 flex h-full flex-1 flex-col">
-              <EyebrowPill surface="dark">AI Agents</EyebrowPill>
-              <span className="mt-4 font-heading text-4xl font-regular leading-none tracking-tight text-white lg:text-6xl">
-                AI Agent
-              </span>
-              <div className="mt-auto pt-6">
-                <p className="font-heading text-base font-medium leading-snug text-white lg:text-xl">
-                  Intelligent workflow automation
-                </p>
-                <p className="mt-2 text-sm leading-relaxed text-white/80">
-                  Purpose-built AI agents read submissions, match appetite and
-                  orchestrate the entire workflow - from intake to policy
-                  delivery - so your team focuses on relationships.
-                </p>
-              </div>
+                <h3 className="font-heading text-2xl font-regular leading-[1.15] tracking-tight text-white md:text-3xl lg:text-4xl lg:leading-[1.1]">
+                  AI workflow
+                  <br />
+                  automation
+                </h3>
+                <div className="mt-auto pt-8">
+                  <p className="font-heading text-lg font-medium leading-snug text-white/90 md:text-xl lg:text-2xl">
+                    AI Agent workflow
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-white/80 md:text-base">
+                    Purpose-built AI agents read submissions, match appetite and
+                    orchestrate the entire workflow - from intake to policy
+                    delivery - so your team focuses on relationships.
+                  </p>
+                </div>
               </div>
             </div>
           </div>

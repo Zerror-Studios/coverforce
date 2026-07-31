@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useVideoModal } from "@/contexts/VideoModalContext";
 import ButtonArrowIcon from "./ButtonArrowIcon";
 import AnimatedLinkText from "./AnimatedLinkText";
 import { containerPadding } from "./containerStyles";
@@ -193,20 +192,7 @@ export default function MegaMenu({
   const [contentOpacity, setContentOpacity] = useState(0);
   const [displayConfig, setDisplayConfig] = useState(config);
   const [displayMenuKey, setDisplayMenuKey] = useState(menuKey);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const prevMenuKeyRef = useRef<string | null>(null);
-  const { open: openVideoModal } = useVideoModal();
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    if (open) {
-      video.play().catch(() => {});
-    } else {
-      video.pause();
-    }
-  }, [open, displayConfig.featured.video]);
 
   useEffect(() => {
     if (open) {
@@ -332,58 +318,26 @@ export default function MegaMenu({
             delay={featuredDelay}
             className="h-full w-full shrink-0 md:w-[20rem] lg:w-[23rem] xl:w-[26rem]"
           >
-            {displayConfig.featured.video ? (
-              <button
-                type="button"
-                onClick={() => {
-                  openVideoModal({
-                    src: displayConfig.featured.video,
-                    title: displayConfig.featured.title,
-                  });
-                  onClose?.();
-                }}
-                className="group flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-xl bg-white p-3 text-left transition-colors duration-200 hover:bg-[#FAFAFA]"
-              >
-                <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-lg bg-[#F7F7FB]">
-                  <video
-                    ref={videoRef}
-                    key={displayConfig.featured.video}
-                    src={displayConfig.featured.video}
-                    className="pointer-events-none absolute inset-0 h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    aria-hidden
-                  />
-                </div>
-                <p className="mt-3 px-0.5 font-heading text-sm font-regular leading-snug text-[#3D3D3D] transition-colors duration-200 group-hover:text-[#151F4D]">
-                  {displayConfig.featured.title}
-                </p>
-              </button>
-            ) : (
-              <Link
-                href={displayConfig.featured.href}
-                onClick={(e) =>
-                  handleMenuLinkClick(e, displayConfig.featured.href, onClose, onNavigate)
-                }
-                className="group flex h-full flex-col overflow-hidden rounded-xl bg-white p-3 transition-colors duration-200 hover:bg-[#FAFAFA]"
-              >
-                <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-lg bg-[#F7F7FB]">
-                  <Image
-                    src={displayConfig.featured.image ?? "/images/mega-menu-promo.png"}
-                    alt={displayConfig.featured.imageAlt ?? displayConfig.featured.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 26rem"
-                    className="object-contain transition-transform duration-300 group-hover:scale-[1.02]"
-                  />
-                </div>
-                <p className="mt-3 px-0.5 font-heading text-sm font-regular leading-snug text-[#3D3D3D] transition-colors duration-200 group-hover:text-[#151F4D]">
-                  {displayConfig.featured.title}
-                </p>
-              </Link>
-            )}
+            <Link
+              href={displayConfig.featured.href}
+              onClick={(e) =>
+                handleMenuLinkClick(e, displayConfig.featured.href, onClose, onNavigate)
+              }
+              className="group flex h-full flex-col overflow-hidden rounded-xl bg-white p-3 transition-colors duration-200 hover:bg-[#FAFAFA]"
+            >
+              <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-lg bg-[#F7F7FB]">
+                <Image
+                  src={displayConfig.featured.image ?? "/images/mega-menu-promo.png"}
+                  alt={displayConfig.featured.imageAlt ?? displayConfig.featured.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 26rem"
+                  className="object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+                />
+              </div>
+              <p className="mt-3 px-0.5 font-heading text-sm font-regular leading-snug text-[#3D3D3D] transition-colors duration-200 group-hover:text-[#151F4D]">
+                {displayConfig.featured.title}
+              </p>
+            </Link>
           </Reveal>
         </div>
       </div>

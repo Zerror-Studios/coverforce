@@ -102,10 +102,10 @@ export function IntegrationCodeTypingBg() {
   return (
     <div
       ref={rootRef}
-      className="pointer-events-none absolute right-0 top-0 z-0 h-[58%] w-[min(72%,15rem)] overflow-hidden sm:w-[min(68%,17rem)] lg:w-[min(62%,19rem)] [mask-image:linear-gradient(225deg,black_42%,transparent_88%)]"
+      className="pointer-events-none absolute -right-6 top-4 z-0 h-[62%] w-[min(74%,15.5rem)] overflow-hidden sm:-right-8 sm:top-5 sm:w-[min(70%,17.5rem)] lg:-right-10 lg:top-6 lg:w-[min(64%,19rem)] [mask-image:linear-gradient(225deg,black_40%,transparent_88%)]"
       aria-hidden
     >
-      <div className="absolute inset-0 px-3 pb-3 pt-3 md:px-4 md:pt-4">
+      <div className="absolute inset-0 px-3 pb-3 pt-7 md:px-4 md:pt-8">
         <div className="mb-2 flex items-center gap-1">
           <span className="size-2 rounded-full bg-[#FF5F57]/80" />
           <span className="size-2 rounded-full bg-[#FEBC2E]/80" />

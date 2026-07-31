@@ -3,7 +3,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import RequestDemoButton from "@/components/request-demo/RequestDemoButton";
-import WatchDemoButton from "@/components/common/WatchDemoButton";
+import Button from "@/components/common/Button";
 import Container from "../common/Container";
 import SectionRadialGlow from "../common/SectionRadialGlow";
 import HeroDataLines from "./HeroDataLines";
@@ -420,9 +420,15 @@ const Hero = () => {
               <RequestDemoButton balanced surface="on-dark" className="!min-w-0 !px-3.5 sm:!min-w-[148px] sm:!px-5">
                 Contact us
               </RequestDemoButton>
-              <WatchDemoButton balanced variant="secondary" surface="on-dark" className="!min-w-0 !px-3.5 sm:!min-w-[148px] sm:!px-5">
-                Watch Demo
-              </WatchDemoButton>
+              <Button
+                href="/integration"
+                balanced
+                variant="secondary"
+                surface="on-dark"
+                className="!min-w-0 !px-3.5 sm:!min-w-[148px] sm:!px-5"
+              >
+                Explore API
+              </Button>
             </div>
           </div>
           {/* ── Stats - below the fold ── */}

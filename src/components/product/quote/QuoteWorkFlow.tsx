@@ -115,6 +115,8 @@ function WorkflowStepPanel({
   imageRef: (el: HTMLDivElement | null) => void;
   className: string;
 }) {
+  const alignLeft = index === 0 || index === 3;
+
   return (
     <article ref={panelRef} data-index={index} className={className}>
       <p
@@ -126,17 +128,16 @@ function WorkflowStepPanel({
 
       <div
         ref={imageRef}
-        className="relative mx-auto w-full max-w-[350px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[720px]"
+        className={alignLeft ? "relative self-start" : "relative self-center"}
       >
-        <div className="relative aspect-[3/2] w-full">
-          <Image
-            src={step.image}
-            alt={`${step.label} preview`}
-            fill
-            className="object-contain object-center"
-            sizes="(max-width: 640px) 350px, (max-width: 768px) 400px, (max-width: 1024px) 600px, 720px"
-          />
-        </div>
+        <Image
+          src={step.image}
+          alt={`${step.label} preview`}
+          width={710}
+          height={456}
+          className="h-auto w-auto max-w-full sm:max-w-[400px] md:max-w-[600px] lg:max-w-[720px]"
+          sizes="(max-width: 640px) 100vw, (max-width: 768px) 400px, (max-width: 1024px) 600px, 720px"
+        />
       </div>
     </article>
   );
@@ -216,7 +217,7 @@ const QuoteWorkFlow = () => {
     const refs = isLg ? panelRefs : mobilePanelRefs;
     refs.current[index]?.scrollIntoView({
       behavior: "smooth",
-      block: isLg ? "center" : "start",
+      block: "start",
     });
   }, []);
 
@@ -406,7 +407,7 @@ const QuoteWorkFlow = () => {
                     imageRef={(el) => {
                       imageRefs.current[index] = el;
                     }}
-                    className="flex min-h-screen flex-col justify-center gap-10 py-16 first:pt-0 last:pb-0 md:gap-12"
+                    className="flex flex-col gap-10 pb-16 last:pb-0 md:gap-12 md:pb-20 lg:pb-24"
                   />
                 ))}
               </div>

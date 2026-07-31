@@ -21,9 +21,7 @@ import {
 } from "@remixicon/react";
 import Hamburger from "hamburger-react";
 import { MEGA_MENUS, type MegaMenuLink } from "@/data/megaMenu";
-import { DEMO_VIDEO_SRC, DEMO_VIDEO_TITLE } from "@/data/demoVideo";
 import { HOME_INTRO_NAV_MS, useHomeIntro } from "@/contexts/HomeIntroContext";
-import { useVideoModal } from "@/contexts/VideoModalContext";
 import { pageAnimation, setPageTransitionBg, setPendingPathname, subscribePendingPathname } from "@/lib/pageTransition";
 import { scrollToHashWhenReady } from "@/lib/scrollToTop";
 import { useTransitionRouter } from "next-view-transitions";
@@ -362,7 +360,6 @@ const Header = () => {
   const [mobileEnterKey, setMobileEnterKey] = useState(0);
   const [mobileActiveMenu, setMobileActiveMenu] = useState<string | null>(null);
   const [renderedMobileSubMenu, setRenderedMobileSubMenu] = useState<string | null>(null);
-  const { open: openVideoModal } = useVideoModal();
   const [navBarHeight, setNavBarHeight] = useState(0);
   const [headerScrolled, setHeaderScrolled] = useState(false);
   const [glassOverDark, setGlassOverDark] = useState(true);
@@ -950,29 +947,20 @@ const Header = () => {
                     <div className="px-6 pb-4 pt-6">
                       <button
                         type="button"
-                        onClick={() => {
-                          openVideoModal({
-                            src: DEMO_VIDEO_SRC,
-                            title: DEMO_VIDEO_TITLE,
-                          });
-                          closeMobileMenu();
-                        }}
+                        onClick={() => handleNavigate("/blog/coverforce-cb-insights-2025")}
                         className="group flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-3 text-left transition-colors duration-200 hover:bg-[#FAFAFA]"
                       >
-                        <div className="h-[10rem] shrink-0 overflow-hidden rounded-lg bg-[#0a143b]">
-                          <video
-                            src={DEMO_VIDEO_SRC}
-                            className="pointer-events-none h-full w-full object-cover"
-                            autoPlay
-                            muted
-                            loop
-                            playsInline
-                            preload="metadata"
-                            aria-hidden
+                        <div className="relative h-[10rem] shrink-0 overflow-hidden rounded-lg bg-[#F7F7FB]">
+                          <Image
+                            src="/images/blog/blog3.png"
+                            alt="CoverForce Insurtech 50 2025 recognition"
+                            fill
+                            sizes="100vw"
+                            className="object-contain transition-transform duration-300 group-hover:scale-[1.02]"
                           />
                         </div>
                         <p className="mt-3 px-0.5 font-heading text-sm font-regular leading-snug text-[#3D3D3D]">
-                          {DEMO_VIDEO_TITLE}
+                          CoverForce Named to the 2025 CB Insights
                         </p>
                       </button>
                     </div>

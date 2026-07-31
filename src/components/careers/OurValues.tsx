@@ -232,7 +232,10 @@ const OurValues = () => {
   );
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden bg-white text-[#0a143b]">
+    <section
+      ref={sectionRef}
+      className="relative min-h-svh overflow-hidden bg-white text-[#0a143b]"
+    >
       <style>{`
         .values-card-shell.way-card-shell {
           --way-card-hover-scale: 1.03;
@@ -243,10 +246,10 @@ const OurValues = () => {
           transform: translate3d(0, 0, 0) scale(1);
         }
       `}</style>
-      <Container borderColor="#53535380" className="relative z-10">
+      <Container borderColor="#53535380" className="relative z-10 min-h-svh">
         <div
           ref={stickyContentRef}
-          className="flex flex-col gap-10 py-16 md:py-20 lg:gap-14 lg:py-24"
+          className="flex min-h-svh flex-col justify-center gap-10 py-12 md:gap-12 md:py-16 lg:h-svh lg:gap-14 lg:py-0"
         >
           <div
             ref={headerRef}
@@ -275,7 +278,7 @@ const OurValues = () => {
             </div>
           </div>
 
-          <div ref={cardsViewportRef} className="relative overflow-hidden lg:min-h-[32rem]">
+          <div ref={cardsViewportRef} className="relative overflow-hidden lg:min-h-[29rem]">
             <div
               ref={cardsGridRef}
               className="grid gap-4 sm:grid-cols-2 md:gap-6 lg:flex lg:w-max lg:gap-8"
