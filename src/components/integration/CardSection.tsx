@@ -72,7 +72,7 @@ const CardSection = () => {
           <div ref={headerRef} className="text-center">
             <h2
               ref={headingRef}
-              className="mx-auto max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[2.5rem] lg:leading-[1.12]"
+              className="mx-auto max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
             >
               <span data-split>The best integration stack for insurance.</span>
             </h2>
