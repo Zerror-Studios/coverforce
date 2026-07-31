@@ -1,33 +1,38 @@
-import React from 'react'
-import CarrierResults from '@/components/home/CarrierResults'
-import WhosFor from '@/components/solutions/startups/WhosFor'
-import ProgramOverview from '@/components/solutions/startups/ProgramOverview'
-import Launch from '@/components/solutions/startups/Launch'
-import Enablement from '@/components/solutions/startups/Enablement'
-import EducationalResources from '@/components/solutions/startups/EducationalResources'
-import StartupFaq from '@/components/solutions/startups/StartupFaq'
-import StartupTestimonials from '@/components/solutions/startups/StartupTestimonials'
-import Hero from '@/components/solutions/startups/Hero'
-import PageWrapper from '@/components/PageWrapper'
-import { createPageMetadata } from '@/lib/seo'
+import CarrierResults from "@/components/home/CarrierResults";
+import WhosFor from "@/components/solutions/startups/WhosFor";
+import ProgramOverview from "@/components/solutions/startups/ProgramOverview";
+import Launch from "@/components/solutions/startups/Launch";
+import Enablement from "@/components/solutions/startups/Enablement";
+import EducationalResources from "@/components/solutions/startups/EducationalResources";
+import StartupFaq from "@/components/solutions/startups/StartupFaq";
+import StartupTestimonials from "@/components/solutions/startups/StartupTestimonials";
+import Hero from "@/components/solutions/startups/Hero";
+import PageWrapper from "@/components/PageWrapper";
+import { createPageMetadata } from "@/lib/seo";
+import { getBlogPosts, toListingPost } from "@/lib/webflow";
 
-export const metadata = createPageMetadata('/solutions/startups')
-const page = () => {
+export const metadata = createPageMetadata("/solutions/startups");
+export const revalidate = 3600;
+
+const page = async () => {
+  const allPosts = await getBlogPosts();
+  const featured = allPosts.filter((post) => post.featured);
+  const rest = allPosts.filter((post) => !post.featured);
+  const posts = [...featured, ...rest].slice(0, 3).map(toListingPost);
+
   return (
-    <>
-      <PageWrapper>
-        <Hero />
-        <WhosFor />
-        <ProgramOverview />
-        <Launch />
-        <Enablement />
-        <EducationalResources />
-        <StartupFaq />
-        <StartupTestimonials />
-        <CarrierResults />
-      </PageWrapper>
-    </>
-  )
-}
+    <PageWrapper>
+      <Hero />
+      <WhosFor />
+      <ProgramOverview />
+      <Launch />
+      <Enablement />
+      <EducationalResources posts={posts} />
+      <StartupFaq />
+      <StartupTestimonials />
+      <CarrierResults />
+    </PageWrapper>
+  );
+};
 
-export default page
+export default page;

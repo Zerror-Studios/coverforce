@@ -753,7 +753,7 @@ const Integration = () => {
                   ))}
                 </div>
                 {hasMoreCards ? (
-                  <div className="mt-6 flex justify-start lg:mt-8">
+                  <div className="mt-6 flex justify-center lg:mt-8">
                     <Button
                       onClick={() => setVisibleCount((current) => current + PAGE_SIZE)}
                       className="hover:scale-[1.02]"

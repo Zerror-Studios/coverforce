@@ -4,12 +4,16 @@ import { useRef } from "react";
 import Container from "@/components/common/Container";
 import Button from "@/components/common/Button";
 import BlogCard from "@/components/blog/BlogCard";
-import { BASE_BLOG_POSTS } from "@/data/blogPosts";
+import type { BlogPost } from "@/data/blogPosts";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 
-const FEATURED_POSTS = BASE_BLOG_POSTS.slice(0, 3);
+type EducationalResourcesProps = {
+  posts: BlogPost[];
+};
 
-export default function EducationalResources() {
+export default function EducationalResources({
+  posts,
+}: EducationalResourcesProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -21,6 +25,8 @@ export default function EducationalResources() {
     headingRef,
     descRef,
   });
+
+  if (!posts.length) return null;
 
   return (
     <section ref={sectionRef} className="bg-white text-[#0a143b]">
@@ -51,11 +57,10 @@ export default function EducationalResources() {
                 knowledge.
               </p>
             </div>
-
           </div>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:mt-12 lg:mt-14 lg:grid-cols-3">
-            {FEATURED_POSTS.map((post) => (
+            {posts.map((post) => (
               <BlogCard key={post.slug} post={post} />
             ))}
           </div>

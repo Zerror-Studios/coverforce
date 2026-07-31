@@ -138,8 +138,20 @@ export default function StartupFaq() {
     <section ref={sectionRef} className="bg-white text-[#0a143b]">
       <Container borderColor="#53535380">
         <div className="py-16 md:py-20 lg:py-24">
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,1.14fr)_minmax(0,0.86fr)] lg:items-start lg:gap-14">
-            <div>
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,0.86fr)_minmax(0,1.14fr)] lg:items-start lg:gap-14">
+            <div className="relative order-2 overflow-hidden rounded-[28px] bg-[#EFF3FF] lg:order-1">
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(21,31,77,0.04),rgba(21,31,77,0.12))]" />
+              <Image
+                src="/images/careers/img3.webp"
+                alt="CoverForce team culture"
+                width={900}
+                height={1100}
+                className="relative h-full min-h-80 w-full object-cover object-left md:object-left lg:min-h-144 lg:max-h-144"
+                sizes="(min-width: 1024px) 34vw, 100vw"
+              />
+            </div>
+
+            <div className="order-1 lg:order-2">
               <div
                 ref={headerRef}
                 className="flex max-w-3xl flex-col items-start text-left"
@@ -167,18 +179,6 @@ export default function StartupFaq() {
                   />
                 ))}
               </div>
-            </div>
-
-            <div className="relative overflow-hidden rounded-[28px] bg-[#EFF3FF]">
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(21,31,77,0.04),rgba(21,31,77,0.12))]" />
-              <Image
-                src="/images/careers/img3.webp"
-                alt="CoverForce team culture"
-                width={900}
-                height={1100}
-                className="relative h-full min-h-80 w-full object-cover object-center md:object-[73%_50%] lg:min-h-144 lg:max-h-144"
-                sizes="(min-width: 1024px) 34vw, 100vw"
-              />
             </div>
           </div>
         </div>

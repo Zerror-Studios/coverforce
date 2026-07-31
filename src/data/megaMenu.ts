@@ -53,6 +53,16 @@ export type MegaMenuPromo = {
   readTime: string;
 };
 
+/** Serializable blog fields for the client Header (icons stay in static config). */
+export type MegaMenuBlogData = {
+  featured: MegaMenuFeatured;
+  latest: Array<{
+    label: string;
+    href: string;
+    description: string;
+  }>;
+};
+
 export type MegaMenuConfig = {
   featured: MegaMenuFeatured;
   columns: MegaMenuColumn[];
@@ -239,16 +249,16 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
         title: "Latest Blogs",
         links: [
           {
-            label: "Why the Future of Insurance Distribution Belongs to the Connectors",
-            href: "/blog/why-the-future-of-insurance-distribution-belongs-to-the-connectors",
-            description: "How CoverForce is transforming insurance distribution.",
+            label: "Latest insights from CoverForce",
+            href: "/blog",
+            description: "Product updates, guides, and industry perspective.",
             icon: RiUserStarLine,
             multiline: true,
           },
           {
-            label: "Wholesalers Must Embrace APIs to Stay Competitive",
-            href: "/blog/wholesalers-must-embrace-apis-to-stay-competitive-e0c5c",
-            description: "Why surplus lines wholesalers need API-driven distribution.",
+            label: "More from the CoverForce blog",
+            href: "/blog",
+            description: "Read the latest commercial insurance articles.",
             icon: RiNewspaperLine,
             multiline: true,
           },
@@ -279,3 +289,41 @@ export const MEGA_MENU_COLUMNS_MIN_HEIGHT_REM =
 
 export const MEGA_MENU_LEFT_MIN_HEIGHT_REM = MEGA_MENU_COLUMNS_MIN_HEIGHT_REM;
 export const MEGA_MENU_FIXED_HEIGHT_REM = MEGA_MENU_COLUMNS_MIN_HEIGHT_REM + 7;
+
+export function applyMegaMenuBlogData(
+  menus: Record<string, MegaMenuConfig>,
+  blogData: MegaMenuBlogData | null | undefined,
+): Record<string, MegaMenuConfig> {
+  if (!blogData) return menus;
+
+  const next: Record<string, MegaMenuConfig> = {};
+
+  for (const [key, menu] of Object.entries(menus)) {
+    const columns = menu.columns.map((column) => {
+      if (column.title !== "Latest Blogs") return column;
+
+      return {
+        ...column,
+        links: column.links.map((link, index) => {
+          const post = blogData.latest[index];
+          if (!post) return link;
+          return {
+            ...link,
+            label: post.label,
+            href: post.href,
+            description: post.description,
+            multiline: true,
+          };
+        }),
+      };
+    });
+
+    next[key] = {
+      ...menu,
+      featured: blogData.featured,
+      columns,
+    };
+  }
+
+  return next;
+}

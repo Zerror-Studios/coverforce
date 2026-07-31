@@ -9,6 +9,7 @@ import {
   isPreNavIntroPhase,
   useHomeIntro,
 } from "@/contexts/HomeIntroContext";
+import type { MegaMenuBlogData } from "@/data/megaMenu";
 import { scrollToTop } from "@/lib/scrollToTop";
 import {
   getPageTransitionBg,
@@ -25,9 +26,16 @@ gsap.registerPlugin(ScrollTrigger);
 
 type SiteLayoutProps = {
   children: ReactNode;
+  megaMenuBlogData?: MegaMenuBlogData | null;
 };
 
-function SiteLayoutInner({ children }: { children: ReactNode }) {
+function SiteLayoutInner({
+  children,
+  megaMenuBlogData,
+}: {
+  children: ReactNode;
+  megaMenuBlogData?: MegaMenuBlogData | null;
+}) {
   const pathname = usePathname();
   const { enabled: introEnabled, phase } = useHomeIntro();
   const hideChrome = introEnabled && isPreNavIntroPhase(phase);
@@ -51,7 +59,7 @@ function SiteLayoutInner({ children }: { children: ReactNode }) {
 
       {!hideChrome ? (
         <header className="site-view-header fixed top-0 z-50 w-full">
-          <Header />
+          <Header megaMenuBlogData={megaMenuBlogData} />
         </header>
       ) : null}
 
@@ -73,7 +81,10 @@ function SiteLayoutInner({ children }: { children: ReactNode }) {
   );
 }
 
-export default function SiteLayout({ children }: SiteLayoutProps) {
+export default function SiteLayout({
+  children,
+  megaMenuBlogData = null,
+}: SiteLayoutProps) {
   const pathname = usePathname();
   const isHome = pathname === "/";
 
@@ -99,7 +110,9 @@ export default function SiteLayout({ children }: SiteLayoutProps) {
   return (
     <LenisScroll>
       <HomeIntroProvider enabled={isHome}>
-        <SiteLayoutInner>{children}</SiteLayoutInner>
+        <SiteLayoutInner megaMenuBlogData={megaMenuBlogData}>
+          {children}
+        </SiteLayoutInner>
       </HomeIntroProvider>
     </LenisScroll>
   );

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import CmsImage from "./CmsImage";
 import ButtonArrowIcon from "./ButtonArrowIcon";
 import AnimatedLinkText from "./AnimatedLinkText";
 import { containerPadding } from "./containerStyles";
@@ -326,7 +326,7 @@ export default function MegaMenu({
               className="group flex h-full flex-col overflow-hidden rounded-xl bg-white p-3 transition-colors duration-200 hover:bg-[#FAFAFA]"
             >
               <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-lg bg-[#F7F7FB]">
-                <Image
+                <CmsImage
                   src={displayConfig.featured.image ?? "/images/mega-menu-promo.png"}
                   alt={displayConfig.featured.imageAlt ?? displayConfig.featured.title}
                   fill

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import gsap from "gsap";
 import Container from "./Container";
 import RequestDemoButton from "@/components/request-demo/RequestDemoButton";
@@ -20,7 +20,13 @@ import {
   RiArrowRightLine,
 } from "@remixicon/react";
 import Hamburger from "hamburger-react";
-import { MEGA_MENUS, type MegaMenuLink } from "@/data/megaMenu";
+import {
+  applyMegaMenuBlogData,
+  MEGA_MENUS,
+  type MegaMenuBlogData,
+  type MegaMenuLink,
+} from "@/data/megaMenu";
+import CmsImage from "@/components/common/CmsImage";
 import { HOME_INTRO_NAV_MS, useHomeIntro } from "@/contexts/HomeIntroContext";
 import { pageAnimation, setPageTransitionBg, setPendingPathname, subscribePendingPathname } from "@/lib/pageTransition";
 import { scrollToHashWhenReady } from "@/lib/scrollToTop";
@@ -341,7 +347,16 @@ function MobileMenuSubLink({
   );
 }
 
-const Header = () => {
+const Header = ({
+  megaMenuBlogData = null,
+}: {
+  megaMenuBlogData?: MegaMenuBlogData | null;
+}) => {
+  const megaMenus = useMemo(
+    () => applyMegaMenuBlogData(MEGA_MENUS, megaMenuBlogData),
+    [megaMenuBlogData],
+  );
+  const featuredCard = megaMenus.Company?.featured ?? MEGA_MENUS.Company.featured;
   const pathname = usePathname();
   const [displayPathname, setDisplayPathname] = useState(pathname);
   const baseTheme = getHeaderTheme(displayPathname);
@@ -586,9 +601,9 @@ const Header = () => {
   }, [mobileMenuOpen, mobileClipOpen, mobileEnterKey]);
 
   const openMobileSubMenu = useCallback((label: string) => {
-    if (!MEGA_MENUS[label]) return;
+    if (!megaMenus[label]) return;
     setMobileActiveMenu(label);
-  }, []);
+  }, [megaMenus]);
 
   const backToMobileMain = useCallback(() => {
     setMobileActiveMenu(null);
@@ -612,7 +627,7 @@ const Header = () => {
   const openMenu = useCallback(
     (label: string) => {
       clearCloseTimer();
-      if (!MEGA_MENUS[label]) return;
+      if (!megaMenus[label]) return;
 
       setActiveMenu(label);
 
@@ -631,7 +646,7 @@ const Header = () => {
       setRenderedMenu(label);
       revealClip();
     },
-    [clearCloseTimer, revealClip],
+    [clearCloseTimer, megaMenus, revealClip],
   );
 
   const closeMenu = useCallback(() => {
@@ -692,7 +707,7 @@ const Header = () => {
     closeMobileMenu();
   }, [pathname, closeMenuImmediately, closeMobileMenu]);
 
-  const renderedConfig = renderedMenu ? MEGA_MENUS[renderedMenu] : null;
+  const renderedConfig = renderedMenu ? megaMenus[renderedMenu] : null;
   const menuVisible = clipOpen && Boolean(renderedConfig);
 
   useEffect(() => {
@@ -713,7 +728,7 @@ const Header = () => {
     };
   }, [mobileMenuRendered]);
 
-  const activeMobileConfig = renderedMobileSubMenu ? MEGA_MENUS[renderedMobileSubMenu] : null;
+  const activeMobileConfig = renderedMobileSubMenu ? megaMenus[renderedMobileSubMenu] : null;
   const navBarClass = forceLightHeader
     ? headerThemes.light.bar
     : isTransparentHeader
@@ -926,7 +941,7 @@ const Header = () => {
                           label={label}
                           isCurrentPage={isNavItemCurrentPage(label, pathname)}
                           onClick={() => {
-                            if (hasDropdown && MEGA_MENUS[label]) {
+                            if (hasDropdown && megaMenus[label]) {
                               openMobileSubMenu(label);
                               return;
                             }
@@ -947,24 +962,20 @@ const Header = () => {
                     <div className="px-6 pb-4 pt-6">
                       <button
                         type="button"
-                        onClick={() =>
-                          handleNavigate(
-                            "/blog/coverforce-named-to-the-2025-cb-insights-list-of-the-50-most-innovative-insurtech-startups"
-                          )
-                        }
+                        onClick={() => handleNavigate(featuredCard.href)}
                         className="group flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-3 text-left transition-colors duration-200 hover:bg-[#FAFAFA]"
                       >
                         <div className="relative h-[10rem] shrink-0 overflow-hidden rounded-lg bg-[#F7F7FB]">
-                          <Image
-                            src="/images/blog/blog3.png"
-                            alt="CoverForce Insurtech 50 2025 recognition"
+                          <CmsImage
+                            src={featuredCard.image ?? "/images/blog/blog3.png"}
+                            alt={featuredCard.imageAlt ?? featuredCard.title}
                             fill
                             sizes="100vw"
                             className="object-contain transition-transform duration-300 group-hover:scale-[1.02]"
                           />
                         </div>
                         <p className="mt-3 px-0.5 font-heading text-sm font-regular leading-snug text-[#3D3D3D]">
-                          CoverForce Named to the 2025 CB Insights
+                          {featuredCard.title}
                         </p>
                       </button>
                     </div>
