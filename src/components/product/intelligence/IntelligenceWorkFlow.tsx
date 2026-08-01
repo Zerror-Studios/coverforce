@@ -143,7 +143,7 @@ function WorkflowStepPanel({
 
       <div
         ref={imageRef}
-        className={`relative w-full max-w-[350px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[720px] ${
+        className={`relative w-full max-w-[350px] sm:max-w-[420px] md:max-w-[720px] lg:max-w-[960px] ${
           alignLeft ? "self-start" : "self-center"
         }`}
       >
@@ -153,7 +153,7 @@ function WorkflowStepPanel({
             alt={`${step.label} preview`}
             fill
             className={`object-contain ${alignLeft ? "object-left" : "object-center"}`}
-            sizes="(max-width: 640px) 350px, (max-width: 768px) 400px, (max-width: 1024px) 600px, 720px"
+            sizes="(max-width: 640px) 350px, (max-width: 768px) 420px, (max-width: 1024px) 720px, 960px"
           />
         </div>
       </div>
@@ -389,7 +389,7 @@ const IntelligenceWorkFlow = () => {
                     imageRef={(el) => {
                       mobileImageRefs.current[index] = el;
                     }}
-                    className="mt-5 flex flex-col gap-6"
+                    className="mt-5 flex flex-col gap-3"
                   />
                 </div>
               ))}
@@ -425,7 +425,7 @@ const IntelligenceWorkFlow = () => {
                     imageRef={(el) => {
                       imageRefs.current[index] = el;
                     }}
-                    className="flex flex-col gap-10 pb-16 last:pb-0 md:gap-12 md:pb-20 lg:pb-24"
+                    className="flex flex-col gap-4 pb-16 last:pb-0 md:gap-5 md:pb-20 lg:pb-24"
                   />
                 ))}
               </div>
