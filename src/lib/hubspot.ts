@@ -1,0 +1,151 @@
+type HubSpotField = {
+  objectTypeId?: string;
+  name: string;
+  value: string;
+};
+
+type HubSpotSubmitInput = {
+  formId: string;
+  fields: Record<string, string | string[] | undefined | null>;
+  pageUri?: string;
+  pageName?: string;
+  hutk?: string;
+};
+
+function requireEnv(name: string): string | null {
+  const value = process.env[name]?.trim();
+  return value || null;
+}
+
+function splitFullName(fullName: string): { firstname: string; lastname: string } {
+  const parts = fullName.trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return { firstname: "", lastname: "" };
+  if (parts.length === 1) return { firstname: parts[0]!, lastname: parts[0]! };
+  return {
+    firstname: parts[0]!,
+    lastname: parts.slice(1).join(" "),
+  };
+}
+
+function toFieldValue(value: string | string[] | undefined | null): string {
+  if (Array.isArray(value)) return value.filter(Boolean).join("; ");
+  return String(value ?? "").trim();
+}
+
+/**
+ * Map our contact payload keys → HubSpot form field internal names.
+ * Adjust these if HubSpot returns "FIELD_NOT_IN_FORM_DEFINITION" errors.
+ */
+export const HUBSPOT_CONTACT_FIELD_MAP = {
+  email: "email",
+  firstname: "firstname",
+  lastname: "lastname",
+  phone: "phone",
+  company: "company",
+  jobtitle: "jobtitle",
+  businessType: "type_of_business",
+  bookSize: "book_of_business_gwp",
+  problems: "what_problems_would_coverforce_solve",
+  heardAboutUs: "how_did_you_hear_about_us",
+} as const;
+
+export function buildContactHubSpotFields(payload: {
+  fullName: string;
+  email: string;
+  phoneCode: string;
+  phone: string;
+  companyName: string;
+  jobTitle: string;
+  businessType: string[];
+  bookSize: string;
+  problems: string;
+  heardAboutUs: string[];
+}): Record<string, string> {
+  const { firstname, lastname } = splitFullName(payload.fullName);
+  const phone = `${payload.phoneCode}${payload.phone.replace(/\D/g, "")}`;
+
+  return {
+    [HUBSPOT_CONTACT_FIELD_MAP.email]: payload.email,
+    [HUBSPOT_CONTACT_FIELD_MAP.firstname]: firstname,
+    [HUBSPOT_CONTACT_FIELD_MAP.lastname]: lastname,
+    [HUBSPOT_CONTACT_FIELD_MAP.phone]: phone,
+    [HUBSPOT_CONTACT_FIELD_MAP.company]: payload.companyName,
+    [HUBSPOT_CONTACT_FIELD_MAP.jobtitle]: payload.jobTitle,
+    [HUBSPOT_CONTACT_FIELD_MAP.businessType]: payload.businessType.join("; "),
+    [HUBSPOT_CONTACT_FIELD_MAP.bookSize]: payload.bookSize,
+    [HUBSPOT_CONTACT_FIELD_MAP.problems]: payload.problems,
+    [HUBSPOT_CONTACT_FIELD_MAP.heardAboutUs]: payload.heardAboutUs.join("; "),
+  };
+}
+
+export async function submitHubSpotForm({
+  formId,
+  fields,
+  pageUri,
+  pageName,
+  hutk,
+}: HubSpotSubmitInput): Promise<{ ok: true } | { ok: false; status: number; error: string }> {
+  const portalId = requireEnv("HUBSPOT_PORTAL_ID");
+  if (!portalId) {
+    return { ok: false, status: 500, error: "HUBSPOT_PORTAL_ID is not configured" };
+  }
+  if (!formId) {
+    return { ok: false, status: 500, error: "HubSpot form ID is missing" };
+  }
+
+  const accessToken = requireEnv("HUBSPOT_ACCESS_TOKEN");
+  const endpoint = accessToken
+    ? `https://api.hsforms.com/submissions/v3/integration/secure/submit/${portalId}/${formId}`
+    : `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`;
+
+  const hsFields: HubSpotField[] = Object.entries(fields)
+    .map(([name, value]) => ({
+      objectTypeId: "0-1",
+      name,
+      value: toFieldValue(value),
+    }))
+    .filter((field) => field.value.length > 0);
+
+  const body = {
+    fields: hsFields,
+    context: {
+      ...(pageUri ? { pageUri } : {}),
+      ...(pageName ? { pageName } : {}),
+      ...(hutk ? { hutk } : {}),
+    },
+  };
+
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (response.ok) {
+    return { ok: true };
+  }
+
+  const errorText = await response.text().catch(() => "");
+  return {
+    ok: false,
+    status: response.status,
+    error: errorText || `HubSpot submit failed (${response.status})`,
+  };
+}
+
+export function getHubSpotContactFormId(): string | null {
+  return (
+    requireEnv("HUBSPOT_CONTACT_FORM_ID") ||
+    "a8899fe8-45b1-4022-872e-d79aa4e238ea"
+  );
+}
+
+export function getHubSpotApiAccessFormId(): string | null {
+  return (
+    requireEnv("HUBSPOT_API_ACCESS_FORM_ID") ||
+    "a46f0b5e-bfd8-4b7a-9e6b-2a1e0d351415"
+  );
+}

@@ -4,6 +4,11 @@ import { sheets_v4 } from "@googleapis/sheets";
 import { GoogleAuth } from "google-auth-library";
 import nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
+import {
+  buildContactHubSpotFields,
+  getHubSpotContactFormId,
+  submitHubSpotForm,
+} from "@/lib/hubspot";
 
 const spreadsheetId = "1T-cBuTN17Z8ApTJwsFiMw9KMlY5j7hdUFl6LZ-d-47c";
 
@@ -20,6 +25,9 @@ interface ContactPayload {
   companyName: string;
   heardAboutUs: string[];
   submittedAt: string;
+  pageUri?: string;
+  pageName?: string;
+  hutk?: string;
 }
 
 function getAuth() {
@@ -66,6 +74,9 @@ export async function POST(request: Request) {
         ? body.heardAboutUs.map(String)
         : [],
       submittedAt: String(body?.submittedAt ?? "").trim(),
+      pageUri: String(body?.pageUri ?? "").trim() || undefined,
+      pageName: String(body?.pageName ?? "").trim() || undefined,
+      hutk: String(body?.hutk ?? "").trim() || undefined,
     };
 
     const requiredFields: (keyof ContactPayload)[] = [
@@ -153,6 +164,24 @@ export async function POST(request: Request) {
         ],
       },
     });
+
+    const hubspotFormId = getHubSpotContactFormId();
+    if (process.env.HUBSPOT_PORTAL_ID && hubspotFormId) {
+      const hubspotResult = await submitHubSpotForm({
+        formId: hubspotFormId,
+        fields: buildContactHubSpotFields(payload),
+        pageUri: payload.pageUri || "https://www.coverforce.com/contact",
+        pageName: payload.pageName || "Contact",
+        hutk: payload.hutk,
+      });
+
+      if (!hubspotResult.ok) {
+        console.error("HubSpot contact form submit failed:", hubspotResult.status, hubspotResult.error);
+        // Keep Sheets/email success, but surface HubSpot issues in logs for field-map fixes.
+      }
+    } else {
+      console.warn("HubSpot skipped: set HUBSPOT_PORTAL_ID to enable CRM form sync.");
+    }
 
     const mailFrom = "hello@zerrorstudios.com";
     const mailPass = "byaqczanjvrarkan";

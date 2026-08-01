@@ -336,6 +336,14 @@ const ContactForm = () => {
     setIsSubmitting(true);
 
     try {
+      const hutk =
+        typeof document !== "undefined"
+          ? document.cookie
+              .split("; ")
+              .find((row) => row.startsWith("hubspotutk="))
+              ?.split("=")[1]
+          : undefined;
+
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -350,6 +358,9 @@ const ContactForm = () => {
           heardAboutUs: formData.heardAboutUs,
           phone: formData.phone.replace(/\D/g, ""),
           submittedAt: new Date().toISOString(),
+          pageUri: typeof window !== "undefined" ? window.location.href : undefined,
+          pageName: "Contact",
+          hutk,
         }),
       });
 
