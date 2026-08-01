@@ -111,7 +111,7 @@ const Hero = () => {
           alt="careers-hero"
           fill
           priority
-          className="object-cover object-center lg:object-[50%_63%]"
+          className="object-cover object-center lg:object-[50%_65%]"
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-black/30" aria-hidden />
