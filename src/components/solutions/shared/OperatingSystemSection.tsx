@@ -268,7 +268,7 @@ export default function OperatingSystemSection({
               return (
                 <div
                   key={row.id}
-                  className="operating-row grid gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20"
+                  className="operating-row grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-12 xl:gap-14"
                 >
                   <div className="flex flex-col justify-center">
                     {row.tag ? (

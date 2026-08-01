@@ -5,10 +5,10 @@ import type { ComponentType } from "react";
 
 /** Shared max width for Operating System step images (wholesaler / broker / carrier). */
 export const SOLUTION_STEP_IMAGE_CLASS =
-  "relative mx-auto flex w-full max-w-[820px] items-center justify-center px-2 lg:max-w-[880px]";
+  "relative mx-auto flex w-full max-w-[920px] items-center justify-center px-1 lg:max-w-[1040px]";
 
 export const SOLUTION_STEP_TRANSFER_TARGET_CLASS =
-  "hidden w-full max-w-[820px] min-h-[360px] lg:block lg:max-w-[880px] lg:min-h-[400px]";
+  "hidden w-full max-w-[920px] min-h-[400px] lg:block lg:max-w-[1040px] lg:min-h-[440px]";
 
 type SolutionStepIllustrationProps = {
   src: string;
@@ -21,9 +21,9 @@ function SolutionStepIllustration({ src, alt }: SolutionStepIllustrationProps) {
       <Image
         src={src}
         alt={alt}
-        width={880}
-        height={660}
-        className="h-auto w-full object-contain"
+        width={1040}
+        height={780}
+        className="h-auto w-full origin-center object-contain scale-[1.06]"
         draggable={false}
       />
     </div>
