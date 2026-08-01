@@ -24,50 +24,82 @@ type Testimonial = {
   role: string;
   company: string;
   avatar: string;
+  logo: string;
+  logoScale?: number;
 };
 
 const testimonials: Testimonial[] = [
   {
     id: "1",
     quote:
-      "The platform simplifies complex insurance workflows, improves accuracy, and helps our team respond to brokers with greater speed and confidence. What used to take days of back-and-forth now happens in a single, unified flow - from submission intake through carrier matching to bind-ready quotes.",
-    name: "Daniel Briggs",
-    role: "Sr. Director of Sales",
-    company: "Coalition",
-    avatar:
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "The partnership between ISU and CoverForce is opening the door to the future of the insurance industry, providing cutting-edge technology to our 225+ member agencies nationwide - increasing the ease of doing business.",
+    name: "T.J. Ryan",
+    role: "CEO, ISU Steadfast Agency Network",
+    company: "ISU Steadfast Agency Network",
+    avatar: "/images/testimonals/tj.webp",
+    logo: "/images/testimonals/isu_steadfast.png",
   },
   {
     id: "2",
     quote:
-      "We cut submission time while improving carrier matches, giving our underwriters more time to evaluate the opportunities that matter. CoverForce surfaces the right appetite data upfront, so our team spends less time chasing dead ends and more time on risks we can actually bind.",
-    name: "Sarah Chen",
-    role: "VP of Underwriting",
-    company: "Coalition",
-    avatar:
-      "https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "We have seen the number of applications processed by a single underwriter in a day skyrocket by 500%, with marked improvements in submission quality and customer win-rates due to increased speed and efficiency in data transmission.",
+    name: "Danny Lee",
+    role: "COO, International Underwriting Agency",
+    company: "International Underwriting Agency",
+    avatar: "/images/testimonals/Danny Lee.webp",
+    logo: "/images/testimonals/international_underwriting.png",
   },
   {
     id: "3",
     quote:
-      "CoverForce gives us one workflow from intake to bind - fewer errors, faster quotes, and less back-and-forth with carriers. Our producers get real-time visibility into every submission, and leadership finally has a single source of truth across the entire distribution pipeline.",
-    name: "Marcus Webb",
-    role: "Head of Distribution",
-    company: "Coalition",
-    avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&h=240&fit=crop",
+      "CoverForce's API enabled us to become fully operational with the top carriers within just 8 weeks. This rapid integration has allowed us to surpass our competitors, achieving more with significantly less cost and engineering resources. The swift and smooth process of integration with CoverForce highlights their expertise in engineering best practices, making them an ideal partner.",
+    name: "Peter Germanov",
+    role: "CEO, Momentum Agency Management Systems",
+    company: "Momentum Agency Management Systems",
+    avatar: "/images/testimonals/Peter Germanov.webp",
+    logo: "/images/testimonals/momentum_nowcerts.png",
+  },
+  {
+    id: "4",
+    quote:
+      "As a new brokerage, securing direct carrier appointments on our own was challenging. With CoverForce's support, we connected with the right carrier teams and were appointed in a matter of days, which would have been far more difficult and time-consuming on our own.",
+    name: "Alex Ledbetter",
+    role: "Founder, Diligence Brokerage",
+    company: "Diligence Brokerage",
+    avatar: "/images/testimonals/Alex Ledbetter.webp",
+    logo: "/images/testimonals/delegance.png",
+  },
+  {
+    id: "5",
+    quote:
+      "We went from kickoff to live in under two months. The CoverForce API was straightforward to work with - clean documentation, a sandbox that behaved like production, and a team that answered questions same-day. Multi-carrier quoting that would have taken us quarters to build ourselves was running in weeks.",
+    name: "Jatin Sandilya",
+    role: "Founder, Latent Insurance",
+    company: "Latent Insurance",
+    avatar: "/images/testimonals/Jatin Sandilya.webp",
+    logo: "/images/testimonals/latent.png",
+    logoScale: 1.35,
   },
 ];
 
-function CoalitionLogo() {
+function CompanyLogo({
+  src,
+  alt,
+  scale = 1,
+}: {
+  src: string;
+  alt: string;
+  scale?: number;
+}) {
   return (
-    <div className="relative h-14 w-[220px] shrink-0 md:h-16 md:w-[264px]">
+    <div className="relative h-10 w-[160px] shrink-0 md:h-12 md:w-[200px]">
       <Image
-        src="/images/review%20logo.png"
-        alt="Coalition"
+        src={src}
+        alt={alt}
         fill
         className="object-contain object-right"
-        sizes="(max-width: 768px) 220px, 264px"
+        sizes="(max-width: 768px) 160px, 200px"
+        style={{ transform: `scale(${scale})`, transformOrigin: "right center" }}
       />
     </div>
   );
@@ -76,8 +108,6 @@ function CoalitionLogo() {
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
     <article className="relative flex min-h-[300px] flex-col overflow-hidden rounded-sm bg-white p-5 md:min-h-[360px] md:p-7 lg:min-h-[400px] lg:p-8">
-   
-
       <div className="relative z-10 flex h-full flex-1 flex-col">
         <div className="flex flex-1 items-center">
           <blockquote className="w-full max-w-4xl text-left text-xl font-heading font-regular leading-[1.35] tracking-tight text-[#1a1a2e] md:text-2xl lg:max-w-5xl lg:text-3xl lg:leading-[1.32]">
@@ -87,11 +117,15 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
 
         <div className="relative mt-6 md:mt-7">
           <div className="pointer-events-none absolute bottom-0 right-0 z-0 opacity-90">
-            <CoalitionLogo />
+            <CompanyLogo
+              src={testimonial.logo}
+              alt={testimonial.company}
+              scale={testimonial.logoScale}
+            />
           </div>
 
           <div className="relative z-10 flex min-w-0 max-w-[70%] items-center gap-4 md:gap-5">
-            <div className="size-16 shrink-0 overflow-hidden md:size-20">
+            <div className="size-16 shrink-0 overflow-hidden border-2 border-gray md:size-20">
               <Image
                 src={testimonial.avatar}
                 alt={testimonial.name}

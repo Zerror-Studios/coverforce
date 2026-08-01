@@ -13,50 +13,52 @@ type Testimonial = {
   role: string;
   company: string;
   avatar: string;
+  logo: string;
+  logoScale?: number;
 };
 
 const TESTIMONIALS: Testimonial[] = [
   {
     id: "1",
     quote:
-      "The platform simplifies complex insurance workflows, improves accuracy, and helps our team respond to brokers with greater speed and confidence.",
-    name: "Daniel Briggs",
-    role: "Sr. Director of Sales",
-    company: "Coalition",
-    avatar:
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "As a new brokerage, securing direct carrier appointments on our own was challenging. With CoverForce's support, we connected with the right carrier teams and were appointed in a matter of days, which would have been far more difficult and time-consuming on our own.",
+    name: "Alex Ledbetter",
+    role: "Founder, Diligence Brokerage",
+    company: "Diligence Brokerage",
+    avatar: "/images/testimonals/Alex Ledbetter.webp",
+    logo: "/images/testimonals/delegance.png",
   },
   {
     id: "2",
     quote:
-      "We cut submission time while improving carrier matches, giving our underwriters more time to evaluate the opportunities that matter.",
-    name: "Sarah Chen",
-    role: "VP of Underwriting",
-    company: "Coalition",
-    avatar:
-      "https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id: "3",
-    quote:
-      "CoverForce gives us one workflow from intake to bind-fewer errors, faster quotes, and less back-and-forth with carriers.",
-    name: "Marcus Webb",
-    role: "Head of Distribution",
-    company: "Coalition",
-    avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&h=240&fit=crop",
+      "We went from kickoff to live in under two months. The CoverForce API was straightforward to work with - clean documentation, a sandbox that behaved like production, and a team that answered questions same-day. Multi-carrier quoting that would have taken us quarters to build ourselves was running in weeks.",
+    name: "Jatin Sandilya",
+    role: "Founder, Latent Insurance",
+    company: "Latent Insurance",
+    avatar: "/images/testimonals/Jatin Sandilya.webp",
+    logo: "/images/testimonals/latent.png",
+    logoScale: 1.35,
   },
 ];
 
-function CoalitionLogo() {
+function CompanyLogo({
+  src,
+  alt,
+  scale = 1,
+}: {
+  src: string;
+  alt: string;
+  scale?: number;
+}) {
   return (
     <div className="relative h-10 w-[148px] shrink-0 md:h-11 md:w-[168px]">
       <Image
-        src="/images/review%20logo.png"
-        alt="Coalition"
+        src={src}
+        alt={alt}
         fill
         className="object-contain object-right"
         sizes="(max-width: 768px) 148px, 168px"
+        style={{ transform: `scale(${scale})`, transformOrigin: "right center" }}
       />
     </div>
   );
@@ -99,7 +101,11 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
         </div>
 
         <div className="mt-auto flex justify-end pt-2">
-          <CoalitionLogo />
+          <CompanyLogo
+            src={testimonial.logo}
+            alt={testimonial.company}
+            scale={testimonial.logoScale}
+          />
         </div>
       </div>
     </article>
@@ -138,7 +144,7 @@ export default function StartupTestimonials() {
             </h2>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3 md:gap-5 lg:gap-6">
+          <div className="grid gap-4 md:grid-cols-2 md:gap-5 lg:gap-6">
             {TESTIMONIALS.map((testimonial) => (
               <TestimonialCard key={testimonial.id} testimonial={testimonial} />
             ))}
