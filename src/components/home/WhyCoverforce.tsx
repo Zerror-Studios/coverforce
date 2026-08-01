@@ -86,7 +86,7 @@ const whySlides: WhySlide[] = [
   },
 ];
 
-const SLIDE_TRANSITION_MS = 1080;
+const SLIDE_TRANSITION_MS = 950;
 
 /** Desktop shows 5 slots: 4 visible + always-zero right reserve for the next card. */
 const VISIBLE_SLIDE_COUNT = 5;
@@ -189,6 +189,17 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
   const isExpanding = expandingTarget !== null;
   isExpandingRef.current = isExpanding;
 
+  const syncTrackHeight = useCallback(() => {
+    const track = trackRef.current;
+    if (!track || isExpandingRef.current) return;
+    const activeEl = track.querySelector(".why-slide.is-active");
+    if (!(activeEl instanceof HTMLElement)) return;
+    const width = activeEl.getBoundingClientRect().width;
+    if (width <= 0) return;
+    // Exact YouTube thumbnail: active slide width × 9/16
+    track.style.setProperty("--why-track-height", `${(width * 9) / 16}px`);
+  }, []);
+
   const clearCommitTimeout = useCallback(() => {
     if (commitTimeoutRef.current) clearTimeout(commitTimeoutRef.current);
     commitTimeoutRef.current = null;
@@ -197,6 +208,8 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
   const advanceOne = useCallback(() => {
     if (isExpandingRef.current) return;
     clearCommitTimeout();
+    // Freeze current thumbnail height for the whole expand (sync skipped while expanding).
+    syncTrackHeight();
     setExpandingTarget(1);
     commitTimeoutRef.current = setTimeout(() => {
       // Commit without transition: leaving slide unmounts on the left,
@@ -205,7 +218,7 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
       setExpandingTarget(null);
       setRotation((current) => current + 1);
     }, SLIDE_TRANSITION_MS);
-  }, [clearCommitTimeout]);
+  }, [clearCommitTimeout, syncTrackHeight]);
 
   // Keep transitions off until the reorder DOM update is painted, then restore.
   // Continue queued steps one-by-one for a continuous loop.
@@ -225,10 +238,34 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
           window.setTimeout(() => {
             advanceOne();
           }, 48);
+        } else {
+          syncTrackHeight();
         }
       });
     });
-  }, [suppressTransition, rotation, advanceOne]);
+  }, [suppressTransition, rotation, advanceOne, syncTrackHeight]);
+
+  // Keep track height matched to active slide 16:9 when settled / on resize.
+  useLayoutEffect(() => {
+    if (isExpanding || suppressTransition) return;
+    syncTrackHeight();
+  }, [rotation, isExpanding, suppressTransition, syncTrackHeight]);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const onResize = () => {
+      if (!isExpandingRef.current) syncTrackHeight();
+    };
+    const ro = new ResizeObserver(onResize);
+    ro.observe(track);
+    window.addEventListener("resize", onResize);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", onResize);
+    };
+  }, [syncTrackHeight]);
 
   const handleSlideClick = useCallback(
     (visualIndex: number) => {
@@ -340,37 +377,28 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
           width: 100%;
           max-width: 100%;
           overflow: hidden;
-          /* Fluid height: keeps proportion across screens without going tiny on desktop */
-          height: clamp(32rem, 68vh + 2vw, 44rem);
-          contain: layout style;
-        }
-        @media (min-width: 1280px) {
-          .why-slider-track {
-            height: clamp(34rem, 70vh + 1.5vw, 46rem);
-          }
-        }
-        @media (min-width: 1536px) {
-          .why-slider-track {
-            height: clamp(36rem, 68vh + 2vw, 48rem);
-          }
-        }
-        @media (max-height: 740px) and (min-width: 1024px) {
-          .why-slider-track {
-            height: clamp(24rem, 56vh, 32rem);
-          }
+          /* Exact thumbnail height set from active slide width (JS). Calc is first-paint fallback. */
+          container-type: inline-size;
+          height: var(--why-track-height, calc((100cqw - 60px) * 17 / 24 * 9 / 16));
+          contain: style;
         }
 
         .why-slide {
           position: relative;
           min-width: 0;
           max-width: 100%;
+          height: 100%;
+          flex: 0 0 0;
+          align-self: stretch;
           border-radius: 10px;
           overflow: hidden;
           margin-right: 12px;
           background: #E3E3E3;
           backface-visibility: hidden;
           transform: translateZ(0);
-          transition: flex 1.08s cubic-bezier(0.19, 1, 0.22, 1);
+          transition:
+            flex-grow 0.95s cubic-bezier(0.22, 1, 0.36, 1),
+            margin-right 0.95s cubic-bezier(0.22, 1, 0.36, 1);
         }
         @media (min-width: 640px) {
           .why-slide { margin-right: 16px; }
@@ -383,7 +411,7 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
           margin-right: 0;
         }
         .why-slider-track--animating .why-slide {
-          will-change: flex;
+          will-change: flex-grow;
         }
         .why-slider-track--no-transition .why-slide {
           transition: none !important;
@@ -395,10 +423,35 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
         .why-slide.is-collapsed {
           pointer-events: none;
           margin-right: 0 !important;
-          transition: flex 1.08s cubic-bezier(0.19, 1, 0.22, 1),
-            margin-right 1.08s cubic-bezier(0.19, 1, 0.22, 1);
         }
         .why-slide.is-zero {
+          pointer-events: none;
+          min-height: 0;
+        }
+        .why-slide > a,
+        .why-slide > button {
+          position: absolute;
+          inset: 0;
+          z-index: 20;
+          display: block;
+          width: 100%;
+          height: 100%;
+          padding: 0;
+          border: 0;
+          background: transparent;
+          cursor: inherit;
+        }
+        .why-slide > img,
+        .why-slide > span {
+          position: absolute !important;
+          inset: 0;
+          width: 100% !important;
+          height: 100% !important;
+        }
+        .why-slide img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
           pointer-events: none;
         }
 
@@ -408,17 +461,20 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
           overflow: hidden;
           border-radius: 2px;
           background: #E3E3E3;
-          aspect-ratio: 4 / 5;
+          aspect-ratio: 16 / 9;
           height: auto;
-          max-height: min(24rem, 62vh);
-          min-height: 13.75rem;
         }
-        @media (min-width: 640px) {
-          .why-swiper-slide {
-            aspect-ratio: 5 / 6;
-            max-height: min(26rem, 58vh);
-            min-height: 16rem;
-          }
+        .why-swiper-slide > img,
+        .why-swiper-slide > span {
+          position: absolute !important;
+          inset: 0;
+          width: 100% !important;
+          height: 100% !important;
+        }
+        .why-swiper-slide img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
       `}</style>
       <div ref={containerRef} className="relative z-10 overflow-hidden lg:will-change-transform">
@@ -536,6 +592,7 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                     isExpanding && expandingTarget !== null && visualIndex === expandingTarget;
                   const isClickable =
                     !isExpanding && visualIndex > 0 && !isZero;
+                  const isFeatured = isActive || isExpanded;
                   const gapClass = getSlideGapClass(
                     visualIndex,
                     expandingTarget,
@@ -546,61 +603,61 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                       ? "is-collapsed is-zero"
                       : isZero
                         ? "is-zero"
-                        : isExpanded || isActive
+                        : isFeatured
                           ? "is-active"
                           : isClickable
                             ? "is-clickable is-inactive"
                             : "is-inactive"
                   }`;
-                  const slideImage = (
-                    <>
+
+                  // Keep a stable outer node for every slot so Link↔button swaps
+                  // never remount the flex item or images (that broke smoothness).
+                  return (
+                    <div
+                      key={key}
+                      className={slideClassName}
+                      style={{ flexGrow }}
+                      aria-hidden={isZero}
+                    >
                       <Image
                         width={1000}
                         height={1000}
-                        sizes="25vw"
+                        sizes="(min-width: 1024px) 55vw, 25vw"
                         className="h-full w-full object-cover"
                         src={slide.image}
                         alt={slide.alt}
                         draggable={false}
+                        priority={visualIndex === 0}
                       />
-                      {isActive || isExpanded ? (
-                        <div className="absolute inset-x-0 bottom-0 z-10 bg-linear-to-t from-black/70 via-black/20 to-transparent px-5 pb-5 pt-14">
-                          <h3 className="max-w-[14rem] font-heading text-lg font-medium leading-[1.12] tracking-tight text-white lg:max-w-[16rem] lg:text-[1.375rem]">
-                            {slide.title}
-                          </h3>
-                        </div>
-                      ) : null}
-                    </>
-                  );
-
-                  if (slide.href && (isActive || isExpanded)) {
-                    return (
-                      <Link
-                        key={key}
-                        href={slide.href}
-                        className={slideClassName}
-                        style={{ flex: `${flexGrow} 0 0` }}
-                        aria-current={isActive || isExpanded ? "true" : undefined}
+                      <div
+                        className={`pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-linear-to-t from-black/70 via-black/20 to-transparent px-5 pb-5 pt-14 transition-opacity duration-300 ${
+                          isFeatured ? "opacity-100" : "opacity-0"
+                        }`}
                       >
-                        {slideImage}
-                      </Link>
-                    );
-                  }
-
-                  return (
-                  <button
-                    type="button"
-                    key={key}
-                    className={slideClassName}
-                    style={{ flex: `${flexGrow} 0 0` }}
-                    onClick={() => handleSlideClick(visualIndex)}
-                    aria-pressed={isExpanded || isActive}
-                    aria-hidden={isZero}
-                    tabIndex={isClickable ? 0 : -1}
-                  >
-                    {slideImage}
-                  </button>
-                )})}
+                        <h3 className="max-w-[14rem] font-heading text-lg font-medium leading-[1.12] tracking-tight text-white lg:max-w-[16rem] lg:text-[1.375rem]">
+                          {slide.title}
+                        </h3>
+                      </div>
+                      {slide.href && isFeatured ? (
+                        <Link
+                          href={slide.href}
+                          className="absolute inset-0 z-20 block"
+                          aria-current="true"
+                          aria-label={slide.title}
+                        />
+                      ) : (
+                        <button
+                          type="button"
+                          className="absolute inset-0 z-20 block"
+                          onClick={() => handleSlideClick(visualIndex)}
+                          aria-pressed={isFeatured}
+                          aria-label={slide.title}
+                          tabIndex={isClickable ? 0 : -1}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="mt-4 flex items-end justify-between gap-8">
