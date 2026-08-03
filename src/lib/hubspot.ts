@@ -6,7 +6,7 @@ type HubSpotField = {
 
 type HubSpotSubmitInput = {
   formId: string;
-  fields: Record<string, string | string[] | undefined | null>;
+  fields: HubSpotField[] | Record<string, string | string[] | undefined | null>;
   pageUri?: string;
   pageName?: string;
   hutk?: string;
@@ -33,20 +33,29 @@ function toFieldValue(value: string | string[] | undefined | null): string {
 }
 
 /**
- * Map our contact payload keys → HubSpot form field internal names.
- * Adjust these if HubSpot returns "FIELD_NOT_IN_FORM_DEFINITION" errors.
+ * HubSpot contact form internal names (portal form a8899fe8-…).
+ * Company-scoped properties use objectTypeId "0-2".
  */
 export const HUBSPOT_CONTACT_FIELD_MAP = {
-  email: "email",
-  firstname: "firstname",
-  lastname: "lastname",
-  phone: "phone",
-  company: "company",
-  jobtitle: "jobtitle",
-  businessType: "type_of_business",
-  bookSize: "book_of_business_gwp",
-  problems: "what_problems_would_coverforce_solve",
-  heardAboutUs: "how_did_you_hear_about_us",
+  email: { name: "email", objectTypeId: "0-1" },
+  firstname: { name: "firstname", objectTypeId: "0-1" },
+  lastname: { name: "lastname", objectTypeId: "0-1" },
+  phone: { name: "phone", objectTypeId: "0-1" },
+  company: { name: "company", objectTypeId: "0-1" },
+  jobtitle: { name: "jobtitle", objectTypeId: "0-1" },
+  businessType: { name: "company_business_type", objectTypeId: "0-1" },
+  bookSize: {
+    name: "how_big_is_your_existing_commercial_book_of_business____in_gwp__",
+    objectTypeId: "0-1",
+  },
+  problems: {
+    name: "which_coverforce_capabilities_are_most_relevant_to_your_needs_",
+    objectTypeId: "0-1",
+  },
+  heardAboutUs: {
+    name: "how_did_you_hear_about_us_form",
+    objectTypeId: "0-2",
+  },
 } as const;
 
 export function buildContactHubSpotFields(payload: {
@@ -60,22 +69,36 @@ export function buildContactHubSpotFields(payload: {
   bookSize: string;
   problems: string;
   heardAboutUs: string[];
-}): Record<string, string> {
+}): HubSpotField[] {
   const { firstname, lastname } = splitFullName(payload.fullName);
   const phone = `${payload.phoneCode}${payload.phone.replace(/\D/g, "")}`;
 
-  return {
-    [HUBSPOT_CONTACT_FIELD_MAP.email]: payload.email,
-    [HUBSPOT_CONTACT_FIELD_MAP.firstname]: firstname,
-    [HUBSPOT_CONTACT_FIELD_MAP.lastname]: lastname,
-    [HUBSPOT_CONTACT_FIELD_MAP.phone]: phone,
-    [HUBSPOT_CONTACT_FIELD_MAP.company]: payload.companyName,
-    [HUBSPOT_CONTACT_FIELD_MAP.jobtitle]: payload.jobTitle,
-    [HUBSPOT_CONTACT_FIELD_MAP.businessType]: payload.businessType.join("; "),
-    [HUBSPOT_CONTACT_FIELD_MAP.bookSize]: payload.bookSize,
-    [HUBSPOT_CONTACT_FIELD_MAP.problems]: payload.problems,
-    [HUBSPOT_CONTACT_FIELD_MAP.heardAboutUs]: payload.heardAboutUs.join("; "),
-  };
+  const entries: Array<{
+    key: keyof typeof HUBSPOT_CONTACT_FIELD_MAP;
+    value: string;
+  }> = [
+    { key: "email", value: payload.email },
+    { key: "firstname", value: firstname },
+    { key: "lastname", value: lastname },
+    { key: "phone", value: phone },
+    { key: "company", value: payload.companyName },
+    { key: "jobtitle", value: payload.jobTitle },
+    { key: "businessType", value: payload.businessType.join("; ") },
+    { key: "bookSize", value: payload.bookSize },
+    { key: "problems", value: payload.problems },
+    { key: "heardAboutUs", value: payload.heardAboutUs.join("; ") },
+  ];
+
+  return entries
+    .map(({ key, value }) => {
+      const field = HUBSPOT_CONTACT_FIELD_MAP[key];
+      return {
+        objectTypeId: field.objectTypeId,
+        name: field.name,
+        value: toFieldValue(value),
+      };
+    })
+    .filter((field) => field.value.length > 0);
 }
 
 export async function submitHubSpotForm({
@@ -98,13 +121,15 @@ export async function submitHubSpotForm({
     ? `https://api.hsforms.com/submissions/v3/integration/secure/submit/${portalId}/${formId}`
     : `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`;
 
-  const hsFields: HubSpotField[] = Object.entries(fields)
-    .map(([name, value]) => ({
-      objectTypeId: "0-1",
-      name,
-      value: toFieldValue(value),
-    }))
-    .filter((field) => field.value.length > 0);
+  const hsFields: HubSpotField[] = Array.isArray(fields)
+    ? fields.filter((field) => field.value.trim().length > 0)
+    : Object.entries(fields)
+        .map(([name, value]) => ({
+          objectTypeId: "0-1",
+          name,
+          value: toFieldValue(value),
+        }))
+        .filter((field) => field.value.length > 0);
 
   const body = {
     fields: hsFields,
