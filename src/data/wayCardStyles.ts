@@ -35,11 +35,11 @@ const SOLUTION_GRADIENT_DEFS = {
     { hex: "210D7C", pos: 100 },
   ],
   wholesaler: [
-    { hex: "0045FF", pos: 0 },
-    { hex: "008EFF", pos: 25 },
-    { hex: "008EFF", pos: 50 },
-    { hex: "8FD7FF", pos: 75 },
-    { hex: "C3EBFF", pos: 100 },
+    { hex: "003CE8", pos: 0 },
+    { hex: "0055FF", pos: 25 },
+    { hex: "007DFF", pos: 50 },
+    { hex: "2F9DFF", pos: 75 },
+    { hex: "5BB5FF", pos: 100 },
   ],
   broker: [
     { hex: "322696", pos: 0 },

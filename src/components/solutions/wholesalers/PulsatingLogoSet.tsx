@@ -12,9 +12,9 @@ const DEFAULT_LOGOS: MarqueeLogo[] = Array.from({ length: 15 }, (_, index) => ({
 
 const LOGO_SIZE_CLASS = {
   default:
-    "h-8 w-auto max-h-8 object-contain opacity-100 grayscale contrast-200 sm:h-9 sm:max-h-9 md:h-10 md:max-h-10 lg:h-12 lg:max-h-12",
+    "h-6 w-auto max-h-6 object-contain opacity-100 grayscale contrast-200 sm:h-7 sm:max-h-7 md:h-8 md:max-h-8 lg:h-9 lg:max-h-9",
   large:
-    "h-10 w-auto max-h-10 object-contain opacity-100 grayscale contrast-200 sm:h-12 sm:max-h-12 md:h-14 md:max-h-14 lg:h-16 lg:max-h-16",
+    "h-8 w-auto max-h-8 object-contain opacity-100 grayscale contrast-200 sm:h-9 sm:max-h-9 md:h-10 md:max-h-10 lg:h-11 lg:max-h-11",
 } as const;
 
 const LOGO_TONE_CLASS = {
@@ -135,8 +135,8 @@ export function PulsatingLogoSet({
             <Image
               src={logo.src}
               alt={logo.alt}
-              width={size === "large" ? 220 : 160}
-              height={size === "large" ? 80 : 56}
+              width={size === "large" ? 160 : 130}
+              height={size === "large" ? 48 : 36}
               className={`${LOGO_SIZE_CLASS[size]} ${LOGO_TONE_CLASS[tone]}`}
               draggable={false}
             />

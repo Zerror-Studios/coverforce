@@ -17,8 +17,7 @@ import {
 import { animateLoaderWordsWave } from "@/lib/animateSplitTextReveal";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import { GdpCounter } from "./GdpCounter";
-import ToolWheel from "./ToolWheel";
-import { CARD_VERTICAL_BACKGROUND_STYLES } from "@/data/wayCardStyles";
+import NetworkBand from "@/components/wheel/NetworkBand";
 
 const INTRO_TITLE_LINES = [
   ["AI-Native", "Insurance"],
@@ -549,33 +548,12 @@ const Hero = () => {
               transaction
             </span>
           </h2>
-          <div className="relative w-full">
-            <div
-              ref={networkRef}
-              data-hero-reveal
-              className="relative z-10 mx-auto aspect-square w-full max-w-[min(100%,720px)] motion-reduce:translate-y-0 motion-reduce:opacity-100"
-              aria-label="Deployment branch timeline"
-            >
-              <ToolWheel
-                className="h-full w-full max-w-none"
-                animateOnScroll
-                entranceReady={!introEnabled || introPhase === "done"}
-              />
-            </div>
-            <div className="relative z-10 mt-6 flex flex-col items-center gap-2.5 text-sm text-white/70 md:absolute md:right-0 md:top-1/2 md:mt-0 md:-translate-y-1/2 md:items-start lg:right-4 xl:right-8">
-              {[
-                { label: "Carriers", background: CARD_VERTICAL_BACKGROUND_STYLES.carrier },
-                { label: "Distributors", background: CARD_VERTICAL_BACKGROUND_STYLES.startup },
-              ].map((item) => (
-                <span key={item.label} className="flex items-center gap-1.5 whitespace-nowrap">
-                  <span
-                    className="inline-block size-2.5 shrink-0 rounded-full"
-                    style={{ background: item.background }}
-                  />
-                  {item.label}
-                </span>
-              ))}
-            </div>
+          <div
+            ref={networkRef}
+            data-hero-reveal
+            className="relative z-10 mx-auto w-full motion-reduce:translate-y-0 motion-reduce:opacity-100"
+          >
+            <NetworkBand showHeader={false} />
           </div>
         </div>
 

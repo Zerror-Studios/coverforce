@@ -244,11 +244,21 @@ function bez(
   };
 }
 
+type NetworkBandProps = {
+  className?: string;
+  showHeader?: boolean;
+  showLegend?: boolean;
+};
+
 /**
  * Network band concept — globe + signal flow from the design prototype.
  * Partner cards reuse CoverForce logo tiles (carriers / distributors).
  */
-export default function NetworkBand() {
+export default function NetworkBand({
+  className,
+  showHeader = true,
+  showLegend = true,
+}: NetworkBandProps = {}) {
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const nodesRef = useRef<BandNode[]>([]);
@@ -763,8 +773,16 @@ export default function NetworkBand() {
     return () => cancelAnimationFrame(raf);
   }, []);
 
+  const defaultPadding = showHeader
+    ? "px-6 pb-16 pt-14 md:pb-20 md:pt-16 lg:pb-28 lg:pt-20"
+    : "px-0 pb-4 pt-2 md:pb-6 md:pt-2";
+
   return (
-    <div className="network-band relative overflow-hidden px-6 pb-16 pt-14 text-white md:pb-20 md:pt-16 lg:pb-28 lg:pt-20">
+    <div
+      className={`network-band relative overflow-hidden text-white ${
+        className !== undefined ? className : defaultPadding
+      }`}
+    >
       <div
         className="pointer-events-none absolute left-1/2 top-[52%] aspect-square w-[min(1100px,120vw)] -translate-x-1/2 -translate-y-1/2"
         style={{
@@ -774,18 +792,22 @@ export default function NetworkBand() {
         aria-hidden
       />
 
-      <p className="relative mb-3 text-center font-sans text-xs tracking-wide text-white/55 sm:text-sm">
-        One integration · 40+ carriers
-      </p>
-      <h2 className="relative z-10 mx-auto mb-2 max-w-xl text-center font-heading text-2xl font-medium leading-[1.15] tracking-tight text-white/55 sm:mb-3 sm:text-3xl sm:leading-[1.12] md:mb-4 md:text-4xl lg:mb-5 lg:text-[1.625rem] lg:leading-[1.12]">
-        The network between{" "}
-        <span className="text-white">carriers</span> and{" "}
-        <span className="text-white">brokers</span>.
-      </h2>
-      <p className="relative mx-auto max-w-xl text-center font-sans text-sm leading-relaxed text-white/70 md:text-[1.0625rem]">
-        Brokers send one submission. CoverForce distributes it, normalises every
-        response, and returns bindable quotes — in real time.
-      </p>
+      {showHeader && (
+        <>
+          <p className="relative mb-3 text-center font-sans text-xs tracking-wide text-white/55 sm:text-sm">
+            One integration · 40+ carriers
+          </p>
+          <h2 className="relative z-10 mx-auto mb-2 max-w-xl text-center font-heading text-2xl font-medium leading-[1.15] tracking-tight text-white/55 sm:mb-3 sm:text-3xl sm:leading-[1.12] md:mb-4 md:text-4xl lg:mb-5 lg:text-[1.625rem] lg:leading-[1.12]">
+            The network between{" "}
+            <span className="text-white">carriers</span> and{" "}
+            <span className="text-white">brokers</span>.
+          </h2>
+          <p className="relative mx-auto max-w-xl text-center font-sans text-sm leading-relaxed text-white/70 md:text-[1.0625rem]">
+            Brokers send one submission. CoverForce distributes it, normalises every
+            response, and returns bindable quotes — in real time.
+          </p>
+        </>
+      )}
 
       <div className="relative mt-4 w-full sm:mt-6">
         <div
@@ -815,29 +837,31 @@ export default function NetworkBand() {
           ))}
         </div>
 
-        <div className="relative z-10 mt-6 flex flex-col items-center gap-2.5 text-sm text-white/70 md:absolute md:right-0 md:top-1/2 md:mt-0 md:-translate-y-1/2 md:items-start lg:right-4 xl:right-8">
-          {[
-            {
-              label: "Carriers",
-              background: CARD_VERTICAL_BACKGROUND_STYLES.carrier,
-            },
-            {
-              label: "Distributors",
-              background: CARD_VERTICAL_BACKGROUND_STYLES.startup,
-            },
-          ].map((item) => (
-            <span
-              key={item.label}
-              className="flex items-center gap-1.5 whitespace-nowrap"
-            >
+        {showLegend && (
+          <div className="relative z-10 mt-6 flex flex-col items-center gap-2.5 text-sm text-white/70 md:absolute md:right-0 md:top-1/2 md:mt-0 md:-translate-y-1/2 md:items-start lg:right-4 xl:right-8">
+            {[
+              {
+                label: "Carriers",
+                background: CARD_VERTICAL_BACKGROUND_STYLES.carrier,
+              },
+              {
+                label: "Distributors",
+                background: CARD_VERTICAL_BACKGROUND_STYLES.startup,
+              },
+            ].map((item) => (
               <span
-                className="inline-block size-2.5 shrink-0 rounded-full"
-                style={{ background: item.background }}
-              />
-              {item.label}
-            </span>
-          ))}
-        </div>
+                key={item.label}
+                className="flex items-center gap-1.5 whitespace-nowrap"
+              >
+                <span
+                  className="inline-block size-2.5 shrink-0 rounded-full"
+                  style={{ background: item.background }}
+                />
+                {item.label}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       <style>{`
