@@ -23,14 +23,24 @@ const STARTUP_HERO_GRAD_FLOW = {
 };
 
 const STARTUP_MARQUEE_LOGOS = [
-  { src: "/images/startups/logos/anzen.png", alt: "Anzen" },
-  { src: "/images/startups/logos/broker.png", alt: "Broker" },
-  { src: "/images/startups/logos/coverwatch.png", alt: "CoverWatch" },
-  { src: "/images/startups/logos/harper.png", alt: "Harper" },
-  { src: "/images/startups/logos/latent.png", alt: "Latent" },
-  { src: "/images/startups/logos/rosella.png", alt: "Rosella" },
-  { src: "/images/startups/logos/snapbind.png", alt: "Snapbind" },
-  { src: "/images/startups/logos/switchboard.png", alt: "Switchboard" },
+  { src: "/images/startups/logos/broker - Diligence Brokerage.png", alt: "Diligence" },
+  { src: "/images/startups/logos/carrier - Chubb.png",alt:"Chubb" },
+  { src: "/images/startups/logos/carrier - Employers.png", alt: "Employers" },
+  { src: "/images/startups/logos/carrier - Liberty Mutual.png", alt: "Liberty Mutual" },
+  { src: "/images/startups/logos/carrier - Nationwide.png", alt: "Nationwide" },
+  { src: "/images/startups/logos/startup - Anzen.png", alt: "Anzen" },
+  { src: "/images/startups/logos/startup - b atomic.png", alt: "b atomic" },
+  { src: "/images/startups/logos/startup - Broker Buddha BuddhAI.png", alt: "Broker Buddha BuddhAI" },
+  { src: "/images/startups/logos/startup - Cinco.png", alt: "Cinco" },
+  { src: "/images/startups/logos/startup - Coverwatch.png", alt: "Coverwatch" },
+  { src: "/images/startups/logos/startup - Harper.png", alt: "Harper" },
+  { src: "/images/startups/logos/startup - Knack.png", alt: "Knack" },
+  { src: "/images/startups/logos/startup - Latent Insurance.png", alt: "Latent Insurance" },
+  { src: "/images/startups/logos/startup - Oyster.png", alt: "Oyster" },
+  { src: "/images/startups/logos/startup - Rosella.png", alt: "Rosella" },
+  { src: "/images/startups/logos/startup - Savus.png", alt: "Savus" },
+  { src: "/images/startups/logos/startup - SnapBind.png", alt: "SnapBind" },
+  { src: "/images/startups/logos/startup - Switchboard.png", alt: "Switchboard" }
 ] as const;
 
 const StartupHeroCard = () => (

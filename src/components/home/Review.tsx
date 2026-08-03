@@ -37,7 +37,7 @@ const testimonials: Testimonial[] = [
     role: "CEO, ISU Steadfast Agency Network",
     company: "ISU Steadfast Agency Network",
     avatar: "/images/testimonals/tj.webp",
-    logo: "/images/testimonals/isu_steadfast.png",
+    logo: "/images/testimonals/ISU Steadfast.png",
   },
   {
     id: "2",
@@ -47,7 +47,7 @@ const testimonials: Testimonial[] = [
     role: "COO, International Underwriting Agency",
     company: "International Underwriting Agency",
     avatar: "/images/testimonals/Danny Lee.webp",
-    logo: "/images/testimonals/international_underwriting.png",
+    logo: "/images/testimonals/International Underwriting Agency.png",
   },
   {
     id: "3",
@@ -67,7 +67,7 @@ const testimonials: Testimonial[] = [
     role: "Founder, Diligence Brokerage",
     company: "Diligence Brokerage",
     avatar: "/images/testimonals/Alex Ledbetter.webp",
-    logo: "/images/testimonals/delegance.png",
+    logo: "/images/testimonals/Diligence Brokerage.png",
   },
   {
     id: "5",
@@ -77,7 +77,7 @@ const testimonials: Testimonial[] = [
     role: "Founder, Latent Insurance",
     company: "Latent Insurance",
     avatar: "/images/testimonals/Jatin Sandilya.webp",
-    logo: "/images/testimonals/latent.png",
+    logo: "/images/testimonals/Latent Insurance.png",
     logoScale: 1.35,
   },
 ];

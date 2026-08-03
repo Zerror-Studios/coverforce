@@ -23,7 +23,7 @@ type CarrierResult = {
 const carrierResults: CarrierResult[] = [
   {
     id: "employers",
-    logo: "/images/employers.png",
+    logo: "/images/carrier - Employers.png",
     logoAlt: "Employers",
     title: "0% Error Rate",
     description:
@@ -31,7 +31,7 @@ const carrierResults: CarrierResult[] = [
   },
   {
     id: "nationwide",
-    logo: "/images/nation.svg",
+    logo: "/images/carrier - Nationwide.png",
     logoAlt: "Nationwide",
     title: "Live in 12 Weeks",
     description:
@@ -39,7 +39,7 @@ const carrierResults: CarrierResult[] = [
   },
   {
     id: "chubb",
-    logo: "/images/chubb.svg",
+    logo: "/images/carrier - Chubb.png",
     logoAlt: "Chubb",
     title: "Trust & Quality",
     description:
@@ -47,7 +47,7 @@ const carrierResults: CarrierResult[] = [
   },
   {
     id: "liberty",
-    logo: "/images/liverty.svg",
+    logo: "/images/carrier - Liberty Mutual.png",
     logoAlt: "Liberty Mutual",
     title: "5-Point Bind Advantage",
     description:

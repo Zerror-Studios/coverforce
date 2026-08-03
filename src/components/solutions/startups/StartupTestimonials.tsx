@@ -26,7 +26,7 @@ const TESTIMONIALS: Testimonial[] = [
     role: "Founder, Diligence Brokerage",
     company: "Diligence Brokerage",
     avatar: "/images/testimonals/Alex Ledbetter.webp",
-    logo: "/images/testimonals/delegance.png",
+    logo: "/images/testimonals/Diligence Brokerage.png",
   },
   {
     id: "2",
@@ -36,7 +36,7 @@ const TESTIMONIALS: Testimonial[] = [
     role: "Founder, Latent Insurance",
     company: "Latent Insurance",
     avatar: "/images/testimonals/Jatin Sandilya.webp",
-    logo: "/images/testimonals/latent.png",
+    logo: "/images/testimonals/Latent Insurance.png",
     logoScale: 1.35,
   },
 ];
