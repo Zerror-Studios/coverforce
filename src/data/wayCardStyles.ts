@@ -8,7 +8,6 @@ export type CardBackground =
   | "carrier";
 
 export type SolutionTheme = Exclude<CardBackground, "accent" | "light">;
-
 type GradientStop = {
   hex: string;
   pos: number;

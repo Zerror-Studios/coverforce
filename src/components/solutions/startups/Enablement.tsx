@@ -547,13 +547,13 @@ function EnablementWheel({ className = "" }: { className?: string }) {
                 <span className="whitespace-nowrap font-mono text-[0.5625rem] font-semibold leading-none tracking-[0.07em] text-white sm:text-[0.625rem]">
                   {item.label}
                 </span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
     </div>
-  );
+  </div>
+);
+        })}
+    </div>
+  </div>
+);
 }
 
 const Enablement = () => {

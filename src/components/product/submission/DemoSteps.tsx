@@ -74,7 +74,7 @@ const DEMO_STEPS = [
   {
     id: "coi-generator",
     label: "AI COI Generator",
-    image: "/images/product/demo5.svg",
+    image: "/images/product/demo6.svg",
     headline: (
       <>
         Issues certificates of insurance on demand. Delivers compliant COIs with{" "}

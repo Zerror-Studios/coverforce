@@ -15,13 +15,13 @@ const Hero = () => (
       <SolutionHeroCards
         transferTargetId="carrier-step-1-card"
         cardOne={{
-          src: "/images/carrier/career1.svg",
+          src: "/images/solution/carriers12.svg",
           alt: "Carrier integration dashboard",
           width: 389,
           height: 238,
         }}
         cardTwo={{
-          src: "/images/carrier/career2.svg",
+          src: "/images/solution/carriers11.svg",
           alt: "Carrier quote workflow",
           width: 371,
           height: 179,
