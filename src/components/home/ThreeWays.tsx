@@ -96,6 +96,7 @@ type WayCardConfig = Omit<WayCardProps, "children" | "onOpen"> & {
   label: string; // keep for modal lookup only
   mock: ReactNode;
   modalPreview: ReactNode;
+  modalPreviewAlign?: "center" | "right";
 };
 
 // Updated WAY_CARDS - remove lightStrip entries
@@ -139,7 +140,8 @@ const WAY_CARDS: WayCardConfig[] = [
     mockAlign: "bottom",
     backgroundScene: <DeveloperTerminalBg />,
     mock: <DeveloperMock />,
-    modalPreview: <DeveloperMock />,
+    modalPreview: <DeveloperMock align="modal" />,
+    modalPreviewAlign: "right",
   },
   {
     label: "Startups",
@@ -495,7 +497,7 @@ export default function ThreeWays() {
           </div>
 
           <div className="mt-8 grid grid-cols-1 gap-3 sm:mt-10 sm:gap-4 md:grid-cols-2 md:gap-2 lg:mt-14">
-            {WAY_CARDS.map(({ mock, modalPreview, ...card }) => (
+            {WAY_CARDS.map(({ mock, modalPreview, modalPreviewAlign, ...card }) => (
               <WayCard
                 key={card.label}
                 {...card}
@@ -519,6 +521,7 @@ export default function ThreeWays() {
         dotGrid={activeConfig?.dotGrid}
         backgroundScene={activeConfig?.backgroundScene}
         backgroundSceneBlendScreen={activeConfig?.backgroundSceneBlendScreen}
+        previewAlign={activeConfig?.modalPreviewAlign ?? "center"}
         onClose={closeModal}
       />
     </section>

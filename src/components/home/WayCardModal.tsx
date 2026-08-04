@@ -31,6 +31,7 @@ type WayCardModalProps = {
   dotGrid?: boolean;
   backgroundScene?: ReactNode;
   backgroundSceneBlendScreen?: boolean;
+  previewAlign?: "center" | "right";
   onClose: () => void;
 };
 
@@ -43,6 +44,7 @@ type StoredModal = {
   dotGrid?: boolean;
   backgroundScene?: ReactNode;
   backgroundSceneBlendScreen?: boolean;
+  previewAlign: "center" | "right";
 };
 
 export default function WayCardModal({
@@ -55,6 +57,7 @@ export default function WayCardModal({
   dotGrid,
   backgroundScene,
   backgroundSceneBlendScreen,
+  previewAlign = "center",
   onClose,
 }: WayCardModalProps) {
   const [isClosing, setIsClosing] = useState(false);
@@ -69,6 +72,7 @@ export default function WayCardModal({
   const dotGridRef = useRef(dotGrid);
   const backgroundSceneRef = useRef(backgroundScene);
   const backgroundSceneBlendScreenRef = useRef(backgroundSceneBlendScreen);
+  const previewAlignRef = useRef(previewAlign);
 
   contentRef.current = content;
   previewNodeRef.current = preview;
@@ -78,6 +82,7 @@ export default function WayCardModal({
   dotGridRef.current = dotGrid;
   backgroundSceneRef.current = backgroundScene;
   backgroundSceneBlendScreenRef.current = backgroundSceneBlendScreen;
+  previewAlignRef.current = previewAlign;
 
   useEffect(() => {
     if (!open || !contentRef.current) return;
@@ -91,6 +96,7 @@ export default function WayCardModal({
       dotGrid: dotGridRef.current,
       backgroundScene: backgroundSceneRef.current,
       backgroundSceneBlendScreen: backgroundSceneBlendScreenRef.current,
+      previewAlign: previewAlignRef.current,
     });
     setIsClosing(false);
   }, [open]);
@@ -277,7 +283,11 @@ export default function WayCardModal({
           </div>
 
           <div
-            className="relative overflow-hidden border-t border-[#535353]/10 px-6 pt-14 pb-12 sm:px-10 sm:py-14"
+            className={`relative overflow-hidden border-t border-[#535353]/10 pt-14 pb-12 sm:py-14 ${
+              stored.previewAlign === "right"
+                ? "pl-6 pr-0 sm:pl-10"
+                : "px-6 sm:px-10"
+            }`}
             style={{
               background: stored.background
                 ? CARD_BACKGROUND_STYLES[stored.background]
@@ -300,7 +310,13 @@ export default function WayCardModal({
                 {stored.backgroundScene}
               </div>
             ) : null}
-            <div className="way-modal-preview-slot pointer-events-none relative z-10 mx-auto flex h-[300px] w-full max-w-[820px] items-center justify-center sm:h-[360px] [&>*]:!relative [&>*]:!top-auto [&>*]:!right-auto [&>*]:!bottom-auto [&>*]:!left-auto [&>*]:mx-auto max-md:[&>*]:scale-[0.82] md:[&>*]:scale-100">
+            <div
+              className={`way-modal-preview-slot pointer-events-none relative z-10 h-[300px] w-full sm:h-[360px] ${
+                stored.previewAlign === "right"
+                  ? ""
+                  : "mx-auto flex max-w-[820px] items-center justify-center max-md:[&>*]:scale-[0.82] md:[&>*]:scale-100 [&>*]:!relative [&>*]:!inset-auto [&>*]:!top-auto [&>*]:!right-auto [&>*]:!bottom-auto [&>*]:!left-auto [&>*]:!translate-x-0 [&>*]:!translate-y-0"
+              }`}
+            >
               {stored.preview}
             </div>
           </div>

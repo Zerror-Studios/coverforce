@@ -14,7 +14,7 @@ export const WAY_CARD_MODALS: Record<string, WayCardModalContent> = {
     description:
       "Route submissions, manage MGAs, and expand your carrier network from one intake workflow built for wholesale teams.",
     primaryCta: { label: "Explore wholesaler tools", href: "/solutions/wholesalers" },
-    secondaryCta: { label: "See pricing details", href: "/" },
+    secondaryCta: { label: "See pricing details", href: "/pricing" },
     features: [
       "Centralize email and ACORD intake",
       "Distribute to the right markets faster",
@@ -28,7 +28,7 @@ export const WAY_CARD_MODALS: Record<string, WayCardModalContent> = {
     description:
       "Quote multiple carriers, pre-fill applications with AI, and give every producer the same fast path from intake to bind.",
     primaryCta: { label: "Explore broker workflow", href: "/solutions/brokers" },
-    secondaryCta: { label: "See pricing details", href: "/" },
+    secondaryCta: { label: "See pricing details", href: "/pricing" },
     features: [
       "AI pre-filled carrier applications",
       "Pipeline visibility for every producer",
@@ -42,7 +42,10 @@ export const WAY_CARD_MODALS: Record<string, WayCardModalContent> = {
     description:
       "Embed quoting, binding, and policy workflows into your product with sandbox-ready APIs and developer-first documentation.",
     primaryCta: { label: "Explore developer APIs", href: "/developers" },
-    secondaryCta: { label: "View API docs", href: "/developers#endpoints" },
+    secondaryCta: {
+      label: "View API docs",
+      href: "https://developer.coverforce.com/docs/coverforce-api/lxj5tz15jwgjy-authentication",
+    },
     features: [
       "Sandbox and production environments",
       "API keys generated in minutes",
@@ -70,7 +73,7 @@ export const WAY_CARD_MODALS: Record<string, WayCardModalContent> = {
     description:
       "Put your appetite in front of the right submissions, streamline appetite matching, and grow appointed distribution digitally.",
     primaryCta: { label: "Explore carrier distribution", href: "/solutions/carrier" },
-    secondaryCta: { label: "See pricing details", href: "/" },
+    secondaryCta: { label: "See pricing details", href: "/pricing" },
     features: [
       "Receive cleaner, pre-structured submissions",
       "Match appetite before manual review",
