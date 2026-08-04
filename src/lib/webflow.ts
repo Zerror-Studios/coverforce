@@ -1,4 +1,3 @@
-import { authorSlugs } from "@/data/authorSeo";
 import type { BlogCategory, BlogPost } from "@/data/blogPosts";
 
 const WEBFLOW_API = "https://api.webflow.com/v2";
@@ -33,6 +32,15 @@ type AuthorFieldData = {
   slug?: string;
   bio?: string | null;
   picture?: WebflowImage | null;
+  facebook?: string | null;
+  "facebook-url"?: string | null;
+  linkedin?: string | null;
+  "linkedin-url"?: string | null;
+  "linked-in"?: string | null;
+  twitter?: string | null;
+  "twitter-url"?: string | null;
+  x?: string | null;
+  "x-url"?: string | null;
 };
 
 type TagFieldData = {
@@ -45,9 +53,13 @@ export type BlogAuthor = {
   id: string;
   name: string;
   slug: string;
+  pageSlug: string;
   bio: string;
   avatar?: string;
   href?: string;
+  facebook?: string;
+  linkedin?: string;
+  twitter?: string;
 };
 
 export type BlogDetail = BlogPost & {
@@ -203,6 +215,53 @@ function stripHtml(html: string): string {
     .trim();
 }
 
+function pickFirstString(
+  record: Record<string, unknown>,
+  candidates: string[]
+): string | undefined {
+  for (const key of candidates) {
+    const value = record[key];
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+  return undefined;
+}
+
+function pickFirstMatchingString(
+  record: Record<string, unknown>,
+  matcher: (key: string) => boolean
+): string | undefined {
+  for (const [key, value] of Object.entries(record)) {
+    if (!matcher(key)) continue;
+    if (typeof value !== "string") continue;
+    const trimmed = value.trim();
+    if (!trimmed) continue;
+    return trimmed;
+  }
+  return undefined;
+}
+
+function pickSocialLink(
+  record: Record<string, unknown>,
+  exactCandidates: string[],
+  fuzzyCandidates: string[]
+): string | undefined {
+  const exact = pickFirstString(record, exactCandidates);
+  if (exact) return exact;
+
+  const normalizedCandidates = fuzzyCandidates.map((candidate) =>
+    candidate.toLowerCase()
+  );
+
+  return pickFirstMatchingString(record, (key) => {
+    const normalizedKey = key.toLowerCase();
+    return normalizedCandidates.some((candidate) =>
+      normalizedKey.includes(candidate)
+    );
+  });
+}
+
 function mapCategory(tagName?: string): BlogCategory {
   const normalized = (tagName ?? "").trim().toLowerCase();
   if (normalized === "case study") return "Case Study";
@@ -230,20 +289,63 @@ async function getAuthorsById(): Promise<Map<string, BlogAuthor>> {
     const pageSlug = authorPageSlug(slug);
     const bioHtml = item.fieldData.bio ?? "";
     const bio = bioHtml ? stripHtml(bioHtml) : "";
+    const socialFields = item.fieldData as Record<string, unknown>;
 
     map.set(item.id, {
       id: item.id,
       name,
       slug,
+      pageSlug,
       bio,
       avatar: normalizeWebflowAssetUrl(item.fieldData.picture?.url),
-      href: authorSlugs.includes(pageSlug)
-        ? `/author/${pageSlug}`
-        : undefined,
+      href: `/author/${pageSlug}`,
+      facebook: pickSocialLink(socialFields, [
+        "facebook",
+        "facebook-url",
+      ], [
+        "facebook",
+        "fb",
+      ]),
+      linkedin: pickSocialLink(socialFields, [
+        "linkedin",
+        "linkedin-url",
+        "linked-in",
+      ], [
+        "linkedin",
+        "linked-in",
+      ]),
+      twitter: pickSocialLink(socialFields, [
+        "twitter",
+        "twitter-url",
+        "x",
+        "x-url",
+      ], [
+        "twitter",
+        "x-url",
+        "x-link",
+        "x-twitter",
+      ]),
     });
   }
 
   return map;
+}
+
+export async function getBlogAuthors(): Promise<BlogAuthor[]> {
+  const authors = await getAuthorsById();
+  return Array.from(authors.values()).sort((a, b) => a.name.localeCompare(b.name));
+}
+
+export async function getBlogAuthorBySlug(
+  slug: string
+): Promise<BlogAuthor | null> {
+  const authors = await getBlogAuthors();
+  return authors.find((author) => author.pageSlug === slug) ?? null;
+}
+
+export async function getBlogAuthorSlugs(): Promise<string[]> {
+  const authors = await getBlogAuthors();
+  return authors.map((author) => author.pageSlug).filter(Boolean);
 }
 
 async function getTagsById(): Promise<

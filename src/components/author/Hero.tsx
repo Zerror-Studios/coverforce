@@ -1,31 +1,52 @@
 import Image from "next/image";
 import Link from "next/link";
-import { RiTwitterXFill, RiLinkedinFill } from "@remixicon/react";
+import {
+  RiFacebookFill,
+  RiTwitterXFill,
+  RiLinkedinFill,
+} from "@remixicon/react";
 import Container from "@/components/common/Container";
 import HeroReveal from "@/components/common/HeroReveal";
+import type { BlogAuthor } from "@/lib/webflow";
 
 type Author = {
   name: string;
-  role: string;
   avatar: string;
   breadcrumb: string;
   bio: string;
   socials: { label: string; href: string; icon: typeof RiTwitterXFill }[];
 };
 
-const AUTHOR: Author = {
-  name: "Cyrus Karai",
-  role: "CEO & Co-Founder",
-  avatar: "/images/blog/author.png",
-  breadcrumb: "Insights",
-  bio: "Cyrus Karai is the CEO and Co-Founder of CoverForce, where he leads the company's vision, strategy, and growth. With extensive experience across financial services, insurance, and consulting, Cyrus is passionate about transforming the commercial insurance industry through technology. Prior to founding CoverForce, he held leadership positions at Credit Suisse and PwC, advising organizations on strategy, transformation, and operational excellence. A Wharton MBA and Chartered Accountant, Cyrus combines deep industry expertise with a commitment to innovation, helping build modern infrastructure for the future of commercial insurance.",
-  socials: [
-    { label: "X (Twitter)", href: "#", icon: RiTwitterXFill },
-    { label: "LinkedIn", href: "#", icon: RiLinkedinFill },
-  ],
-};
+const DEFAULT_SOCIALS: Author["socials"] = [
+  { label: "Facebook", href: "#", icon: RiFacebookFill },
+  { label: "X (Twitter)", href: "#", icon: RiTwitterXFill },
+  { label: "LinkedIn", href: "#", icon: RiLinkedinFill },
+];
 
-const Hero = () => {
+function toAuthor(author: BlogAuthor): Author {
+  return {
+    name: author.name,
+    avatar: author.avatar || "/images/blog/author.png",
+    breadcrumb: "Insights",
+    bio:
+      author.bio ||
+      "Explore articles and insights from CoverForce on commercial insurance distribution, technology, and the future of the P&C industry.",
+    socials: [
+      { label: "Facebook", href: author.facebook || "#", icon: RiFacebookFill },
+      { label: "X (Twitter)", href: author.twitter || "#", icon: RiTwitterXFill },
+      { label: "LinkedIn", href: author.linkedin || "#", icon: RiLinkedinFill },
+    ],
+  };
+}
+
+const Hero = ({ author }: { author: BlogAuthor }) => {
+  const profile = toAuthor(author);
+  console.log(author);
+
+  const visibleSocials = profile.socials.filter(
+    ({ href }) => href && href !== "#"
+  );
+
   return (
     <section className="bg-white text-[#0a143b]">
       <Container borderColor="#53535380" borderBottom>
@@ -36,7 +57,7 @@ const Hero = () => {
             </Link>
             <span className="text-[#C4C4C4]">/</span>
             <Link href="/blog" className="transition-colors hover:text-[#413CC0]">
-              {AUTHOR.breadcrumb}
+              {profile.breadcrumb}
             </Link>
             <span className="text-[#C4C4C4]">/</span>
             <span className="text-[#50617a]">Author</span>
@@ -44,8 +65,8 @@ const Hero = () => {
 
           <div className="mt-8 flex flex-col items-center text-center">
             <Image
-              src={AUTHOR.avatar}
-              alt={AUTHOR.name}
+              src={profile.avatar}
+              alt={profile.name}
               width={128}
               height={128}
               priority
@@ -53,29 +74,29 @@ const Hero = () => {
             />
 
             <h1 className="mt-6 font-heading text-3xl font-medium tracking-tight text-[#0a143b] md:text-4xl">
-              {AUTHOR.name}
+              {profile.name}
             </h1>
 
-            <p className="mt-2 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-[#6B7280]">
-              {AUTHOR.role}
-            </p>
-
-            <div className="mt-5 flex items-center justify-center gap-3">
-              {AUTHOR.socials.map(({ label, href, icon: Icon }) => (
-                <Link
-                  key={label}
-                  href={href}
-                  aria-label={label}
-                  className="flex size-8 items-center justify-center rounded-full bg-[#0a143b] text-white transition-colors hover:bg-[#413CC0]"
-                >
-                  <Icon className="size-4" />
-                </Link>
-              ))}
-            </div>
+            {visibleSocials.length ? (
+              <div className="mt-5 flex items-center justify-center gap-3">
+                {visibleSocials.map(({ label, href, icon: Icon }) => (
+                  <Link
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="flex size-8 items-center justify-center rounded-full bg-[#0a143b] text-white transition-colors hover:bg-[#413CC0]"
+                  >
+                    <Icon className="size-4" />
+                  </Link>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           <p className="mt-10 text-[0.9375rem] leading-[1.75] text-[#444444]">
-            {AUTHOR.bio}
+            {profile.bio}
           </p>
         </HeroReveal>
       </Container>

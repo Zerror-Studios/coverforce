@@ -30,6 +30,12 @@ function authorInitials(name: string) {
     .join("");
 }
 
+function truncateWords(text: string, maxWords: number) {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  if (words.length <= maxWords) return text.trim();
+  return `${words.slice(0, maxWords).join(" ")}...`;
+}
+
 function ShareIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -58,6 +64,7 @@ type HeroProps = {
 const Hero = ({ post }: HeroProps) => {
   const [authorOpen, setAuthorOpen] = useState(false);
   const authorRef = useRef<HTMLDivElement>(null);
+  console.log(post);
 
   useEffect(() => {
     if (!authorOpen) return;
@@ -92,7 +99,12 @@ const Hero = ({ post }: HeroProps) => {
     }
   };
 
-  const hasAuthorCard = Boolean(post.authorBio || post.authorHref);
+  const hasAuthorCard = Boolean(
+    post.author && (post.authorBio || post.authorHref || post.authorAvatar)
+  );
+  const authorBioPreview = post.authorBio
+    ? truncateWords(post.authorBio, 18)
+    : undefined;
 
   return (
     <section className="relative z-20 bg-white text-[#0a143b]">
@@ -206,9 +218,9 @@ const Hero = ({ post }: HeroProps) => {
                       </div>
                     </div>
 
-                    {post.authorBio ? (
+                    {authorBioPreview ? (
                       <p className="mt-4 text-sm font-regular font-sans leading-[1.6] text-[#454545]">
-                        {post.authorBio}
+                        {authorBioPreview}
                       </p>
                     ) : null}
 
