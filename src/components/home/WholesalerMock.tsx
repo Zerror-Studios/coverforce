@@ -1,10 +1,23 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefObject, type TransitionEvent } from "react";
-import { RiAttachmentLine, RiFileTextFill, RiLineChartLine, RiMailFill } from "@remixicon/react";
+import type { ComponentType, ReactNode, TransitionEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  RiAttachmentLine,
+  RiBuildingLine,
+  RiCheckboxCircleFill,
+  RiCodeSSlashLine,
+  RiDownloadLine,
+  RiFileCopy2Line,
+  RiFileTextLine,
+  RiMailLine,
+  RiShieldLine,
+} from "@remixicon/react";
 import Image from "next/image";
 import { MICRO_EASE, MICRO_ROLL_MS, MICRO_ROLL_STAGGER_MS } from "@/lib/motion";
 import { PeriodicIncrementalStat } from "@/components/common/AnimatedPercent";
+
+type IconComponent = ComponentType<{ size?: number | string; className?: string }>;
 
 const SLIDE_MS = 1700;
 const ROTATE_MS = 8000;
@@ -67,6 +80,13 @@ function OdometerCurrency({ value, className = "" }: { value: string; className?
   );
 }
 
+/** Empty ring bullet used in the Limits Summary rows (matches reference mock) */
+function LimitBullet() {
+  return (
+    <span className="inline-block size-2.5 shrink-0 rounded-full border-[1.5px] border-[#D6D6D6]" />
+  );
+}
+
 function AnimatedLimitRow({
   label,
   values,
@@ -101,8 +121,11 @@ function AnimatedLimitRow({
   }, [intervalMs, startDelayMs, values]);
 
   return (
-    <div className="flex items-center justify-between py-2">
-      <span className="text-[0.60rem] font-heading font-medium text-[#3C3B3B]">{label}</span>
+    <div className="flex items-center justify-between rounded-md border border-[#EEEEEE] px-3 py-3">
+      <span className="flex items-center gap-2 text-[0.60rem] font-heading font-medium text-[#3C3B3B]">
+        <LimitBullet />
+        {label}
+      </span>
       <OdometerCurrency
         value={values[index]}
         className="text-xs font-heading font-medium text-[#3C3B3B]"
@@ -113,7 +136,7 @@ function AnimatedLimitRow({
 
 function AnimatedLimitsList() {
   return (
-    <div className="divide-y divide-neutral-100 px-4">
+    <div className="flex flex-col gap-2 px-4 pb-3">
       {LIMIT_LABELS.map((label, rowIndex) => (
         <AnimatedLimitRow
           key={label}
@@ -136,11 +159,8 @@ const EMAIL_INTAKES = [
 const ACORD_INFO = {
   insured: "Construction LLC",
   policy: "GL-2024-98765",
-  coverage: "5 coverages",
+  coverage: "5 Coverages",
 } as const;
-
-/** Same content on every slide - avoids wrap/height jumps during transition */
-const ACORD_INFO_SLIDES = [ACORD_INFO, ACORD_INFO, ACORD_INFO] as const;
 
 const AVATARS = [
   { label: "A", className: "bg-amber-400", image: "/images/avatar1.png" },
@@ -238,8 +258,6 @@ function RollingText({
 
         const prevDigit = prevChar >= "0" && prevChar <= "9" ? Number(prevChar) : Number(char);
         const nextDigit = Number(char);
-        // Always roll digits, even when they don't change.
-        // For unchanged digits we roll 0→0 (or 5→5, etc) using a 2-step sequence.
         const sequence =
           prevDigit === nextDigit ? [nextDigit, nextDigit] : [prevDigit, nextDigit];
 
@@ -256,25 +274,41 @@ function RollingText({
   );
 }
 
-function AcordInfoField({
+/** Shared outline icon chip used in summary bar + email intake header */
+function BorderIcon({
+  icon: Icon,
+  className = "text-[#9CA3AF]",
+}: {
+  icon: IconComponent;
+  className?: string;
+}) {
+  return (
+    <span className="flex size-5 shrink-0 items-center justify-center rounded-[4px] border border-[#D6D6D6] bg-transparent">
+      <Icon size={11} className={className} />
+    </span>
+  );
+}
+
+/** Static info row: Insured / Policy Number / Coverages, boxed like the reference mock */
+function AcordSummaryField({
   label,
   value,
+  icon,
   liveValue,
 }: {
   label: string;
   value: string;
+  icon: IconComponent;
   liveValue?: ReactNode;
 }) {
   return (
-    <div className="mt-0.5 flex items-start gap-1">
-      <span className="flex size-3 shrink-0 items-center justify-center rounded-sm bg-[#F9FAFB]">
-        <RiLineChartLine className="text-[#6B7280] size-2" />
-      </span>
-      <div className="min-w-0 flex-1">
-        <p className="text-[0.40rem] font-sans font-normal uppercase leading-tight tracking-wider text-[#9CA3AF]">
+    <div className="flex min-w-0 flex-1 items-start gap-1.5">
+      <BorderIcon icon={icon} />
+      <div className="min-w-0">
+        <p className="truncate text-[0.42rem] font-sans font-normal uppercase leading-tight tracking-wider text-[#9CA3AF]">
           {label}
         </p>
-        <p className="truncate text-[0.50rem] tracking-wide font-heading font-medium text-[#111827]">
+        <p className="truncate text-[0.55rem] tracking-wide font-heading font-medium text-[#111827]">
           {liveValue ?? value}
         </p>
       </div>
@@ -282,146 +316,44 @@ function AcordInfoField({
   );
 }
 
-type AcordInfoSet = (typeof ACORD_INFO_SLIDES)[number];
-
-function AcordInfoPanel({
-  set,
+function AcordSummaryBox({
   liveStats,
   coverageStatClassName,
-  panelRef,
 }: {
-  set: AcordInfoSet;
   liveStats: boolean;
   coverageStatClassName: string;
-  panelRef?: RefObject<HTMLDivElement | null>;
 }) {
-  const fields = [
-    { label: "Insured", value: set.insured },
-    { label: "Policy Number", value: set.policy },
-    { label: "Coverage", value: set.coverage },
-  ] as const;
-
   return (
-    <div ref={panelRef} className="px-3">
-      {[0, 1].map((rowIndex) => (
-        <div
-          key={rowIndex}
-          className="grid grid-cols-3 gap-x-2 border-b border-dashed border-[#CCCCCC] py-2"
-        >
-          {fields.map((field) => (
-            <div key={`${rowIndex}-${field.label}`} className="min-w-0">
-              <AcordInfoField
-                label={field.label}
-                value={field.value}
-                liveValue={
-                  liveStats && rowIndex === 0 && field.label === "Coverage" ? (
-                    <span className="inline-flex items-baseline">
-                      <PeriodicIncrementalStat
-                        start={5}
-                        step={1}
-                        max={12}
-                        intervalMs={ROTATE_MS}
-                        className={coverageStatClassName}
-                      />
-                      <span className={coverageStatClassName}> coverages</span>
-                    </span>
-                  ) : undefined
-                }
+    <div className="mx-4 mt-3 grid grid-cols-3 gap-2 rounded-md border border-[#EEEEEE] px-2.5 py-2.5 sm:gap-3 sm:px-3">
+      <AcordSummaryField
+        label="Insured"
+        value={ACORD_INFO.insured}
+        icon={RiBuildingLine}
+      />
+      <AcordSummaryField
+        label="Policy Number"
+        value={ACORD_INFO.policy}
+        icon={RiFileTextLine}
+      />
+      <AcordSummaryField
+        label="Coverage"
+        value={ACORD_INFO.coverage}
+        icon={RiShieldLine}
+        liveValue={
+          liveStats ? (
+            <span className="inline-flex items-baseline">
+              <PeriodicIncrementalStat
+                start={5}
+                step={1}
+                max={12}
+                intervalMs={ROTATE_MS}
+                className={coverageStatClassName}
               />
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function AnimatedAcordInfoSection({
-  liveStats,
-  coverageStatClassName,
-}: {
-  liveStats: boolean;
-  coverageStatClassName: string;
-}) {
-  const [index, setIndex] = useState(0);
-  const [animating, setAnimating] = useState(false);
-  const animatingRef = useRef(false);
-  const slideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const [panelHeight, setPanelHeight] = useState(0);
-  const nextIndex = (index + 1) % ACORD_INFO_SLIDES.length;
-
-  const finishSlide = useCallback(() => {
-    if (!animatingRef.current) return;
-
-    animatingRef.current = false;
-    setAnimating(false);
-    setIndex((current) => (current + 1) % ACORD_INFO_SLIDES.length);
-
-    if (slideTimerRef.current) {
-      clearTimeout(slideTimerRef.current);
-      slideTimerRef.current = null;
-    }
-  }, []);
-
-  const startSlide = useCallback(() => {
-    if (animatingRef.current || ACORD_INFO_SLIDES.length <= 1) return;
-
-    animatingRef.current = true;
-    setAnimating(true);
-
-    if (slideTimerRef.current) clearTimeout(slideTimerRef.current);
-    slideTimerRef.current = setTimeout(finishSlide, SLIDE_MS + 150);
-  }, [finishSlide]);
-
-  useLayoutEffect(() => {
-    const el = panelRef.current;
-    if (!el || panelHeight > 0) return;
-
-    setPanelHeight(el.offsetHeight);
-  }, [liveStats, panelHeight]);
-
-  useEffect(() => {
-    if (ACORD_INFO_SLIDES.length <= 1) return;
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) return;
-
-    const interval = setInterval(startSlide, ROTATE_MS);
-    return () => {
-      clearInterval(interval);
-      if (slideTimerRef.current) clearTimeout(slideTimerRef.current);
-    };
-  }, [startSlide]);
-
-  const handleTransitionEnd = (event: TransitionEvent<HTMLDivElement>) => {
-    if (event.propertyName !== "transform") return;
-    if (event.target !== event.currentTarget) return;
-    finishSlide();
-  };
-
-  return (
-    <div className="overflow-hidden" style={panelHeight ? { height: panelHeight } : undefined}>
-      <div
-        className="flex flex-col will-change-transform"
-        style={{
-          transform: animating && panelHeight ? `translateY(-${panelHeight}px)` : "translateY(0)",
-          transition: animating ? `transform ${SLIDE_MS}ms ${MICRO_EASE}` : "none",
-        }}
-        onTransitionEnd={handleTransitionEnd}
-      >
-        <AcordInfoPanel
-          set={ACORD_INFO_SLIDES[index]}
-          liveStats={liveStats}
-          coverageStatClassName={coverageStatClassName}
-          panelRef={panelRef}
-        />
-        <AcordInfoPanel
-          set={ACORD_INFO_SLIDES[nextIndex]}
-          liveStats={liveStats}
-          coverageStatClassName={coverageStatClassName}
-        />
-      </div>
+              <span className={coverageStatClassName}> coverages</span>
+            </span>
+          ) : undefined
+        }
+      />
     </div>
   );
 }
@@ -454,15 +386,15 @@ function EmailIntakeFooter({
 }) {
   return (
     <div className="flex items-center justify-between border-t border-dashed border-[#CCCCCC] px-3 py-3">
-      <div className="flex items-center gap-1 text-[10px] text-[#6B7280]">
-        <RiAttachmentLine className="size-2 rotate-90 text-[#6B7280]" />
+      <div className="flex items-center gap-1 text-[10px] font-medium text-[#4683E5]">
+        <RiAttachmentLine className="size-2 rotate-90 text-[#4683E5]" />
         <RollingText
           prev={String(prevAttachments)}
           next={String(nextAttachments)}
           animationKey={animationKey}
-          className="text-[10px] font-sans font-normal leading-[1.4] text-[#6B7280]"
+          className="text-[10px] font-sans font-medium leading-[1.4] text-[#4683E5]"
         />
-        <span>attachments</span>
+        <span>Attachments</span>
       </div>
       <div className="flex items-center">
         <div className="-mr-1.5 flex -space-x-1.5">
@@ -578,80 +510,66 @@ function AnimatedEmailIntake() {
 }
 
 export default function WholesalerMock({ liveStats = false }: { liveStats?: boolean }) {
-  const coverageStatClassName = "inline text-[0.50rem] tracking-wide font-heading font-medium text-[#111827]";
+  const coverageStatClassName = "inline text-[0.55rem] tracking-wide font-heading font-medium text-[#111827]";
 
   return (
-    <div className="relative w-full min-w-0 max-md:mx-auto max-md:mt-8 max-md:h-[220px] max-md:max-w-[250px] max-md:overflow-visible md:-ml-32 md:max-w-[290px] md:h-auto">
-      <div className="relative z-20 w-full max-md:absolute max-md:top-0 max-md:right-[-14%] max-md:w-[88%] md:absolute md:top-0 md:-right-32">
-        <div className="w-full overflow-hidden rounded-2xl bg-white shadow-[0_8px_30px_rgba(0,0,0,0.15)]">
-          <div className="flex items-center gap-3 border-b border-dashed border-[#CCCCCC] max-md:px-3 max-md:py-2 px-4 py-2.5">
-            <span className="flex size-[23px] shrink-0 items-center justify-center border border-[#F3F4F6] rounded-full bg-[#F9FAFB]">
-              <RiMailFill color="#6F6F6F" size={11} />
+    <div className="relative mx-auto w-full min-w-0 max-md:mt-8 max-md:h-[300px] max-md:max-w-[300px] max-md:overflow-visible md:max-w-[330px] md:h-auto">
+      {/* ACORD 25 — primary card */}
+      <div className="relative z-10 mx-auto w-full overflow-hidden rounded-md bg-white shadow-[0_8px_40px_rgba(0,0,0,0.18)]">
+        <div className="flex items-center justify-between px-4 pt-4 pb-1">
+          <span className="text-sm font-heading font-semibold text-[#3C3B3B]">Acord 25</span>
+          <span className="flex items-center gap-1 rounded-md bg-[#FFFFFF] border border-[#EEEEEE] px-3 py-1.5 text-[0.60rem] font-heading font-medium text-[#5B35E0]">
+            Download
+            <RiDownloadLine className="size-2.5" />
+          </span>
+        </div>
+
+        <AcordSummaryBox liveStats={liveStats} coverageStatClassName={coverageStatClassName} />
+
+        <div className="px-4 pt-4 pb-4">
+          <p className="text-[0.65rem] font-heading font-semibold text-[#3C3B3B]">Limits Summary</p>
+        </div>
+
+        <AnimatedLimitsList />
+
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-1.5">
+            <span className="flex size-[16px] shrink-0 items-center justify-center rounded-full">
+              <RiCheckboxCircleFill className="size-4 text-[#4CAF50]" />
             </span>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-heading font-medium leading-tight text-[#3C3B3B]">
-                Email Intake
+            <div>
+              <p className="text-[0.60rem] font-heading font-medium leading-tight text-[#4683E5]">
+                Verified
               </p>
-              <p className="truncate text-[0.60rem] font-heading font-normal leading-tight text-[#3C3B3B]">
-                submissions@coverforce.com
+              <p className="text-[0.50rem] font-sans font-normal leading-tight text-[#9CA3AF]">
+                This certificate is valid.
               </p>
-              {liveStats ? (
-                <p className="mt-0.5 flex items-baseline gap-1 text-[0.55rem] font-sans text-[#4683E5]">
-                  <PeriodicIncrementalStat
-                    start={18}
-                    step={1}
-                    max={26}
-                    intervalMs={ROTATE_MS}
-                    className="text-[0.55rem] font-sans font-medium text-[#4683E5]"
-                  />
-                  <span>new today</span>
-                </p>
-              ) : null}
             </div>
           </div>
-
-          <AnimatedEmailIntake />
+          <span className="flex items-center gap-1 rounded-md bg-[#ECE8FC] px-3 py-1.5 text-[0.55rem] font-heading font-medium text-[#5B35E0]">
+            <RiFileCopy2Line className="size-2.5" />
+            ACORD 25 Standard
+          </span>
         </div>
       </div>
 
-      <div className="relative z-10 w-full max-md:absolute max-md:-bottom-6 max-md:left-[-14%] max-md:mt-0 max-md:w-[88%] md:mt-[72px]">
-        <div className="w-full overflow-hidden rounded-2xl bg-white shadow-[0_8px_40px_rgba(0,0,0,0.18)]">
-          <div className="flex items-center gap-2 border-b border-[#CCCCCC] max-md:px-3 max-md:py-2.5 px-4 py-3">
-            <span className="flex size-[23px] shrink-0 items-center justify-center border border-[#F3F4F6] rounded-full bg-[#F9FAFB]">
-              <RiFileTextFill color="#6F6F6F" size={11} />
-            </span>
-            <span className="text-xs font-heading font-medium leading-tight text-[#3C3B3B]">ACORD 25</span>
-          </div>
-
-          <div className="flex items-center justify-between max-md:px-3 max-md:pt-2 max-md:pb-0.5 px-4 pt-3 pb-1">
-            <p className="text-[0.60rem] font-heading font-medium text-[#3C3B3B]">
-              Certificate of liability insurance
-            </p>
-            <span className="text-[9px] font-sans text-[#4683E5]">View All</span>
-          </div>
-
-          <AnimatedLimitsList />
-
-          <div className="flex items-center justify-between border-t border-[#CCCCCC] max-md:px-3 max-md:py-2.5 px-4 py-3">
+      {/* Email Intake — overlapping card */}
+      <div className="absolute z-20 top-[22%] -right-5 w-[72%] max-md:top-[16%] max-md:-right-[6%] max-md:w-[76%] md:-right-7 md:w-[70%]">
+        <div className="w-full overflow-hidden rounded-md bg-white shadow-[0_8px_30px_rgba(0,0,0,0.15)]">
+          <div className="flex items-center justify-between bg-[#72AF23]/15 px-3 py-2.5">
             <div className="flex items-center gap-1.5">
-              <span className="flex size-[16px] shrink-0 items-center justify-center rounded-full bg-blue-100">
-                <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
-                  <path
-                    d="M1 3l2 2 4-4"
-                    stroke="#4683E5"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+              <BorderIcon icon={RiMailLine} className="text-[#4CAF50]" />
+              <span className="text-[0.65rem] font-heading font-medium leading-tight text-[#3C3B3B]">
+                Email Intake
               </span>
-              <div>
-                <p className="text-[0.55rem] font-sans uppercase leading-tight tracking-wide text-[#4683E5]">
-                  Auto-Verified
-                </p>
-              </div>
             </div>
+            <span className="flex items-center gap-0.5 text-[0.55rem] font-sans font-medium text-[#4683E5]">
+              <RiCodeSSlashLine className="size-2.5" />
+              200+
+            </span>
           </div>
+
+          <AnimatedEmailIntake />
         </div>
       </div>
     </div>
