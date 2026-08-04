@@ -23,12 +23,15 @@ type MarqueeRowProps = {
   tone?: "dark" | "light";
 };
 
-const LOGO_SIZE_CLASS = {
+const LOGO_SLOT_CLASS = {
   default:
-    "h-6 w-auto max-h-6 object-contain opacity-90 grayscale contrast-200 sm:h-7 sm:max-h-7 md:h-6 md:max-h-6 lg:h-7 lg:max-h-7",
+    "flex h-6 w-[6.25rem] items-center justify-center sm:h-7 sm:w-[7rem] md:h-7 md:w-[7.5rem] lg:h-8 lg:w-32",
   large:
-    "h-7 w-auto max-h-7 object-contain opacity-90 grayscale contrast-200 sm:h-8 sm:max-h-8 md:h-10 md:max-h-10 lg:h-12 lg:max-h-12",
+    "flex h-7 w-28 items-center justify-center sm:h-8 sm:w-32 md:h-9 md:w-36 lg:h-10 lg:w-40",
 } as const;
+
+const LOGO_IMAGE_CLASS =
+  "h-full w-full max-h-full max-w-full object-contain object-center opacity-90 grayscale contrast-200";
 
 const LOGO_TONE_CLASS = {
   dark: "brightness-0",
@@ -52,14 +55,16 @@ export function MarqueeRow({
       <div className={`logo-marquee-track ${reverse ? "logo-marquee-track--reverse" : ""}`}>
         {items.map((logo, index) => (
           <div key={`${logo.src}-${index}`} className="logo-marquee-item">
-            <Image
-              src={logo.src}
-              alt="partner-logo"
-              width={size === "large" ? 180 : 120}
-              height={size === "large" ? 60 : 40}
-              className={`${LOGO_SIZE_CLASS[size]} ${LOGO_TONE_CLASS[tone]}`}
-              draggable={false}
-            />
+            <div className={LOGO_SLOT_CLASS[size]}>
+              <Image
+                src={logo.src}
+                alt="partner-logo"
+                width={size === "large" ? 160 : 128}
+                height={size === "large" ? 40 : 32}
+                className={`${LOGO_IMAGE_CLASS} ${LOGO_TONE_CLASS[tone]}`}
+                draggable={false}
+              />
+            </div>
           </div>
         ))}
       </div>

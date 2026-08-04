@@ -10,12 +10,13 @@ const DEFAULT_LOGOS: MarqueeLogo[] = Array.from({ length: 15 }, (_, index) => ({
   alt: `Partner logo ${index + 1}`,
 }));
 
-const LOGO_SIZE_CLASS = {
-  default:
-    "h-6 w-auto max-h-6 object-contain opacity-100 grayscale contrast-200 sm:h-7 sm:max-h-7 md:h-8 md:max-h-8 lg:h-9 lg:max-h-9",
-  large:
-    "h-8 w-auto max-h-8 object-contain opacity-100 grayscale contrast-200 sm:h-9 sm:max-h-9 md:h-10 md:max-h-10 lg:h-11 lg:max-h-11",
+const LOGO_SLOT_CLASS = {
+  default: "flex h-6 w-[6.25rem] items-center justify-center sm:h-7 sm:w-[7rem] md:h-7 md:w-[7.5rem] lg:h-8 lg:w-32",
+  large: "flex h-7 w-28 items-center justify-center sm:h-8 sm:w-32 md:h-9 md:w-36 lg:h-10 lg:w-40",
 } as const;
+
+const LOGO_IMAGE_CLASS =
+  "h-full w-full max-h-full max-w-full object-contain object-center opacity-100 grayscale contrast-200";
 
 const LOGO_TONE_CLASS = {
   dark: "brightness-0",
@@ -132,14 +133,16 @@ export function PulsatingLogoSet({
               transitionDelay: phase === "hidden" ? "0ms" : `${delayMs}ms`,
             }}
           >
-            <Image
-              src={logo.src}
-              alt={logo.alt}
-              width={size === "large" ? 160 : 130}
-              height={size === "large" ? 48 : 36}
-              className={`${LOGO_SIZE_CLASS[size]} ${LOGO_TONE_CLASS[tone]}`}
-              draggable={false}
-            />
+            <div className={LOGO_SLOT_CLASS[size]}>
+              <Image
+                src={logo.src}
+                alt={logo.alt}
+                width={size === "large" ? 160 : 128}
+                height={size === "large" ? 40 : 32}
+                className={`${LOGO_IMAGE_CLASS} ${LOGO_TONE_CLASS[tone]}`}
+                draggable={false}
+              />
+            </div>
           </div>
         );
       })}
