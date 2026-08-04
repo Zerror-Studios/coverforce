@@ -263,34 +263,33 @@ const NODES: ToolNode[] = [
 
 /** Carrier marks for upper-half / Carriers slots on the home wheel. */
 const CARRIER_LOGO_FILES = [
-  "68db80d8be07394c698f0c72_c5430f51b657bd0ff972da286c4be264_Property 1=Default (1).png",
-  "68db80d8f3d6515c7918886d_b00e6284238df42cd9436e8ca7d7c035_Property 1=Default (2).png",
-  "68db80d842a384de4eeb434d_54f8614075a66a7a30d1d5ea3a184be3_Property 1=Default (3).png",
-  "68db80d8c913e0400ef47a59_dece8e498a38e9fea87f8104dc908d25_Property 1=Default (4).png",
-  "68db80d84382bb971c6f7a8e_1fa88f07e585ca322412b4984775c7da_Property 1=Default (6).png",
-  "68db80d8942c9cc3d4b47792_26d9f23a1158995569ca33a3d876e078_Property 1=Default (7).png",
-  "68db80d82e3a92ff1556059d_39d8ff0956c32711b38e925748b36b6b_Property 1=Default (9).png",
-  "68db80d8d771fa26b6dccfb6_d8043d2faf4a6ce6788b023065beaa51_Property 1=Default (10).png",
-  "68db80d8a90ccfaf42bcc4be_ce9cdae545db4c26a0bebd1d9a452503_Property 1=Default (11).png",
-  "68db80d8cbb7f8ab52d73e17_e1236caaacd3875d47c57c223e78b85a_Property 1=Default (12).png",
-  "68db80d8e4545f315a582a23_d811604ed257bab6737348ed27d9411e_Property 1=Default.png",
-  "68ec91d546c6c49acfcd13ff_ff44ae82233274e3313bf9ffdf1c2418_Great_American-dark.png",
+  "carrier - Berkshire Hathaway GUARD.png",
+  "carrier - Chubb (official, vectorized).png",
+  "carrier - Coalition (official coalitioninc.com SVG).png",
+  "carrier - CompWest.png",
+  "carrier - Cowbell (SOURCE PENDING - cowbell.insure unreachable).png",
+  "carrier - Employers.png",
+  "carrier - Markel.png",
+  "carrier - Merchants Insurance Group (official, vectorized).png",
+  "carrier - Republic Indemnity (official republicindemnity.com).png",
 ] as const;
 
 function carrierLogoSrc(index: number) {
   const file = CARRIER_LOGO_FILES[index % CARRIER_LOGO_FILES.length]!;
-  return `/images/carrier-logos/${encodeURIComponent(file)}`;
+  return `/images/home/carrier/${encodeURIComponent(file)}`;
 }
 
 const STARTUP_LOGO_SRCS = [
-  "/images/startups/logos/anzen.png",
-  "/images/startups/logos/broker.png",
-  "/images/startups/logos/coverwatch.png",
-  "/images/startups/logos/harper.png",
-  "/images/startups/logos/latent.png",
-  "/images/startups/logos/rosella.png",
-  "/images/startups/logos/snapbind.png",
-  "/images/startups/logos/switchboard.png",
+  "/images/home/distributors/broker - Diligence Brokerage (SOURCE PENDING - from site testimonial).png",
+  "/images/home/distributors/network - ISU Steadfast (official, isusteadfast.com).png",
+  "/images/home/distributors/startup - Anzen.png",
+  "/images/home/distributors/startup - Broker Buddha BuddhAI (official brand asset, supplied).png",
+  "/images/home/distributors/startup - Coverwatch.png",
+  "/images/home/distributors/startup - Harper.png",
+  "/images/home/distributors/startup - Latent Insurance (NOT FINAL - wordmark source 220px, proprietary font_ request brand pack).png",
+  "/images/home/distributors/startup - Rosella.png",
+  "/images/home/distributors/startup - SnapBind (official brand asset, supplied).png",
+  "/images/home/distributors/wholesaler - International Underwriting Agency (official brand asset, supplied).png",
 ] as const;
 
 function startupLogoSrc(index: number) {
