@@ -25,17 +25,53 @@ gsap.registerPlugin(ScrollTrigger);
 type NodeDef = {
   id: string;
   label: string;
+  description: string;
   icon: LucideIcon;
 };
 
 const NODES: NodeDef[] = [
-  { id: "market-access", label: "MARKET ACCESS", icon: Building2 },
-  { id: "api-integration", label: "API INTEGRATION", icon: Settings2 },
-  { id: "custom-policy", label: "CUSTOM POLICY", icon: Diamond },
-  { id: "distribution-layer", label: "DISTRIBUTION LAYER", icon: Sparkle },
-  { id: "enablement-partner", label: "ENABLEMENT PARTNER", icon: Triangle },
-  { id: "compliance", label: "COMPLIANCE", icon: ShieldCheck },
-  { id: "licensing-provider", label: "LICENSING PROVIDER", icon: FileText },
+  {
+    id: "market-access",
+    label: "MARKET ACCESS",
+    description: "Reach carriers",
+    icon: Building2,
+  },
+  {
+    id: "api-integration",
+    label: "API INTEGRATION",
+    description: "Connect fast",
+    icon: Settings2,
+  },
+  {
+    id: "custom-policy",
+    label: "CUSTOM POLICY",
+    description: "Tailor coverage",
+    icon: Diamond,
+  },
+  {
+    id: "distribution-layer",
+    label: "DISTRIBUTION",
+    description: "Scale outreach",
+    icon: Sparkle,
+  },
+  {
+    id: "enablement-partner",
+    label: "ENABLEMENT",
+    description: "Launch faster",
+    icon: Triangle,
+  },
+  {
+    id: "compliance",
+    label: "COMPLIANCE",
+    description: "Stay ready",
+    icon: ShieldCheck,
+  },
+  {
+    id: "licensing-provider",
+    label: "LICENSING",
+    description: "Easy appointments",
+    icon: FileText,
+  },
 ];
 
 const CX = 50;
@@ -43,9 +79,9 @@ const CY = 50;
 /** Hub outer edge (matches w-[14%] hub → r = 7% of size). */
 const R_LINE_START = 7;
 /** Fallback spoke tip before card sizes are measured. */
-const R_LINE_END = 36;
+const R_LINE_END = 34;
 /** Card centers on this orbit. */
-const R_ITEM = 38;
+const R_ITEM = 36;
 const SIGNAL_COLOR = CARD_ACCENT_COLORS.broker;
 
 function wheelPolarPoint(deg: number, radius = 50, cx = CX, cy = CY) {
@@ -490,7 +526,7 @@ function EnablementWheel({ className = "" }: { className?: string }) {
   return (
     <div
       ref={containerRef}
-      className={`relative mx-auto aspect-square h-full w-full max-w-[720px] ${className}`}
+      className={`relative mx-auto aspect-square h-full w-full max-w-[820px] ${className}`}
       aria-label="Program partner capabilities radiating from CoverForce"
     >
       <canvas
@@ -534,26 +570,31 @@ function EnablementWheel({ className = "" }: { className?: string }) {
               onMouseLeave={() => setHovered(null)}
             >
               <div
-                className={`flex items-center gap-1.5 rounded-[5px] border border-transparent py-1.5 pl-1.5 pr-2.5 text-white transition-all duration-200 sm:gap-2 sm:py-1.5 sm:pl-1.5 sm:pr-3 ${
+                className={`flex w-max min-w-[11.5rem] items-center gap-2.5 rounded-[6px] border border-transparent px-3 py-2.5 text-white transition-all duration-200 sm:min-w-[13rem] sm:gap-3 sm:rounded-[7px] sm:px-3.5 sm:py-3 ${
                   isActive
                     ? "scale-110 shadow-[0_10px_28px_rgba(50,38,150,0.42)]"
                     : "shadow-[0_4px_14px_rgba(50,38,150,0.26)] group-hover:scale-110 group-hover:shadow-[0_10px_28px_rgba(50,38,150,0.42)]"
                 }`}
                 style={{ background: PRIMARY_BUTTON_GRADIENT }}
               >
-                <div className="flex size-5 shrink-0 items-center justify-center rounded-[4px] bg-white/20 ring-1 ring-white/30">
-                  <Icon size={11} strokeWidth={2.25} className="text-white" />
+                <div className="flex size-6 shrink-0 items-center justify-center rounded-[5px] bg-white/20 ring-1 ring-white/30 sm:size-7">
+                  <Icon size={14} strokeWidth={2.25} className="text-white" />
                 </div>
-                <span className="whitespace-nowrap font-mono text-[0.5625rem] font-semibold leading-none tracking-[0.07em] text-white sm:text-[0.625rem]">
-                  {item.label}
-                </span>
-    </div>
-  </div>
-);
+                <div className="shrink-0 text-left">
+                  <p className="whitespace-nowrap font-mono text-[0.625rem] font-semibold leading-none tracking-[0.06em] text-white sm:text-[0.6875rem]">
+                    {item.label}
+                  </p>
+                  <p className="mt-1 whitespace-nowrap font-sans text-[0.625rem] font-regular leading-none text-white/80 sm:text-[0.6875rem]">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
         })}
+      </div>
     </div>
-  </div>
-);
+  );
 }
 
 const Enablement = () => {
@@ -603,7 +644,7 @@ const Enablement = () => {
           </div>
 
           <div className="relative mt-10 w-full md:mt-14">
-            <div className="relative z-10 mx-auto aspect-square w-full max-w-[min(100%,720px)]">
+            <div className="relative z-10 mx-auto aspect-square w-full max-w-[min(100%,820px)]">
               <EnablementWheel className="h-full w-full max-w-none" />
             </div>
           </div>
