@@ -262,34 +262,33 @@ const NODES: ToolNode[] = [
 ];
 
 /** Carrier marks for upper-half / Carriers slots on the home wheel. */
-const CARRIER_LOGO_FILES = [
-  "carrier - Berkshire Hathaway GUARD.png",
-  "carrier - Chubb (official, vectorized).png",
-  "carrier - Coalition (official coalitioninc.com SVG).png",
-  "carrier - CompWest.png",
-  "carrier - Cowbell (SOURCE PENDING - cowbell.insure unreachable).png",
-  "carrier - Employers.png",
-  "carrier - Markel.png",
-  "carrier - Merchants Insurance Group (official, vectorized).png",
-  "carrier - Republic Indemnity (official republicindemnity.com).png",
+const CARRIER_LOGO_SRCS = [
+  "/images/solution/travelers.svg",
+  "/images/solution/liberty.svg",
+  "/images/solution/nationwide.svg",
+  "/images/product/carrier1.svg",
+  "/images/product/carrier2.svg",
+  "/images/product/carrier3.svg",
+  "/images/product/carrier4.svg",
+  "/images/product/carrier5.svg",
+  "/images/product/carrier6.svg",
 ] as const;
 
 function carrierLogoSrc(index: number) {
-  const file = CARRIER_LOGO_FILES[index % CARRIER_LOGO_FILES.length]!;
-  return `/images/home/carrier/${encodeURIComponent(file)}`;
+  return CARRIER_LOGO_SRCS[index % CARRIER_LOGO_SRCS.length]!;
 }
 
 const STARTUP_LOGO_SRCS = [
-  "/images/home/distributors/broker - Diligence Brokerage (SOURCE PENDING - from site testimonial).png",
-  "/images/home/distributors/network - ISU Steadfast (official, isusteadfast.com).png",
-  "/images/home/distributors/startup - Anzen.png",
-  "/images/home/distributors/startup - Broker Buddha BuddhAI (official brand asset, supplied).png",
-  "/images/home/distributors/startup - Coverwatch.png",
-  "/images/home/distributors/startup - Harper.png",
-  "/images/home/distributors/startup - Latent Insurance (NOT FINAL - wordmark source 220px, proprietary font_ request brand pack).png",
-  "/images/home/distributors/startup - Rosella.png",
-  "/images/home/distributors/startup - SnapBind (official brand asset, supplied).png",
-  "/images/home/distributors/wholesaler - International Underwriting Agency (official brand asset, supplied).png",
+  "/images/solution/recent-logo1.svg",
+  "/images/solution/recent-logo2.svg",
+  "/images/solution/recent-logo3.svg",
+  "/images/solution/recent-logo4.svg",
+  "/images/solution/logo-network.svg",
+  "/images/solution/ai-logo.svg",
+  "/images/solution/orbit.svg",
+  "/images/startups/center-logo.svg",
+  "/images/startups/startup.svg",
+  "/images/threeway/startups.svg",
 ] as const;
 
 function startupLogoSrc(index: number) {
@@ -611,7 +610,7 @@ export default function ToolWheel({
   );
 
   const { indices: carrierIndices, opaque: carrierOpaque } =
-    useIndependentLogoRotation(upperCarrierCount, CARRIER_LOGO_FILES.length);
+    useIndependentLogoRotation(upperCarrierCount, CARRIER_LOGO_SRCS.length);
   const { indices: startupIndices, opaque: startupOpaque } =
     useIndependentLogoRotation(lowerStartupCount, STARTUP_LOGO_SRCS.length);
   const { indices: amsIndices, opaque: amsOpaque } =

@@ -31,6 +31,7 @@ import React, {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from "react";
 import { ShaderMaterial, Vector3 } from "three";
 
@@ -230,15 +231,25 @@ const WavePlane: FC<{ showGrid: boolean; palette: Vector3[] }> = ({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const size     = useMemo(() => Math.max(Math.round(viewport.width + 2), Math.round(viewport.height * 2)), [viewport]);
-  const segments = useMemo(() => size * 8, [size]);
+  const size = useMemo(
+    () => Math.max(Math.round(viewport.width + 2), Math.round(viewport.height * 2)),
+    [viewport.height, viewport.width],
+  );
+  const segments = useMemo(
+    () => Math.min(96, Math.max(56, Math.round(size * 5))),
+    [size],
+  );
+
+  useEffect(() => {
+    if (!matRef.current) return;
+    matRef.current.uColourPalette = palette;
+    matRef.current.uShowGrid = showGrid;
+  }, [palette, showGrid]);
 
   useFrame(({ clock }) => {
     if (!matRef.current) return;
     matRef.current.uTime = clock.elapsedTime;
     matRef.current.uScrollProgress = scroll.current * 12;
-    matRef.current.uColourPalette = palette;
-    matRef.current.uShowGrid = showGrid;
   });
 
   return (
@@ -264,9 +275,12 @@ const WavePlane: FC<{ showGrid: boolean; palette: Vector3[] }> = ({
 // ─── Static camera – locked at the "mouse to top-center" incline ─────────────
 
 const StaticCamera: FC = () => {
-  useFrame(({ camera, scene }) => {
+  const camera = useThree((state) => state.camera);
+  const scene = useThree((state) => state.scene);
+
+  useEffect(() => {
     camera.lookAt(scene.position);
-  });
+  }, [camera, scene]);
 
   return (
     <PerspectiveCamera
@@ -292,20 +306,41 @@ export const WavePlaneCanvas: FC<CanvasProps> = ({
   colors = DEFAULT_COLOURS,
   showGrid = true,
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
   const palette = useMemo(() => colors.map(hexToVec3), [colors]);
   const canvasKey = colors.join("-");
 
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node || typeof IntersectionObserver === "undefined") return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.01, rootMargin: "200px 0px" },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <Canvas
-      key={canvasKey}
-      className={className}
-      camera={{ position: [0, 0, 5], fov: 60, far: 20, near: 0.001 }}
-      gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
-      style={{ background: "transparent" }}
-    >
-      <WavePlane showGrid={showGrid} palette={palette} />
-      <StaticCamera />
-    </Canvas>
+    <div ref={containerRef} className={className}>
+      <Canvas
+        key={canvasKey}
+        className="h-full w-full"
+        dpr={[1, 1.5]}
+        frameloop={isVisible ? "always" : "never"}
+        camera={{ position: [0, 0, 5], fov: 60, far: 20, near: 0.001 }}
+        gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
+        style={{ background: "transparent" }}
+      >
+        <WavePlane showGrid={showGrid} palette={palette} />
+        <StaticCamera />
+      </Canvas>
+    </div>
   );
 };
 

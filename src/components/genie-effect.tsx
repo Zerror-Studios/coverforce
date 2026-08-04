@@ -7,13 +7,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/magnified-doc";
-import {
-  type MotionValue,
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-} from "motion/react";
 import { toCanvas } from "html-to-image";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -40,10 +33,8 @@ const DUR = 500;
 // DPR is read lazily inside setupCanvas - never at module scope, which would
 // run during SSR and either crash or hardcode a value.
 
-// Magnification config - tuned to match macOS dock proportions
-const DOCK_ICON_BASE = 68;
-const DOCK_ICON_PEAK = 112;
-const DOCK_MAG_RANGE = 160;
+// Static dock config - intentionally lightweight to avoid hover lag.
+const DOCK_ICON_SIZE = 72;
 const DOCK_PAD_X = 18;
 const DOCK_PAD_BOTTOM = 6;
 const DOCK_PAD_TOP = 8;
@@ -265,94 +256,66 @@ const MacWindow = ({
   );
 };
 
-// ─── Magnified Dock Icon ──────────────────────────────────────────────────────
-// This component uses framer-motion's useSpring/useTransform - both produce
-// floating-point values whose last-digit precision can differ between Node
-// (server) and V8 (client), which causes hydration mismatches. So this whole
-// component only renders client-side via the `mounted` flag in <GenieEffect>.
-function MagnifiedDockIcon({
+// ─── Dock Icon ────────────────────────────────────────────────────────────────
+function DockIconButton({
   app,
   isActive,
   showDot,
+  hintActive,
+  hintDelayMs,
   disabled,
   btnRef,
   onClick,
-  mouseX,
 }: {
   app: App;
   isActive: boolean;
   showDot: boolean;
+  hintActive: boolean;
+  hintDelayMs: number;
   disabled: boolean;
   btnRef: (el: HTMLButtonElement | null) => void;
   onClick: () => void;
-  mouseX: MotionValue<number>;
 }) {
-  const localRef = useRef<HTMLButtonElement>(null);
-  const setRefs = useCallback(
-    (el: HTMLButtonElement | null) => {
-      localRef.current = el;
-      btnRef(el);
-    },
-    [btnRef],
-  );
-
-  const distance = useTransform(mouseX, (val) => {
-    const bounds = localRef.current?.getBoundingClientRect() ?? {
-      x: 0,
-      width: 0,
-    };
-    return val - bounds.x - bounds.width / 2;
-  });
-
-  const sizeSync = useTransform(distance, (dist) => {
-    const t = clamp(1 - Math.abs(dist) / DOCK_MAG_RANGE, 0, 1);
-    return lerp(DOCK_ICON_BASE, DOCK_ICON_PEAK, eioC(t));
-  });
-  const size = useSpring(sizeSync, {
-    mass: 0.1,
-    stiffness: 220,
-    damping: 18,
-  });
-
-  const innerSize = useTransform(size, (s) => s * 0.92);
-
   const Icon = app.Icon;
 
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <motion.button
-          ref={setRefs}
+        <button
+          ref={btnRef}
           onClick={onClick}
           disabled={disabled}
           style={{
-            width: size,
-            height: size,
+            width: DOCK_ICON_SIZE,
+            height: DOCK_ICON_SIZE,
             cursor: disabled ? "default" : "pointer",
+            animationDelay: `${hintDelayMs}ms`,
           }}
-          className="relative flex shrink-0 items-end justify-center border-none bg-transparent p-0"
+          className={`relative flex shrink-0 items-end justify-center border-none bg-transparent p-0 transition-transform duration-200 ease-out hover:scale-[1.06] ${
+            hintActive ? "animate-[dockHint_2.8s_ease-in-out_infinite]" : ""
+          }`}
         >
-          <motion.div
+          <div
             style={{
-              width: innerSize,
-              height: innerSize,
+              width: Math.round(DOCK_ICON_SIZE * 0.92),
+              height: Math.round(DOCK_ICON_SIZE * 0.92),
               borderRadius: "22%",
               filter: isActive
                 ? `drop-shadow(0 6px 14px ${app.accent}88)`
                 : "drop-shadow(0 2px 6px rgba(0,0,0,.45))",
               pointerEvents: "none",
             }}
-            className="flex size-full items-center justify-center"
+            className="flex items-center justify-center"
           >
             <Icon />
-          </motion.div>
+          </div>
           {showDot && (
             <div
-              className="absolute bottom-0 left-1/2 h-[3px] w-[3px] -translate-x-1/2 rounded-full"
+              className="absolute bottom-0 left-1/2 h-0.75 w-0.75 -translate-x-1/2 rounded-full"
               style={{ background: "rgba(255,255,255,.85)" }}
             />
           )}
-        </motion.button>
+        </button>
       </TooltipTrigger>
       <TooltipContent className="rounded-md px-3 py-1" side="top" sideOffset={8}>
         <p className="text-xs text-primary">{app.label}</p>
@@ -362,14 +325,10 @@ function MagnifiedDockIcon({
 }
 
 // ─── macOS Dock Bar ───────────────────────────────────────────────────────────
-const DOCK_WAVE_MS = 2200;
-const DOCK_WAVE_PAUSE_MS = 700;
-
 function MacDock({
   apps,
   activeApp,
   phase,
-  pulseHint,
   isAnimating,
   snapshotsReady,
   dockRefs,
@@ -378,122 +337,41 @@ function MacDock({
   apps: App[];
   activeApp: number | null;
   phase: Phase;
-  pulseHint: boolean;
   isAnimating: boolean;
   snapshotsReady: boolean;
   dockRefs: MutableRefObject<(HTMLButtonElement | null)[]>;
   onOpen: (idx: number) => void;
 }) {
-  const mouseX = useMotionValue(Infinity);
-  const hoveringRef = useRef(false);
-
-  // Drive the same magnification path as hover: a virtual cursor travels
-  // left → right across the dock so icons and the dock container grow together.
-  useEffect(() => {
-    if (!pulseHint) {
-      if (!hoveringRef.current) mouseX.set(Infinity);
-      return;
-    }
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
-
-    let raf = 0;
-    const startedAt = performance.now();
-
-    const tick = (now: number) => {
-      if (!hoveringRef.current) {
-        const buttons = dockRefs.current.filter(
-          (btn): btn is HTMLButtonElement => btn != null,
-        );
-
-        if (buttons.length >= 1) {
-          const first = buttons[0].getBoundingClientRect();
-          const last = buttons[buttons.length - 1]!.getBoundingClientRect();
-          const startX = first.left + first.width / 2;
-          const endX = last.left + last.width / 2;
-          const period = DOCK_WAVE_MS + DOCK_WAVE_PAUSE_MS;
-          const elapsed = (now - startedAt) % period;
-
-          if (elapsed <= DOCK_WAVE_MS) {
-            const p = elapsed / DOCK_WAVE_MS;
-            mouseX.set(lerp(startX, endX, p));
-          } else {
-            mouseX.set(Infinity);
-          }
-        }
-      }
-
-      raf = requestAnimationFrame(tick);
-    };
-
-    raf = requestAnimationFrame(tick);
-    return () => {
-      cancelAnimationFrame(raf);
-      if (!hoveringRef.current) mouseX.set(Infinity);
-    };
-  }, [pulseHint, mouseX, dockRefs]);
-
-  const dockHeight = useTransform(mouseX, (mx) => {
-    let maxSize = DOCK_ICON_BASE;
-    if (Number.isFinite(mx)) {
-      dockRefs.current.forEach((btn) => {
-        if (!btn) return;
-        const b = btn.getBoundingClientRect();
-        const center = b.left + b.width / 2;
-        const dist = Math.abs(mx - center);
-        const t = clamp(1 - dist / DOCK_MAG_RANGE, 0, 1);
-        maxSize = Math.max(
-          maxSize,
-          lerp(DOCK_ICON_BASE, DOCK_ICON_PEAK, eioC(t)),
-        );
-      });
-    }
-    return maxSize + DOCK_PAD_TOP + DOCK_PAD_BOTTOM;
-  });
-
-  const dockHeightSpring = useSpring(dockHeight, {
-    mass: 0.12,
-    stiffness: 200,
-    damping: 18,
-  });
-
   return (
     <TooltipProvider delayDuration={400}>
-      <motion.div
-        onMouseMove={(e) => {
-          hoveringRef.current = true;
-          mouseX.set(e.clientX);
-        }}
-        onMouseLeave={() => {
-          hoveringRef.current = false;
-          mouseX.set(Infinity);
-        }}
+      <div
         className="absolute bottom-3 bg-[#303030]/20 rounded-2xl left-1/2 z-50 flex -translate-x-1/2 items-end"
         style={{
-          height: dockHeightSpring,
+          height: DOCK_ICON_SIZE + DOCK_PAD_TOP + DOCK_PAD_BOTTOM,
           gap: DOCK_GAP,
           paddingLeft: DOCK_PAD_X,
           paddingRight: DOCK_PAD_X,
           paddingBottom: DOCK_PAD_BOTTOM,
+          paddingTop: DOCK_PAD_TOP,
+          borderRadius: DOCK_RADIUS,
         }}
       >
         {apps.map((a, i) => (
-          <MagnifiedDockIcon
+          <DockIconButton
             key={a.id}
             app={a}
             isActive={activeApp === i}
             showDot={phase === "open" && activeApp === i}
+            hintActive={snapshotsReady && !isAnimating && activeApp !== i}
+            hintDelayMs={i * 180}
             disabled={isAnimating || !snapshotsReady}
             btnRef={(el) => {
               dockRefs.current[i] = el;
             }}
             onClick={() => onOpen(i)}
-            mouseX={mouseX}
           />
         ))}
-      </motion.div>
+      </div>
     </TooltipProvider>
   );
 }
@@ -601,10 +479,7 @@ function SnapshotStage({
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function GenieEffect() {
-  // `mounted` is the SSR-safety gate. Server renders `mounted=false` →
-  // matches the first client render → hydration succeeds. Then this effect
-  // fires, mounted flips to true, and the framer-motion-using bits mount.
-  // No floating-point divergence, no hydration mismatch.
+  // Render the interactive pieces client-side after mount.
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
@@ -614,7 +489,6 @@ export default function GenieEffect() {
   const [activeApp, setActiveApp] = useState<number | null>(null);
   const [winPos, setWinPos] = useState<Pt>({ x: 0, y: 0 });
   const [snapshotsReady, setSnapshotsReady] = useState(false);
-  const [pulseHint, setPulseHint] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   // `containerRef` is the source of truth for layout coordinates. All
@@ -635,23 +509,6 @@ export default function GenieEffect() {
   const handleSnapshotsReady = useCallback((canvases: HTMLCanvasElement[]) => {
     offRef.current = canvases;
     setSnapshotsReady(true);
-  }, []);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setPulseHint(entry.isIntersecting);
-      },
-      { threshold: 0.45 },
-    );
-
-    observer.observe(el);
-    return () => {
-      observer.disconnect();
-    };
   }, []);
 
   // All position helpers below resolve against the container's bounding rect.
@@ -829,7 +686,6 @@ export default function GenieEffect() {
     };
   }, []);
 
-  // Open the first app by default once dock snapshots are ready.
   useEffect(() => {
     if (!mounted || !snapshotsReady) return;
     if (stateRef.current.phase !== "idle") return;
@@ -862,10 +718,15 @@ export default function GenieEffect() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full min-h-[650px] h-[min(85vh,860px)] select-none"
+      className="relative h-[min(85vh,860px)] min-h-162.5 w-full select-none"
     >
       <style>{`
         @keyframes blink { 0%,49% { opacity: 1 } 50%,100% { opacity: 0 } }
+        @keyframes dockHint {
+          0%, 82%, 100% { transform: translateY(0); }
+          88% { transform: translateY(-5px); }
+          94% { transform: translateY(0); }
+        }
       `}</style>
       <div className="absolute inset-0 overflow-hidden">
       <img
@@ -958,7 +819,6 @@ export default function GenieEffect() {
             apps={APPS}
             activeApp={activeApp}
             phase={phase}
-            pulseHint={pulseHint}
             isAnimating={isAnimating}
             snapshotsReady={snapshotsReady}
             dockRefs={dockRefs}

@@ -262,34 +262,33 @@ const NODES: ToolNode[] = [
 ];
 
 /** Carrier marks for upper-half / Carriers slots on the home wheel. */
-const CARRIER_LOGO_FILES = [
-  "carrier-berkshire-hathaway.png",
-  "carrier-chubb.png",
-  "carrier-coalition.png",
-  "carrier-compwest.png",
-  "carrier-cowbell.png",
-  "carrier-employers.png",
-  "carrier-markel.png",
-  "carrier-merchants-insurance-group.png",
-  "carrier-republic-indemnity.png",
+const CARRIER_LOGO_SRCS = [
+  "/images/solution/travelers.svg",
+  "/images/solution/liberty.svg",
+  "/images/solution/nationwide.svg",
+  "/images/product/carrier1.svg",
+  "/images/product/carrier2.svg",
+  "/images/product/carrier3.svg",
+  "/images/product/carrier4.svg",
+  "/images/product/carrier5.svg",
+  "/images/product/carrier6.svg",
 ] as const;
 
 function carrierLogoSrc(index: number) {
-  const file = CARRIER_LOGO_FILES[index % CARRIER_LOGO_FILES.length]!;
-  return `/images/home/carrier/${encodeURIComponent(file)}`;
+  return CARRIER_LOGO_SRCS[index % CARRIER_LOGO_SRCS.length]!;
 }
 
 const STARTUP_LOGO_SRCS = [
-  "/images/home/distributors/broker-diligence-brokerage.png",
-  "/images/home/distributors/network-isu-steadfast.png",
-  "/images/home/distributors/startup-snapBind.png",
-  "/images/home/distributors/startup-anzen.png",
-  "/images/home/distributors/startup-broker-buddha-buddhAI.png",
-  "/images/home/distributors/startup-coverwatch.png",
-  "/images/home/distributors/startup-harper.png",
-  "/images/home/distributors/startup-latent-insurance.png",
-  "/images/home/distributors/startup-rosella.png",
-  "/images/home/distributors/wholesaler-international-underwriting-agency.pngpng",
+  "/images/solution/recent-logo1.svg",
+  "/images/solution/recent-logo2.svg",
+  "/images/solution/recent-logo3.svg",
+  "/images/solution/recent-logo4.svg",
+  "/images/solution/logo-network.svg",
+  "/images/solution/ai-logo.svg",
+  "/images/solution/orbit.svg",
+  "/images/startups/center-logo.svg",
+  "/images/startups/startup.svg",
+  "/images/threeway/startups.svg",
 ] as const;
 
 function startupLogoSrc(index: number) {
@@ -612,7 +611,7 @@ export default function ToolWheelLab({
   );
 
   const { indices: carrierIndices, opaque: carrierOpaque } =
-    useIndependentLogoRotation(upperCarrierCount, CARRIER_LOGO_FILES.length);
+    useIndependentLogoRotation(upperCarrierCount, CARRIER_LOGO_SRCS.length);
   const { indices: startupIndices, opaque: startupOpaque } =
     useIndependentLogoRotation(lowerStartupCount, STARTUP_LOGO_SRCS.length);
   const { indices: amsIndices, opaque: amsOpaque } =

@@ -51,29 +51,29 @@ type Pulse = {
 type Vec3 = { x: number; y: number; z: number };
 
 const CARRIER_LOGO_POOL = [
-  "carrier-berkshire-hathaway.png",
-  "carrier-chubb.png",
-  "carrier-coalition.png",
-  "carrier-compwest.png",
-  "carrier-cowbell.png",
-  "carrier-employers.png",
-  "carrier-markel.png",
-  "carrier-merchants-insurance-group.png",
-  "carrier-republic-indemnity.png",
-].map((file) => `/images/home/carrier/${encodeURIComponent(file)}`);
+  "/images/solution/travelers.svg",
+  "/images/solution/liberty.svg",
+  "/images/solution/nationwide.svg",
+  "/images/product/carrier1.svg",
+  "/images/product/carrier2.svg",
+  "/images/product/carrier3.svg",
+  "/images/product/carrier4.svg",
+  "/images/product/carrier5.svg",
+  "/images/product/carrier6.svg",
+];
 
 const BROKER_LOGO_POOL = [
-  "broker-diligence-brokerage.png",
-  "network-isu-steadfast.png",
-  "startup-snapBind.png",
-  "startup-anzen.png",
-  "startup-broker-buddha-buddhAI.png",
-  "startup-coverwatch.png",
-  "startup-harper.png",
-  "startup-latent-insurance.png",
-  "startup-rosella.png",
-  "wholesaler-international-underwriting-agency.png",
-].map((file) => `/images/home/distributors/${encodeURIComponent(file)}`);
+  "/images/solution/recent-logo1.svg",
+  "/images/solution/recent-logo2.svg",
+  "/images/solution/recent-logo3.svg",
+  "/images/solution/recent-logo4.svg",
+  "/images/solution/logo-network.svg",
+  "/images/solution/ai-logo.svg",
+  "/images/solution/orbit.svg",
+  "/images/startups/center-logo.svg",
+  "/images/startups/startup.svg",
+  "/images/threeway/startups.svg",
+];
 
 const CARRIER_LABELS = [
   "BerkleyNet",
