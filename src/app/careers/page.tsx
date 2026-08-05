@@ -5,17 +5,16 @@ import OurValues from "@/components/careers/OurValues";
 import OurCluture from "@/components/careers/OurCluture";
 import Positions from "@/components/careers/Positions";
 import { createPageMetadata } from "@/lib/seo";
-import { getDoverJobs, groupJobsIntoCategories } from "@/lib/doverJobs";
+import { getDoverJobCategories, JobCategory } from "@/lib/doverJobs";
 
 export const metadata = createPageMetadata("/careers");
 export const revalidate = 3600;
 
 const CareerPage = async () => {
-  let categories = [] as ReturnType<typeof groupJobsIntoCategories>;
+  let categories: JobCategory[] = [];
 
   try {
-    const jobs = await getDoverJobs();
-    categories = groupJobsIntoCategories(jobs);
+    categories = await getDoverJobCategories();
   } catch (error) {
     console.error("Failed to load Dover jobs:", error);
   }

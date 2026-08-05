@@ -1,11 +1,4 @@
-export type DoverApiJob = {
-  id: string;
-  title: string;
-  absolute_url: string;
-  location?: { name?: string };
-  remote?: "only" | "yes" | "no" | string;
-  first_published?: string;
-};
+// lib/doverJobs.ts
 
 export type JobListing = {
   id: string;
@@ -22,73 +15,103 @@ export type JobCategory = {
   jobs: JobListing[];
 };
 
-const DOVER_JOBS_URL =
-  "https://app.dover.com/feed/v1/boards/coverforce/jobs";
+type DoverLocation = {
+  location_type: string;
+  location_option: {
+    id: string;
+    display_name: string;
+    location_type: string;
+    city: string;
+    state: string;
+    country: string;
+  };
+  name: string;
+  is_primary: boolean;
+};
 
-function formatLocation(job: DoverApiJob): string {
-  const name = job.location?.name?.trim() ?? "";
+type DoverJobGroupApiJob = {
+  id: string;
+  title: string;
+  locations: DoverLocation[];
+  workplace_type: "REMOTE" | "HYBRID" | "ONSITE" | string;
+  is_published: boolean;
+  is_sample: boolean;
+};
 
-  if (job.remote === "only") {
-    return name ? `Remote [${name}]` : "Remote";
+type DoverJobGroupApiGroup = {
+  id: string | null;
+  name: string;
+  jobs: DoverJobGroupApiJob[];
+};
+
+const DOVER_JOB_GROUPS_URL = `https://app.dover.com/api/v1/job-groups/d2d0e44f-528d-45f6-b05a-7011c415dec0/job-groups`;
+
+const MORE_JOBS_LABEL = "More Jobs";
+
+function formatLocation(job: DoverJobGroupApiJob): string {
+  const locations = job.locations ?? [];
+
+  const label = locations
+    .slice()
+    .sort((a, b) => Number(b.is_primary) - Number(a.is_primary))
+    .map((loc) => loc.location_option?.display_name || loc.name)
+    .filter(Boolean)
+    .join(" / ");
+
+  switch (job.workplace_type) {
+    case "REMOTE":
+      return label ? `Remote [${label}]` : "Remote";
+    case "HYBRID":
+      return label ? `Hybrid [${label}]` : "Hybrid";
+    default:
+      return label || "On-site";
   }
-
-  if (job.remote === "yes") {
-    return name ? `Hybrid [${name}]` : "Hybrid";
-  }
-
-  return name || "On-site";
 }
 
-function mapDoverJob(job: DoverApiJob): JobListing {
+function mapJob(job: DoverJobGroupApiJob): JobListing {
   return {
     id: job.id,
     title: job.title,
     location: formatLocation(job),
     type: "Full Time",
-    href: job.absolute_url,
+    href: `https://app.dover.com/apply/coverforce/${job.id}`,
     target: "_blank",
     rel: "noopener noreferrer",
   };
 }
 
-function isEngineeringRole(title: string) {
-  return /engineer/i.test(title);
-}
-
-export function groupJobsIntoCategories(jobs: JobListing[]): JobCategory[] {
-  const engineering = jobs.filter((job) => isEngineeringRole(job.title));
-  const other = jobs.filter((job) => !isEngineeringRole(job.title));
-
-  const categories: JobCategory[] = [];
-
-  if (engineering.length) {
-    categories.push({ name: "Engineering Roles", jobs: engineering });
-  }
-
-  if (other.length) {
-    categories.push({
-      name: categories.length ? "More Jobs" : "Open Positions",
-      jobs: other,
-    });
-  }
-
-  return categories;
-}
-
-export async function getDoverJobs(): Promise<JobListing[]> {
-  const response = await fetch(DOVER_JOBS_URL, {
+export async function getDoverJobCategories(): Promise<JobCategory[]> {
+  const response = await fetch(DOVER_JOB_GROUPS_URL, {
     next: { revalidate: 3600 },
     headers: { Accept: "application/json" },
   });
-
   if (!response.ok) {
-    throw new Error(`Dover jobs fetch failed: ${response.status}`);
+    throw new Error(`Dover job groups fetch failed: ${response.status}`);
   }
 
-  const data = (await response.json()) as { jobs?: DoverApiJob[] };
-  const jobs = Array.isArray(data.jobs) ? data.jobs : [];
+  const groups = (await response.json()) as DoverJobGroupApiGroup[];
+  const isVisible = (job: DoverJobGroupApiJob) =>
+    job.is_published && !job.is_sample;
 
-  return jobs
-    .map(mapDoverJob)
-    .sort((a, b) => a.title.localeCompare(b.title));
+  const named = groups
+    .filter((group) => group.id !== null)
+    .map((group) => ({
+      name: group.name,
+      jobs: group.jobs.filter(isVisible).map(mapJob),
+    }))
+    .filter((group) => group.jobs.length > 0)
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const ungrouped = groups.find((group) => group.id === null);
+  const ungroupedJobs = (ungrouped?.jobs ?? []).filter(isVisible).map(mapJob);
+
+  const categories: JobCategory[] = [...named];
+
+  if (ungroupedJobs.length > 0) {
+    categories.push({ name: MORE_JOBS_LABEL, jobs: ungroupedJobs });
+  }
+  return categories.map((category) => ({
+    ...category,
+    jobs: category.jobs.sort((a, b) => a.title.localeCompare(b.title)),
+  }));
 }

@@ -25,10 +25,11 @@ const ROW_BASE =
 const JOB_ROW_LAYOUT =
   "sm:grid sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start sm:gap-x-6 sm:gap-y-2 lg:grid-cols-subgrid lg:items-center lg:gap-y-0";
 
-const COL_LOCATION =
-  "font-mono text-sm font-medium uppercase text-white/55 lg:justify-self-start lg:text-left lg:whitespace-nowrap";
+  const COL_LOCATION =
+  "font-mono text-sm font-medium uppercase text-white/55 lg:justify-self-start lg:text-left";
 
-const COL_TYPE = COL_LOCATION;
+const COL_TYPE =
+  "font-mono text-sm font-medium uppercase text-white/55 lg:justify-self-start lg:text-left lg:whitespace-nowrap";
 
 const COL_HEADER =
   "hidden font-heading text-base font-medium text-white lg:block lg:justify-self-start lg:text-left";
