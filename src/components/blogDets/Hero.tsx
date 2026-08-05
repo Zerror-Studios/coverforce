@@ -64,7 +64,6 @@ type HeroProps = {
 const Hero = ({ post }: HeroProps) => {
   const [authorOpen, setAuthorOpen] = useState(false);
   const authorRef = useRef<HTMLDivElement>(null);
-  console.log(post);
 
   useEffect(() => {
     if (!authorOpen) return;

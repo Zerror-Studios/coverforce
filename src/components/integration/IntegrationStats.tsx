@@ -108,13 +108,13 @@ const IntegrationStats = () => {
               </h2>
               <p
                 ref={descRef}
-                className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
+                className="max-w-lg font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
               >
                 Carriers, MGAs, and API-enabled products connected through
                 CoverForce - the numbers behind the platform.
               </p>
             </div>
-            <p className="hidden max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:block lg:text-right">
+            <p className="hidden max-w-lg font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:block lg:text-right">
               Carriers, MGAs, and API-enabled products connected through
               CoverForce - the numbers behind the platform.
             </p>

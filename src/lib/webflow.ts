@@ -1,7 +1,6 @@
 import type { BlogCategory, BlogPost } from "@/data/blogPosts";
 
 const WEBFLOW_API = "https://api.webflow.com/v2";
-const AUTHOR_COLLECTION_ID = "68668c18b2c9122736547830";
 const REVALIDATE_SECONDS = 3600;
 
 type WebflowImage = {
@@ -47,6 +46,27 @@ type TagFieldData = {
   name?: string;
   slug?: string;
   "chip-color"?: string | null;
+};
+
+export type CarrierFieldData = {
+  name?: string;
+  slug?: string;
+  logo?: WebflowImage | null;
+  "company-url"?: string | null;
+  "products-ad"?: string | null;
+  "products-es"?: string | null;
+  "products-admitted"?: string | null;
+  "products-surplus"?: string | null;
+};
+
+export type WebflowCarrier = {
+  id: string;
+  name: string;
+  slug: string;
+  logoUrl?: string;
+  companyUrl?: string;
+  productsAd?: string;
+  productsEs?: string;
 };
 
 export type BlogAuthor = {
@@ -280,7 +300,8 @@ function rewriteBlogLinks(html: string): string {
 }
 
 async function getAuthorsById(): Promise<Map<string, BlogAuthor>> {
-  const items = await fetchAllCmsItems<AuthorFieldData>(AUTHOR_COLLECTION_ID);
+  const collectionId = requireEnv("WEBFLOW_AUTHOR_COLLECTION_ID");
+  const items = await fetchAllCmsItems<AuthorFieldData>(collectionId);
   const map = new Map<string, BlogAuthor>();
 
   for (const item of items) {
@@ -453,3 +474,35 @@ export function toListingPost(post: BlogDetail): BlogPost {
     author: post.author,
   };
 }
+
+export async function getWebflowCarriers(): Promise<WebflowCarrier[]> {
+  const collectionId = requireEnv("WEBFLOW_CARRIER_COLLECTION_ID");
+  try {
+    const items = await fetchAllLiveItems<CarrierFieldData>(collectionId);
+    return items
+      .map((item) => {
+        const logoUrl = normalizeWebflowAssetUrl(item.fieldData.logo?.url);
+        return {
+          id: item.id,
+          name: item.fieldData.name ?? "",
+          slug: item.fieldData.slug ?? item.id,
+          logoUrl: logoUrl || undefined,
+          companyUrl: item.fieldData["company-url"] ?? undefined,
+          productsAd:
+            item.fieldData["products-ad"] ??
+            item.fieldData["products-admitted"] ??
+            undefined,
+          productsEs:
+            item.fieldData["products-es"] ??
+            item.fieldData["products-surplus"] ??
+            undefined,
+        };
+      })
+      .filter((carrier) => Boolean(carrier.name));
+  } catch (error) {
+    console.error("[webflow-carriers]", error);
+    return [];
+  }
+}
+
+

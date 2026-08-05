@@ -41,7 +41,6 @@ function toAuthor(author: BlogAuthor): Author {
 
 const Hero = ({ author }: { author: BlogAuthor }) => {
   const profile = toAuthor(author);
-  console.log(author);
 
   const visibleSocials = profile.socials.filter(
     ({ href }) => href && href !== "#"

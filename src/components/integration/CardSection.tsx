@@ -129,13 +129,13 @@ const CardSection = () => {
               </h2>
               <p
                 ref={cardsDescRef}
-                className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
+                className="max-w-lg font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
               >
                 Direct carrier API connections and purpose-built AI agents -
                 quoting, binding, and workflow automation in one stack.
               </p>
             </div>
-            <p className="hidden max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:block lg:text-right">
+            <p className="hidden max-w-lg font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:block lg:text-right">
               Direct carrier API connections and purpose-built AI agents -
               quoting, binding, and workflow automation in one stack.
             </p>

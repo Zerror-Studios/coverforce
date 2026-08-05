@@ -51,28 +51,28 @@ type Pulse = {
 type Vec3 = { x: number; y: number; z: number };
 
 const CARRIER_LOGO_POOL = [
-  "/images/solution/travelers.svg",
-  "/images/solution/liberty.svg",
-  "/images/solution/nationwide.svg",
-  "/images/product/carrier1.svg",
-  "/images/product/carrier2.svg",
-  "/images/product/carrier3.svg",
-  "/images/product/carrier4.svg",
-  "/images/product/carrier5.svg",
-  "/images/product/carrier6.svg",
+  "/images/home/carrier/carrier-berkshire-hathaway.png",
+  "/images/home/carrier/carrier-chubb.png",
+  "/images/home/carrier/carrier-coalition.png",
+  "/images/home/carrier/carrier-compwest.png",
+  "/images/home/carrier/carrier-cowbell.png",
+  "/images/home/carrier/carrier-employers.png",
+  "/images/home/carrier/carrier-markel.png",
+  "/images/home/carrier/carrier-merchants-insurance-group.png",
+  "/images/home/carrier/carrier-republic-indemnity.png",
 ];
 
 const BROKER_LOGO_POOL = [
-  "/images/solution/recent-logo1.svg",
-  "/images/solution/recent-logo2.svg",
-  "/images/solution/recent-logo3.svg",
-  "/images/solution/recent-logo4.svg",
-  "/images/solution/logo-network.svg",
-  "/images/solution/ai-logo.svg",
-  "/images/solution/orbit.svg",
-  "/images/startups/center-logo.svg",
-  "/images/startups/startup.svg",
-  "/images/threeway/startups.svg",
+  "/images/home/distributors/broker-diligence-brokerage.png",
+  "/images/home/distributors/network-isu-steadfast.png",
+  "/images/home/distributors/startup-anzen.png",
+  "/images/home/distributors/startup-broker-buddha-buddhAI.png",
+  "/images/home/distributors/startup-coverwatch.png",
+  "/images/home/distributors/startup-harper.png",
+  "/images/home/distributors/startup-latent-insurance.png",
+  "/images/home/distributors/startup-rosella.png",
+  "/images/home/distributors/startup-snapBind.png",
+  "/images/home/distributors/wholesaler-international-underwriting-agency.png",
 ];
 
 const CARRIER_LABELS = [
