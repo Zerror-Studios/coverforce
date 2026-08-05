@@ -81,7 +81,7 @@ const PLANS: PricingPlan[] = [
     id: "enterprise",
     title: "Enterprise",
     description:
-      "For wholesalers, brokers, carriers, and organizations at scale. The full CoverForce platform with unlimited usage, enterprise controls, dedicated support, and custom integrations built for organizations processing thousands of submissions per month.",
+      "For brokers and organizations at scale. The full CoverForce platform with enterprise controls, dedicated support, and custom integrations built for organizations processing thousands of submissions per month.",
     features: [
       "Application and usage-based pricing that scales as you scale",
       "Unlimited seats",
