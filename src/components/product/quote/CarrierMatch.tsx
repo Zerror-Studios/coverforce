@@ -46,7 +46,7 @@ function PolicyTypeTabs({
   return (
     <fieldset>
       <legend className="mb-2 block font-mono text-sm font-medium uppercase text-[#2A297C]">
-        Policy Type
+        Product
       </legend>
       <div
         className="grid grid-cols-2 gap-2.5"
@@ -171,7 +171,7 @@ function MatchResultsCard({
           </p>
         ) : !isChecking && !error ? (
           <p className="mt-1 font-mono text-sm font-medium text-[#444444]">
-            Choose a policy type, industry, and state to check appetite.
+            Choose a product, industry, and state to check appetite.
           </p>
         ) : null}
       </div>
