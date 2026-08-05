@@ -261,7 +261,7 @@ function optionLabel(
   return options.find((option) => option.value === value)?.label ?? fallback;
 }
 
-const CarrierMatch = ({eyepilllabel}:{eyepilllabel:String}) => {
+const CarrierMatch = ({eyepilllabel}:{eyepilllabel?:String}) => {
   const sectionRef = useRef<HTMLElement>(null);
   const checkIdRef = useRef(0);
   const [policyType, setPolicyType] = useState<string>("");
