@@ -263,15 +263,15 @@ const NODES: ToolNode[] = [
 
 /** Carrier marks for upper-half / Carriers slots on the home wheel. */
 const CARRIER_LOGO_SRCS = [
-  "/images/solution/travelers.svg",
-  "/images/solution/liberty.svg",
-  "/images/solution/nationwide.svg",
-  "/images/product/carrier1.svg",
-  "/images/product/carrier2.svg",
-  "/images/product/carrier3.svg",
-  "/images/product/carrier4.svg",
-  "/images/product/carrier5.svg",
-  "/images/product/carrier6.svg",
+  "/images/home/carrier/carrier-berkshire-hathaway.png",
+  "/images/home/carrier/carrier-chubb.png",
+  "/images/home/carrier/carrier-coalition.png",
+  "/images/home/carrier/carrier-compwest.png",
+  "/images/home/carrier/carrier-cowbell.png",
+  "/images/home/carrier/carrier-employers.png",
+  "/images/home/carrier/carrier-markel.png",
+  "/images/home/carrier/carrier-merchants-insurance-group.png",
+  "/images/home/carrier/carrier-republic-indemnity.png",
 ] as const;
 
 function carrierLogoSrc(index: number) {
@@ -279,16 +279,16 @@ function carrierLogoSrc(index: number) {
 }
 
 const STARTUP_LOGO_SRCS = [
-  "/images/solution/recent-logo1.svg",
-  "/images/solution/recent-logo2.svg",
-  "/images/solution/recent-logo3.svg",
-  "/images/solution/recent-logo4.svg",
-  "/images/solution/logo-network.svg",
-  "/images/solution/ai-logo.svg",
-  "/images/solution/orbit.svg",
-  "/images/startups/center-logo.svg",
-  "/images/startups/startup.svg",
-  "/images/threeway/startups.svg",
+  "/images/home/distributors/broker-diligence-brokerage.png",
+  "/images/home/distributors/network-isu-steadfast.png",
+  "/images/home/distributors/startup-anzen.png",
+  "/images/home/distributors/startup-broker-buddha-buddhAI.png",
+  "/images/home/distributors/startup-coverwatch.png",
+  "/images/home/distributors/startup-harper.png",
+  "/images/home/distributors/startup-latent-insurance.png",
+  "/images/home/distributors/startup-rosella.png",
+  "/images/home/distributors/startup-snapBind.png",
+  "/images/home/distributors/wholesaler-international-underwriting-agency.png",
 ] as const;
 
 function startupLogoSrc(index: number) {
@@ -657,12 +657,12 @@ export default function ToolWheel({
       const timeline = gsap.timeline({
         ...(shouldAnimateOnScroll
           ? {
-              scrollTrigger: {
-                trigger: container,
-                start: "top 50%",
-                once: true,
-              },
-            }
+            scrollTrigger: {
+              trigger: container,
+              start: "top 50%",
+              once: true,
+            },
+          }
           : {}),
       });
 
@@ -917,9 +917,8 @@ export default function ToolWheel({
 
       {/* Hub - outer ring + inner logo circle */}
       <div
-        className={`absolute top-1/2 left-1/2 z-10 flex aspect-square w-[14%] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#ECE7FF] bg-white transition-transform duration-200 ${
-          hoveredLogo !== null ? "scale-105" : ""
-        }`}
+        className={`absolute top-1/2 left-1/2 z-10 flex aspect-square w-[14%] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#ECE7FF] bg-white transition-transform duration-200 ${hoveredLogo !== null ? "scale-105" : ""
+          }`}
       >
         <div className="flex aspect-square w-[72%] items-center justify-center rounded-full bg-[#ECE7FF]">
           <Image
@@ -938,18 +937,18 @@ export default function ToolWheel({
           const src =
             item.carrierSlot !== null
               ? carrierLogoSrc(
-                  carrierIndices[item.carrierSlot] ?? item.carrierSlot,
-                )
+                carrierIndices[item.carrierSlot] ?? item.carrierSlot,
+              )
               : item.startupSlot !== null
                 ? startupLogoSrc(
-                    startupIndices[item.startupSlot] ?? item.startupSlot,
-                  )
+                  startupIndices[item.startupSlot] ?? item.startupSlot,
+                )
                 : item.amsSlot !== null
                   ? amsLogoSrc(amsIndices[item.amsSlot] ?? item.amsSlot)
                   : item.financeSlot !== null
                     ? financeLogoSrc(
-                        financeIndices[item.financeSlot] ?? item.financeSlot,
-                      )
+                      financeIndices[item.financeSlot] ?? item.financeSlot,
+                    )
                     : item.iconSrc;
           const fading =
             (item.carrierSlot !== null &&
@@ -975,9 +974,8 @@ export default function ToolWheel({
                   alt=""
                   width={64}
                   height={36}
-                  className={`h-full w-full object-contain transition-opacity duration-[400ms] ease-out ${
-                    fading ? "opacity-0" : "opacity-100"
-                  }`}
+                  className={`h-full w-full object-contain transition-opacity duration-[400ms] ease-out ${fading ? "opacity-0" : "opacity-100"
+                    }`}
                 />
               </div>
             </div>
