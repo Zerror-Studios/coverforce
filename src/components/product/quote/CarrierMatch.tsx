@@ -2,13 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import Container from "@/components/common/Container";
 import Button from "@/components/common/Button";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import SearchableSelect, {
   type SelectOption,
 } from "@/components/common/SearchableSelect";
+
 import {
   loadIndustryOptions,
   POLICY_TYPE_OPTIONS,
@@ -32,7 +33,6 @@ type MatchedCarrier = Carrier & {
 
 const MAX_VISIBLE = 15;
 const MAX_VISIBLE_RESULTS = 7;
-const VIEW_MORE_HREF = "/product/intelligence#appetite";
 
 function PolicyTypeTabs({
   value,
@@ -62,15 +62,14 @@ function PolicyTypeTabs({
               role="tab"
               aria-selected={selected}
               onClick={() => onChange(option.value)}
-              className={`rounded-lg border px-3 py-3 text-left font-heading text-sm font-medium transition-colors ${
-                selected
+              className={`rounded-lg border px-3 py-3 text-left font-heading text-sm font-medium transition-colors ${selected
                   ? isBlue
                     ? "border-[#5B35E0] bg-[#F5F3FF] text-[#5B35E0] ring-1 ring-[#5B35E0]/30"
                     : "border-[#E25E2F] bg-[#FFF4EF] text-[#E25E2F] ring-1 ring-[#E25E2F]/30"
                   : isBlue
                     ? "border-[#DDDDDD] bg-white text-[#1A1A1A] hover:border-[#5B35E0]/50 hover:bg-[#F5F3FF] hover:text-[#5B35E0]"
                     : "border-[#DDDDDD] bg-white text-[#1A1A1A] hover:border-[#E25E2F]/50 hover:bg-[#FFF8F5]"
-              }`}
+                }`}
             >
               {option.label}
             </button>
@@ -106,27 +105,87 @@ function CarrierLogoCell({ carrier }: { carrier: Carrier }) {
 
 function CarrierGrid({
   carriers,
-  viewMoreHref = VIEW_MORE_HREF,
   maxVisible = MAX_VISIBLE,
 }: {
   carriers: Carrier[];
-  viewMoreHref?: string;
   maxVisible?: number;
 }) {
-  const visible = carriers.slice(0, maxVisible);
+  const [expanded, setExpanded] = useState(false);
+  const [page, setPage] = useState(0);
+
+  // Once expanded, each page can use one extra slot
+  // since there's no "View more" tile eating into it.
+  const pageSize = maxVisible + 1;
+
+  // Reset pagination whenever the underlying list changes
+  // (e.g. new appetite check results come in)
+  useEffect(() => {
+    setExpanded(false);
+    setPage(0);
+  }, [carriers, maxVisible]);
+
   const hasMore = carriers.length > maxVisible;
+  const totalPages = Math.max(1, Math.ceil(carriers.length / pageSize));
+
+  const visible = expanded
+    ? carriers.slice(page * pageSize, page * pageSize + pageSize)
+    : carriers.slice(0, maxVisible);
+
+  const goPrev = () => setPage((p) => Math.max(0, p - 1));
+  const goNext = () => setPage((p) => Math.min(totalPages - 1, p + 1));
 
   return (
-    <div className="grid grid-cols-4 gap-2 md:gap-2.5">
-      {visible.map((carrier) => (
-        <CarrierLogoCell key={carrier.id} carrier={carrier} />
-      ))}
-      {hasMore ? (
-        <button
-          className="flex items-center justify-center rounded-lg border border-dashed border-[#5B35E0]/40 bg-[#F5F3FF] px-2 py-3 font-heading text-xs font-semibold text-[#5B35E0] transition-colors hover:border-[#5B35E0] hover:bg-[#EDE9FE] md:text-sm"
-        >
-          View more
-        </button>
+    <div>
+      <div className="grid grid-cols-4 gap-2 md:gap-2.5">
+        {visible.map((carrier) => (
+          <CarrierLogoCell key={carrier.id} carrier={carrier} />
+        ))}
+
+        {!expanded && hasMore ? (
+          <button
+            type="button"
+            onClick={() => setExpanded(true)}
+            className="flex items-center justify-center rounded-lg border border-dashed border-[#5B35E0]/40 bg-[#F5F3FF] px-2 py-3 font-heading text-xs font-semibold text-[#5B35E0] transition-colors hover:border-[#5B35E0] hover:bg-[#EDE9FE] md:text-sm"
+          >
+            View more
+          </button>
+        ) : null}
+      </div>
+
+      {expanded && hasMore ? (
+        <div className="mt-2.5 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setExpanded(false)}
+            className="font-mono uppercase text-xs tracking-wide font-medium text-[#9CA3AF] transition-colors hover:text-[#5B35E0]"
+          >
+            Show less
+          </button>
+
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-xs text-[#9CA3AF]">
+              {page + 1} / {totalPages}
+            </span>
+            <button
+              type="button"
+              onClick={goPrev}
+              disabled={page === 0}
+              aria-label="Previous carriers"
+              className="flex size-7 items-center justify-center rounded-full border border-[#DDDDDD] text-[#5B35E0] transition-colors hover:border-[#5B35E0] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ChevronLeft className="size-4" />
+            </button>
+            <button
+              type="button"
+              onClick={goNext}
+              disabled={page >= totalPages - 1}
+              aria-label="Next carriers"
+              className="flex size-7 items-center justify-center rounded-full border border-[#DDDDDD] text-[#5B35E0] transition-colors hover:border-[#5B35E0] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ChevronRight className="size-4" />
+            </button>
+          </div>
+        </div>
       ) : null}
     </div>
   );
@@ -261,7 +320,15 @@ function optionLabel(
   return options.find((option) => option.value === value)?.label ?? fallback;
 }
 
-const CarrierMatch = ({eyepilllabel}:{eyepilllabel?:String}) => {
+type CarrierMatchProps = {
+  eyepilllabel?: string;
+  id?: string;
+};
+
+const CarrierMatch = ({
+  eyepilllabel,
+  id = "appetite",
+}: CarrierMatchProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const checkIdRef = useRef(0);
   const [policyType, setPolicyType] = useState<string>("");
@@ -470,7 +537,7 @@ const CarrierMatch = ({eyepilllabel}:{eyepilllabel?:String}) => {
   const stateLabel = optionLabel(STATE_OPTIONS, state, "State");
 
   return (
-    <section ref={sectionRef} className="bg-[#F6F8F9] text-[#0a143b]">
+    <section id={id} ref={sectionRef} className="bg-[#F6F8F9] text-[#0a143b] scroll-mt-20 md:scroll-mt-24">
       <Container borderColor="#53535340">
         <div className="py-16 md:py-20 lg:py-24">
           <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12 xl:gap-16">
@@ -478,7 +545,7 @@ const CarrierMatch = ({eyepilllabel}:{eyepilllabel?:String}) => {
               <div className="mb-8">
                 <EyebrowPill
                   surface="light"
-                  background= {eyepilllabel === "Appetite Checker" ? "linear-gradient(135deg, #322696 0%, #322696 48%, #5E3FD0 100%)" : "linear-gradient(45deg, #E25E2F 0%, #DE5943 50%, #FC976B 100%)"}
+                  background={eyepilllabel === "Appetite Checker" ? "linear-gradient(135deg, #322696 0%, #322696 48%, #5E3FD0 100%)" : "linear-gradient(45deg, #E25E2F 0%, #DE5943 50%, #FC976B 100%)"}
                   className="mb-4 shadow-[0_8px_24px_rgba(226,94,47,0.2)]"
                 >
                   {eyepilllabel ?? "Interactive tool"}
@@ -501,13 +568,12 @@ const CarrierMatch = ({eyepilllabel}:{eyepilllabel?:String}) => {
                     type="button"
                     onClick={clearAll}
                     disabled={!canClear}
-                    className={`font-mono text-xs font-medium uppercase tracking-wide transition-colors ${
-                      canClear
+                    className={`font-mono text-xs font-medium uppercase tracking-wide transition-colors ${canClear
                         ? isBlue
                           ? "text-[#5B35E0] hover:text-[#322696]"
                           : "text-[#E25E2F] hover:text-[#D62B1C]"
                         : "cursor-not-allowed text-[#9CA3AF]"
-                    }`}
+                      }`}
                   >
                     Clear all
                   </button>
@@ -525,6 +591,7 @@ const CarrierMatch = ({eyepilllabel}:{eyepilllabel?:String}) => {
                   value={industry}
                   options={industryOptions}
                   onChange={setIndustry}
+                  placeholder="Start typing to search industry..."
                 />
 
                 <SearchableSelect
@@ -533,6 +600,7 @@ const CarrierMatch = ({eyepilllabel}:{eyepilllabel?:String}) => {
                   value={state}
                   options={STATE_OPTIONS}
                   onChange={setState}
+                  placeholder="Start typing to search state..."
                 />
               </form>
             </div>

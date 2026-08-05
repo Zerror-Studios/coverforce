@@ -45,6 +45,7 @@ type SearchableSelectProps = {
   value: string;
   options: readonly (string | SelectOption)[];
   onChange: (value: string) => void;
+  placeholder?: string; // add this
 };
 
 export default function SearchableSelect({
@@ -53,6 +54,7 @@ export default function SearchableSelect({
   value,
   options,
   onChange,
+  placeholder = "Start typing to search...",
 }: SearchableSelectProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -119,7 +121,7 @@ export default function SearchableSelect({
           aria-autocomplete="list"
           aria-labelledby={`${id}-label`}
           autoComplete="off"
-          placeholder={`Select ${label}`}
+          placeholder={placeholder}
           value={open ? query : selectedLabel}
           onFocus={() => {
             setOpen(true);
