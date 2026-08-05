@@ -27,27 +27,45 @@ type IndustryOption = {
 };
 
 type IndustryCache = {
+  version: number;
   industries: IndustryOption[];
 };
+
+/** Bump when label format changes so in-memory caches refresh. */
+const INDUSTRY_LABEL_VERSION = 4;
+const COVERFORCE_FETCH_TIMEOUT_MS = 20_000;
 
 let industryCodesCache: ReturnType<typeof setCachedValue<IndustryCache>> | null =
   null;
 
-function toLabel(item: CoverforceIndustryItem): string | null {
-  const code = String(
-    item.naicsCode ??
-      item.naics_code ??
-      item.naics ??
-      item.code ??
-      item.industryCode ??
-      item.industry_code ??
-      ""
-  ).trim();
-  const description = String(
-    item.description ?? item.title ?? item.label ?? item.name ?? ""
-  ).trim();
-  if (!code || !description) return null;
-  return `${code} - ${description}`;
+function toTitleCase(text: string): string {
+  if (/[a-z]/.test(text)) return text;
+
+  return text
+    .toLowerCase()
+    .replace(
+      /(^|[\s\-/(])([a-z])/g,
+      (_, prefix: string, char: string) => prefix + char.toUpperCase()
+    );
+}
+
+function stripNaicsCodePrefix(text: string, code?: string): string {
+  let result = text.trim();
+
+  if (code) {
+    const escaped = code.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    result = result.replace(new RegExp(`^${escaped}\\s*[-–—:]\\s*`, "i"), "");
+  }
+
+  result = result.replace(/^\d{2,6}(?:\.\d+)?\s*[-–—:]\s*/, "");
+  return result.trim();
+}
+
+function formatIndustryLabel(label: string, code?: string): string {
+  const raw = String(label ?? "").trim();
+  const description = stripNaicsCodePrefix(raw, code);
+  if (!description) return raw;
+  return toTitleCase(description);
 }
 
 function toValue(item: CoverforceIndustryItem): string {
@@ -62,9 +80,46 @@ function toValue(item: CoverforceIndustryItem): string {
   ).trim();
 }
 
-function getIndustryDescription(label: string): string {
-  const parts = label.split(" - ");
-  return (parts[1] ?? label).trim();
+function toLabel(item: CoverforceIndustryItem): string | null {
+  const code = toValue(item);
+  const rawDescription = String(
+    item.description ?? item.title ?? item.label ?? item.name ?? ""
+  ).trim();
+  if (!rawDescription) return null;
+
+  const description = formatIndustryLabel(rawDescription, code || undefined);
+  return description || null;
+}
+
+function dedupeIndustryOptions(
+  industries: IndustryOption[]
+): IndustryOption[] {
+  const seen = new Set<string>();
+  const deduped: IndustryOption[] = [];
+
+  for (const item of industries) {
+    if (seen.has(item.value)) continue;
+    seen.add(item.value);
+    deduped.push(item);
+  }
+
+  return deduped;
+}
+
+function normalizeCachedIndustries(
+  industries: IndustryOption[]
+): IndustryOption[] {
+  return dedupeIndustryOptions(
+    industries
+      .map((item) => {
+        const value = String(item.value ?? "").trim();
+        const label = formatIndustryLabel(String(item.label ?? ""), value);
+        if (!value || !label) return null;
+        return { value, label };
+      })
+      .filter((item): item is IndustryOption => Boolean(item))
+      .sort((a, b) => a.label.localeCompare(b.label))
+  );
 }
 
 function findIndustryArray(value: unknown): CoverforceIndustryItem[] {
@@ -87,63 +142,96 @@ function findIndustryArray(value: unknown): CoverforceIndustryItem[] {
 async function fetchIndustryCodes(): Promise<IndustryOption[]> {
   const baseUrl = getCoverforceApiBaseUrl();
   const token = await getCoverforceAccessToken();
+  const controller = new AbortController();
+  const timeoutId = setTimeout(
+    () => controller.abort(),
+    COVERFORCE_FETCH_TIMEOUT_MS
+  );
 
-  const response = await fetch(`${baseUrl}/api/get-industry-codes`, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    cache: "no-store",
-  });
-  if (!response.ok) {
-    throw new Error(`Industry code request failed: ${response.status}`);
-  }
+  try {
+    const response = await fetch(`${baseUrl}/api/get-industry-codes`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    if (!response.ok) {
+      throw new Error(`Industry code request failed: ${response.status}`);
+    }
 
-  const payload = await response.json();
-  const rawItems = findIndustryArray(payload);
+    const payload = await response.json();
+    const rawItems = findIndustryArray(payload);
 
-  return rawItems
-    .map((item: CoverforceIndustryItem) => {
-      const label = toLabel(item);
-      const value = toValue(item);
-      if (!label || !value) return null;
-      return { value, label } satisfies IndustryOption;
-    })
-    .filter((item): item is IndustryOption => Boolean(item))
-    .sort((a, b) =>
-      getIndustryDescription(a.label).localeCompare(
-        getIndustryDescription(b.label)
-      )
+    return dedupeIndustryOptions(
+      rawItems
+        .map((item: CoverforceIndustryItem) => {
+          const label = toLabel(item);
+          const value = toValue(item);
+          if (!label || !value) return null;
+          return { value, label } satisfies IndustryOption;
+        })
+        .filter((item): item is IndustryOption => Boolean(item))
+        .sort((a, b) => a.label.localeCompare(b.label))
     );
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 export async function GET() {
   try {
     const cached = getCachedValue(industryCodesCache);
-    if (cached) {
-      return NextResponse.json(cached, {
-        headers: {
-          "Cache-Control": coverforceCacheControlHeader(),
-          "X-Cache": "HIT",
-        },
-      });
+
+    if (cached?.industries?.length) {
+      const industries =
+        cached.version === INDUSTRY_LABEL_VERSION
+          ? cached.industries
+          : normalizeCachedIndustries(cached.industries);
+
+      if (cached.version !== INDUSTRY_LABEL_VERSION) {
+        industryCodesCache = setCachedValue(
+          { version: INDUSTRY_LABEL_VERSION, industries },
+          COVERFORCE_REFERENCE_CACHE_SECONDS
+        );
+      }
+
+      return NextResponse.json(
+        { industries },
+        {
+          headers: {
+            "Cache-Control": coverforceCacheControlHeader(),
+            "X-Cache": "HIT",
+          },
+        }
+      );
     }
 
     const industries = await fetchIndustryCodes();
-    const payload = { industries };
+    if (!industries.length) {
+      return NextResponse.json(
+        { industries: [], error: "No industry codes returned" },
+        { status: 502 }
+      );
+    }
+
     industryCodesCache = setCachedValue(
-      payload,
+      { version: INDUSTRY_LABEL_VERSION, industries },
       COVERFORCE_REFERENCE_CACHE_SECONDS
     );
 
-    return NextResponse.json(payload, {
-      headers: {
-        "Cache-Control": coverforceCacheControlHeader(),
-        "X-Cache": "MISS",
-      },
-    });
+    return NextResponse.json(
+      { industries },
+      {
+        headers: {
+          "Cache-Control": coverforceCacheControlHeader(),
+          "X-Cache": "MISS",
+        },
+      }
+    );
   } catch (error) {
     console.error("[industry-codes]", error);
     return NextResponse.json(

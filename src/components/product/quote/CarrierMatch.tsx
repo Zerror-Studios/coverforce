@@ -1,79 +1,78 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import { CheckCircle2, ChevronDown } from "lucide-react";import Container from "@/components/common/Container";
+import Link from "next/link";
+import { Loader2 } from "lucide-react";
+import Container from "@/components/common/Container";
 import Button from "@/components/common/Button";
 import EyebrowPill from "@/components/common/EyebrowPill";
+import SearchableSelect, {
+  type SelectOption,
+} from "@/components/common/SearchableSelect";
+import {
+  loadIndustryOptions,
+  POLICY_TYPE_OPTIONS,
+  STATE_OPTIONS,
+} from "@/lib/appetiteFormOptions";
 
-const INDUSTRIES = [
-  "Restaurant",
-  "Contractor",
-  "Retail Store",
-  "Professional Services",
-] as const;
+type AppetiteStatus =
+  | "IN_APPETITE"
+  | "MAYBE_IN_APPETITE"
+  | "NOT_IN_APPETITE";
 
-const FORM_FIELDS = [
-  {
-    id: "revenue",
-    label: "ANNUAL REVENUE",
-    value: "$1M - $5M",
-    options: ["Under $1M", "$1M - $5M", "$5M - $10M", "$10M+"],
-    highlighted: true,
-  },
-  {
-    id: "state",
-    label: "STATE",
-    value: "FL",
-    options: ["FL", "CA", "TX", "NY"],
-  },
-  {
-    id: "employees",
-    label: "EMPLOYEES",
-    value: "10 - 20",
-    options: ["1 - 9", "10 - 20", "21 - 49", "50+"],
-  },
-] as const;
+type Carrier = {
+  id: string;
+  name: string;
+  logo?: string;
+};
 
-const ALSO_ELIGIBLE_LOGOS = [
-  { src: "/images/product/carrier1.svg", alt: "Carrier 1" },
-  { src: "/images/product/carrier2.svg", alt: "Carrier 2" },
-  { src: "/images/product/carrier3.svg", alt: "Carrier 3" },
-  { src: "/images/product/carrier4.svg", alt: "Carrier 4" },
-  { src: "/images/product/carrier5.svg", alt: "Carrier 5" },
-  { src: "/images/product/carrier6.svg", alt: "Carrier 6" },
-  { src: "/images/product/carrier7.svg", alt: "Carrier 7" },
-] as const;
+type MatchedCarrier = Carrier & {
+  status: AppetiteStatus;
+};
 
-function IndustryTiles({
+const MAX_VISIBLE = 15;
+const MAX_VISIBLE_RESULTS = 7;
+const VIEW_MORE_HREF = "/product/intelligence#appetite";
+
+function PolicyTypeTabs({
   value,
   onChange,
+  isBlue,
 }: {
-  value: (typeof INDUSTRIES)[number];
-  onChange: (industry: (typeof INDUSTRIES)[number]) => void;
+  value: string;
+  onChange: (policyType: string) => void;
+  isBlue: boolean;
 }) {
   return (
     <fieldset>
-      <legend className="mb-2 block font-mono text-sm font-medium uppercase text-[#413CC0]">
-        Industry
+      <legend className="mb-2 block font-mono text-sm font-medium uppercase text-[#2A297C]">
+        Policy Type
       </legend>
-      <div className="grid grid-cols-2 gap-2.5" role="listbox" aria-label="Industry">
-        {INDUSTRIES.map((industry) => {
-          const selected = industry === value;
+      <div
+        className="grid grid-cols-2 gap-2.5"
+        role="tablist"
+        aria-label="Policy Type"
+      >
+        {POLICY_TYPE_OPTIONS.map((option) => {
+          const selected = option.value === value;
           return (
             <button
-              key={industry}
+              key={option.value}
               type="button"
-              role="option"
+              role="tab"
               aria-selected={selected}
-              onClick={() => onChange(industry)}
+              onClick={() => onChange(option.value)}
               className={`rounded-lg border px-3 py-3 text-left font-heading text-sm font-medium transition-colors ${
                 selected
-                  ? "border-[#E25E2F] bg-[#FFF4EF] text-[#E25E2F] ring-1 ring-[#E25E2F]/30"
-                  : "border-[#DDDDDD] bg-white text-[#1A1A1A] hover:border-[#E25E2F]/50 hover:bg-[#FFF8F5]"
+                  ? isBlue
+                    ? "border-[#5B35E0] bg-[#F5F3FF] text-[#5B35E0] ring-1 ring-[#5B35E0]/30"
+                    : "border-[#E25E2F] bg-[#FFF4EF] text-[#E25E2F] ring-1 ring-[#E25E2F]/30"
+                  : isBlue
+                    ? "border-[#DDDDDD] bg-white text-[#1A1A1A] hover:border-[#5B35E0]/50 hover:bg-[#F5F3FF] hover:text-[#5B35E0]"
+                    : "border-[#DDDDDD] bg-white text-[#1A1A1A] hover:border-[#E25E2F]/50 hover:bg-[#FFF8F5]"
               }`}
             >
-              {industry}
+              {option.label}
             </button>
           );
         })}
@@ -82,210 +81,171 @@ function IndustryTiles({
   );
 }
 
-function formatDropdownLabel(option: string) {
-  if (/[a-z]/.test(option)) return option;
-
-  return option
-    .toLowerCase()
-    .replace(/(^|[\s\-/(])([a-z])/g, (_, prefix: string, char: string) => prefix + char.toUpperCase());
-}
-
-function FormSelect({
-  id,
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  id: string;
-  label: string;
-  value: string;
-  options: readonly string[];
-  onChange: (value: string) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-  const listId = `${id}-listbox`;
-  const selected = options.includes(value) ? value : options[0];
-  const selectedLabel = formatDropdownLabel(selected);
-
-  useEffect(() => {
-    if (!open) return;
-
-    const onPointerDown = (event: globalThis.MouseEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    };
-    const onKeyDown = (event: globalThis.KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
-    };
-
-    document.addEventListener("mousedown", onPointerDown);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", onPointerDown);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open]);
+function CarrierLogoCell({ carrier }: { carrier: Carrier }) {
+  const [showFallback, setShowFallback] = useState(!carrier.logo);
 
   return (
-    <div ref={rootRef} className="relative block min-w-0">
-      <span
-        id={`${id}-label`}
-        className="mb-2 block font-mono text-sm font-medium uppercase text-[#413CC0]"
-      >
-        {label}
-      </span>
-      <button
-        id={id}
-        type="button"
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        aria-controls={listId}
-        aria-labelledby={`${id}-label`}
-        onClick={() => setOpen((prev) => !prev)}
-        className={`box-border flex h-10 min-h-10 max-h-10 w-full items-center justify-between rounded-lg border bg-white px-4 text-left font-heading text-sm font-medium leading-none outline-none transition-colors ${
-          open
-            ? "border-[#5B35E0] text-[#1A1A1A] ring-1 ring-[#5B35E0]/20"
-            : "border-[#E4E7EC] text-[#1A1A1A] hover:border-[#5B35E0]/40"
-        }`}
-      >
-        <span className="truncate text-[#1A1A1A]">{selectedLabel}</span>
-        <ChevronDown
-          className={`ml-3 size-4 shrink-0 text-[#9AA8BC] transition-transform duration-200 ${
-            open ? "rotate-180" : ""
-          }`}
-          aria-hidden
+    <div className="flex flex-col items-center justify-center gap-1.5 rounded-lg border border-[#ECEEF2] bg-white px-2 py-3">
+      {showFallback || !carrier.logo ? (
+        <span className="font-heading text-[10px] font-semibold text-[#2A297C] md:text-xs">
+          {carrier.name}
+        </span>
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={carrier.logo}
+          alt={`${carrier.name} logo`}
+          loading="lazy"
+          onError={() => setShowFallback(true)}
+          className="h-4 w-auto max-w-full object-contain md:h-8"
         />
-      </button>
+      )}
+    </div>
+  );
+}
 
-      {open ? (
-        <ul
-          id={listId}
-          role="listbox"
-          aria-labelledby={`${id}-label`}
-          data-lenis-prevent
-          className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-64 overflow-y-auto rounded-xl border border-[#E8ECF0] bg-white py-1 shadow-[0_12px_32px_rgba(10,20,59,0.1)]"
+function CarrierGrid({
+  carriers,
+  viewMoreHref = VIEW_MORE_HREF,
+  maxVisible = MAX_VISIBLE,
+}: {
+  carriers: Carrier[];
+  viewMoreHref?: string;
+  maxVisible?: number;
+}) {
+  const visible = carriers.slice(0, maxVisible);
+  const hasMore = carriers.length > maxVisible;
+
+  return (
+    <div className="grid grid-cols-4 gap-2 md:gap-2.5">
+      {visible.map((carrier) => (
+        <CarrierLogoCell key={carrier.id} carrier={carrier} />
+      ))}
+      {hasMore ? (
+        <button
+          className="flex items-center justify-center rounded-lg border border-dashed border-[#5B35E0]/40 bg-[#F5F3FF] px-2 py-3 font-heading text-xs font-semibold text-[#5B35E0] transition-colors hover:border-[#5B35E0] hover:bg-[#EDE9FE] md:text-sm"
         >
-          {options.map((option, index) => {
-            const isSelected = option === value;
-            return (
-              <li key={option} role="presentation">
-                <button
-                  type="button"
-                  role="option"
-                  aria-selected={isSelected}
-                  onClick={() => {
-                    onChange(option);
-                    setOpen(false);
-                  }}
-                  className={`flex w-full items-center px-4 py-3.5 text-left font-heading text-xs font-medium transition-colors md:text-sm ${
-                    index > 0 ? "border-t border-[#EEF1F5]" : ""
-                  } ${
-                    isSelected
-                      ? "bg-[#F5F3FF] text-[#2A297C]"
-                      : "text-[#111110] hover:bg-[#F7F8FA]"
-                  }`}
-                >
-                  {formatDropdownLabel(option)}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+          View more
+        </button>
       ) : null}
     </div>
   );
 }
 
 function MatchResultsCard({
+  policyType,
   industry,
   state,
-  revenue,
-  employees,
+  allCarriers,
+  inAppetite,
+  outOfAppetite,
+  isChecking,
+  hasChecked,
+  error,
 }: {
+  policyType: string;
   industry: string;
   state: string;
-  revenue: string;
-  employees: string;
-}) {  return (
+  allCarriers: Carrier[];
+  inAppetite: MatchedCarrier[];
+  outOfAppetite: MatchedCarrier[];
+  isChecking: boolean;
+  hasChecked: boolean;
+  error: string | null;
+}) {
+  const summaryParts = [policyType, industry, state].filter(Boolean);
+
+  return (
     <div className="rounded-2xl border border-[#ECEEF2] bg-white p-5 md:p-6 lg:p-7">
       <div className="border-b border-[#ECEEF2] pb-5">
         <p className="font-sans text-lg font-regular text-[#2A297C]">
-          8 carriers matched
+          {hasChecked
+            ? `${inAppetite.length} carriers in appetite`
+            : allCarriers.length
+              ? `${allCarriers.length} carriers available`
+              : "Carriers available"}
         </p>
-        <p className="mt-1 font-mono text-sm font-medium uppercase text-[#444444]">
-          {industry} / {state} / {revenue} / {employees} employees
-        </p>      </div>
-
-      <div className="py-5">
-        <div className="mb-3 flex items-center justify-between gap-4">
-          <span className="font-mono text-sm font-medium uppercase text-[#5F950C]">
-            TOP MATCH
-          </span>
-          <span className="inline-flex items-center gap-1.5 font-heading text-xs font-medium text-[#5F950C] md:text-sm">
-            <CheckCircle2 className="size-3.5 shrink-0" aria-hidden />
-            92% appetite match
-          </span>
-        </div>
-
-        <div className="flex items-center gap-4 rounded-xl bg-gradient-to-r from-[#E66F35] to-[#D62B1C] p-4 md:gap-5 md:p-4">
-          <div className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-white md:size-20">
-            <Image
-              src="/images/product/carrier8.svg"
-              alt="Top match carrier"
-              width={72}
-              height={28}
-              className="h-5 w-auto object-contain md:h-7"
-            />
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="font-heading text-lg font-medium leading-tight text-white md:text-xl">
-              AmTrust
-            </p>
-            <p className="mt-0.5 font-sans text-xs font-regular text-white/85 md:text-sm">
-              Worker&apos;s Compensation
-            </p>
-          </div>
-          <p className="shrink-0 font-heading text-lg font-medium leading-none text-white md:text-xl">
-            $4,200–$5,800
+        {summaryParts.length > 0 ? (
+          <p className="mt-1 font-mono text-sm font-medium text-[#444444]">
+            {summaryParts.join(" / ")}
           </p>
-        </div>
+        ) : !isChecking && !error ? (
+          <p className="mt-1 font-mono text-sm font-medium text-[#444444]">
+            Choose a policy type, industry, and state to check appetite.
+          </p>
+        ) : null}
       </div>
 
-      <div className="border-t border-[#ECEEF2] pt-5">
-        <p className="mb-3 font-mono text-sm font-medium uppercase text-[#393939]">
-          ALSO ELIGIBLE
-        </p>
-        <div className="grid grid-cols-4 gap-2 md:gap-2.5">
-          {ALSO_ELIGIBLE_LOGOS.map((logo) => (
-            <div
-              key={logo.src}
-              className="flex items-center justify-center rounded-lg border border-[#ECEEF2] bg-white px-2 py-3"
-            >
-              <Image
-                src={logo.src}
-                alt={logo.alt}
-                width={80}
-                height={32}
-                className="h-4 w-auto max-w-full object-contain md:h-10"
+      {isChecking ? (
+        <div className="flex flex-col items-center justify-center gap-3 py-16">
+          <Loader2
+            className="size-8 animate-spin text-[#5B35E0]"
+            aria-hidden
+          />
+          <p className="font-heading text-sm font-medium text-[#2A297C]">
+            Checking Appetite...
+          </p>
+        </div>
+      ) : error ? (
+        <div className="py-10 text-center">
+          <p className="font-heading text-sm font-medium text-[#D64545]">
+            {error}
+          </p>
+        </div>
+      ) : hasChecked ? (
+        <>
+          <div className="py-5">
+            <p className="mb-3 font-mono text-sm font-medium uppercase text-[#5F950C]">
+              IN APPETITE ({inAppetite.length})
+            </p>
+            {inAppetite.length > 0 ? (
+              <CarrierGrid
+                carriers={inAppetite}
+                maxVisible={MAX_VISIBLE_RESULTS}
+              />
+            ) : (
+              <p className="font-sans text-sm text-[#9CA3AF]">
+                No carriers in appetite for this selection.
+              </p>
+            )}
+          </div>
+
+          <div className="border-t border-[#ECEEF2] pt-5">
+            <p className="mb-3 font-mono text-sm font-medium uppercase text-[#393939]">
+              OUT OF APPETITE ({outOfAppetite.length})
+            </p>
+            {outOfAppetite.length > 0 ? (
+              <CarrierGrid
+                carriers={outOfAppetite}
+                maxVisible={MAX_VISIBLE_RESULTS}
+              />
+            ) : (
+              <p className="font-sans text-sm text-[#9CA3AF]">
+                No carriers out of appetite for this selection.
+              </p>
+            )}
+          </div>
+        </>
+      ) : (
+        <div className="py-5">
+          {allCarriers.length > 0 ? (
+            <CarrierGrid carriers={allCarriers} />
+          ) : (
+            <div className="flex items-center justify-center py-10">
+              <Loader2
+                className="size-6 animate-spin text-[#5B35E0]"
+                aria-hidden
               />
             </div>
-          ))}
+          )}
         </div>
-      </div>
+      )}
 
       <div className="mt-5 flex flex-col items-start justify-between gap-4 border-t border-[#ECEEF2] pt-5 sm:flex-row sm:items-center">
-        <div>
-          <p className="font-sans text-sm font-regular text-[#2A297C] md:text-base">
-            Estimated Response
-          </p>
-          <p className="mt-0.5 font-mono text-sm font-medium uppercase text-[#444444]">
-            QUOTES AVAILABLE IN MINUTES
-          </p>
-        </div>
-        <Button href="/" variant="primary" className="shrink-0">
+        <p className="font-mono text-sm font-medium uppercase text-[#444444]">
+          QUOTES AVAILABLE IN MINUTES
+        </p>
+        <Button href="/contact" variant="primary" className="shrink-0">
           Get quotes
         </Button>
       </div>
@@ -293,24 +253,222 @@ function MatchResultsCard({
   );
 }
 
-const CarrierMatch = () => {
+function optionLabel(
+  options: readonly SelectOption[],
+  value: string,
+  fallback: string
+) {
+  return options.find((option) => option.value === value)?.label ?? fallback;
+}
+
+const CarrierMatch = ({eyepilllabel}:{eyepilllabel:String}) => {
   const sectionRef = useRef<HTMLElement>(null);
-  const [industry, setIndustry] = useState<(typeof INDUSTRIES)[number]>("Restaurant");
-  const [revenue, setRevenue] = useState<string>(FORM_FIELDS[0].value);
-  const [state, setState] = useState<string>(FORM_FIELDS[1].value);
-  const [employees, setEmployees] = useState<string>(FORM_FIELDS[2].value);
+  const checkIdRef = useRef(0);
+  const [policyType, setPolicyType] = useState<string>("");
+  const [industryOptions, setIndustryOptions] = useState<SelectOption[]>([]);
+  const [industry, setIndustry] = useState<string>("");
+  const [state, setState] = useState<string>("");
+  const [allCarriers, setAllCarriers] = useState<Carrier[]>([]);
+  const [inAppetite, setInAppetite] = useState<MatchedCarrier[]>([]);
+  const [outOfAppetite, setOutOfAppetite] = useState<MatchedCarrier[]>([]);
+  const [isChecking, setIsChecking] = useState(false);
+  const [hasChecked, setHasChecked] = useState(false);
+  const [checkError, setCheckError] = useState<string | null>(null);
 
-  const fieldSetters: Record<(typeof FORM_FIELDS)[number]["id"], (value: string) => void> = {
-    revenue: setRevenue,
-    state: setState,
-    employees: setEmployees,
+  const canClear = Boolean(policyType || industry || state || hasChecked);
+  const isBlue = eyepilllabel === "Appetite Checker";
+
+  const clearAll = () => {
+    checkIdRef.current += 1;
+    setPolicyType("");
+    setIndustry("");
+    setState("");
+    setInAppetite([]);
+    setOutOfAppetite([]);
+    setIsChecking(false);
+    setHasChecked(false);
+    setCheckError(null);
   };
 
-  const fieldValues: Record<(typeof FORM_FIELDS)[number]["id"], string> = {
-    revenue,
-    state,
-    employees,
-  };
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadIndustryCodes = async () => {
+      try {
+        const nextOptions = await loadIndustryOptions();
+        if (!nextOptions.length || cancelled) return;
+
+        setIndustryOptions(nextOptions);
+        setIndustry((current) =>
+          nextOptions.some((option) => option.value === current) ? current : ""
+        );
+      } catch (error) {
+        console.error("[carrier-match-industry-codes]", error);
+      }
+    };
+
+    void loadIndustryCodes();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadCarriers = async () => {
+      try {
+        const response = await fetch("/api/appetite-carriers", {
+          cache: "force-cache",
+        });
+        if (!response.ok) {
+          throw new Error(`Carriers failed: ${response.status}`);
+        }
+
+        const payload = (await response.json()) as {
+          carriers?: {
+            id?: string;
+            name?: string;
+            logo?: string;
+          }[];
+        };
+
+        if (cancelled) return;
+
+        setAllCarriers(
+          (payload.carriers ?? [])
+            .map((carrier) => ({
+              id: String(carrier.id ?? "").trim(),
+              name: String(carrier.name ?? "").trim(),
+              logo: carrier.logo ? String(carrier.logo).trim() : undefined,
+            }))
+            .filter((carrier) => carrier.id && carrier.name)
+        );
+      } catch (error) {
+        console.error("[carrier-match-carriers]", error);
+      }
+    };
+
+    void loadCarriers();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!policyType || !industry || !state) {
+      setInAppetite([]);
+      setOutOfAppetite([]);
+      setHasChecked(false);
+      setCheckError(null);
+      setIsChecking(false);
+      return;
+    }
+
+    if (!allCarriers.length) return;
+
+    const checkId = ++checkIdRef.current;
+    let cancelled = false;
+
+    const runCheck = async () => {
+      setIsChecking(true);
+      setCheckError(null);
+      setHasChecked(false);
+
+      try {
+        const response = await fetch("/api/check-appetite", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            carriers: allCarriers.map((carrier) => carrier.id),
+            policyType,
+            state,
+            naicsCode: industry,
+          }),
+          cache: "no-store",
+        });
+
+        const payload = (await response.json()) as {
+          checkedCarriers?: { id: string; status: string }[];
+          error?: string;
+        };
+
+        if (!response.ok) {
+          throw new Error(payload.error ?? `Check failed: ${response.status}`);
+        }
+
+        if (cancelled || checkId !== checkIdRef.current) return;
+
+        const statusById = new Map<string, AppetiteStatus>();
+        for (const item of payload.checkedCarriers ?? []) {
+          const id = String(item.id ?? "").trim();
+          const status = String(item.status ?? "").trim();
+          if (
+            id &&
+            (status === "IN_APPETITE" ||
+              status === "MAYBE_IN_APPETITE" ||
+              status === "NOT_IN_APPETITE")
+          ) {
+            statusById.set(id, status);
+          }
+        }
+
+        const nextIn: MatchedCarrier[] = [];
+        const nextOut: MatchedCarrier[] = [];
+
+        for (const carrier of allCarriers) {
+          const status = statusById.get(carrier.id);
+          if (!status) continue;
+
+          const matched: MatchedCarrier = {
+            ...carrier,
+            status,
+          };
+
+          if (status === "NOT_IN_APPETITE") {
+            nextOut.push(matched);
+          } else {
+            nextIn.push(matched);
+          }
+        }
+
+        setInAppetite(nextIn);
+        setOutOfAppetite(nextOut);
+        setHasChecked(true);
+      } catch (error) {
+        if (cancelled || checkId !== checkIdRef.current) return;
+        console.error("[carrier-match-check-appetite]", error);
+        setCheckError("Unable to check appetite. Please try again.");
+        setInAppetite([]);
+        setOutOfAppetite([]);
+        setHasChecked(false);
+      } finally {
+        if (!cancelled && checkId === checkIdRef.current) {
+          setIsChecking(false);
+        }
+      }
+    };
+
+    void runCheck();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [policyType, industry, state, allCarriers]);
+
+  const policyTypeLabel = optionLabel(
+    POLICY_TYPE_OPTIONS,
+    policyType,
+    policyType
+  );
+  const industryLabel = optionLabel(industryOptions, industry, "Industry");
+  const stateLabel = optionLabel(STATE_OPTIONS, state, "State");
+
   return (
     <section ref={sectionRef} className="bg-[#F6F8F9] text-[#0a143b]">
       <Container borderColor="#53535340">
@@ -320,10 +478,10 @@ const CarrierMatch = () => {
               <div className="mb-8">
                 <EyebrowPill
                   surface="light"
-                  background="linear-gradient(45deg, #E25E2F 0%, #DE5943 50%, #FC976B 100%)"
+                  background= {eyepilllabel === "Appetite Checker" ? "linear-gradient(135deg, #322696 0%, #322696 48%, #5E3FD0 100%)" : "linear-gradient(45deg, #E25E2F 0%, #DE5943 50%, #FC976B 100%)"}
                   className="mb-4 shadow-[0_8px_24px_rgba(226,94,47,0.2)]"
                 >
-                  Interactive tool
+                  {eyepilllabel ?? "Interactive tool"}
                 </EyebrowPill>
                 <h3 className="font-heading text-xl font-semibold text-[#2A297C] md:text-2xl">
                   CoverForce Carrier Match
@@ -338,36 +496,59 @@ const CarrierMatch = () => {
                 className="space-y-4"
                 onSubmit={(event) => event.preventDefault()}
               >
-                <IndustryTiles value={industry} onChange={setIndustry} />
-
-                {FORM_FIELDS.map((field) => (
-                  <FormSelect
-                    key={field.id}
-                    id={field.id}
-                    label={field.label}
-                    value={fieldValues[field.id]}
-                    options={field.options}
-                    onChange={fieldSetters[field.id]}
-                  />
-                ))}
-                <div className="mt-2">
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    className="h-12 min-h-12 max-h-12 w-full justify-center border-transparent bg-gradient-to-r from-[#F0784A] to-[#E63946] text-white transition-opacity hover:opacity-95"
+                <div className="flex items-center justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={clearAll}
+                    disabled={!canClear}
+                    className={`font-mono text-xs font-medium uppercase tracking-wide transition-colors ${
+                      canClear
+                        ? isBlue
+                          ? "text-[#5B35E0] hover:text-[#322696]"
+                          : "text-[#E25E2F] hover:text-[#D62B1C]"
+                        : "cursor-not-allowed text-[#9CA3AF]"
+                    }`}
                   >
-                    Find matching carriers
-                  </Button>
+                    Clear all
+                  </button>
                 </div>
+
+                <PolicyTypeTabs
+                  value={policyType}
+                  onChange={setPolicyType}
+                  isBlue={isBlue}
+                />
+
+                <SearchableSelect
+                  id="carrier-match-industry"
+                  label="Industry"
+                  value={industry}
+                  options={industryOptions}
+                  onChange={setIndustry}
+                />
+
+                <SearchableSelect
+                  id="carrier-match-state"
+                  label="State"
+                  value={state}
+                  options={STATE_OPTIONS}
+                  onChange={setState}
+                />
               </form>
             </div>
 
             <MatchResultsCard
-              industry={industry}
-              state={state}
-              revenue={revenue}
-              employees={employees}
-            />          </div>
+              policyType={policyType ? policyTypeLabel : ""}
+              industry={industry ? industryLabel : ""}
+              state={state ? stateLabel : ""}
+              allCarriers={allCarriers}
+              inAppetite={inAppetite}
+              outOfAppetite={outOfAppetite}
+              isChecking={isChecking}
+              hasChecked={hasChecked}
+              error={checkError}
+            />
+          </div>
         </div>
       </Container>
     </section>

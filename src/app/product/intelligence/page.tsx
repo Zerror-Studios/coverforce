@@ -2,11 +2,11 @@ import React from 'react'
 import WhyCoverforce from '@/components/home/WhyCoverforce'
 import Hero from '@/components/product/intelligence/Hero'
 import IntelligenceWorkFlow from '@/components/product/intelligence/IntelligenceWorkFlow'
-import Appetite from '@/components/product/intelligence/Appetite'
 import ExplorePlatform from '@/components/product/intelligence/ExplorePlatform'
 import CommingSoon from '@/components/product/intelligence/CommingSoon'
 import PageWrapper from '@/components/PageWrapper'
 import { createPageMetadata } from '@/lib/seo'
+import CarrierMatch from '@/components/product/quote/CarrierMatch'
 
 export const metadata = createPageMetadata('/product/intelligence')
 
@@ -18,7 +18,7 @@ const IntelligencePage = () => {
             <PageWrapper>
                 <Hero />
                 <IntelligenceWorkFlow />
-                <Appetite />
+                <CarrierMatch eyepilllabel="Appetite Checker" />
                 <ExplorePlatform />
                 <WhyCoverforce paddingTop={true} />
                 <CommingSoon />
