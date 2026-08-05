@@ -8,21 +8,21 @@ import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 
 const investors = [
   {
-    src: "/images/about/Insight Partners.png",
+    src: "/images/about/Insight.png",
     alt: "Insight Partners",
     href: "https://www.insightpartners.com/",
     width: 286,
     height: 80,
   },
   {
-    src: "/images/about/QED Investors.png",
+    src: "/images/about/QED.png",
     alt: "QED Investors",
     href: "https://www.qedinvestors.com/",
     width: 287,
     height: 80,
   },
   {
-    src: "/images/about/NYCA Partners.png",
+    src: "/images/about/NYCA.png",
     alt: "Nyca Partners",
     href: "https://www.nyca.com/",
     width: 260,
@@ -78,30 +78,30 @@ const Investors = () => {
               <span data-split>Shaping the Future of Insurance</span>
             </h2>
           </div>
-
           <div className="investor-logos mt-14 flex w-full max-w-5xl flex-wrap items-center justify-center gap-x-8 gap-y-10 md:mt-16 md:gap-x-10 lg:mt-20 lg:gap-x-12">
             {investors.map((investor) => (
+
               <a
-                key={investor.src}
-                href={investor.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Visit ${investor.alt}`}
-                className="investor-logo relative flex h-14 shrink-0 items-center justify-center transition-[transform,margin,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform md:h-16 lg:h-[4.5rem]"
-              >
-                <Image
-                  src={investor.src}
-                  alt={investor.alt}
-                  width={investor.width}
-                  height={investor.height}
-                  className="h-full w-auto max-w-[11rem] object-contain object-center md:max-w-[13rem] lg:max-w-[15rem]"
-                />
-              </a>
-            ))}
-          </div>
+              key={ investor.src }
+      href={ investor.href }
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Visit ${investor.alt}`}
+            className="investor-logo relative flex h-14 w-40 shrink-0 items-center justify-center transition-[transform,margin,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform md:h-16 md:w-48 lg:h-[4.5rem] lg:w-56"
+    >
+            <Image
+              src={investor.src}
+              alt={investor.alt}
+              width={investor.width}
+              height={investor.height}
+              className="h-full w-full object-contain object-center"
+            />
+          </a>
+  ))}
         </div>
-      </Container>
-    </section>
+      </div>
+    </Container>
+    </section >
   );
 };
 
