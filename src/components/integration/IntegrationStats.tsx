@@ -5,7 +5,6 @@ import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import { ScrollTriggeredOdometerStat } from "@/components/common/AnimatedPercent";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
-import { PRIMARY_BUTTON_GRADIENT } from "@/data/wayCardStyles";
 
 const STATS = [
   {
@@ -35,17 +34,17 @@ const STATS = [
 ] as const;
 
 const VALUE_CLASS =
-  "font-heading text-[1.35rem] font-regular tracking-tight md:text-3xl lg:text-4xl";
+  "font-heading text-[1.8rem] font-semibold tracking-tight md:text-[2.6rem] lg:text-[3.1rem]";
 
 const LABEL_CLASS =
-  "operating-stat-gradient-text max-w-[11rem] text-center font-sans text-[0.68rem] font-regular leading-relaxed md:max-w-[12rem] md:text-lg";
+  "flex min-h-[2.9rem] max-w-[11rem] items-start justify-center text-center font-sans text-[0.68rem] font-regular leading-relaxed md:min-h-[4.5rem] md:max-w-[12rem] md:text-lg";
 
 const VALUE_COLOR_STYLE: CSSProperties = {
-  color: "#5E3FD0",
+  color: "#0045FF",
 };
 
-const LABEL_GRADIENT_STYLE: CSSProperties = {
-  backgroundImage: PRIMARY_BUTTON_GRADIENT,
+const LABEL_COLOR_STYLE: CSSProperties = {
+  color: "#50617A",
 };
 
 function StatCell({
@@ -59,7 +58,7 @@ function StatCell({
 }) {
   return (
     <div
-      className={`relative flex flex-col items-center justify-center gap-1.5 px-4 py-10 text-center md:gap-2 md:px-6 md:py-12 lg:py-14 ${
+      className={`relative flex h-full flex-col items-center justify-start gap-2 px-4 py-10 text-center md:gap-3 md:px-6 md:py-12 lg:py-14 ${
         showLeftDivider
           ? "before:absolute before:left-0 before:top-1/2 before:hidden before:h-[58%] before:w-px before:-translate-y-1/2 before:bg-[#D8DCE8] md:before:block"
           : ""
@@ -76,7 +75,7 @@ function StatCell({
         ariaLabel={stat.ariaLabel}
       />
 
-      <p className={LABEL_CLASS} style={LABEL_GRADIENT_STYLE}>
+      <p className={LABEL_CLASS} style={LABEL_COLOR_STYLE}>
         {stat.label}
       </p>
     </div>
@@ -121,7 +120,7 @@ const IntegrationStats = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4">
+          <div className="grid grid-cols-2 items-stretch md:grid-cols-4">
             {STATS.map((stat, index) => (
               <StatCell
                 key={stat.id}

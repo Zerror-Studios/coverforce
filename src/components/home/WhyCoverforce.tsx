@@ -26,7 +26,7 @@ type WhySlide = {
 const whySlides: WhySlide[] = [
   {
     id: "slide-1",
-    title: "1. AI Investments",
+    title: "AI Investments",
     descriptionLines: [
       "AI-first infrastructure that gets smarter with every quote -",
       "driving higher bind rates and a customer experience",
@@ -38,7 +38,7 @@ const whySlides: WhySlide[] = [
   },
   {
     id: "slide-2",
-    title: "2. Market Power",
+    title: "Market Power",
     descriptionLines: [
       "The largest bindable carrier network in the market means",
       "Chase inherits access on day one, instead of negotiating",
@@ -50,7 +50,7 @@ const whySlides: WhySlide[] = [
   },
   {
     id: "slide-3",
-    title: "3. Carrier Knowledge",
+    title: "Carrier Knowledge",
     descriptionLines: [
       "60+ live integrations and deep institutional know-how mean",
       "CoverForce launches in weeks - on rails already built",
@@ -62,7 +62,7 @@ const whySlides: WhySlide[] = [
   },
   {
     id: "slide-4",
-    title: "4. Security & Resilience",
+    title: "Security & Resilience",
     descriptionLines: [
       "SOC 2 Type II certified, cloud-native, and built for enterprise scale -",
       "giving Chase infrastructure that's secure, resilient, and ready",
@@ -74,7 +74,7 @@ const whySlides: WhySlide[] = [
   },
   {
     id: "slide-5",
-    title: "5. Recognized excellence and innovation",
+    title: "Recognized excellence and innovation",
     descriptionLines: [
       "Named to the 2025 CB Insights Insurtech 50 - an annual list honoring",
       "the world's most innovative and high-impact insurtech companies",

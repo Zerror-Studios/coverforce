@@ -686,13 +686,13 @@ const Integration = () => {
                   ref={descRef}
                   className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
                 >
-                  The universal index of CoverForce integrations - carriers, AMS,
-                  premium finance, E&amp;S compliance, and AI in one place.
+                  The universal index of accessible integrations - carriers, AMS,
+                  premium finance, E&S compliance, and All in one place.
                 </p>
               </div>
               <p className="hidden max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:block lg:text-right">
-                The universal index of CoverForce integrations - carriers, AMS,
-                premium finance, E&amp;S compliance, and AI in one place.
+              The universal index of accessible integrations - carriers, AMS,
+              premium finance, E&S compliance, and All in one place.
               </p>
             </div>
 

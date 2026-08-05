@@ -56,7 +56,7 @@ const DataAdvantage = () => {
           <div className="grid gap-5 md:grid-cols-2 md:gap-6 md:items-stretch">
             {/* Underwriting data retention */}
             <article
-              className="relative flex min-h-[28rem] w-full flex-col overflow-hidden rounded-sm text-white md:min-h-[36rem] lg:min-h-[37rem]"
+              className="relative flex min-h-[24rem] w-full flex-col overflow-hidden rounded-sm text-white md:min-h-[30rem] lg:min-h-[32rem]"
               style={{ background: CARD_BACKGROUND_STYLES.wholesaler }}
             >
               <div className="relative z-10 flex flex-1 flex-col justify-between gap-8 p-6 md:p-8 lg:p-10">
@@ -79,7 +79,7 @@ const DataAdvantage = () => {
             </article>
 
             {/* Placement / decline intelligence - keep RHS video */}
-            <article className="relative flex min-h-[28rem] w-full flex-col justify-between overflow-hidden rounded-sm p-6 md:min-h-[36rem] md:p-8 lg:min-h-[37rem] lg:p-10">
+            <article className="relative flex min-h-[24rem] w-full flex-col justify-between overflow-hidden rounded-sm p-6 md:min-h-[30rem] md:p-8 lg:min-h-[32rem] lg:p-10">
               <video
                 src="/carrier.mp4"
                 autoPlay
