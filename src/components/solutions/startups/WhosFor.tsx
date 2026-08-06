@@ -4,7 +4,7 @@ import { useRef, type ComponentType } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Building2, Rocket, Briefcase } from "lucide-react";
+import { Rocket } from "lucide-react";
 import Container from "@/components/common/Container";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import {
@@ -13,6 +13,45 @@ import {
 } from "@/data/wayCardStyles";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const CustomIncubatedSproutIcon = ({ className}: { className?: string; strokeWidth?: number }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={`${className || ""} scale-[1.2]`}
+  >
+    <path d="M3 20h18" />
+    <path d="M8 20v-2a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    <path d="M12 16v-5" />
+    <path d="M12 11C9.5 11 8 9.5 8 8c1.5 0 4 1.5 4 3z" />
+    <path d="M12 11c2.5 0 4-1.5 4-3-1.5 0-4 1.5-4 3z" />
+    <path d="M5 20V10a7 7 0 0 1 14 0v10" />
+  </svg>
+);
+
+const CustomSproutIcon = ({ className}: { className?: string; strokeWidth?: number }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={`${className || ""} scale-[1.2]`}
+  >
+    <path d="M4 20h16" />
+    <path d="M7 20v-2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2" />
+    <path d="M12 16v-6" />
+    <path d="M12 10C9 10 7 8 7 6c2 0 5 2 5 4z" />
+    <path d="M12 10c3 0 5-2 5-4-2 0-5 2-5 4z" />
+  </svg>
+);
 
 type AudienceCard = {
   number: string;
@@ -36,7 +75,7 @@ const audienceCards: AudienceCard[] = [
     title: ["Incubated", "startups"],
     description:
       "Your company started inside a venture studio, foundry, or company builder and is now ready to launch or grow.",
-    Icon: Building2,
+    Icon: CustomIncubatedSproutIcon,
     background: "wholesaler",
   },
   {
@@ -44,7 +83,7 @@ const audienceCards: AudienceCard[] = [
     title: ["New", "brokerages"],
     description:
       "You're starting a brokerage, writing your first policies, or growing an early book of business.",
-    Icon: Briefcase,
+    Icon: CustomSproutIcon,
     background: "broker",
   },
 ];
@@ -80,7 +119,7 @@ function AudienceCardItem({
           </h3>
           <Icon
             className="mt-1 size-6 shrink-0 text-white/85 md:size-7"
-            strokeWidth={1.75}
+            strokeWidth={1.5}
             aria-hidden
           />
         </div>
@@ -177,7 +216,7 @@ const WhosFor = () => {
               ref={descRef}
               className="mt-4 max-w-md font-sans text-sm font-regular leading-[1.4] text-[#D1D1D1] md:mt-5 md:text-[1.125rem]"
             >
-            Built for founders who are serious about insurance. If you meet the criteria, you're welcome to apply
+              Built for founders who are serious about insurance. If you meet the criteria, you're welcome to apply
             </p>
           </div>
 

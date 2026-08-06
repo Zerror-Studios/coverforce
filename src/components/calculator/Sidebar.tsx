@@ -79,17 +79,15 @@ function SidebarAccordion({
           {title}
         </span>
         <ChevronDown
-          className={`size-4 shrink-0 text-[#8A8A8A] transition-transform duration-300 ease-out ${
-            open ? "rotate-180" : ""
-          }`}
+          className={`size-4 shrink-0 text-[#8A8A8A] transition-transform duration-300 ease-out ${open ? "rotate-180" : ""
+            }`}
           aria-hidden
         />
       </button>
 
       <div
-        className={`grid transition-[grid-template-rows] duration-300 ease-out ${
-          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-        }`}
+        className={`grid transition-[grid-template-rows] duration-300 ease-out ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          }`}
       >
         <div className="overflow-hidden">
           <div className="px-1 pb-4 pt-1">{children}</div>
@@ -112,9 +110,8 @@ function SegmentButton({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-md border px-2.5 py-1.5 font-heading text-xs font-medium tracking-tight transition-colors ${
-        active ? calcSegmentActive : calcSegmentIdle
-      }`}
+      className={`rounded-md border px-2.5 py-1.5 font-heading text-xs font-medium tracking-tight transition-colors ${active ? calcSegmentActive : calcSegmentIdle
+        }`}
     >
       {children}
     </button>
@@ -284,13 +281,13 @@ export default function Sidebar({
         <p className={`mb-2 ${calcEyebrow}`}>
           Commercial lines - CF can help
         </p>
-        <div className="mb-4 flex flex-col gap-1.5 font-sans">
+        <div className="mb-4 flex flex-col  font-sans">
           {LOB_COMMERCIAL.map((lob) => {
             const st = inputs.commercialLobs[lob.id] || { on: true, pct: lob.pct };
             return (
               <label
                 key={lob.id}
-                className="flex cursor-pointer select-none items-center gap-2 rounded-md p-1.5 hover:bg-[#F7F7F7]"
+                className="flex cursor-pointer select-none items-center gap-2 rounded-sm p-1.5 hover:bg-[#F7F7F7]"
               >
                 <input
                   type="checkbox"
@@ -301,7 +298,7 @@ export default function Sidebar({
                 <span className="flex-1 text-xs font-medium text-[#444444]">
                   {lob.label}
                 </span>
-                <div className="flex items-center gap-1 border-l border-[#535353]/10 pl-2">
+                <div className="flex items-center gap-1 border border-[#535353]/10 px-1 py-0.5 rounded-xs">
                   <input
                     type="number"
                     min={0}
@@ -321,24 +318,24 @@ export default function Sidebar({
         <p className={`mb-2 mt-4 ${calcEyebrow}`}>
           Personal lines - quantify pain only
         </p>
-        <div className="flex flex-col gap-1.5 font-sans">
+        <div className="flex flex-col  font-sans">
           {LOB_PERSONAL.map((lob) => {
             const st = inputs.personalLobs[lob.id] || { on: true, pct: lob.pct };
             return (
               <label
                 key={lob.id}
-                className="flex cursor-pointer select-none items-center gap-2 rounded-md p-1.5 hover:bg-[#F7F7F7]"
+                className="flex cursor-pointer select-none items-center gap-2 rounded-sm p-1.5 hover:bg-[#F7F7F7]"
               >
                 <input
                   type="checkbox"
                   className="size-3.5 shrink-0 rounded border-[#535353]/25 accent-[#444444]"
                   checked={st.on}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
                 <span className="flex-1 text-xs font-medium text-[#444444]">
                   {lob.label}
                 </span>
-                <div className="flex items-center gap-1 border-l border-[#535353]/15 pl-2">
+                <div className="flex items-center gap-1 border border-[#535353]/15 px-1 py-0.5 rounded-xs">
                   <input
                     type="number"
                     min={0}
@@ -358,21 +355,21 @@ export default function Sidebar({
         <p className={`mb-2 mt-4 ${calcEyebrow}`}>
           Other line of business
         </p>
-        <div className="flex items-center gap-2 font-sans">
+        <div className=" w-full   grid grid-cols-7 gap-x-1 font-sans">
           <input
             type="text"
             placeholder="e.g. Marine Cargo..."
-            className="flex-1 rounded-lg border border-[#535353]/10 bg-white p-2 text-xs text-[#444444] outline-none transition-colors placeholder:text-[#8A8A8A] focus:border-[#444444]"
+            className=" col-span-5  rounded-sm border border-[#535353]/10 bg-white p-2 text-xs text-[#444444] outline-none transition-colors placeholder:text-[#8A8A8A] focus:border-[#444444]"
             value={inputs.otherLobName}
             onChange={(e) => updateInput("otherLobName", e.target.value)}
           />
-          <div className="flex items-center gap-1 rounded-lg border border-[#535353]/10 bg-white px-2 py-1 focus-within:border-[#444444]">
+          <div className=" col-span-2 flex items-center   pr-2  rounded-sm border border-[#535353]/10 bg-white  focus-within:border-[#444444]">
             <input
               type="number"
               min={0}
               max={100}
               placeholder="0"
-              className="w-6 border-none bg-transparent p-0 text-right text-xs font-bold text-[#444444] outline-none"
+              className=" w-[90%] pl-2  border-none bg-transparent  text-xs font-bold text-[#444444] outline-none"
               value={inputs.otherLobPct || ""}
               onChange={(e) => updateInput("otherLobPct", parseFloat(e.target.value) || 0)}
             />
@@ -386,7 +383,7 @@ export default function Sidebar({
             checked={inputs.otherLobCF}
             onChange={(e) => updateInput("otherLobCF", e.target.checked)}
           />
-          CF helps
+          CoverForce helps
         </label>
       </SidebarAccordion>
 

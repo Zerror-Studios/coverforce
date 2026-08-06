@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, Suspense } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { useTexture, Decal, Line } from "@react-three/drei";
 
@@ -10,11 +10,11 @@ function triggerCenterHit(time: number) {
     hitState.lastHitTime = time;
 }
 
-function LogoMaterial({ texture }: { texture: THREE.Texture }) {
+function LogoMaterial({ texture, tintColor = '#ffffff' }: { texture: THREE.Texture, tintColor?: string }) {
     const uniforms = React.useMemo(() => ({
         uMap: { value: texture },
-        uColor: { value: new THREE.Color('#ffffff') }
-    }), [texture]);
+        uColor: { value: new THREE.Color(tintColor) }
+    }), [texture, tintColor]);
 
     return (
         <shaderMaterial
@@ -51,13 +51,24 @@ function LogoMaterial({ texture }: { texture: THREE.Texture }) {
     );
 }
 
-function AnimatedLine({ start, end, color, isNorthern }: { start: THREE.Vector3, end: THREE.Vector3, color: string, isNorthern: boolean }) {
+function AnimatedLine({ start, end, color, isNorthern, curveOffset = 0 }: { start: THREE.Vector3, end: THREE.Vector3, color: string, isNorthern: boolean, curveOffset?: number }) {
     const numDots = 40;
     const meshRef = useRef<THREE.InstancedMesh>(null!);
     const colorObj = React.useMemo(() => new THREE.Color(color), [color]);
 
-    const direction = React.useMemo(() => new THREE.Vector3().subVectors(end, start), [start, end]);
     const dummy = React.useMemo(() => new THREE.Object3D(), []);
+
+    const curve = React.useMemo(() => {
+        const mid = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.6);
+        const nonOrigin = start.lengthSq() > 0.1 ? start : end;
+        let up = new THREE.Vector3(0, 1, 0);
+        if (Math.abs(nonOrigin.clone().normalize().y) > 0.99) {
+            up = new THREE.Vector3(1, 0, 0);
+        }
+        const axis = new THREE.Vector3().crossVectors(nonOrigin, up).normalize();
+        mid.add(axis.multiplyScalar(curveOffset));
+        return new THREE.QuadraticBezierCurve3(start, mid, end);
+    }, [start, end, curveOffset]);
 
     const timeOffset = React.useMemo(() => Math.random() * 2, []);
     const prevT = useRef(0);
@@ -93,7 +104,8 @@ function AnimatedLine({ start, end, color, isNorthern }: { start: THREE.Vector3,
                 progress = 0;
             }
 
-            dummy.position.copy(start).add(direction.clone().multiplyScalar(progress));
+            curve.getPoint(progress, tempVec);
+            dummy.position.copy(tempVec);
             dummy.scale.setScalar(scale);
 
             dummy.updateMatrix();
@@ -155,8 +167,8 @@ function AnimatedLine({ start, end, color, isNorthern }: { start: THREE.Vector3,
     }, [colorObj]);
 
     const lineGeo = React.useMemo(() => {
-        return new THREE.BufferGeometry().setFromPoints([start, end]);
-    }, [start, end]);
+        return new THREE.BufferGeometry().setFromPoints(curve.getPoints(50));
+    }, [curve]);
 
     const trackLine = React.useMemo(() => {
         return new THREE.Line(lineGeo, trackMaterial);
@@ -208,7 +220,7 @@ function getLogoPosition(index: number, total: number, isNorthern: boolean, radi
     return new THREE.Vector3(x, y, z);
 }
 
-function LogoPlacer({ urls, isNorthern, radius, color }: { urls: string[], isNorthern: boolean, radius: number, color: string }) {
+function LogoPlacer({ urls, isNorthern, radius, color, tintColor = '#ffffff' }: { urls: string[], isNorthern: boolean, radius: number, color: string, tintColor?: string }) {
     const textures = useTexture(urls) as THREE.Texture[];
     return (
         <>
@@ -223,18 +235,17 @@ function LogoPlacer({ urls, isNorthern, radius, color }: { urls: string[], isNor
                 dummy.lookAt(position.clone().multiplyScalar(2));
 
                 const origin = new THREE.Vector3(0, 0, 0);
-                const start = isNorthern ? position : origin;
-                const end = isNorthern ? origin : position;
 
                 return (
                     <React.Fragment key={urls[i]}>
-                        <AnimatedLine start={start} end={end} color={color} isNorthern={isNorthern} />
+                        <AnimatedLine start={position} end={origin} color={color} isNorthern={isNorthern} curveOffset={0.2} />
+                        <AnimatedLine start={origin} end={position} color={color} isNorthern={isNorthern} curveOffset={-0.2} />
                         <Decal
                             position={position}
                             rotation={dummy.rotation}
                             scale={[width, height, 0.5]}
                         >
-                            <LogoMaterial texture={texture} />
+                            <LogoMaterial texture={texture} tintColor={tintColor} />
                         </Decal>
                     </React.Fragment>
                 );
@@ -260,7 +271,6 @@ function CenterLogo() {
     useFrame((state, delta) => {
         const s = springRef.current;
         if (hitState.lastHitTime !== s.prevHit) {
-            s.velocity += 0.15; // Bounce impulse
             s.prevHit = hitState.lastHitTime;
 
             // Trigger ripple
@@ -273,16 +283,6 @@ function CenterLogo() {
                 }
             });
             rippleStates.current[oldestIdx].startTime = state.clock.elapsedTime;
-        }
-
-        // Critically damped spring for bubble effect
-        const force = (1 - s.scale) * 40;
-        const damping = s.velocity * 10;
-        s.velocity += (force - damping) * delta;
-        s.scale += s.velocity * delta;
-
-        if (groupRef.current) {
-            groupRef.current.scale.setScalar(s.scale);
         }
 
         // Animate ripples
@@ -335,8 +335,9 @@ function CenterLogo() {
     );
 }
 
-function RotatingGlobe() {
+function RotatingGlobe({ logoColor = 'light' }: { logoColor?: 'light' | 'dark' }) {
     const meshRef = useRef<THREE.Mesh>(null!);
+    const tintColor = logoColor === 'dark' ? '#000000' : '#ffffff';
 
     useFrame((state, delta) => {
         meshRef.current.rotation.y -= delta * 0.1;
@@ -364,7 +365,7 @@ function RotatingGlobe() {
                 '#include <color_fragment>',
                 `#include <color_fragment>
                 vec3 northColor = vec3(1.0, 0.419, 0.207); // #FF6B35
-                vec3 southColor = vec3(0.29, 0.87, 0.607); // #4ADE9B
+                vec3 southColor = vec3(0.29, 0.686, 1.0); // #4AAFFF
                 float yNorm = clamp(vPos.y / 1.95, -1.0, 1.0);
                 
                 // Smooth transition between colors across the equator
@@ -407,7 +408,7 @@ function RotatingGlobe() {
                 '#include <color_fragment>',
                 `#include <color_fragment>
                 vec3 northColor = vec3(1.0, 0.419, 0.207); // #FF6B35
-                vec3 southColor = vec3(0.29, 0.87, 0.607); // #4ADE9B
+                vec3 southColor = vec3(0.29, 0.686, 1.0); // #4AAFFF
                 float yNorm = clamp(vPos.y / 1.95, -1.0, 1.0);
                 
                 float blend = smoothstep(-0.1, 0.1, yNorm);
@@ -434,23 +435,31 @@ function RotatingGlobe() {
             </points>
 
             <Suspense fallback={null}>
-                <LogoPlacer urls={CARRIER_LOGO_POOL} isNorthern={true} radius={1.95} color="#FF6B35" />
-                <LogoPlacer urls={BROKER_LOGO_POOL} isNorthern={false} radius={1.95} color="#4ADE9B" />
+                <LogoPlacer urls={CARRIER_LOGO_POOL} isNorthern={true} radius={1.95} color="#FF6B35" tintColor={tintColor} />
+                <LogoPlacer urls={BROKER_LOGO_POOL} isNorthern={false} radius={1.95} color="#4AAFFF" tintColor={tintColor} />
             </Suspense>
         </mesh>
     );
 }
 
-export default function RequestGlobe2() {
+function ResponsiveScene({ children }: { children: React.ReactNode }) {
+    const { viewport } = useThree();
+    const scale = Math.min(1, viewport.width / 4.5);
+    return <group scale={scale}>{children}</group>;
+}
+
+export default function RequestGlobe2({ logoColor = 'light' }: { logoColor?: 'light' | 'dark' }) {
     return (
-        <div className="w-full h-[40rem] flex items-center justify-center pointer-events-none">
+        <div className="w-full h-[25rem] sm:h-[30rem] md:h-[40rem] flex items-center justify-center pointer-events-none">
             <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
                 <ambientLight intensity={0.5} />
                 <directionalLight position={[10, 10, 10]} intensity={1} />
-                <RotatingGlobe />
-                <Suspense fallback={null}>
-                    <CenterLogo />
-                </Suspense>
+                <ResponsiveScene>
+                    <RotatingGlobe logoColor={logoColor} />
+                    <Suspense fallback={null}>
+                        <CenterLogo />
+                    </Suspense>
+                </ResponsiveScene>
             </Canvas>
         </div>
     );

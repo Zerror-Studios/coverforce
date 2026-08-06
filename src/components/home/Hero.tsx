@@ -18,6 +18,7 @@ import { animateLoaderWordsWave } from "@/lib/animateSplitTextReveal";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import { GdpCounter } from "./GdpCounter";
 import NetworkBand from "@/components/wheel/NetworkBand";
+import RequestGlobe2 from "./Globe/RequestGlobe2";
 
 const INTRO_TITLE_LINES = [
   ["AI-Native", "Insurance"],
@@ -553,7 +554,7 @@ const Hero = () => {
             data-hero-reveal
             className="relative z-10 mx-auto w-full motion-reduce:translate-y-0 motion-reduce:opacity-100"
           >
-            <NetworkBand showHeader={false} />
+          <RequestGlobe2/>
           </div>
         </div>
 

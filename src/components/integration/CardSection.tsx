@@ -15,6 +15,7 @@ import {
   IntegrationAutomationBg,
   IntegrationCodeTypingBg,
 } from "@/components/integration/IntegrationStatCardBackgrounds";
+import RequestGlobe2 from "../home/Globe/RequestGlobe2";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -79,40 +80,7 @@ const CardSection = () => {
           </div>
 
           <div className="relative mt-10 w-full md:mt-14">
-            <div className="relative z-10 mx-auto aspect-square w-full max-w-150 lg:max-w-145">
-              <ToolWheel className="h-full w-full max-w-none" showBackground />
-            </div>
-            <div className="relative z-10 mt-6 flex flex-col items-center gap-2.5 text-sm text-[#4F4F4F] md:absolute md:right-0 md:top-1/2 md:mt-0 md:-translate-y-1/2 md:items-start lg:right-4 xl:right-8">
-              {[
-                {
-                  label: "Carriers & MGAs",
-                  background: CARD_VERTICAL_BACKGROUND_STYLES.carrier,
-                },
-                {
-                  label: "Agency Management",
-                  background: CARD_VERTICAL_BACKGROUND_STYLES.broker,
-                },
-                {
-                  label: "Finance & Compliance",
-                  background: CARD_VERTICAL_BACKGROUND_STYLES.developer,
-                },
-                {
-                  label: "Market Access",
-                  background: CARD_VERTICAL_BACKGROUND_STYLES.startup,
-                },
-              ].map((item) => (
-                <span
-                  key={item.label}
-                  className="flex items-center gap-1.5 whitespace-nowrap"
-                >
-                  <span
-                    className="inline-block size-2.5 shrink-0 rounded-full"
-                    style={{ background: item.background }}
-                  />
-                  {item.label}
-                </span>
-              ))}
-            </div>
+            <RequestGlobe2 logoColor="dark" />
           </div>
 
           <div
