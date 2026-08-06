@@ -33,7 +33,7 @@ type StatItem = {
 
 const stats: StatItem[] = [
   { value: "350,000+", label: "AI-labeled Carrier Interactions" },
-  { value: "40+", label: "Carrier & MGA Integrations" },
+  { value: "60+", label: "Carrier & MGA Integrations" },
   { value: "15,000+", label: "Agencies on Platform" },
   { value: "110,000+", label: "Submissions" },
 ];
