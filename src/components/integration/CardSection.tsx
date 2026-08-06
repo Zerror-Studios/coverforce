@@ -75,17 +75,41 @@ const CardSection = () => {
       className="relative overflow-hidden bg-white text-[#0a143b]"
     >
       <Container borderColor="#53535380">
-        <div className="py-12 md:py-20 lg:py-24">
-          <div ref={headerRef} className="text-center">
+        <div className="py-12 md:py-20 lg:py-24 relative">
+          <div className="relative">
+          <div ref={headerRef} className=" w-full lg:absolute left-0 items-center  top-1/2 lg:-translate-y-1/2 md:flex justify-between">
             <h2
               ref={headingRef}
-              className="mx-auto max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+              className=" text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
             >
-              <span data-split>The best integration stack for insurance.</span>
+              <span data-split>The best integration <br  className="max-sm:hidden"/> stack for insurance.</span>
             </h2>
+            <div className="max-sm:text-sm max-sm:mt-5">
+              <div className="space-y-1">
+                {[
+                  {
+                    label: "Carriers",
+                    background: CARD_VERTICAL_BACKGROUND_STYLES.carrier,
+                  },
+                  {
+                    label: "Distributors",
+                    background: CARD_VERTICAL_BACKGROUND_STYLES.startup,
+                  },
+                ].map((item) => (
+                  <span
+                    key={item.label}
+                    className="flex items-center gap-1.5 whitespace-nowrap"
+                  >
+                    <span
+                      className="inline-block size-2.5 shrink-0 rounded-full"
+                      style={{ background: item.background }}
+                    />
+                    {item.label}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
-
-          <div className="relative mt-10 w-full md:mt-14">
             <RequestGlobe2 logoColor="dark" />
           </div>
 
