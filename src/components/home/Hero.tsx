@@ -19,6 +19,7 @@ import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import { GdpCounter } from "./GdpCounter";
 import NetworkBand from "@/components/wheel/NetworkBand";
 import RequestGlobe2 from "./Globe/RequestGlobe2";
+import { CARD_VERTICAL_BACKGROUND_STYLES } from "@/data/wayCardStyles";
 
 const INTRO_TITLE_LINES = [
   ["AI-Native", "Insurance"],
@@ -352,7 +353,7 @@ const Hero = () => {
       data-intro-reveal={introEnabled ? "pending" : undefined}
       className={`relative isolate overflow-hidden ${theme.sectionText} ${sectionBgClass}`}
     >
-      <Container className="relative z-10 px-0!">
+      <Container className="relative z-10">
 
 
         {/* ── 100vh block: heading + button + network ── */}
@@ -374,7 +375,7 @@ const Hero = () => {
               >
                 <div className={`flex max-w-[18rem] flex-col items-center gap-1 text-[0.625rem] font-sans tracking-wide sm:max-w-none sm:text-xs md:inline-flex md:flex-row md:gap-2 ${theme.gdpText}`}>
                   <span className="text-center sm:whitespace-nowrap">Quoted premium through CoverForce</span>
-                  <GdpCounter/>
+                  <GdpCounter />
                 </div>
               </div>
               <div
@@ -423,9 +424,8 @@ const Hero = () => {
             <div
               ref={buttonsRef}
               data-hero-reveal
-              className={`mt-8 flex w-full max-w-[21rem] flex-row items-center justify-center gap-2.5 sm:mt-10 sm:max-w-none sm:gap-4 ${
-                introUiLocked ? "pointer-events-none" : ""
-              }`}
+              className={`mt-8 flex w-full max-w-[21rem] flex-row items-center justify-center gap-2.5 sm:mt-10 sm:max-w-none sm:gap-4 ${introUiLocked ? "pointer-events-none" : ""
+                }`}
             >
               <RequestDemoButton balanced surface="on-dark" className="!min-w-0 !px-3.5 sm:!min-w-[148px] sm:!px-5">
                 Contact us
@@ -445,9 +445,8 @@ const Hero = () => {
           <div
             ref={statsWrapRef}
             data-hero-reveal
-            className={`relative motion-reduce:opacity-100 ${
-              introUiLocked ? "pointer-events-none" : ""
-            }`}
+            className={`relative motion-reduce:opacity-100 ${introUiLocked ? "pointer-events-none" : ""
+              }`}
           >
             <SectionRadialGlow className="absolute left-1/2 top-20 z-0 -translate-x-1/2 -translate-y-1/3 md:top-20" />
 
@@ -516,16 +515,14 @@ const Hero = () => {
                   className="flex flex-1 flex-col items-center gap-2 px-8"
                 >
                   <p
-                    className={`font-heading text-3xl font-regular tracking-tight transition-colors lg:text-4xl ${
-                      index === activeIndex ? theme.statValueActive : theme.statValueInactive
-                    }`}
+                    className={`font-heading text-3xl font-regular tracking-tight transition-colors lg:text-4xl ${index === activeIndex ? theme.statValueActive : theme.statValueInactive
+                      }`}
                   >
                     {stat.value}
                   </p>
                   <p
-                    className={`text-center font-sans text-lg font-regular leading-relaxed transition-colors ${
-                      index === activeIndex ? theme.statLabelActive : theme.statLabelInactive
-                    }`}
+                    className={`text-center font-sans text-lg font-regular leading-relaxed transition-colors ${index === activeIndex ? theme.statLabelActive : theme.statLabelInactive
+                      }`}
                   >
                     {stat.label}
                   </p>
@@ -540,21 +537,48 @@ const Hero = () => {
           ref={networkHeaderRef}
           className="relative w-full pt-4 pb-6 sm:pt-6 sm:pb-8 md:pt-10 md:pb-10 lg:pb-12"
         >
-          <h2
-            ref={networkHeadingRef}
-            className={`relative z-10 mx-auto mb-2 max-w-xl text-center text-2xl font-heading font-medium leading-[1.15] tracking-tight sm:mb-3 sm:text-3xl sm:leading-[1.12] md:mb-4 md:text-4xl lg:mb-5 lg:text-[1.625rem] lg:leading-[1.12] ${theme.titleMuted}`}
-          >
-            <span data-split>
-              Commercial insurance distribution that gets smarter with every
-              transaction
-            </span>
-          </h2>
           <div
             ref={networkRef}
             data-hero-reveal
             className="relative z-10 mx-auto w-full motion-reduce:translate-y-0 motion-reduce:opacity-100"
           >
-          <RequestGlobe2/>
+            <div className=" w-full lg:absolute left-0 items-center  top-1/2 lg:-translate-y-1/2 md:flex justify-between">
+              <h2
+                ref={networkHeadingRef}
+                className={` text-left z-10   text-2xl font-heading font-medium leading-[1.15] tracking-tight sm:text-3xl sm:leading-[1.12]  md:text-4xl  lg:text-[1.625rem] lg:leading-[1.12] ${theme.titleMuted}`}
+              >
+                <span data-split>
+                  Commercial insurance <br className="max-sm:hidden" /> distribution that gets <br className="max-sm:hidden" /> smarter with every <br className="max-sm:hidden" />
+                  transaction
+                </span>
+              </h2>
+              <div className="max-sm:text-sm max-sm:mt-5">
+                <div className="space-y-2">
+                  {[
+                    {
+                      label: "Carriers",
+                      background: CARD_VERTICAL_BACKGROUND_STYLES.carrier,
+                    },
+                    {
+                      label: "Distributors",
+                      background: CARD_VERTICAL_BACKGROUND_STYLES.startup,
+                    },
+                  ].map((item) => (
+                    <span
+                      key={item.label}
+                      className="flex items-center gap-1.5 whitespace-nowrap"
+                    >
+                      <span
+                        className="inline-block size-2.5 shrink-0 rounded-full"
+                        style={{ background: item.background }}
+                      />
+                      {item.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <RequestGlobe2 />
           </div>
         </div>
 

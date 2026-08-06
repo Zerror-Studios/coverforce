@@ -141,10 +141,10 @@ function AnimatedLine({ start, end, color, isNorthern, curveOffset = 0 }: { star
     }, [colorObj]);
 
     const trackMaterial = React.useMemo(() => {
-        const mat = new THREE.LineBasicMaterial({
+        const mat = new THREE.MeshBasicMaterial({
             color: colorObj,
             transparent: true,
-            opacity: 0.15,
+            opacity: 0.35,
             depthTest: false
         });
         mat.onBeforeCompile = (shader) => {
@@ -166,19 +166,19 @@ function AnimatedLine({ start, end, color, isNorthern, curveOffset = 0 }: { star
         return mat;
     }, [colorObj]);
 
-    const lineGeo = React.useMemo(() => {
-        return new THREE.BufferGeometry().setFromPoints(curve.getPoints(50));
+    const trackTubeGeo = React.useMemo(() => {
+        return new THREE.TubeGeometry(curve, 50, 0.004, 8, false);
     }, [curve]);
 
-    const trackLine = React.useMemo(() => {
-        return new THREE.Line(lineGeo, trackMaterial);
-    }, [lineGeo, trackMaterial]);
+    const trackMesh = React.useMemo(() => {
+        return new THREE.Mesh(trackTubeGeo, trackMaterial);
+    }, [trackTubeGeo, trackMaterial]);
 
     return (
         <group>
-            <primitive object={trackLine} />
+            <primitive object={trackMesh} />
             <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, numDots]}>
-                <sphereGeometry args={[0.012, 12, 12]} />
+                <sphereGeometry args={[0.015, 12, 12]} />
                 <primitive object={customMaterial} attach="material" />
             </instancedMesh>
         </group>
@@ -450,7 +450,7 @@ function ResponsiveScene({ children }: { children: React.ReactNode }) {
 
 export default function RequestGlobe2({ logoColor = 'light' }: { logoColor?: 'light' | 'dark' }) {
     return (
-        <div className="w-full h-[25rem] sm:h-[30rem] md:h-[40rem] flex items-center justify-center pointer-events-none">
+        <div className="w-full h-[25rem] sm:h-[30rem] lg:h-[40rem] flex items-center justify-center pointer-events-none">
             <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
                 <ambientLight intensity={0.5} />
                 <directionalLight position={[10, 10, 10]} intensity={1} />
