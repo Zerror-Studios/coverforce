@@ -68,6 +68,7 @@ const launchSteps: LaunchStep[] = [
 // Single, consistent color treatment for every step (no more per-step colors)
 const CARD_BACKGROUND = "linear-gradient(135deg, #0a143b 0%, #1c2b63 100%)";
 const TAB_ACCENT = "#0a143b";
+const COMPLETE_ACCENT = "#72AF23"; // lime/green used for completed-state checks + progress fill
 
 type LaunchPreviewCardProps = {
   step: LaunchStep;
@@ -125,6 +126,25 @@ function LaunchPreviewCard({ step, stepIndex, onPrevious }: LaunchPreviewCardPro
   );
 }
 
+function CheckIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      className="size-4"
+      aria-hidden
+    >
+      <path
+        d="M5 13l4 4L19 7"
+        stroke="currentColor"
+        strokeWidth={2.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 const LAUNCH_SECTION_TITLE = "Steps to Launch a Digital Brokerage";
 const LAUNCH_SECTION_DESCRIPTION =
   "From idea to first bind in five easy steps";
@@ -152,6 +172,10 @@ const Launch = () => {
     setActiveStep(index);
   };
 
+  // Progress reflects how far through the flow the user has clicked -
+  // completed steps + the currently active one count toward fill.
+  const progressPercent = ((activeStep + 1) / launchSteps.length) * 100;
+
   return (
     <section ref={sectionRef} className="bg-white text-[#0a143b]">
       <style>{`
@@ -162,6 +186,14 @@ const Launch = () => {
         .launch-preview-card .way-card-body {
           transition: transform 800ms cubic-bezier(0.165, 0.84, 0.44, 1);
           transform: translate3d(0, 0, 0) scale(1);
+        }
+
+        .launch-progress-fill {
+          transition: width 500ms cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .launch-tab-icon-inner {
+          transition: background-color 300ms ease, color 300ms ease, transform 300ms ease;
         }
       `}</style>
 
@@ -199,15 +231,16 @@ const Launch = () => {
         </div>
 
         <div className="hidden grid-cols-7 items-stretch gap-16 pb-24 xl:gap-23 lg:grid">
-          <div className="flex h-full min-h-0 lg:col-span-3">
+          <div className="flex h-full min-h-0 flex-col justify-center lg:col-span-3">
             <div
               role="tablist"
               aria-label="Launch steps"
               aria-orientation="vertical"
-              className="flex h-full w-full max-w-sm flex-col justify-center gap-4"
+              className="flex w-full max-w-sm flex-col gap-4"
             >
               {launchSteps.map((step, index) => {
                 const isActive = activeStep === index;
+                const isComplete = index < activeStep;
 
                 return (
                   <button
@@ -225,24 +258,44 @@ const Launch = () => {
                     style={isActive ? { background: TAB_ACCENT } : undefined}
                   >
                     <span
-                      className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full font-sans text-sm font-medium transition-all duration-300 ${isActive
-                          ? "bg-white text-[#0a143b]"
-                          : "bg-[#0a143b] text-white"
+                      className={`launch-tab-icon-inner mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full font-sans text-sm font-medium ${isComplete
+                          ? "text-white"
+                          : isActive
+                            ? "bg-white text-[#0a143b]"
+                            : "bg-[#0a143b] text-white"
                         }`}
+                      style={isComplete ? { backgroundColor: COMPLETE_ACCENT } : undefined}
                     >
-                      {index + 1}
+                      {isComplete ? <CheckIcon /> : index + 1}
                     </span>
                     <span
-                      className={`min-w-0 flex-1 font-sans text-base leading-snug transition-colors duration-300 ${isActive
-                          ? "font-semibold text-white"
-                          : "font-regular text-[#0a143b]"
+                      className={`min-w-0 flex-1 font-sans text-base leading-snug transition-colors duration-300 ${isComplete
+                          ? "font-medium"
+                          : isActive
+                            ? "font-semibold text-white"
+                            : "font-regular text-[#0a143b]"
                         }`}
+                      style={isComplete ? { color: COMPLETE_ACCENT } : undefined}
                     >
                       {step.title}
                     </span>
                   </button>
                 );
               })}
+            </div>
+
+            <div
+              className="mt-6 h-1.5 w-full max-w-sm overflow-hidden rounded-full bg-[#0a143b]/10"
+              role="progressbar"
+              aria-valuenow={activeStep + 1}
+              aria-valuemin={1}
+              aria-valuemax={launchSteps.length}
+              aria-label="Launch progress"
+            >
+              <div
+                className="launch-progress-fill h-full rounded-full"
+                style={{ width: `${progressPercent}%`, backgroundColor: COMPLETE_ACCENT }}
+              />
             </div>
           </div>
 

@@ -25,13 +25,18 @@ type Carrier = {
   id: string;
   name: string;
   logo?: string;
+  // "E&S" = Excess & Surplus lines - a carrier's non-admitted paper,
+  // used for higher-risk/non-standard accounts their standard admitted
+  // paper won't write. Comes straight from the API; this is why a
+  // carrier like Coalition can appear twice (once admitted, once E&S).
+  badge?: "E&S";
 };
 
 type MatchedCarrier = Carrier & {
   status: AppetiteStatus;
 };
 
-const MAX_VISIBLE = 15;
+const MAX_VISIBLE = 16;
 const MAX_VISIBLE_RESULTS = 7;
 
 function PolicyTypeTabs({
@@ -80,11 +85,34 @@ function PolicyTypeTabs({
   );
 }
 
-function CarrierLogoCell({ carrier }: { carrier: Carrier }) {
+type CarrierAccent = "green" | "red";
+
+const ACCENT_STYLES: Record<CarrierAccent, { border: string }> = {
+  green: { border: "#72AF23" },
+  red: { border: "#DC2626" },
+};
+
+function CarrierLogoCell({
+  carrier,
+  accent,
+}: {
+  carrier: Carrier;
+  accent?: CarrierAccent;
+}) {
   const [showFallback, setShowFallback] = useState(!carrier.logo);
+  const borderColor = accent ? ACCENT_STYLES[accent].border : "#ECEEF2";
 
   return (
-    <div className="flex flex-col items-center justify-center gap-1.5 rounded-lg border border-[#ECEEF2] bg-white px-2 py-3">
+    <div
+      className="relative flex flex-col items-center justify-center gap-1.5 rounded-lg border bg-white px-2 py-3"
+      style={{ borderColor }}
+    >
+      {carrier.badge ? (
+        <span className="absolute left-2 top-2 rounded bg-[#F4A261] px-1.5 py-0.5 font-mono text-[0.5625rem] font-semibold uppercase leading-none tracking-wide text-white">
+          {carrier.badge}
+        </span>
+      ) : null}
+
       {showFallback || !carrier.logo ? (
         <span className="font-heading text-[10px] font-semibold text-[#2A297C] md:text-xs">
           {carrier.name}
@@ -103,19 +131,44 @@ function CarrierLogoCell({ carrier }: { carrier: Carrier }) {
   );
 }
 
+const WRAPPER_GRADIENT_ORANGE =
+  "linear-gradient(135deg, #E66F35 0%, #D62B1C 100%)";
+const WRAPPER_GRADIENT_BLUE =
+  "linear-gradient(135deg, #322696 0%, #322696 48%, #5E3FD0 100%)";
+
 function CarrierGrid({
   carriers,
   maxVisible = MAX_VISIBLE,
+  directPaginate = false,
+  accent,
+  gradientWrapper = false,
+  isBlue = false,
 }: {
   carriers: Carrier[];
   maxVisible?: number;
+  // When true, skips the click-to-expand "View more" tile and instead
+  // paginates straight away with prev/next arrows. Used for the full
+  // carrier list shown before any filters are selected, so e.g. 32
+  // logos become two pages of 16 with just arrow navigation.
+  directPaginate?: boolean;
+  // Colors every logo tile's outline - green for in-appetite results,
+  // red for out-of-appetite results. Omitted for the neutral default list.
+  accent?: CarrierAccent;
+  // Wraps the tile grid in a gradient background - used for the
+  // default (pre-filter) logo grid and the in-appetite results.
+  gradientWrapper?: boolean;
+  // Swaps the wrapper gradient to the blue/indigo variant used on the
+  // "Appetite Checker" (isBlue) eyebrow variant of this section.
+  isBlue?: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [page, setPage] = useState(0);
 
-  // Once expanded, each page can use one extra slot
-  // since there's no "View more" tile eating into it.
-  const pageSize = maxVisible + 1;
+  // Once expanded (click-to-expand mode), each page can use one extra
+  // slot since there's no "View more" tile eating into it. In
+  // direct-paginate mode there's never a "View more" tile, so every
+  // page can use the full maxVisible slots from the start.
+  const pageSize = directPaginate ? maxVisible : maxVisible + 1;
 
   // Reset pagination whenever the underlying list changes
   // (e.g. new appetite check results come in)
@@ -127,7 +180,8 @@ function CarrierGrid({
   const hasMore = carriers.length > maxVisible;
   const totalPages = Math.max(1, Math.ceil(carriers.length / pageSize));
 
-  const visible = expanded
+  const isPaginated = directPaginate || expanded;
+  const visible = isPaginated
     ? carriers.slice(page * pageSize, page * pageSize + pageSize)
     : carriers.slice(0, maxVisible);
 
@@ -136,12 +190,19 @@ function CarrierGrid({
 
   return (
     <div>
-      <div className="grid grid-cols-4 gap-2 md:gap-2.5">
+      <div
+        className={`grid grid-cols-4 gap-2 md:gap-2.5 ${gradientWrapper ? "rounded-xl p-2.5 md:p-3" : ""}`}
+        style={
+          gradientWrapper
+            ? { backgroundImage: isBlue ? WRAPPER_GRADIENT_BLUE : WRAPPER_GRADIENT_ORANGE }
+            : undefined
+        }
+      >
         {visible.map((carrier) => (
-          <CarrierLogoCell key={carrier.id} carrier={carrier} />
+          <CarrierLogoCell key={carrier.id} carrier={carrier} accent={accent} />
         ))}
 
-        {!expanded && hasMore ? (
+        {!directPaginate && !expanded && hasMore ? (
           <button
             type="button"
             onClick={() => setExpanded(true)}
@@ -152,15 +213,19 @@ function CarrierGrid({
         ) : null}
       </div>
 
-      {expanded && hasMore ? (
+      {isPaginated && hasMore ? (
         <div className="mt-2.5 flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => setExpanded(false)}
-            className="font-mono uppercase text-xs tracking-wide font-medium text-[#9CA3AF] transition-colors hover:text-[#5B35E0]"
-          >
-            Show less
-          </button>
+          {directPaginate ? (
+            <span aria-hidden />
+          ) : (
+            <button
+              type="button"
+              onClick={() => setExpanded(false)}
+              className="font-mono uppercase text-xs tracking-wide font-medium text-[#9CA3AF] transition-colors hover:text-[#5B35E0]"
+            >
+              Show less
+            </button>
+          )}
 
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs text-[#9CA3AF]">
@@ -201,6 +266,7 @@ function MatchResultsCard({
   isChecking,
   hasChecked,
   error,
+  isBlue,
 }: {
   policyType: string;
   industry: string;
@@ -211,6 +277,7 @@ function MatchResultsCard({
   isChecking: boolean;
   hasChecked: boolean;
   error: string | null;
+  isBlue: boolean;
 }) {
   const summaryParts = [policyType, industry, state].filter(Boolean);
 
@@ -254,13 +321,16 @@ function MatchResultsCard({
       ) : hasChecked ? (
         <>
           <div className="py-5">
-            <p className="mb-3 font-mono text-sm font-medium uppercase text-[#5F950C]">
+            <p className="mb-3 font-mono text-sm font-medium uppercase text-[#72AF23]">
               IN APPETITE ({inAppetite.length})
             </p>
             {inAppetite.length > 0 ? (
               <CarrierGrid
                 carriers={inAppetite}
                 maxVisible={MAX_VISIBLE_RESULTS}
+                accent="green"
+                gradientWrapper
+                isBlue={isBlue}
               />
             ) : (
               <p className="font-sans text-sm text-[#9CA3AF]">
@@ -270,13 +340,14 @@ function MatchResultsCard({
           </div>
 
           <div className="border-t border-[#ECEEF2] pt-5">
-            <p className="mb-3 font-mono text-sm font-medium uppercase text-[#393939]">
+            <p className="mb-3 font-mono text-sm font-medium uppercase text-[#DC2626]">
               OUT OF APPETITE ({outOfAppetite.length})
             </p>
             {outOfAppetite.length > 0 ? (
               <CarrierGrid
                 carriers={outOfAppetite}
                 maxVisible={MAX_VISIBLE_RESULTS}
+                accent="red"
               />
             ) : (
               <p className="font-sans text-sm text-[#9CA3AF]">
@@ -288,7 +359,12 @@ function MatchResultsCard({
       ) : (
         <div className="py-5">
           {allCarriers.length > 0 ? (
-            <CarrierGrid carriers={allCarriers} />
+            <CarrierGrid
+              carriers={allCarriers}
+              directPaginate
+              gradientWrapper
+              isBlue={isBlue}
+            />
           ) : (
             <div className="flex items-center justify-center py-10">
               <Loader2
@@ -398,6 +474,7 @@ const CarrierMatch = ({
             id?: string;
             name?: string;
             logo?: string;
+            badge?: string;
           }[];
         };
 
@@ -409,6 +486,7 @@ const CarrierMatch = ({
               id: String(carrier.id ?? "").trim(),
               name: String(carrier.name ?? "").trim(),
               logo: carrier.logo ? String(carrier.logo).trim() : undefined,
+              badge: carrier.badge === "E&S" ? ("E&S" as const) : undefined,
             }))
             .filter((carrier) => carrier.id && carrier.name)
         );
@@ -615,6 +693,7 @@ const CarrierMatch = ({
               isChecking={isChecking}
               hasChecked={hasChecked}
               error={checkError}
+              isBlue={isBlue}
             />
           </div>
         </div>

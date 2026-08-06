@@ -146,7 +146,7 @@ export default function StartupFaq() {
                 alt="CoverForce team culture"
                 width={900}
                 height={1100}
-                className="relative h-full min-h-80 w-full object-cover object-left md:object-left lg:min-h-144 lg:max-h-144"
+                className="relative h-full min-h-80 w-full object-cover object-left md:object-[72%_50%] lg:min-h-144 lg:max-h-144"
                 sizes="(min-width: 1024px) 34vw, 100vw"
               />
             </div>

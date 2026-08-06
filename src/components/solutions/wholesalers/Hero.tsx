@@ -3,7 +3,20 @@
 import SolutionScrollHero from "@/components/solutions/shared/SolutionScrollHero";
 import SolutionHeroCards from "@/components/solutions/shared/SolutionHeroCards";
 import { SOLUTION_GRAD_FLOW } from "@/data/wayCardStyles";
-import { SOLUTION_HERO_LOGOS } from "@/data/solutionHeroLogos";
+
+const WHOLESALERS_HERO_LOGOS = [
+  { src: "/images/wholesaler/logo/network - Agentero (white).png", alt: "Agentero" },
+  { src: "/images/wholesaler/logo/wholesaler - Amwins (white).png", alt: "Amwins" },
+  { src: "/images/wholesaler/logo/wholesaler - Bridge Specialty Group (white).png", alt: "Bridge Specialty Group" },
+  { src: "/images/wholesaler/logo/wholesaler - International Underwriting Agency (official brand asset, supplied) (white).png", alt: "International Underwriting Agency" },
+  { src: "/images/wholesaler/logo/wholesaler - Jencap (white).png", alt: "Jencap" },
+  { src: "/images/wholesaler/logo/wholesaler - Johnson & Johnson Insurance (official jjins.com, upscaled) (white).png", alt: "Johnson & Johnson Insurance" },
+  { src: "/images/wholesaler/logo/wholesaler - One80 Intermediaries (white).png", alt: "One80 Intermediaries" },
+  { src: "/images/wholesaler/logo/wholesaler - Pathpoint (official pathpoint.com SVG) (white).png", alt: "Pathpoint" },
+  { src: "/images/wholesaler/logo/wholesaler - RT Specialty (white).png", alt: "RT Specialty" },
+  { src: "/images/wholesaler/logo/wholesaler - XS Brokers (official brand asset, supplied) (white).png", alt: "XS Brokers" },
+] as const;
+
 
 const Hero = () => (
   <SolutionScrollHero
@@ -34,7 +47,7 @@ const Hero = () => (
     rightCardTransferTargetId="wholesalers-step-1-card"
     showMarquee
     marqueeVariant="pulsating"
-    marqueeLogos={SOLUTION_HERO_LOGOS}
+    marqueeLogos={WHOLESALERS_HERO_LOGOS}
     marqueeSize="default"
     marqueeLogosPerSet={4}
     showSecondSection={false}
