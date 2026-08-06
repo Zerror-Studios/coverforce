@@ -46,20 +46,30 @@ const StatusBadge = ({ status }: { status: Carrier["status"] }) => {
 const CarrierCard = ({
   carrier,
   marketFilter,
+  statusFilter,
 }: {
   carrier: Carrier;
   marketFilter: Market | "all";
+  statusFilter: "all" | "live" | "api";
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
 
-  // Filter products based on market filter
+  // Filter products based on market filter + status filter (live vs request)
   const displayProducts = useMemo(() => {
-    if (marketFilter === "all") {
-      return carrier.products;
-    }
-    return carrier.products.filter((p) => p.market === marketFilter);
-  }, [carrier.products, marketFilter]);
+    return carrier.products.filter((p) => {
+      const matchesMarket = marketFilter === "all" ? true : p.market === marketFilter;
+
+      let matchesStatus = true;
+      if (statusFilter === "live") {
+        matchesStatus = p.availability === "live";
+      } else if (statusFilter === "api") {
+        matchesStatus = p.availability === "request";
+      }
+
+      return matchesMarket && matchesStatus;
+    });
+  }, [carrier.products, marketFilter, statusFilter]);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     const card = cardRef.current;
@@ -332,7 +342,7 @@ const Integration = () => {
 
   const [lob, setLob] = useState("all");
   const [market, setMarket] = useState("all");
-  const [status, setStatus] = useState("all");
+  const [status, setStatus] = useState<"all" | "live" | "api">("all");
 
   useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef, descRef });
 
@@ -358,12 +368,16 @@ const Integration = () => {
         hasMarket = hasESProducts;
       }
 
-      // Status filter
+      // Status filter — based on whether the carrier has any product
+      // with matching availability, not the carrier's overall status badge.
+      // This lets a mixed carrier (e.g. one with both live AD products
+      // and request-only ES products) show up correctly under either filter,
+      // with only the matching products rendered inside the card.
       let hasStatus = true;
       if (status === "live") {
-        hasStatus = carrier.status === "Live on CoverForce";
+        hasStatus = carrier.products.some((p) => p.availability === "live");
       } else if (status === "api") {
-        hasStatus = carrier.status === "API available";
+        hasStatus = carrier.products.some((p) => p.availability === "request");
       }
 
       return hasLob && hasMarket && hasStatus;
@@ -459,7 +473,7 @@ const Integration = () => {
                   label="Status"
                   value={status}
                   options={STATUS_OPTIONS}
-                  onChange={setStatus}
+                  onChange={(v) => setStatus(v as "all" | "live" | "api")}
                 />
               </div>
 
@@ -482,6 +496,7 @@ const Integration = () => {
                       key={carrier.logoSrc ? `${carrier.name}-logo` : `${carrier.name}-${idx}`}
                       carrier={carrier}
                       marketFilter={market as Market | "all"}
+                      statusFilter={status}
                     />
                   ))}
                 </div>
