@@ -271,7 +271,6 @@ function CenterLogo() {
     useFrame((state, delta) => {
         const s = springRef.current;
         if (hitState.lastHitTime !== s.prevHit) {
-            s.velocity += 0.15; // Bounce impulse
             s.prevHit = hitState.lastHitTime;
 
             // Trigger ripple
@@ -284,16 +283,6 @@ function CenterLogo() {
                 }
             });
             rippleStates.current[oldestIdx].startTime = state.clock.elapsedTime;
-        }
-
-        // Critically damped spring for bubble effect
-        const force = (1 - s.scale) * 40;
-        const damping = s.velocity * 10;
-        s.velocity += (force - damping) * delta;
-        s.scale += s.velocity * delta;
-
-        if (groupRef.current) {
-            groupRef.current.scale.setScalar(s.scale);
         }
 
         // Animate ripples
