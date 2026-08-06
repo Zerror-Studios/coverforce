@@ -19,7 +19,7 @@ const defaultPersonalLobs: Record<string, LobStateItem> = Object.fromEntries(
 
 const initialInputs: CalculatorInputs = {
   projYears: 5,
-  companyName: 'Your Prospect',
+  companyName: 'Your Company',
 
   // Business Mix
   commPct: 60,

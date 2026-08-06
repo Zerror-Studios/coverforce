@@ -18,7 +18,7 @@ export default function CalculationPage() {
 
   return (
     <PageWrapper>
-      <section className="min-h-screen bg-[#F7F7F8] pt-24 text-[#444444] md:pt-28">
+      <section className="min-h-screen bg-[#151f4d] pt-24 text-[#444444] md:pt-28">
         <div
           id="calculator-main-view"
           className="flex w-full flex-col gap-5 px-4 py-5 print:flex-col print:gap-4 print:px-4 print:py-4 sm:px-6 md:flex-row md:items-start md:gap-6 md:px-8 md:py-6 lg:gap-8 lg:px-10"
