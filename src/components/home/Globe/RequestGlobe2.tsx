@@ -158,11 +158,13 @@ function AnimatedLine({ start, end, color, isNorthern }: { start: THREE.Vector3,
         return new THREE.BufferGeometry().setFromPoints([start, end]);
     }, [start, end]);
 
+    const trackLine = React.useMemo(() => {
+        return new THREE.Line(lineGeo, trackMaterial);
+    }, [lineGeo, trackMaterial]);
+
     return (
         <group>
-            <line geometry={lineGeo}>
-                <primitive object={trackMaterial} attach="material" />
-            </line>
+            <primitive object={trackLine} />
             <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, numDots]}>
                 <sphereGeometry args={[0.012, 12, 12]} />
                 <primitive object={customMaterial} attach="material" />
@@ -211,7 +213,7 @@ function LogoPlacer({ urls, isNorthern, radius, color }: { urls: string[], isNor
     return (
         <>
             {textures.map((texture, i) => {
-                const aspect = texture.image.width / texture.image.height;
+                const aspect = (texture.image as any).width / (texture.image as any).height;
                 const height = 0.175;
                 const width = height * aspect;
                 const position = getLogoPosition(i, urls.length, isNorthern, radius);
@@ -243,7 +245,7 @@ function LogoPlacer({ urls, isNorthern, radius, color }: { urls: string[], isNor
 
 function CenterLogo() {
     const texture = useTexture("/images/startups/center-logo.svg") as THREE.Texture;
-    const aspect = texture.image ? texture.image.width / texture.image.height : 1;
+    const aspect = texture.image ? (texture.image as any).width / (texture.image as any).height : 1;
     const height = 0.25;
     const width = height * aspect;
 
