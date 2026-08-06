@@ -209,10 +209,18 @@ const DemoSteps = () => {
   const scrollToPanel = useCallback((index: number) => {
     const isLg = window.matchMedia("(min-width: 1024px)").matches;
     const refs = isLg ? panelRefs : mobilePanelRefs;
-    refs.current[index]?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    const target = refs.current[index];
+    if (!target) return;
+  
+    const lenis = window.lenis;
+    if (lenis) {
+      lenis.scrollTo(target, {
+        offset: -100,
+        duration: 1.2,
+      });
+    } else {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }, []);
 
   useEffect(() => {
