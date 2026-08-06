@@ -76,7 +76,7 @@ const bottomCulturePair = {
     src: "/images/careers/image5.webp",
     alt: "CoverForce team group photo at a conference gathering",
     caption:
-      "One team, many roles - product, sales, and leadership side by side wherever the industry gathers.",
+      "Our 2% attrition rate reflects the culture we've built - people stay because they enjoy solving hard problems together.",
     placement: "",
     imageHeight: "large" as const,
   },
@@ -84,7 +84,7 @@ const bottomCulturePair = {
     src: "/images/careers/image6.webp",
     alt: "CoverForce teammates at the company insurtech booth",
     caption:
-      "Builders on the booth - explaining the API to quote and bind, one conversation at a time.",
+      "Every conversation is a chance to learn from brokers, carriers, and partners - helping shape what we build next.",
     placement: "",
     imageHeight: "medium" as const,
   },
