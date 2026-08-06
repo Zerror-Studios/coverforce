@@ -9,27 +9,31 @@ import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 const STATS = [
   {
     id: "carriers-mgas",
-    value: 61,
-    label: "Carriers & MGAs",
-    ariaLabel: "61 carriers and MGAs",
+    value: 60,
+    suffix: "+",
+    label: "Carrier & MGA products",
+    ariaLabel: "60+ Carrier & MGA products",
   },
   {
     id: "api-products",
-    value: 190,
-    label: "API Enabled Products",
-    ariaLabel: "190 API enabled products",
+    value: 200,
+    suffix: "+",
+    label: "API capabilities",
+    ariaLabel: "200+ API capabilities",
   },
   {
     id: "integrated-carriers",
-    value: 42,
-    label: "CoverForce Integrated Carriers & MGAs",
-    ariaLabel: "42 CoverForce integrated carriers and MGAs",
+    value: 5,
+    suffix: "+",
+    label: "CoverForce-exclusive integrations",
+    ariaLabel: "5+ CoverForce-exclusive integrations",
   },
   {
     id: "integrated-products",
-    value: 46,
-    label: "Products Integrated with CoverForce",
-    ariaLabel: "46 products integrated with CoverForce",
+    value: 8,
+    suffix: "",
+    label: "Avg integration in weeks",
+    ariaLabel: "8 Avg integration in weeks",
   },
 ] as const;
 
@@ -68,12 +72,19 @@ function StatCell({
           : ""
       }`}
     >
-      <ScrollTriggeredOdometerStat
-        value={stat.value}
-        className={VALUE_CLASS}
+      <div
+        className={`${VALUE_CLASS} flex items-baseline`}
         style={VALUE_COLOR_STYLE}
-        ariaLabel={stat.ariaLabel}
-      />
+        aria-label={stat.ariaLabel}
+      >
+        <ScrollTriggeredOdometerStat
+          value={stat.value}
+          className="inline"
+        />
+        {stat.suffix && (
+          <span className="ml-0.5 leading-none">{stat.suffix}</span>
+        )}
+      </div>
 
       <p className={LABEL_CLASS} style={LABEL_COLOR_STYLE}>
         {stat.label}
@@ -88,7 +99,12 @@ const IntegrationStats = () => {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
 
-  useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef, descRef });
+  useSectionHeaderReveal({
+    scopeRef: sectionRef,
+    headerRef,
+    headingRef,
+    descRef,
+  });
 
   return (
     <section ref={sectionRef} className="bg-white text-[#0a143b]">
@@ -100,12 +116,14 @@ const IntegrationStats = () => {
           >
             <div className="flex flex-col justify-end">
               <EyebrowPill surface="light">Key highlights</EyebrowPill>
+
               <h2
                 ref={headingRef}
                 className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
               >
                 <span data-split>Integration scale at a glance</span>
               </h2>
+
               <p
                 ref={descRef}
                 className="max-w-lg font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
@@ -114,6 +132,7 @@ const IntegrationStats = () => {
                 CoverForce - the numbers behind the platform.
               </p>
             </div>
+
             <p className="hidden max-w-lg font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:block lg:text-right">
               Carriers, MGAs, and API-enabled products connected through
               CoverForce - the numbers behind the platform.

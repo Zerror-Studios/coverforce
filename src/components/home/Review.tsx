@@ -5,12 +5,17 @@ import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import ArrowNavButton from "../common/ArrowNavButton";
 import Container from "../common/Container";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 
 import "swiper/css";
 import "swiper/css/navigation";
+
+gsap.registerPlugin(ScrollTrigger);
 
 type Testimonial = {
   id: string;
@@ -154,6 +159,32 @@ const Review = () => {
   const swiperRef = useRef<SwiperType | null>(null);
 
   useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef, theme: "dark" });
+
+  useGSAP(
+    () => {
+      const section = sectionRef.current;
+      if (!section) return;
+
+      // One-time nudge: when the section is scrolling out of view (user
+      // moving on to the next section), advance a single slide so people
+      // notice the carousel even before autoplay would have ticked over.
+      const st = ScrollTrigger.create({
+        trigger: section,
+        start: "bottom 90%",
+        onEnter: () => swiperRef.current?.slideNext(),
+      });
+
+      const lenis = window.lenis;
+      const onLenisScroll = () => ScrollTrigger.update();
+      lenis?.on("scroll", onLenisScroll);
+
+      return () => {
+        lenis?.off("scroll", onLenisScroll);
+        st.kill();
+      };
+    },
+    { scope: sectionRef },
+  );
 
   return (
     <section ref={sectionRef} className="bg-[#151f4d] text-white">

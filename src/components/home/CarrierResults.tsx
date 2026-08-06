@@ -23,7 +23,7 @@ type CarrierResult = {
 const carrierResults: CarrierResult[] = [
   {
     id: "employers",
-    logo: "/images/carrier - Employers.png",
+    logo: "/images/carrier-employers.png",
     logoAlt: "Employers",
     title: "0% Error Rate",
     description:
