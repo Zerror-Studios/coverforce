@@ -158,11 +158,13 @@ function AnimatedLine({ start, end, color, isNorthern }: { start: THREE.Vector3,
         return new THREE.BufferGeometry().setFromPoints([start, end]);
     }, [start, end]);
 
+    const trackLine = React.useMemo(() => {
+        return new THREE.Line(lineGeo, trackMaterial);
+    }, [lineGeo, trackMaterial]);
+
     return (
         <group>
-            <line geometry={lineGeo}>
-                <primitive object={trackMaterial} attach="material" />
-            </line>
+            <primitive object={trackLine} />
             <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, numDots]}>
                 <sphereGeometry args={[0.012, 12, 12]} />
                 <primitive object={customMaterial} attach="material" />
