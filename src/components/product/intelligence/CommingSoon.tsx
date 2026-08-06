@@ -181,8 +181,8 @@ const CommingSoon = () => {
             ref={buttonsRef}
             className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center"
           >
-            <Button href="#coming-soon" balanced surface="on-dark">
-              Explore AI
+            <Button href="/contact" balanced surface="on-dark">
+              Contact Us
             </Button>
           </div>
         </div>

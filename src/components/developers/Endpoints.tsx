@@ -109,11 +109,7 @@ function EndpointRow({
         >
             <div className="grid grid-cols-1 items-center gap-2 py-5 transition-transform duration-300 ease-out group-hover:translate-x-2 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] md:gap-8 md:py-6">
                 <div className="flex items-center gap-3">
-                    {endpoint.badge ? (
-                        <span className="flex h-6 min-w-9 items-center justify-center rounded-full bg-[#151f4d] px-2 font-sans text-xs font-semibold tracking-[0.08em] text-white">
-                            {endpoint.badge}
-                        </span>
-                    ) : null}
+                
                     <span className="font-heading text-xl font-normal tracking-tight text-[#151f4d] md:text-2xl">
                         <AnimatedLinkText
                             hovered={hovered || wave}
