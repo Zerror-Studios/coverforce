@@ -25,6 +25,10 @@ type Carrier = {
   id: string;
   name: string;
   logo?: string;
+  // "E&S" = Excess & Surplus lines - a carrier's non-admitted paper,
+  // used for higher-risk/non-standard accounts their standard admitted
+  // paper won't write. Comes straight from the API; this is why a
+  // carrier like Coalition can appear twice (once admitted, once E&S).
   badge?: "E&S";
 };
 
@@ -84,7 +88,7 @@ function PolicyTypeTabs({
 type CarrierAccent = "green" | "red";
 
 const ACCENT_STYLES: Record<CarrierAccent, { border: string }> = {
-  green: { border: "#5F950C" },
+  green: { border: "#72AF23" },
   red: { border: "#DC2626" },
 };
 
@@ -104,7 +108,7 @@ function CarrierLogoCell({
       style={{ borderColor }}
     >
       {carrier.badge ? (
-        <span className="absolute right-2 top-1 rounded bg-[#F4A261] px-1.5 py-0.5 font-mono text-[0.5625rem] font-normal uppercase leading-none tracking-wide text-white">
+        <span className="absolute left-2 top-2 rounded bg-[#F4A261] px-1.5 py-0.5 font-mono text-[0.5625rem] font-semibold uppercase leading-none tracking-wide text-white">
           {carrier.badge}
         </span>
       ) : null}
@@ -127,11 +131,18 @@ function CarrierLogoCell({
   );
 }
 
+const WRAPPER_GRADIENT_ORANGE =
+  "linear-gradient(135deg, #E66F35 0%, #D62B1C 100%)";
+const WRAPPER_GRADIENT_BLUE =
+  "linear-gradient(135deg, #322696 0%, #322696 48%, #5E3FD0 100%)";
+
 function CarrierGrid({
   carriers,
   maxVisible = MAX_VISIBLE,
   directPaginate = false,
   accent,
+  gradientWrapper = false,
+  isBlue = false,
 }: {
   carriers: Carrier[];
   maxVisible?: number;
@@ -143,6 +154,12 @@ function CarrierGrid({
   // Colors every logo tile's outline - green for in-appetite results,
   // red for out-of-appetite results. Omitted for the neutral default list.
   accent?: CarrierAccent;
+  // Wraps the tile grid in a gradient background - used for the
+  // default (pre-filter) logo grid and the in-appetite results.
+  gradientWrapper?: boolean;
+  // Swaps the wrapper gradient to the blue/indigo variant used on the
+  // "Appetite Checker" (isBlue) eyebrow variant of this section.
+  isBlue?: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [page, setPage] = useState(0);
@@ -173,7 +190,14 @@ function CarrierGrid({
 
   return (
     <div>
-      <div className="grid grid-cols-4 gap-2 md:gap-2.5">
+      <div
+        className={`grid grid-cols-4 gap-2 md:gap-2.5 ${gradientWrapper ? "rounded-xl p-2.5 md:p-3" : ""}`}
+        style={
+          gradientWrapper
+            ? { backgroundImage: isBlue ? WRAPPER_GRADIENT_BLUE : WRAPPER_GRADIENT_ORANGE }
+            : undefined
+        }
+      >
         {visible.map((carrier) => (
           <CarrierLogoCell key={carrier.id} carrier={carrier} accent={accent} />
         ))}
@@ -242,6 +266,7 @@ function MatchResultsCard({
   isChecking,
   hasChecked,
   error,
+  isBlue,
 }: {
   policyType: string;
   industry: string;
@@ -252,6 +277,7 @@ function MatchResultsCard({
   isChecking: boolean;
   hasChecked: boolean;
   error: string | null;
+  isBlue: boolean;
 }) {
   const summaryParts = [policyType, industry, state].filter(Boolean);
 
@@ -295,7 +321,7 @@ function MatchResultsCard({
       ) : hasChecked ? (
         <>
           <div className="py-5">
-            <p className="mb-3 font-mono text-sm font-medium uppercase text-[#5F950C]">
+            <p className="mb-3 font-mono text-sm font-medium uppercase text-[#72AF23]">
               IN APPETITE ({inAppetite.length})
             </p>
             {inAppetite.length > 0 ? (
@@ -303,6 +329,8 @@ function MatchResultsCard({
                 carriers={inAppetite}
                 maxVisible={MAX_VISIBLE_RESULTS}
                 accent="green"
+                gradientWrapper
+                isBlue={isBlue}
               />
             ) : (
               <p className="font-sans text-sm text-[#9CA3AF]">
@@ -331,7 +359,12 @@ function MatchResultsCard({
       ) : (
         <div className="py-5">
           {allCarriers.length > 0 ? (
-            <CarrierGrid carriers={allCarriers} directPaginate />
+            <CarrierGrid
+              carriers={allCarriers}
+              directPaginate
+              gradientWrapper
+              isBlue={isBlue}
+            />
           ) : (
             <div className="flex items-center justify-center py-10">
               <Loader2
@@ -660,6 +693,7 @@ const CarrierMatch = ({
               isChecking={isChecking}
               hasChecked={hasChecked}
               error={checkError}
+              isBlue={isBlue}
             />
           </div>
         </div>
