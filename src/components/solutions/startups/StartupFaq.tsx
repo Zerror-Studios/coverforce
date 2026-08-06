@@ -142,7 +142,7 @@ export default function StartupFaq() {
             <div className="relative order-2 overflow-hidden rounded-[28px] bg-[#EFF3FF] lg:order-1">
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(21,31,77,0.04),rgba(21,31,77,0.12))]" />
               <Image
-                src="/images/careers/img3.webp"
+                src="/images/careers/image3.webp"
                 alt="CoverForce team culture"
                 width={900}
                 height={1100}

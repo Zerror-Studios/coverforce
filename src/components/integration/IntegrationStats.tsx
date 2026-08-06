@@ -44,7 +44,11 @@ const LABEL_CLASS =
   "flex min-h-[2.9rem] max-w-[11rem] items-start justify-center text-center font-sans text-[0.68rem] font-regular leading-relaxed md:min-h-[4.5rem] md:max-w-[12rem] md:text-lg";
 
 const VALUE_COLOR_STYLE: CSSProperties = {
-  color: "#E25E2F",
+  color: "transparent",
+  background:"linear-gradient(135deg, #322696 0%, #322696 48%, #5E3FD0 100%)",
+  backgroundClip: "text",
+  WebkitBackgroundClip: "text",
+  WebkitTextFillColor: "transparent",
 };
 
 const LABEL_COLOR_STYLE: CSSProperties = {
