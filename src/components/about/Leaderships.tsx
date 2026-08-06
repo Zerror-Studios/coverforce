@@ -32,7 +32,7 @@ const foundersRow: Leader[] = [
     name: "Behram Dinshaw",
     role: "Chairman & Co-Founder",
     bio: "Former Travelers executive with 25+ years in insurance leadership.",
-    image: "/images/about/behram.webp",
+    image: "/images/about/behram.png",
     linkedin: "https://www.linkedin.com/in/behram-m-dinshaw-77760b6/",
   },
   {
@@ -40,7 +40,7 @@ const foundersRow: Leader[] = [
     name: "Cyrus Karai",
     role: "CEO & Co-Founder",
     bio: "Former Credit Suisse and PwC leader with a Wharton MBA.",
-    image: "/images/about/cyrus.webp",
+    image: "/images/about/cyrus.png",
     linkedin: "https://www.linkedin.com/in/cyrus-karai/",
   },
   {
@@ -48,7 +48,7 @@ const foundersRow: Leader[] = [
     name: "Kaivan Wadia",
     role: "CTO & Co-Founder",
     bio: "Former Amazon engineering leader experienced in scaling platforms.",
-    image: "/images/about/kaivan.webp",
+    image: "/images/about/kaivan.png",
     linkedin: "https://www.linkedin.com/in/kaivanwadia/",
   },
 ];

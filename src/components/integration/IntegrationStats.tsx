@@ -3,7 +3,6 @@
 import { useRef, type CSSProperties } from "react";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
-import { ScrollTriggeredOdometerStat } from "@/components/common/AnimatedPercent";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 
 const STATS = [
@@ -44,7 +43,10 @@ const LABEL_CLASS =
   "flex min-h-[2.9rem] max-w-[11rem] items-start justify-center text-center font-sans text-[0.68rem] font-regular leading-relaxed md:min-h-[4.5rem] md:max-w-[12rem] md:text-lg";
 
 const VALUE_COLOR_STYLE: CSSProperties = {
-  color: "#0045FF",
+  backgroundImage: "linear-gradient(to right, #F0764A, #E73C47)",
+  WebkitBackgroundClip: "text",
+  WebkitTextFillColor: "transparent",
+  color: "transparent",
 };
 
 const LABEL_COLOR_STYLE: CSSProperties = {
@@ -77,10 +79,9 @@ function StatCell({
         style={VALUE_COLOR_STYLE}
         aria-label={stat.ariaLabel}
       >
-        <ScrollTriggeredOdometerStat
-          value={stat.value}
-          className="inline"
-        />
+        <span className="inline">
+          {stat.value}
+        </span>
         {stat.suffix && (
           <span className="ml-0.5 leading-none">{stat.suffix}</span>
         )}
