@@ -3,6 +3,7 @@
 import { useRef, type CSSProperties } from "react";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
+import { ScrollTriggeredOdometerStat } from "@/components/common/AnimatedPercent";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 
 const STATS = [
@@ -43,10 +44,7 @@ const LABEL_CLASS =
   "flex min-h-[2.9rem] max-w-[11rem] items-start justify-center text-center font-sans text-[0.68rem] font-regular leading-relaxed md:min-h-[4.5rem] md:max-w-[12rem] md:text-lg";
 
 const VALUE_COLOR_STYLE: CSSProperties = {
-  backgroundImage: "linear-gradient(to right, #F0764A, #E73C47)",
-  WebkitBackgroundClip: "text",
-  WebkitTextFillColor: "transparent",
-  color: "transparent",
+  color: "#E25E2F",
 };
 
 const LABEL_COLOR_STYLE: CSSProperties = {
@@ -64,24 +62,23 @@ function StatCell({
 }) {
   return (
     <div
-      className={`relative flex h-full flex-col items-center justify-start gap-2 px-4 py-10 text-center md:gap-3 md:px-6 md:py-12 lg:py-14 ${
-        showLeftDivider
+      className={`relative flex h-full flex-col items-center justify-start gap-2 px-4 py-10 text-center md:gap-3 md:px-6 md:py-12 lg:py-14 ${showLeftDivider
           ? "before:absolute before:left-0 before:top-1/2 before:hidden before:h-[58%] before:w-px before:-translate-y-1/2 before:bg-[#D8DCE8] md:before:block"
           : ""
-      } ${
-        showRightDivider
+        } ${showRightDivider
           ? "after:absolute after:right-0 after:top-1/2 after:hidden after:h-[58%] after:w-px after:-translate-y-1/2 after:bg-[#D8DCE8] md:after:block"
           : ""
-      }`}
+        }`}
     >
       <div
         className={`${VALUE_CLASS} flex items-baseline`}
         style={VALUE_COLOR_STYLE}
         aria-label={stat.ariaLabel}
       >
-        <span className="inline">
-          {stat.value}
-        </span>
+        <ScrollTriggeredOdometerStat
+          value={stat.value}
+          className="inline"
+        />
         {stat.suffix && (
           <span className="ml-0.5 leading-none">{stat.suffix}</span>
         )}
