@@ -1,6 +1,5 @@
 "use client";
-import { getCalApi } from "@calcom/embed-react";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -136,20 +135,6 @@ const ContactForm = () => {
     splitsRef.current.forEach((split) => split.revert());
     splitsRef.current = [];
   };
-
-  useEffect(() => {
-    (async function () {
-      const cal = await getCalApi({ namespace: "15min" });
-      cal("ui", {
-        cssVarsPerTheme: {
-          light: { "cal-brand": "#1e2a5e" },
-          dark: { "cal-brand": "#ffffff" },
-        },
-        hideEventTypeDetails: false,
-        layout: "month_view",
-      });
-    })();
-  }, []);
 
   useGSAP(
     () => {
@@ -891,21 +876,11 @@ const ContactForm = () => {
                   <span data-split>Thank you! Your request has been submitted.</span>
                 </h2>
                 <p
-                  className="mb-12 mt-4 max-w-xl px-2 text-balance text-base text-white/90 sm:px-0 md:text-lg"
+                  className="mb-4 mt-4 max-w-xl px-2 text-balance text-base text-white/90 sm:px-0 md:text-lg"
                   data-animate-field
                 >
-                  Want to move faster? Schedule a call with our team at a time that works for you.
+                  Our team will be in touch with you shortly.
                 </p>
-                <div
-                  data-animate-field
-                  data-cal-namespace="15min"
-                  data-cal-link="sunny-cal/15min"
-                  data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true","theme":"auto"}'
-                >
-                  <Button surface="on-dark" balanced>
-                    SCHEDULE A CALL
-                  </Button>
-                </div>
               </div>
             )}
           </div>

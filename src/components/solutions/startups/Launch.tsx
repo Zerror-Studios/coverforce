@@ -1,16 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useRef, useState } from "react";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import Button from "@/components/common/Button";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
-import {
-  CARD_ACCENT_COLORS,
-  CARD_BACKGROUND_STYLES,
-  CARD_UI_GRADIENT_STYLES,
-  type CardBackground,
-} from "@/data/wayCardStyles";
 
 type LaunchStep = {
   id: string;
@@ -18,7 +12,6 @@ type LaunchStep = {
   title: string;
   description: string;
   body: string[];
-  background: CardBackground;
 };
 
 const launchSteps: LaunchStep[] = [
@@ -31,17 +24,15 @@ const launchSteps: LaunchStep[] = [
     body: [
       "You'll need a registered business, an EIN, and a registered agent in each state you plan to operate in. Getting this right from day one matters - carriers and regulators will ask for documentation.",
     ],
-    background: "developer",
   },
   {
     id: "license",
     label: "STEP 02",
     title: "Get Licensed",
-    description: "Secure producer and entity licenses with guided checklists.",
+    description: "Secure producer and entity licenses.",
     body: [
       "Licensing requirements vary by state - each has its own exam, application, and renewal cadence. The two main portals used by regulators across the country are NIPR and Sircon.",
     ],
-    background: "wholesaler",
   },
   {
     id: "market",
@@ -52,7 +43,6 @@ const launchSteps: LaunchStep[] = [
       "Carrier appointments take time to secure for a new brokerage. Our market access partners let you quote and bind through their existing appointments so you're generating revenue from day one.",
       "Startup Program members get preferred pricing from our market access partners. Start writing business on day one, not month six.",
     ],
-    background: "broker",
   },
   {
     id: "api",
@@ -62,7 +52,6 @@ const launchSteps: LaunchStep[] = [
     body: [
       "One integration gives you real-time quoting and binding across commercial lines - GL, BOP, Workers' Comp, Professional Liability, and more. Our sandbox is ready from day one.",
     ],
-    background: "carrier",
   },
   {
     id: "quote",
@@ -73,9 +62,12 @@ const launchSteps: LaunchStep[] = [
     body: [
       "CoverForce handles appetite matching, form prefill, and comparative quoting across carriers. Your team stays focused on the client. Your first bound policy is closer than you think.",
     ],
-    background: "startup",
   },
 ];
+
+// Single, consistent color treatment for every step (no more per-step colors)
+const CARD_BACKGROUND = "linear-gradient(135deg, #0a143b 0%, #1c2b63 100%)";
+const TAB_ACCENT = "#0a143b";
 
 type LaunchPreviewCardProps = {
   step: LaunchStep;
@@ -88,7 +80,7 @@ function LaunchPreviewCard({ step, stepIndex, onPrevious }: LaunchPreviewCardPro
     <article className="launch-preview-card way-card-shell relative flex w-full flex-col overflow-hidden rounded-md text-white">
       <div
         className="way-card-body absolute inset-0 overflow-hidden rounded-md"
-        style={{ background: CARD_BACKGROUND_STYLES[step.background] }}
+        style={{ background: CARD_BACKGROUND }}
         aria-hidden
       />
 
@@ -133,11 +125,9 @@ function LaunchPreviewCard({ step, stepIndex, onPrevious }: LaunchPreviewCardPro
   );
 }
 
-const AUTO_TAB_MS = 3000;
-
-const LAUNCH_SECTION_TITLE = "From idea to first bind in five easy steps";
+const LAUNCH_SECTION_TITLE = "Steps to Launch a Digital Brokerage";
 const LAUNCH_SECTION_DESCRIPTION =
-  "Launching a brokerage used to be hard. We've made it easy by clarifying the steps, providing ready infrastructure, and ecosystem partnerships.";
+  "From idea to first bind in five easy steps";
 
 const Launch = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -155,22 +145,15 @@ const Launch = () => {
     descRef,
   });
 
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const id = window.setInterval(() => {
-      setActiveStep((current) => (current + 1) % launchSteps.length);
-    }, AUTO_TAB_MS);
-
-    return () => window.clearInterval(id);
-  }, [activeStep]);
+  // Auto-cycling removed intentionally - steps only advance on click,
+  // since users need time to read each tile.
 
   const selectStep = (index: number) => {
     setActiveStep(index);
   };
 
   return (
-    <section id="launch" ref={sectionRef} className="bg-white text-[#0a143b]">
+    <section ref={sectionRef} className="bg-white text-[#0a143b]">
       <style>{`
         .launch-preview-card.way-card-shell {
           --way-card-hover-scale: 1.02;
@@ -185,7 +168,7 @@ const Launch = () => {
       <Container borderColor="#53535380">
         <div
           ref={headerRef}
-          className="flex flex-col gap-4 py-10 lg:grid lg:grid-cols-2 lg:items-end lg:justify-between lg:gap-x-12 lg:gap-y-5 lg:py-24"
+          className="flex flex-col gap-4 pt-10 lg:pt-24 pb-10"
         >
           <h2
             ref={headingRef}
@@ -193,7 +176,8 @@ const Launch = () => {
           >
             <span data-split>{LAUNCH_SECTION_TITLE}</span>
           </h2>
-          <div className="max-w-sm text-left lg:ml-auto">
+
+          <div className="max-w-sm">
             <p
               ref={descRef}
               className="font-sans text-sm font-regular leading-relaxed text-[#3E3E3E]"
@@ -224,8 +208,6 @@ const Launch = () => {
             >
               {launchSteps.map((step, index) => {
                 const isActive = activeStep === index;
-                const accent = CARD_ACCENT_COLORS[step.background];
-                const tabGradient = CARD_UI_GRADIENT_STYLES[step.background];
 
                 return (
                   <button
@@ -236,33 +218,25 @@ const Launch = () => {
                     aria-selected={isActive}
                     aria-controls="launch-panel"
                     onClick={() => selectStep(index)}
-                    className={`group flex w-full items-center gap-5 rounded-xl border px-4 py-3.5 text-left outline-none transition-all duration-300 ease-out focus-visible:ring-2 focus-visible:ring-offset-2 ${
-                      isActive
+                    className={`group flex w-full items-center gap-5 rounded-xl border px-4 py-3.5 text-left outline-none transition-all duration-300 ease-out focus-visible:ring-2 focus-visible:ring-offset-2 ${isActive
                         ? "border-transparent text-white shadow-[0_8px_24px_rgba(10,20,59,0.12)]"
-                        : "border-[color:var(--tab-accent)] bg-transparent"
-                    }`}
-                    style={
-                      {
-                        ["--tab-accent" as string]: accent,
-                        ...(isActive ? { background: tabGradient } : null),
-                      } as CSSProperties
-                    }
+                        : "border-[#0a143b]/25 bg-transparent"
+                      }`}
+                    style={isActive ? { background: TAB_ACCENT } : undefined}
                   >
                     <span
-                      className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full font-sans text-sm font-medium transition-all duration-300 ${
-                        isActive
-                          ? "bg-white/20 text-white"
-                          : "bg-[color:var(--tab-accent)] text-white"
-                      }`}
+                      className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full font-sans text-sm font-medium transition-all duration-300 ${isActive
+                          ? "bg-white text-[#0a143b]"
+                          : "bg-[#0a143b] text-white"
+                        }`}
                     >
                       {index + 1}
                     </span>
                     <span
-                      className={`min-w-0 flex-1 font-sans text-base leading-snug transition-colors duration-300 ${
-                        isActive
+                      className={`min-w-0 flex-1 font-sans text-base leading-snug transition-colors duration-300 ${isActive
                           ? "font-semibold text-white"
-                          : "font-regular text-[color:var(--tab-accent)]"
-                      }`}
+                          : "font-regular text-[#0a143b]"
+                        }`}
                     >
                       {step.title}
                     </span>

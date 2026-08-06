@@ -30,7 +30,7 @@ const whySlides: WhySlide[] = [
     descriptionLines: [
       "AI-first infrastructure that gets smarter with every quote -",
       "driving higher bind rates and a customer experience",
-      "that keeps improving for Chase.",
+      "that keeps improving for you.",
     ],
     image:
       "/images/why/ai.avif",
@@ -41,7 +41,7 @@ const whySlides: WhySlide[] = [
     title: "Market Power",
     descriptionLines: [
       "The largest bindable carrier network in the market means",
-      "Chase inherits access on day one, instead of negotiating",
+      "you inherits access on day one, instead of negotiating",
       "carrier relationships alone.",
     ],
     image:
@@ -65,7 +65,7 @@ const whySlides: WhySlide[] = [
     title: "Security & Resilience",
     descriptionLines: [
       "SOC 2 Type II certified, cloud-native, and built for enterprise scale -",
-      "giving Chase infrastructure that's secure, resilient, and ready",
+      "giving you infrastructure that's secure, resilient, and ready",
       "for FI-grade volume from day one.",
     ],
     image:

@@ -356,12 +356,7 @@ const Integration = ({ initialCarriers = [] }: IntegrationProps) => {
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
-  const CATEGORY_OPTIONS = [
-    { value: "carriers-mgas", label: "Carriers & MGAs" },
-    { value: "agency-management", label: "Agency Management" },
-    { value: "finance-compliance", label: "Finance & Compliance" },
-    { value: "market-access", label: "Market Access" },
-  ] as const;
+
 
   // FIXED: Normalize apostrophes in LOB options
   const LOB_OPTIONS = [
@@ -399,7 +394,6 @@ const Integration = ({ initialCarriers = [] }: IntegrationProps) => {
     { value: "api", label: "API Available" },
   ] as const;
 
-  const [category, setCategory] = useState("all");
   const [lob, setLob] = useState("all");
   const [market, setMarket] = useState("all");
   const [status, setStatus] = useState("all");
@@ -511,27 +505,17 @@ const Integration = ({ initialCarriers = [] }: IntegrationProps) => {
                   ref={descRef}
                   className="max-w-lg font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
                 >
-                  The universal index of accessible integrations — carriers, AMS,
-                  premium finance, E&S compliance, all in one place.
+                  The universal index of accessible integrations all in one place.
                 </p>
               </div>
               <p className="hidden max-w-lg font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:block lg:text-right">
-                The universal index of accessible integrations — carriers, AMS,
-                premium finance, E&S compliance, all in one place.
+              The universal index of accessible integrations all in one place.
               </p>
             </div>
 
             {/* Result count */}
             <div className="relative z-20 mt-8 space-y-5 lg:mt-10 lg:space-y-3">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <FormSelect
-                  id="integration-category"
-                  label="Category"
-                  value={category}
-                  options={CATEGORY_OPTIONS}
-                  onChange={setCategory}
-                />
-
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <FormSelect
                   id="integration-lob"
                   label="Product Type"

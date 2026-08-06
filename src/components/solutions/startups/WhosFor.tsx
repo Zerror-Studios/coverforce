@@ -170,14 +170,14 @@ const WhosFor = () => {
               ref={headingRef}
               className="text-2xl font-heading font-regular leading-[1.15] tracking-tight text-[#9AA8BC] sm:text-3xl md:text-4xl lg:text-[1.625rem] lg:leading-[1.15] lg:whitespace-nowrap"
             >
-              <span data-split>Built for founders who are serious about insurance.</span>
+              <span data-split>Program Criteria</span>
             </h2>
 
             <p
               ref={descRef}
               className="mt-4 max-w-md font-sans text-sm font-regular leading-[1.4] text-[#D1D1D1] md:mt-5 md:text-[1.125rem]"
             >
-              If you meet the criteria, you're welcome to apply
+            Built for founders who are serious about insurance. If you meet the criteria, you're welcome to apply
             </p>
           </div>
 
@@ -195,12 +195,6 @@ const WhosFor = () => {
               />
             ))}
           </div>
-
-          <p className="max-w-2xl font-sans text-sm font-regular leading-[1.45] text-white/60 md:text-[0.9375rem]">
-            <span className="font-medium text-white/75">Note:</span> B2B2B startups
-            - those building for brokers, agencies, and distribution partners - are
-            also a strong fit for this program.
-          </p>
         </div>
       </Container>
     </section>

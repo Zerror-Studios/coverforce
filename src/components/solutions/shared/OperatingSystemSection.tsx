@@ -49,6 +49,7 @@ export type OperatingSystemConfig = {
   showStats?: boolean;
   paddingTop?: boolean;
   rows: OperatingRow[];
+  id?: string;
 };
 
 const DEFAULT_MOCKS: Record<string, ComponentType> = {
@@ -135,6 +136,7 @@ export default function OperatingSystemSection({
   showStats = true,
   paddingTop = false,
   rows,
+  id,
 }: OperatingSystemConfig) {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -218,7 +220,7 @@ export default function OperatingSystemSection({
   );
 
   return (
-    <section ref={sectionRef} className="relative z-10 min-h-screen bg-white text-[#0a143b]">
+    <section ref={sectionRef} id={id} className="relative z-10 min-h-screen bg-white text-[#0a143b]">
       <ShrimpLineAnimation className="h-full" />
       <ShrimpLineAnimation2 className="h-full" />
       <Container borderColor="#53535380">

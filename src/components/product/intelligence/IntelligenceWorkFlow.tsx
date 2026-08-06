@@ -233,10 +233,20 @@ const IntelligenceWorkFlow = () => {
     setActiveIndex(index);
     const isLg = window.matchMedia("(min-width: 1024px)").matches;
     const refs = isLg ? panelRefs : mobilePanelRefs;
-    refs.current[index]?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    const target = refs.current[index];
+    if (!target) return;
+  
+    const lenis = window.lenis;
+    if (lenis) {
+      // Negative offset pulls target down from viewport top to clear
+      // your sticky header — tweak the -100 to match its actual height.
+      lenis.scrollTo(target, {
+        offset: -115,
+        duration: 1.2,
+      });
+    } else {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }, []);
 
   useEffect(() => {
