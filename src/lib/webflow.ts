@@ -474,35 +474,3 @@ export function toListingPost(post: BlogDetail): BlogPost {
     author: post.author,
   };
 }
-
-export async function getWebflowCarriers(): Promise<WebflowCarrier[]> {
-  const collectionId = requireEnv("WEBFLOW_CARRIER_COLLECTION_ID");
-  try {
-    const items = await fetchAllLiveItems<CarrierFieldData>(collectionId);
-    return items
-      .map((item) => {
-        const logoUrl = normalizeWebflowAssetUrl(item.fieldData.logo?.url);
-        return {
-          id: item.id,
-          name: item.fieldData.name ?? "",
-          slug: item.fieldData.slug ?? item.id,
-          logoUrl: logoUrl || undefined,
-          companyUrl: item.fieldData["company-url"] ?? undefined,
-          productsAd:
-            item.fieldData["products-ad"] ??
-            item.fieldData["products-admitted"] ??
-            undefined,
-          productsEs:
-            item.fieldData["products-es"] ??
-            item.fieldData["products-surplus"] ??
-            undefined,
-        };
-      })
-      .filter((carrier) => Boolean(carrier.name));
-  } catch (error) {
-    console.error("[webflow-carriers]", error);
-    return [];
-  }
-}
-
-

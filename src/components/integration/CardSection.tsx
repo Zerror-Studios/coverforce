@@ -42,20 +42,26 @@ const CardSection = () => {
   useGSAP(
     () => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  
       const cards = gsap.utils.toArray<HTMLElement>("[data-stat-card]");
       if (!cards.length) return;
-
-      gsap.set(cards, { rotateY: 90, opacity: 0, transformOrigin: "left center" });
-
+  
+      gsap.set(cards, {
+        x: 180,               // Start from the right
+        opacity: 0,
+        transformOrigin: "right center",
+        force3D: true,
+      });
+  
       ScrollTrigger.batch(cards, {
         start: "top 85%",
         onEnter: (batch) =>
           gsap.to(batch, {
-            rotateY: 0,
+            x: 0,
             opacity: 1,
-            duration: 0.8,
-            ease: "power3.out",
-            stagger: 0.12,
+            duration: 1,
+            ease: "power4.out",
+            stagger: 0.15,
             overwrite: true,
           }),
       });

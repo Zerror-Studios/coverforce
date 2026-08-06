@@ -11,57 +11,16 @@ import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import Button from "@/components/common/Button";
-import ButtonArrowIcon from "@/components/common/ButtonArrowIcon";
-import type { WebflowCarrier } from "@/lib/webflow";
 import { ChevronDown } from "lucide-react";
 import ExternalArrowIcon from "../common/ExternalArrowIcon";
+import {
+  INTEGRATION_DATA,
+  type Carrier,
+  type CarrierProduct,
+  type Market,
+} from "@/data/integrationData";
 
 gsap.registerPlugin(ScrollTrigger);
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-type Market = "AD" | "ES";
-type ProductAvailability = "live" | "request";
-
-type CarrierProduct = {
-  market: Market;
-  name: string;
-  availability?: ProductAvailability;
-};
-
-type Carrier = {
-  name: string;
-  logoSrc?: string;
-  website?: string;
-  logoColor: string;
-  status: "Live on CoverForce" | "API available";
-  products: CarrierProduct[];
-};
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-// Normalize apostrophes and other common characters for consistent matching
-function normalizeProduct(name: string): string {
-  return name
-    .replace(/[''']/g, "'") // Replace all apostrophe variants with standard '
-    .replace(/\s+/g, " ")   // Normalize whitespace
-    .trim();
-}
-
-function parseProductsFromWebflow(adString?: string, esString?: string): CarrierProduct[] {
-  const products: CarrierProduct[] = [];
-  if (adString) {
-    for (const name of adString.split(",").map((s) => s.trim()).filter(Boolean)) {
-      products.push({ market: "AD", name: normalizeProduct(name) }); // Normalize on parse
-    }
-  }
-  if (esString) {
-    for (const name of esString.split(",").map((s) => s.trim()).filter(Boolean)) {
-      products.push({ market: "ES", name: normalizeProduct(name) }); // Normalize on parse
-    }
-  }
-  return products;
-}
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -84,17 +43,33 @@ const StatusBadge = ({ status }: { status: Carrier["status"] }) => {
   );
 };
 
-const CarrierCard = ({ carrier, marketFilter }: { carrier: Carrier; marketFilter: Market | "all" }) => {
+const CarrierCard = ({
+  carrier,
+  marketFilter,
+  statusFilter,
+}: {
+  carrier: Carrier;
+  marketFilter: Market | "all";
+  statusFilter: "all" | "live" | "api";
+}) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
 
-  // Filter products based on market filter
+  // Filter products based on market filter + status filter (live vs request)
   const displayProducts = useMemo(() => {
-    if (marketFilter === "all") {
-      return carrier.products;
-    }
-    return carrier.products.filter((p) => p.market === marketFilter);
-  }, [carrier.products, marketFilter]);
+    return carrier.products.filter((p) => {
+      const matchesMarket = marketFilter === "all" ? true : p.market === marketFilter;
+
+      let matchesStatus = true;
+      if (statusFilter === "live") {
+        matchesStatus = p.availability === "live";
+      } else if (statusFilter === "api") {
+        matchesStatus = p.availability === "request";
+      }
+
+      return matchesMarket && matchesStatus;
+    });
+  }, [carrier.products, marketFilter, statusFilter]);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     const card = cardRef.current;
@@ -154,12 +129,12 @@ const CarrierCard = ({ carrier, marketFilter }: { carrier: Carrier; marketFilter
         {/* Products - only show filtered products */}
         {displayProducts.length > 0 && (
           <div className="mt-5 flex flex-wrap gap-2 md:mt-6">
-            {displayProducts.map((product, idx) => {
+            {displayProducts.map((product: CarrierProduct, idx) => {
               const requestable = product.availability === "request";
               const isES = product.market === "ES";
               return (
                 <span
-                  key={`${product.name}-${idx}`}
+                  key={`${product.market}-${product.name}-${idx}`}
                   title={requestable ? "Available to request" : "Live on CoverForce"}
                   className={`inline-flex w-fit max-w-full items-center gap-1.5 rounded-full py-1 pl-2.5 pr-4 text-xs font-sans font-medium tracking-wide transition-colors duration-300 ${
                     isES
@@ -194,7 +169,7 @@ const CarrierCard = ({ carrier, marketFilter }: { carrier: Carrier; marketFilter
 
         {/* Footer link */}
         <Link
-          href={carrier.website ?? "/contact"}
+          href={carrier.website || "/contact"}
           target={carrier.website ? "_blank" : undefined}
           rel={carrier.website ? "noreferrer" : undefined}
           className="mt-auto ml-auto flex items-center gap-1 pt-5 text-right text-sm font-heading font-medium text-[#2D3E9D] transition-colors hover:text-[#151F4D] md:pt-6"
@@ -220,26 +195,17 @@ type FormSelectProps = {
   onChange: (value: string) => void;
 };
 
-function FormSelect({
-  id,
-  label,
-  value,
-  options,
-  onChange,
-}: FormSelectProps) {
+function FormSelect({ id, label, value, options, onChange }: FormSelectProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
   const listId = `${id}-listbox`;
 
   const normalized = options.map((option) =>
-    typeof option === "string"
-      ? { value: option, label: option }
-      : option,
+    typeof option === "string" ? { value: option, label: option } : option,
   );
 
-  const selected =
-    normalized.find((option) => option.value === value) ?? normalized[0];
+  const selected = normalized.find((option) => option.value === value) ?? normalized[0];
 
   useEffect(() => {
     if (!open) return;
@@ -288,9 +254,7 @@ function FormSelect({
             : "border-[#E4E7EC] hover:border-[#5B35E0]/40"
         }`}
       >
-        <span
-          className={`truncate ${value ? "text-[#1A1A1A]" : "text-[#98A2B3]"}`}
-        >
+        <span className={`truncate ${value ? "text-[#1A1A1A]" : "text-[#98A2B3]"}`}>
           {selected?.label ?? "Select"}
         </span>
 
@@ -343,11 +307,7 @@ function FormSelect({
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-type IntegrationProps = {
-  initialCarriers?: WebflowCarrier[];
-};
-
-const Integration = ({ initialCarriers = [] }: IntegrationProps) => {
+const Integration = () => {
   const PAGE_SIZE = 12;
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
@@ -357,31 +317,17 @@ const Integration = ({ initialCarriers = [] }: IntegrationProps) => {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
 
+  // Product Type options are derived from the actual dataset so the dropdown
+  // never lists a line of business that no carrier actually offers.
+  const LOB_OPTIONS = useMemo(() => {
+    const names = new Set<string>();
+    INTEGRATION_DATA.forEach((carrier) =>
+      carrier.products.forEach((p) => names.add(p.name)),
+    );
+    const sorted = Array.from(names).sort((a, b) => a.localeCompare(b));
+    return [{ value: "all", label: "All" }, ...sorted.map((n) => ({ value: n, label: n }))];
+  }, []);
 
-  // FIXED: Normalize apostrophes in LOB options
-  const LOB_OPTIONS = [
-    { value: "all", label: "All" },
-    { value: normalizeProduct("Business Owner's Policy"), label: "Business Owner's Policy" },
-    { value: normalizeProduct("Commercial Auto"), label: "Commercial Auto" },
-    { value: normalizeProduct("Contractors' Pollution Liability"), label: "Contractors' Pollution Liability" },
-    { value: normalizeProduct("Crime"), label: "Crime" },
-    { value: normalizeProduct("Cyber"), label: "Cyber" },
-    { value: normalizeProduct("D&O"), label: "D&O" },
-    { value: normalizeProduct("EPLI"), label: "EPLI" },
-    { value: normalizeProduct("Excess Liability"), label: "Excess Liability" },
-    { value: normalizeProduct("Fiduciary"), label: "Fiduciary" },
-    { value: normalizeProduct("General Liability"), label: "General Liability" },
-    { value: normalizeProduct("Inland Marine"), label: "Inland Marine" },
-    { value: normalizeProduct("K&R"), label: "K&R" },
-    { value: normalizeProduct("MPL"), label: "MPL" },
-    { value: normalizeProduct("Professional Liability"), label: "Professional Liability" },
-    { value: normalizeProduct("Property"), label: "Property" },
-    { value: normalizeProduct("Special Events"), label: "Special Events" },
-    { value: normalizeProduct("Tech E&O"), label: "Tech E&O" },
-    { value: normalizeProduct("Transactional Liability"), label: "Transactional Liability" },
-    { value: normalizeProduct("Umbrella"), label: "Umbrella" },
-    { value: normalizeProduct("Worker's Compensation"), label: "Worker's Compensation" },
-  ] as const;
   const MARKET_OPTIONS = [
     { value: "all", label: "All" },
     { value: "AD", label: "Admitted" },
@@ -396,63 +342,54 @@ const Integration = ({ initialCarriers = [] }: IntegrationProps) => {
 
   const [lob, setLob] = useState("all");
   const [market, setMarket] = useState("all");
-  const [status, setStatus] = useState("all");
+  const [status, setStatus] = useState<"all" | "live" | "api">("all");
 
   useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef, descRef });
 
-  // Build carrier list from initialCarriers only, sorted A→Z
+  // Carrier list from the static local dataset, sorted A→Z
   const directory = useMemo<Carrier[]>(() => {
-    return initialCarriers
-      .filter((wf) => wf.name)
-      .map((wf) => {
-        const products = parseProductsFromWebflow(wf.productsAd, wf.productsEs);
-        return {
-          name: wf.name,
-          logoSrc: wf.logoUrl,
-          website: wf.companyUrl,
-          logoColor: "#2D3E9D",
-          status: "Live on CoverForce" as const,
-          products: products.length > 0 ? products : [{ market: "AD" as Market, name: "Commercial Policy" }],
-        };
-      })
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [initialCarriers]);
+    return [...INTEGRATION_DATA].sort((a, b) => a.name.localeCompare(b.name));
+  }, []);
 
-  // FIXED: Product Type and Market Type filters
+  // Product Type, Market Type, and Status filters
   const filteredDirectory = useMemo(() => {
     return directory.filter((carrier) => {
-      // Check if carrier has AD products
       const hasADProducts = carrier.products.some((p) => p.market === "AD");
-      // Check if carrier has ES products
       const hasESProducts = carrier.products.some((p) => p.market === "ES");
 
-      // Product Type (LOB) filter - normalized comparison
-      const hasLob =
-        lob === "all"
-          ? true
-          : carrier.products.some((p) => p.name === lob);
+      // Product Type (LOB) filter
+      const hasLob = lob === "all" ? true : carrier.products.some((p) => p.name === lob);
 
       // Market Type filter
       let hasMarket = true;
       if (market === "AD") {
-        // Show only carriers that have AD products (regardless of ES)
         hasMarket = hasADProducts;
       } else if (market === "ES") {
-        // Show only carriers that have ES products (regardless of AD)
         hasMarket = hasESProducts;
       }
-      // if market === "all", hasMarket stays true
 
-      return hasLob && hasMarket;
+      // Status filter — based on whether the carrier has any product
+      // with matching availability, not the carrier's overall status badge.
+      // This lets a mixed carrier (e.g. one with both live AD products
+      // and request-only ES products) show up correctly under either filter,
+      // with only the matching products rendered inside the card.
+      let hasStatus = true;
+      if (status === "live") {
+        hasStatus = carrier.products.some((p) => p.availability === "live");
+      } else if (status === "api") {
+        hasStatus = carrier.products.some((p) => p.availability === "request");
+      }
+
+      return hasLob && hasMarket && hasStatus;
     });
-  }, [directory, lob, market]);
+  }, [directory, lob, market, status]);
 
   const visibleCards = filteredDirectory.slice(0, visibleCount);
   const hasMore = visibleCount < filteredDirectory.length;
 
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
-  }, [lob, market]);
+  }, [lob, market, status]);
 
   useGSAP(
     () => {
@@ -487,7 +424,6 @@ const Integration = ({ initialCarriers = [] }: IntegrationProps) => {
       <div className="relative z-10 overflow-hidden">
         <Container borderColor="#53535380">
           <div className="pb-12 pt-16 md:pb-24 md:pt-24">
-
             {/* Header */}
             <div
               ref={headerRef}
@@ -509,11 +445,11 @@ const Integration = ({ initialCarriers = [] }: IntegrationProps) => {
                 </p>
               </div>
               <p className="hidden max-w-lg font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:ml-auto lg:block lg:text-right">
-              The universal index of accessible integrations all in one place.
+                The universal index of accessible integrations all in one place.
               </p>
             </div>
 
-            {/* Result count */}
+            {/* Filters */}
             <div className="relative z-20 mt-8 space-y-5 lg:mt-10 lg:space-y-3">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <FormSelect
@@ -537,7 +473,7 @@ const Integration = ({ initialCarriers = [] }: IntegrationProps) => {
                   label="Status"
                   value={status}
                   options={STATUS_OPTIONS}
-                  onChange={setStatus}
+                  onChange={(v) => setStatus(v as "all" | "live" | "api")}
                 />
               </div>
 
@@ -557,9 +493,10 @@ const Integration = ({ initialCarriers = [] }: IntegrationProps) => {
                 >
                   {visibleCards.map((carrier, idx) => (
                     <CarrierCard
-                      key={carrier.logoSrc ?? `${carrier.name}-${idx}`}
+                      key={carrier.logoSrc ? `${carrier.name}-logo` : `${carrier.name}-${idx}`}
                       carrier={carrier}
                       marketFilter={market as Market | "all"}
+                      statusFilter={status}
                     />
                   ))}
                 </div>

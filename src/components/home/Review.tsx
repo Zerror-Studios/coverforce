@@ -107,15 +107,15 @@ function CompanyLogo({
 
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
-    <article className="relative flex min-h-[300px] flex-col overflow-hidden rounded-sm bg-white p-5 md:min-h-[360px] md:p-7 lg:min-h-[400px] lg:p-8">
+    <article className="relative flex h-[420px] flex-col overflow-hidden rounded-sm bg-white p-5 md:h-[460px] md:p-7 lg:h-[480px] lg:p-8">
       <div className="relative z-10 flex h-full flex-1 flex-col">
-        <div className="flex flex-1 items-center">
-          <blockquote className="w-full max-w-4xl text-left text-xl font-heading font-regular leading-[1.35] tracking-tight text-[#1a1a2e] md:text-2xl lg:max-w-5xl lg:text-3xl lg:leading-[1.32]">
+        <div className="flex flex-1 items-center overflow-hidden">
+          <blockquote className="line-clamp-6 w-full text-left text-xl font-heading font-regular leading-[1.35] tracking-tight text-[#1a1a2e] md:text-2xl lg:text-3xl lg:leading-[1.32]">
             &ldquo;{testimonial.quote}&rdquo;
           </blockquote>
         </div>
 
-        <div className="relative mt-6 md:mt-7">
+        <div className="relative mt-6 shrink-0 md:mt-7">
           <div className="pointer-events-none absolute bottom-0 right-0 z-0 opacity-90">
             <CompanyLogo
               src={testimonial.logo}
