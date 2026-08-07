@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -167,46 +167,11 @@ function ProcessStepStrip({
   );
 }
 
-function MobileProcessFlow({
-  activeIndex,
-  setActiveIndex,
-}: {
-  activeIndex: number;
-  setActiveIndex: (index: number) => void;
-}) {
-  const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
-
-  useEffect(() => {
-    const items = itemRefs.current.filter(Boolean) as HTMLDivElement[];
-    if (!items.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (!visible?.target) return;
-        const index = items.indexOf(visible.target as HTMLDivElement);
-        if (index >= 0) setActiveIndex(index);
-      },
-      { threshold: [0.35, 0.55], rootMargin: "-20% 0px -35% 0px" },
-    );
-
-    items.forEach((item) => observer.observe(item));
-    return () => observer.disconnect();
-  }, [setActiveIndex]);
-
+function MobileProcessFlow() {
   return (
-    <>
-      <div className="flex flex-col gap-16 py-12 pb-20 lg:hidden">
-        {processSteps.map((step, index) => (
-        <div
-          key={step.id}
-          ref={(el) => {
-            itemRefs.current[index] = el;
-          }}
-          className="flex flex-col"
-        >
+    <div className="flex flex-col gap-16 py-12 pb-20 lg:hidden">
+      {processSteps.map((step) => (
+        <div key={step.id} className="flex flex-col">
           <div className="w-fit">
             <EyebrowPill background={PRIMARY_BUTTON_GRADIENT}>{step.tag}</EyebrowPill>
           </div>
@@ -237,11 +202,8 @@ function MobileProcessFlow({
             <ProcessStepVideo src={step.videoSrc} label={step.heading} />
           </div>
         </div>
-        ))}
-      </div>
-
-      <ProcessStepBar activeIndex={activeIndex} className="fixed inset-x-0 bottom-0 z-30 lg:hidden" />
-    </>
+      ))}
+    </div>
   );
 }
 
@@ -494,10 +456,7 @@ const ProcessFlow = () => {
       />
 
       <Container borderColor="#53535380">
-        <MobileProcessFlow
-          activeIndex={activeStep}
-          setActiveIndex={setActiveStep}
-        />
+        <MobileProcessFlow />
 
         <div className="hidden h-screen gap-12 lg:grid lg:grid-cols-2 lg:gap-16 xl:gap-20">
           <div className="leftScroll relative flex flex-col will-change-transform">

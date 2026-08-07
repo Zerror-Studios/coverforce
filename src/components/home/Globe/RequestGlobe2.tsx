@@ -193,14 +193,15 @@ const CARRIER_LOGO_POOL = [
     "/images/home/carrier/carrier-cowbell.png",
     "/images/home/carrier/carrier-employers.png",
     "/images/home/carrier/carrier-markel.png",
-    "/images/home/carrier/carrier-merchants-insurance-group.png",
+    "/images/home/carrier/carrier-Travelers.png",
+    "/images/home/carrier/carrier-liberty-mutual.png",
     "/images/home/carrier/carrier-republic-indemnity.png",
 ];
 
 const BROKER_LOGO_POOL = [
     "/images/home/distributors/broker-diligence-brokerage.png",
     "/images/home/distributors/network-isu-steadfast.png",
-    "/images/home/distributors/startup-anzen.png",
+    "/images/home/distributors/wholesaler-amwins.png",
     "/images/home/distributors/startup-broker-buddha-buddhAI.png",
     "/images/home/distributors/startup-coverwatch.png",
     "/images/home/distributors/startup-harper.png",

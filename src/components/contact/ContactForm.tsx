@@ -43,7 +43,7 @@ function validateStep(step: number, data: FormDataState): FieldErrors {
   const errors: FieldErrors = {};
 
   if (step === 1 && data.businessType.length === 0) {
-    errors.businessType = "Please select at least one business type.";
+    errors.businessType = "Please select a business type.";
   }
 
   if (step === 2) {
@@ -55,8 +55,13 @@ function validateStep(step: number, data: FormDataState): FieldErrors {
     }
   }
 
-  if (step === 3 && !data.bookSize.trim()) {
-    errors.bookSize = "Please select your book of business size.";
+  if (step === 3) {
+    const bookSize = data.bookSize.trim();
+    if (!bookSize) {
+      errors.bookSize = "Please enter your book of business size.";
+    } else if (bookSize.length < 2) {
+      errors.bookSize = "Please enter a valid book of business size.";
+    }
   }
 
   if (step === 4) {
@@ -377,16 +382,6 @@ const ContactForm = () => {
     "Other",
   ];
 
-  const bookSizes = [
-    "Under $25k",
-    "$25k – $50k",
-    "$50k – $250k",
-    "$250k – $1M",
-    "$1M – $5M",
-    "$5M – $10M",
-    "$10M+",
-  ];
-
   const heardAboutUsOptions = [
     "Search (Google, other engine)",
     "AI Tool (Claude, ChatGPT, etc)",
@@ -410,14 +405,11 @@ const ContactForm = () => {
     }))
     .sort((a, b) => a.country.localeCompare(b.country));
 
-  const toggleBusinessType = (type: string) => {
-    setFormData((prev) => {
-      const current = prev.businessType;
-      if (current.includes(type)) {
-        return { ...prev, businessType: current.filter((t) => t !== type) };
-      }
-      return { ...prev, businessType: [...current, type] };
-    });
+  const selectBusinessType = (type: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      businessType: prev.businessType[0] === type ? [] : [type],
+    }));
     clearFieldError("businessType");
     setSubmitError(null);
   };
@@ -511,9 +503,9 @@ const ContactForm = () => {
                       key={type}
                       type="button"
                       data-animate-btn
-                      onClick={() => toggleBusinessType(type)}
+                      onClick={() => selectBusinessType(type)}
                       className={`rounded-[5px] border px-8 py-3 transition-colors ${
-                        formData.businessType.includes(type)
+                        formData.businessType[0] === type
                           ? "border-transparent bg-white text-[#2E2E2E]"
                           : "border-white/40 bg-transparent text-white hover:bg-white/[0.08]"
                       }`}
@@ -582,29 +574,21 @@ const ContactForm = () => {
                     Premium)?*
                   </span>
                 </h2>
-                <div className="flex w-full flex-wrap justify-center gap-4">
-                  {bookSizes.map((size) => (
-                    <button
-                      key={size}
-                      type="button"
-                      data-animate-btn
-                      onClick={() => updateData("bookSize", size)}
-                      className={`min-w-[140px] rounded-[5px] border px-8 py-3 transition-colors ${
-                        formData.bookSize === size
-                          ? "border-transparent bg-white text-[#2E2E2E]"
-                          : "border-white/40 bg-transparent text-white hover:bg-white/[0.08]"
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
+                <div className="w-full" data-animate-field>
+                  <input
+                    type="text"
+                    value={formData.bookSize}
+                    onChange={(e) => updateData("bookSize", e.target.value)}
+                    aria-invalid={Boolean(fieldErrors.bookSize)}
+                    className={`w-full border-b bg-transparent pb-3 text-center text-lg text-white outline-none transition-colors ${fieldBorderClass(Boolean(fieldErrors.bookSize))}`}
+                  />
+                  {fieldErrors.bookSize && (
+                    <p className="mt-3 text-sm text-red-300" role="alert">
+                      {fieldErrors.bookSize}
+                    </p>
+                  )}
                 </div>
-                {fieldErrors.bookSize && (
-                  <p className="mt-6 text-sm text-red-300" role="alert">
-                    {fieldErrors.bookSize}
-                  </p>
-                )}
-                <div className="mt-16 flex w-full items-center justify-between" data-animate-btn>
+                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
                   <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
                     GO BACK
                   </Button>
