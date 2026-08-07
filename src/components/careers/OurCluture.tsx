@@ -18,6 +18,7 @@ type CultureItem = {
   caption: string;
   placement: string;
   imageHeight?: "large" | "medium";
+  objectPosition?: "center" | "left" | "right";
 };
 
 const CULTURE_PARALLAX_TRAVEL = [
@@ -52,6 +53,7 @@ const cultureItems: CultureItem[] = [
       "From submission intake to quote, bind, and data intelligence - our platform story, live on the show floor.",
     placement: "lg:col-span-7 lg:col-start-6 lg:row-span-6 lg:row-start-1",
     imageHeight: "large",
+    objectPosition: "left",
   },
   {
     src: "/images/careers/image3.webp",
@@ -76,7 +78,7 @@ const bottomCulturePair = {
     src: "/images/careers/image5.webp",
     alt: "CoverForce team group photo at a conference gathering",
     caption:
-      "Our 2% attrition rate reflects the culture we've built - people stay because they enjoy solving hard problems together.",
+      "Every conversation is a chance to learn from brokers, carriers, and partners - helping shape what we build next.",
     placement: "",
     imageHeight: "large" as const,
   },
@@ -84,7 +86,7 @@ const bottomCulturePair = {
     src: "/images/careers/image6.webp",
     alt: "CoverForce teammates at the company insurtech booth",
     caption:
-      "Every conversation is a chance to learn from brokers, carriers, and partners - helping shape what we build next.",
+      "Our 2% attrition rate reflects the culture we've built - people stay because they enjoy solving hard problems together.",
     placement: "",
     imageHeight: "medium" as const,
   },
@@ -92,6 +94,12 @@ const bottomCulturePair = {
 
 const captionClassName =
   "max-w-md font-heading text-base font-medium leading-snug tracking-tight text-white/85 md:text-lg";
+
+const OBJECT_POSITION_CLASS = {
+  center: "object-center",
+  left: "object-left",
+  right: "object-right",
+} as const;
 
 function CultureImage({
   item,
@@ -103,6 +111,8 @@ function CultureImage({
   const imageWrapClass = item.imageHeight
     ? IMAGE_HEIGHTS[item.imageHeight]
     : "relative min-h-[14rem] w-full overflow-hidden rounded-xl";
+  const objectPositionClass =
+    OBJECT_POSITION_CLASS[item.objectPosition ?? "center"];
 
   return (
     <div className={`${imageWrapClass} ${className}`}>
@@ -110,7 +120,7 @@ function CultureImage({
         src={item.src}
         alt={item.alt}
         fill
-        className="object-cover"
+        className={`object-cover ${objectPositionClass}`}
         sizes={
           item.imageHeight
             ? "(max-width: 1024px) 100vw, 42vw"

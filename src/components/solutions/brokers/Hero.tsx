@@ -53,7 +53,7 @@ const Hero = () => (
     rightCardTransferTargetId="brokers-step-1-card"
     showMarquee
     marqueeLogos={BROKERS_HERO_LOGOS}
-    marqueeSize="default"
+    marqueeSize="large"
     marqueeLogosPerSet={4}
     marqueeVariant="pulsating"
     showSecondSection={false}

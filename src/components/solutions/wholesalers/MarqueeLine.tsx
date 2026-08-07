@@ -25,9 +25,9 @@ type MarqueeRowProps = {
 
 const LOGO_SLOT_CLASS = {
   default:
-    "flex h-6 w-[6.25rem] items-center justify-center sm:h-7 sm:w-[7rem] md:h-7 md:w-[7.5rem] lg:h-8 lg:w-32",
+    "flex h-7 w-[7.5rem] shrink-0 items-center justify-center sm:h-8 sm:w-36 md:h-8 md:w-40 lg:h-9 lg:w-44",
   large:
-    "flex h-7 w-28 items-center justify-center sm:h-8 sm:w-32 md:h-9 md:w-36 lg:h-10 lg:w-40",
+    "flex h-8 w-36 shrink-0 items-center justify-center sm:h-9 sm:w-40 md:h-9 md:w-44 lg:h-10 lg:w-48",
 } as const;
 
 const LOGO_IMAGE_CLASS =
@@ -59,8 +59,8 @@ export function MarqueeRow({
               <Image
                 src={logo.src}
                 alt="partner-logo"
-                width={size === "large" ? 160 : 128}
-                height={size === "large" ? 40 : 32}
+                width={size === "large" ? 192 : 176}
+                height={size === "large" ? 40 : 36}
                 className={`${LOGO_IMAGE_CLASS} ${LOGO_TONE_CLASS[tone]}`}
                 draggable={false}
               />

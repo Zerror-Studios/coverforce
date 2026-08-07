@@ -60,7 +60,7 @@ const Hero = () => (
     showMarquee
     marqueeVariant="pulsating"
     marqueeLogos={STARTUP_MARQUEE_LOGOS}
-    marqueeSize="default"
+    marqueeSize="large"
     marqueeLogosPerSet={4}
     gradFlow={STARTUP_HERO_GRAD_FLOW}
   />
