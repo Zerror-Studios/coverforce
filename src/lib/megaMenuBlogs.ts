@@ -1,6 +1,10 @@
 import type { MegaMenuBlogData } from "@/data/megaMenu";
 import { getBlogPosts, type BlogDetail } from "@/lib/webflow";
 
+/** Solutions mega menu featured card — same source as /blog/[slug]. */
+export const SOLUTIONS_MEGA_MENU_BLOG_SLUG =
+  "the-anatomy-of-a-carrier-integration-part-5-the-integration-stack";
+
 function toFeatured(post: BlogDetail): MegaMenuBlogData["featured"] {
   return {
     title: post.title,
@@ -16,6 +20,9 @@ export async function getMegaMenuBlogData(): Promise<MegaMenuBlogData | null> {
     if (!posts.length) return null;
 
     const featuredPost = posts.find((post) => post.featured) ?? posts[0]!;
+    const solutionsPost =
+      posts.find((post) => post.slug === SOLUTIONS_MEGA_MENU_BLOG_SLUG) ?? null;
+
     const latest = posts
       .filter((post) => post.slug !== featuredPost.slug)
       .slice(0, 2)
@@ -37,14 +44,15 @@ export async function getMegaMenuBlogData(): Promise<MegaMenuBlogData | null> {
           label: post.title,
           href: `/blog/${post.slug}`,
           description:
-          (post.summary || `${post.category} · ${post.date}`).slice(0, 110) +
-          ((post.summary || "").length > 110 ? "…" : ""),
+            (post.summary || `${post.category} · ${post.date}`).slice(0, 110) +
+            ((post.summary || "").length > 110 ? "…" : ""),
         });
       }
     }
 
     return {
       featured: toFeatured(featuredPost),
+      solutionsFeatured: solutionsPost ? toFeatured(solutionsPost) : undefined,
       latest,
     };
   } catch {

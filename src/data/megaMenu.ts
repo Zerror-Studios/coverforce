@@ -56,6 +56,8 @@ export type MegaMenuPromo = {
 /** Serializable blog fields for the client Header (icons stay in static config). */
 export type MegaMenuBlogData = {
   featured: MegaMenuFeatured;
+  /** Featured card for the Solutions mega menu (specific post from Webflow). */
+  solutionsFeatured?: MegaMenuFeatured;
   latest: Array<{
     label: string;
     href: string;
@@ -140,10 +142,10 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
   },
   Solutions: {
     featured: {
-      title: "CoverForce Named to the 2025 CB Insights",
-      href: "/blog/coverforce-named-to-the-2025-cb-insights-list-of-the-50-most-innovative-insurtech-startups",
+      title: "The Anatomy of a Carrier Integration, Part 5: The Integration Stack",
+      href: "/blog/the-anatomy-of-a-carrier-integration-part-5-the-integration-stack",
       image: "/images/blog/blog3.png",
-      imageAlt: "CoverForce Insurtech 50 2025 recognition",
+      imageAlt: "The Anatomy of a Carrier Integration, Part 5: The Integration Stack",
     },
     cta: {
       label: "Explore Solutions",
@@ -320,7 +322,10 @@ export function applyMegaMenuBlogData(
 
     next[key] = {
       ...menu,
-      featured: blogData.featured,
+      featured:
+        key === "Solutions"
+          ? (blogData.solutionsFeatured ?? menu.featured)
+          : blogData.featured,
       columns,
     };
   }
