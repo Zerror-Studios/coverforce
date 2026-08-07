@@ -167,16 +167,18 @@ const CarrierCard = ({
           </div>
         )}
 
-        {/* Footer link */}
-        <Link
-          href={carrier.website || "/contact"}
-          target={carrier.website ? "_blank" : undefined}
-          rel={carrier.website ? "noreferrer" : undefined}
-          className="mt-auto ml-auto flex items-center gap-1 pt-5 text-right text-sm font-heading font-medium text-[#2D3E9D] transition-colors hover:text-[#151F4D] md:pt-6"
-        >
-          Know more
-          <ExternalArrowIcon className="h-2 w-3 shrink-0 text-current" />
-        </Link>
+        {/* Footer link — only when a logo is available */}
+        {carrier.logoSrc ? (
+          <Link
+            href={carrier.website || "/contact"}
+            target={carrier.website ? "_blank" : undefined}
+            rel={carrier.website ? "noreferrer" : undefined}
+            className="mt-auto ml-auto flex items-center gap-1 pt-5 text-right text-sm font-heading font-medium text-[#2D3E9D] transition-colors hover:text-[#151F4D] md:pt-6"
+          >
+            Know more
+            <ExternalArrowIcon className="h-2 w-3 shrink-0 text-current" />
+          </Link>
+        ) : null}
       </div>
     </div>
   );

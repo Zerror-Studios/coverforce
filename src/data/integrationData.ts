@@ -23,7 +23,7 @@ export type Carrier = {
 export const INTEGRATION_DATA: Carrier[] = [
   {
     name: "Accident Fund",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Accident Fund.png",
     website: "https://www.accidentfund.com/",
     status: "Live on CoverForce",
     products: [
@@ -32,7 +32,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Acuity",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Acuity.png",
     website: "https://www.acuity.com/",
     status: "API available",
     products: [
@@ -44,7 +44,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Amtrust",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/AmTrust.png",
     website: "https://amtrustfinancial.com/",
     status: "Live on CoverForce",
     products: [
@@ -57,7 +57,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Arch",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Arch.png",
     website: "https://www.archinsurance.com/",
     status: "API available",
     products: [
@@ -72,7 +72,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "At-Bay",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/At Bay.png",
     website: "https://www.at-bay.com/",
     status: "API available",
     products: [
@@ -81,7 +81,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Ategrity",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Ategrity.png",
     website: "https://www.ategrity.com/",
     status: "API available",
     products: [
@@ -92,7 +92,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Atlantic Casualty",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Atlantic.png",
     website: "https://www.atlanticcasualty.net/",
     status: "API available",
     products: [
@@ -103,7 +103,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Attune",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Attune.png",
     website: "https://www.attuneinsurance.com/",
     status: "API available",
     products: [
@@ -112,7 +112,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Axis",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Axis.png",
     website: "https://www.axiscapital.com/",
     status: "API available",
     products: [
@@ -123,7 +123,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Beazley",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Beazley.png",
     website: "https://www.beazley.com/",
     status: "API available",
     products: [
@@ -133,7 +133,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Berkeley Management Protection",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Berkeley Management.png",
     website: "https://www.berkleymp.com/",
     status: "API available",
     products: [
@@ -146,7 +146,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "BerkleyNet",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/BerkleyNet.png",
     website: "https://berkleynet.com/",
     status: "Live on CoverForce",
     products: [
@@ -155,7 +155,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "BiBerk",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/BiBerk.png",
     website: "https://www.biberk.com/",
     status: "Live on CoverForce",
     products: [
@@ -164,7 +164,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Blitz",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Blitz.png",
     website: "https://www.blitzinsurance.com/",
     status: "API available",
     products: [
@@ -176,7 +176,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Btis",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Btis.png",
     website: "https://marketplace.btisinc.com/",
     status: "API available",
     products: [
@@ -187,7 +187,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Burlington IFG",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Burlington ifg.png",
     website: "https://www.ifgcompanies.com/",
     status: "API available",
     products: [
@@ -198,7 +198,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Century Surety",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Century.png",
     website: "https://www.centurysurety.com/",
     status: "API available",
     products: [
@@ -209,7 +209,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "CFC",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/CFC.png",
     website: "https://www.cfc.com/",
     status: "API available",
     products: [
@@ -220,7 +220,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Chubb",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Chubbs.png",
     website: "https://www.chubb.com/",
     status: "Live on CoverForce",
     products: [
@@ -235,7 +235,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "CNA",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/CNA.png",
     website: "https://www.cna.com/",
     status: "Live on CoverForce",
     products: [
@@ -246,7 +246,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Coaction",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/CoAction.png",
     website: "https://www.coactionspecialty.com/",
     status: "API available",
     products: [
@@ -257,7 +257,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Coliation",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Coliation.png",
     website: "https://www.coalitioninc.com/",
     status: "Live on CoverForce",
     products: [
@@ -279,7 +279,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Core Specialty",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Core Specialty.png",
     website: "https://corespecialty.com/",
     status: "API available",
     products: [
@@ -290,7 +290,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Corvus",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Corvus.png",
     website: "https://www.corvusinsurance.com/",
     status: "API available",
     products: [
@@ -300,7 +300,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Coterie",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Coterie.png",
     website: "https://coterieinsurance.com/",
     status: "Live on CoverForce",
     products: [
@@ -311,7 +311,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Counterpart",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Counterpart.png",
     website: "https://yourcounterpart.com/",
     status: "API available",
     products: [
@@ -324,7 +324,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Cowbell",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Cowbell.png",
     website: "https://cowbell.insure/",
     status: "Live on CoverForce",
     products: [
@@ -334,7 +334,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Crum & Forster",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Crum.png",
     website: "https://www.cfins.com/",
     status: "Live on CoverForce",
     products: [
@@ -346,7 +346,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Doe & Emuss",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Doe Emuss.png",
     website: "https://doeandemuss.com/",
     status: "API available",
     products: [
@@ -355,7 +355,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Elpha Secure",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Elpha.png",
     website: "https://www.elphasecure.com/",
     status: "API available",
     products: [
@@ -364,7 +364,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Employers",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Employers.png",
     website: "https://www.employers.com/",
     status: "Live on CoverForce",
     products: [
@@ -373,7 +373,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "First",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/First.png",
     website: "https://myfirstinsurance.com/",
     status: "API available",
     products: [
@@ -382,7 +382,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Gaig",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Gaig.jpg",
     website: "https://www.greatamericaninsurancegroup.com/",
     status: "Live on CoverForce",
     products: [
@@ -394,7 +394,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "General Star",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/General Star.png",
     website: "https://www.generalstar.com/",
     status: "API available",
     products: [
@@ -403,7 +403,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Guard",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Guard.png",
     website: "https://www.guard.com/",
     status: "Live on CoverForce",
     products: [
@@ -412,7 +412,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Hanover",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Hanover.png",
     website: "https://www.hanover.com/",
     status: "API available",
     products: [
@@ -423,7 +423,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Hiscox",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Hiscox.png",
     website: "https://www.hiscox.com/",
     status: "Live on CoverForce",
     products: [
@@ -436,7 +436,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Homesite",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Homesite.png",
     website: "https://go.homesite.com/",
     status: "API available",
     products: [
@@ -445,7 +445,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Hsb",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/HSB.png",
     website: "https://www.munichre.com/hsb/en.html",
     status: "API available",
     products: [
@@ -456,7 +456,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "IAT Specialty",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/IAT.png",
     website: "https://www.iatinsurancegroup.com/",
     status: "Live on CoverForce",
     products: [
@@ -467,7 +467,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Killara",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Killara.png",
     website: "https://killaracyber.com/",
     status: "API available",
     products: [
@@ -476,7 +476,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Liberty Mutual",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Liberty Mutual.png",
     website: "https://www.libertymutual.com/",
     status: "Live on CoverForce",
     products: [
@@ -489,7 +489,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Main Street America Insurance",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Main Street.png",
     website: "https://msainsurance.com/",
     status: "API available",
     products: [
@@ -502,7 +502,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Markel",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Markel.png",
     website: "https://www.markel.com/",
     status: "Live on CoverForce",
     products: [
@@ -520,7 +520,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Merchants",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Merchants.png",
     website: "https://www.merchantsgroup.com/",
     status: "Live on CoverForce",
     products: [
@@ -530,7 +530,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Music",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Music.png",
     website: "https://www.music-ins.com/",
     status: "API available",
     products: [
@@ -541,7 +541,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Nationwide",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Nationwide.png",
     website: "https://www.nationwide.com/",
     status: "Live on CoverForce",
     products: [
@@ -557,7 +557,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Nautilus Group",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Nautilus.png",
     website: "https://www.nautilusinsgroup.com/",
     status: "API available",
     products: [
@@ -579,7 +579,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Northfield",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Northfield.png",
     website: "https://www.northfieldins.com/",
     status: "API available",
     products: [
@@ -591,7 +591,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Penn America",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Penn American.png",
     website: "https://penn-america.com/",
     status: "Live on CoverForce",
     products: [
@@ -602,7 +602,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Pie",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/pie.png",
     website: "https://www.pieinsurance.com/",
     status: "Live on CoverForce",
     products: [
@@ -611,7 +611,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Republic Indemnity",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Republic.png",
     website: "https://www.republicindemnity.com/",
     status: "Live on CoverForce",
     products: [
@@ -620,7 +620,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "RSUI",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/RSUI.png",
     website: "https://www.rsui.com/",
     status: "API available",
     products: [
@@ -631,7 +631,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Seneca",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/seneca-insurance.jpg",
     website: "https://www.senecainsurance.com/",
     status: "API available",
     products: [
@@ -642,7 +642,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "State Auto Insurance",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/State Auto Insurance.webp",
     website: "https://www.stateauto.com/",
     status: "API available",
     products: [
@@ -651,7 +651,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Thimble",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/thimble.png",
     website: "https://www.thimble.com/",
     status: "API available",
     products: [
@@ -660,7 +660,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Travelers",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Travelers.png",
     website: "https://www.travelers.com/",
     status: "Live on CoverForce",
     products: [
@@ -671,7 +671,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "USLI",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/USLI.png",
     website: "https://www.usli.com/",
     status: "Live on CoverForce",
     products: [
@@ -684,7 +684,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Westchester Surplus",
-    logoSrc: "",
+    logoSrc: "Westchester Surplus",
     website: "https://www.chubb.com/",
     status: "Live on CoverForce",
     products: [
@@ -696,7 +696,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Western World (AIG)",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Western World.png",
     website: "https://www.westernworld.com/home",
     status: "API available",
     products: [
@@ -707,7 +707,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Westfield",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/Westfield.png",
     website: "https://www.westfieldinsurance.com/",
     status: "API available",
     products: [

@@ -87,11 +87,19 @@ const Hero = () => {
         className="relative h-full w-full overflow-hidden will-change-transform"
       >
         <Image
+          src="/images/about/about-banner-mobile.webp"
+          alt="about-hero"
+          fill
+          priority
+          className="object-cover object-top lg:hidden"
+          sizes="100vw"
+        />
+        <Image
           src="/images/about/about-banner.webp"
           alt="about-hero"
           fill
           priority
-          className="object-cover object-top"
+          className="hidden object-cover object-top lg:block"
           sizes="100vw"
         />
         <div
