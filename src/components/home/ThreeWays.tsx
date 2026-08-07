@@ -142,7 +142,7 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "developer",
     className: "md:col-span-2",
     mockAlign: "bottom",
-    mobileMockScale: 0.66,
+    mobileMockScale: 0.7,
     backgroundScene: <DeveloperTerminalBg />,
     mock: <DeveloperMock />,
     modalPreview: <DeveloperMock align="modal" />,

@@ -153,7 +153,7 @@ export default function BrokerMock({ cardHovered = false }: BrokerMockProps) {
       </div>
 
       {/* One API. 40+ Carriers. — overlaps lower-left of Quotes card */}
-      <div className="relative z-20 -mt-18 w-[70%] max-md:-mt-12 max-md:w-[85%] md:-ml-6">
+      <div className="relative z-20 -mt-18 w-[70%] max-md:-mt-20 max-md:w-[85%] md:-ml-6">
         <div className="w-full overflow-hidden rounded-md bg-white p-3.5 shadow-[0_8px_32px_rgba(0,0,0,0.16)]">
           <div className="flex items-start justify-between gap-2">
             <p className="text-[13px] font-heading font-semibold leading-snug text-[#111827]">

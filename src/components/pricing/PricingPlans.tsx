@@ -140,8 +140,8 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
     <article
       className={`pricing-card pricing-plan-card-shell way-card-shell group/pricing relative flex flex-col overflow-hidden rounded-md will-change-transform ${
         isEnterprise
-          ? "min-h-[40rem] sm:min-h-[42rem]"
-          : "min-h-[36rem] sm:min-h-[38rem]"
+          ? "min-h-[44rem] sm:min-h-[46rem]"
+          : "min-h-[40rem] sm:min-h-[42rem]"
       } md:min-h-[44rem] lg:min-h-[48rem]`}
     >
       <div className="way-card-body absolute inset-0 overflow-hidden rounded-md">
@@ -201,7 +201,7 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
           size="md"
           surface={isDark ? "on-dark" : "default"}
           balanced
-          className="w-full"
+          className="mt-8 w-full sm:mt-6 md:mt-0"
         />
       </div>
     </article>

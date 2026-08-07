@@ -104,10 +104,10 @@ export default function DeveloperMock({ align = "card" }: DeveloperMockProps) {
       className={
         isModal
           ? "absolute top-1/2 right-6 z-10 w-[min(78%,460px)] -translate-y-1/2 sm:w-[500px] md:right-10"
-          : "relative z-10 mx-auto w-full max-w-[460px] max-md:mt-4 max-md:w-[108%] max-md:max-w-[26rem] md:absolute md:top-1/2 md:right-14 md:mx-0 md:max-w-[500px] md:-translate-y-1/2 lg:right-20"
+          : "relative z-10 mx-auto w-full max-w-[460px] max-md:mt-2 max-md:w-[122%] max-md:max-w-none md:absolute md:top-1/2 md:right-14 md:mx-0 md:max-w-[500px] md:-translate-y-1/2 lg:right-20"
       }
     >
-      <div className="w-full rounded-xl bg-white p-3.5 shadow-[0_8px_30px_rgba(20,20,40,0.08)] sm:p-4">
+      <div className="w-full rounded-xl bg-white p-3.5 shadow-[0_8px_30px_rgba(20,20,40,0.08)] max-md:p-2.5 sm:p-4">
         {/* Header */}
         <div className="flex items-center justify-between gap-2">
           <h2 className="text-sm font-bold tracking-tight text-[#14141a] sm:text-base">
@@ -134,11 +134,11 @@ export default function DeveloperMock({ align = "card" }: DeveloperMockProps) {
         </div>
 
         {/* Metric tiles — highlight cycles next → next */}
-        <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className="mt-2.5 grid grid-cols-2 gap-2 max-md:mt-2 max-md:gap-1.5 sm:grid-cols-4">
           {METRICS.map((m, i) => (
             <div
               key={m.label}
-              className={`rounded-lg border p-2 ${
+              className={`rounded-lg border p-2 max-md:p-1.5 ${
                 i === activeMetric
                   ? "border-[#7C6CF6] bg-white"
                   : "border-[#ECECEF] bg-white"
@@ -157,7 +157,7 @@ export default function DeveloperMock({ align = "card" }: DeveloperMockProps) {
         </div>
 
         {/* Chart + always-visible black tooltip */}
-        <div className="relative mt-2.5 h-36 w-full">
+        <div className="relative mt-2.5 h-36 w-full max-md:mt-1.5 max-md:h-24">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={DATA} margin={{ top: 6, right: 8, left: -16, bottom: 0 }}>
               <defs>
