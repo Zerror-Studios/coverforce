@@ -460,10 +460,10 @@ const Hero = () => {
                       className="flex shrink-0 flex-col items-center gap-1.5 px-2"
                       aria-hidden={index >= stats.length ? true : undefined}
                     >
-                      <p className={`text-[1.35rem] font-heading font-regular tracking-tight ${theme.statValueActive}`}>
+                      <p className={`text-[2rem] font-heading font-regular tracking-tight ${theme.statValueActive}`}>
                         {stat.value}
                       </p>
-                      <p className={`whitespace-nowrap text-center text-[0.68rem] font-sans font-regular leading-relaxed ${theme.statLabelActive}`}>
+                      <p className={`whitespace-nowrap text-center text-[0.75rem] font-sans font-regular leading-relaxed ${theme.statLabelActive}`}>
                         {stat.label}
                       </p>
                     </div>
@@ -535,7 +535,7 @@ const Hero = () => {
         {/* Network + distribution header */}
         <div
           ref={networkHeaderRef}
-          className="relative w-full pt-4 pb-6 sm:pt-6 sm:pb-8 md:pt-10 md:pb-10 lg:pb-12"
+          className="relative w-full pt-18 pb-6 sm:pt-6 sm:pb-8 md:pt-10 md:pb-10 lg:pb-12"
         >
           <div
             ref={networkRef}

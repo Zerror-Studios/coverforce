@@ -224,24 +224,24 @@ const Footer = () => {
         <div className="relative z-10 pt-12 md:pt-16 lg:pt-20">
 
           {/* ── Top: CTA banner ── */}
-          <div className="relative min-h-[22rem] overflow-hidden border-b border-neutral-200 md:min-h-[26rem] lg:min-h-[30rem]">
+          <div className="relative min-h-[26rem] overflow-hidden border-b border-neutral-200 md:min-h-[26rem] lg:min-h-[30rem]">
             <Image
               src="/images/footer_banner.webp"
               alt="footer-banner"
               fill
-              className="object-cover object-top md:object-right"
+              className="object-cover  object-[90%_50%] md:object-right"
               sizes="100vw"
             />
             <div
-              className="absolute inset-0 bg-linear-to-t from-black/75 via-black/40 to-black/10 md:from-black/60 md:via-black/25 md:to-transparent"
+              className="absolute inset-0 bg-linear-to-t from-black/70 via-black/35 to-transparent md:from-black/60 md:via-black/25"
               aria-hidden
             />
             <div
-              className="absolute inset-0 bg-linear-to-r from-black/85 via-black/35 to-transparent md:from-black/80 md:via-black/25 md:to-transparent [mask-image:linear-gradient(to_right,black_0%,black_32%,transparent_58%)]"
+              className="absolute inset-0 hidden bg-linear-to-r from-black/80 via-black/25 to-transparent [mask-image:linear-gradient(to_right,black_0%,black_32%,transparent_58%)] md:block"
               aria-hidden
             />
 
-            <div className="relative z-10 flex min-h-[inherit] items-start px-6 pt-10 pb-12 md:items-center md:px-10 md:pt-20 md:pb-16 lg:px-12 lg:pt-24 lg:pb-20">
+            <div className="relative z-10 flex min-h-[inherit] items-end px-6 pt-10 pb-12 md:items-center md:px-10 md:pt-20 md:pb-16 lg:px-12 lg:pt-24 lg:pb-20">
               <div className="max-w-xl text-left lg:max-w-2xl">
 
                 <h2 className="mt-5 text-2xl font-heading font-regular leading-[1.12] tracking-tight text-white md:mt-6 md:text-3xl lg:text-4xl lg:leading-[1.1]">

@@ -38,10 +38,10 @@ const STATS = [
 ] as const;
 
 const VALUE_CLASS =
-  "font-heading text-[1.8rem] font-semibold tracking-tight md:text-[2.6rem] lg:text-[3.1rem]";
+  "font-heading text-[2.5rem] font-semibold tracking-tight md:text-[2.6rem] lg:text-[3.1rem]";
 
 const LABEL_CLASS =
-  "flex min-h-[2.9rem] max-w-[11rem] items-start justify-center text-center font-sans text-[0.68rem] font-regular leading-relaxed md:min-h-[4.5rem] md:max-w-[12rem] md:text-lg";
+  "flex min-h-[2.9rem] max-w-[11rem] items-start justify-center text-center font-sans text-sm font-regular leading-[1.4] md:min-h-[4.5rem] md:max-w-[12rem] md:text-[1.125rem]";
 
 const VALUE_COLOR_STYLE: CSSProperties = {
   color: "#322696",

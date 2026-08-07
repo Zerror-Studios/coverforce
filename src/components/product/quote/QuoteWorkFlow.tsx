@@ -128,7 +128,7 @@ function WorkflowStepPanel({
 
       <div
         ref={imageRef}
-        className={`relative w-full max-w-[350px] sm:max-w-[420px] md:max-w-[720px] lg:max-w-[960px] ${
+        className={`relative w-full max-w-[420px] sm:max-w-[480px] md:max-w-[720px] lg:max-w-[960px] ${
           alignLeft ? "self-start" : "self-center"
         }`}
       >
@@ -138,7 +138,7 @@ function WorkflowStepPanel({
             alt={`${step.label} preview`}
             fill
             className={`object-contain ${alignLeft ? "object-left" : "object-center"}`}
-            sizes="(max-width: 640px) 350px, (max-width: 768px) 420px, (max-width: 1024px) 720px, 960px"
+            sizes="(max-width: 640px) 420px, (max-width: 768px) 480px, (max-width: 1024px) 720px, 960px"
           />
         </div>
       </div>
@@ -367,7 +367,7 @@ const QuoteWorkFlow = () => {
                 <div key={step.id}>
                   <NavItem
                     label={step.label}
-                    active={activeIndex === index}
+                    active
                     onClick={() => scrollToPanel(index)}
                   />
                   <WorkflowStepPanel

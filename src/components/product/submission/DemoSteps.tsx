@@ -139,7 +139,7 @@ function DemoStepPanel({
 
       <div
         ref={imageRef}
-        className="relative mr-auto w-full max-w-[350px] sm:max-w-[400px] md:max-w-[640px] lg:max-w-[800px]"
+        className="relative mr-auto w-full max-w-[420px] sm:max-w-[460px] md:max-w-[640px] lg:max-w-[800px]"
       >
         <Image
           src={step.image}
@@ -147,7 +147,7 @@ function DemoStepPanel({
           width={800}
           height={346}
           className="h-auto w-full"
-          sizes="(max-width: 640px) 350px, (max-width: 768px) 400px, (max-width: 1024px) 640px, 800px"
+          sizes="(max-width: 640px) 420px, (max-width: 768px) 460px, (max-width: 1024px) 640px, 800px"
         />
       </div>
     </article>
@@ -278,7 +278,7 @@ const DemoSteps = () => {
               <div key={step.id}>
                 <NavItem
                   label={step.label}
-                  active={activeIndex === index}
+                  active
                   onClick={() => scrollToPanel(index)}
                 />
                 <DemoStepPanel

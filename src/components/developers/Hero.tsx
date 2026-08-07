@@ -71,32 +71,21 @@ const Hero = () => {
           </HeroReveal>
 
           <HeroReveal
-            className="relative z-10 mx-auto -mt-10 w-full max-w-6xl px-4 pb-16 md:-mt-28 md:pb-20 lg:-mt-36 lg:max-w-7xl lg:pb-24"
+            className="relative z-10 mx-auto w-full max-w-6xl px-2 pb-10 max-md:-mt-48 sm:-mt-60 sm:px-4 md:-mt-28 md:px-4 md:pb-20 lg:-mt-36 lg:max-w-7xl lg:pb-24"
             delay={0.75}
           >
-            <div className="relative mx-auto w-full md:hidden">
-              <Image
-                src="/images/developers/mobile-display.svg"
-                alt="CoverForce mobile developer preview"
-                width={1200}
-                height={1600}
-                className="h-auto w-full object-contain"
-                priority
-              />
-            </div>
-
-            <div className="relative mx-auto hidden h-[32rem] w-full md:block lg:h-[38rem]">
+            <div className="relative mx-auto h-[24rem] w-full sm:h-[30rem] md:h-[32rem] lg:h-[38rem]">
               <Image
                 src="/images/developers/display.svg"
                 alt="CoverForce API request example showing POST /v1/quote"
                 width={1200}
                 height={720}
-                className="h-full w-full object-contain"
+                className="h-full w-full object-fill md:object-contain"
                 priority
               />
 
-              <div className="absolute inset-0 z-10 flex translate-y-3 flex-col items-center justify-end gap-3 px-[10%] md:gap-4">
-                <div className="w-14 md:w-16 lg:w-20">
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2.5 px-[6%] pt-[2%] translate-y-4 sm:translate-y-5 sm:gap-3.5 sm:px-[8%] md:translate-y-3 md:justify-end md:gap-4 md:px-[10%] md:pt-0">
+                <div className="hidden w-14 md:block md:w-16 lg:w-20">
                   <Image
                     src="/images/developers/display-logo.svg"
                     alt="CoverForce logo"
@@ -105,7 +94,7 @@ const Hero = () => {
                     className="h-auto w-full object-contain"
                   />
                 </div>
-                <div className="relative w-full max-w-xl lg:max-w-3xl">
+                <div className="relative w-full max-w-2xl sm:max-w-3xl md:max-w-xl lg:max-w-3xl">
                   <Image
                     src="/images/developers/display-editor.svg"
                     alt="CoverForce API request editor"
@@ -113,7 +102,7 @@ const Hero = () => {
                     height={720}
                     className="h-auto w-full object-contain"
                   />
-                  <ApiCodeReveal className="pointer-events-none absolute inset-0 flex flex-col justify-center pl-[11%] pr-[3%] pb-[10%] pt-[2%]" />
+                  <ApiCodeReveal className="pointer-events-none absolute inset-0 flex flex-col justify-center pl-[9%] pr-[3%] pb-[8%] pt-[2%] sm:pl-[11%] sm:pb-[10%] md:pl-[11%] md:pb-[10%]" />
                 </div>
               </div>
             </div>
