@@ -965,13 +965,13 @@ const Header = ({
                         onClick={() => handleNavigate(featuredCard.href)}
                         className="group flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-3 text-left transition-colors duration-200 hover:bg-[#FAFAFA]"
                       >
-                        <div className="relative h-[10rem] shrink-0 overflow-hidden rounded-lg bg-[#F7F7FB]">
+                        <div className="relative h-[13rem] w-full shrink-0 overflow-hidden rounded-lg bg-[#F7F7FB] sm:h-[14.5rem]">
                           <CmsImage
                             src={featuredCard.image ?? "/images/blog/blog3.png"}
                             alt={featuredCard.imageAlt ?? featuredCard.title}
                             fill
                             sizes="100vw"
-                            className="object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+                            className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.02]"
                           />
                         </div>
                         <p className="mt-3 px-0.5 font-heading text-sm font-regular leading-snug text-[#3D3D3D]">

@@ -229,7 +229,7 @@ const Footer = () => {
               src="/images/footer_banner.webp"
               alt="footer-banner"
               fill
-              className="object-cover  object-[90%_50%] md:object-right"
+              className="object-cover  object-[85%_50%] md:object-right"
               sizes="100vw"
             />
             <div
