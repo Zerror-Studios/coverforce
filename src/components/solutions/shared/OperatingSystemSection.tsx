@@ -232,7 +232,7 @@ export default function OperatingSystemSection({
             >
               <h2
                 ref={headingRef}
-                className="order-1 max-w-sm text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:col-start-1 lg:row-start-1 lg:text-[1.625rem] lg:leading-[1.12]"
+                className="order-1 max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:col-start-1 lg:row-start-1 lg:text-[1.625rem] lg:leading-[1.12]"
               >
                 <span data-split>{sectionTitle}</span>
               </h2>

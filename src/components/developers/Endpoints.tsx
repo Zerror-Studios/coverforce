@@ -54,7 +54,7 @@ const ENDPOINTS: Endpoint[] = [
         description: "Usage metrics, bind ratios, performance data.",
     },
     {
-        name: "Documents",
+        name: "Issuance",
         description: "Retrieve policy docs, ACORDs, proposals.",
     },
 ];

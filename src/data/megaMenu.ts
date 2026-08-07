@@ -124,7 +124,7 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
           },
           {
             label: "D2C Online Stores",
-            href: "/solutions/startups",
+            href: "/contact",
             description: "Launch consumer-facing quote and bind experiences.",
             icon: RiStore2Line,
           },

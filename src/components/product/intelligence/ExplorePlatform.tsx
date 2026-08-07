@@ -164,7 +164,7 @@ const ExplorePlatform = () => {
             ref={headingRef}
             className="mt-5 text-3xl font-heading font-regular leading-[1.12] tracking-tight md:text-5xl lg:text-[3.25rem] lg:leading-[1.1]"
           >
-            <span data-split>Powered by 140K+ CoverForce carrier interactions.</span>
+            <span data-split>Powered by 350K+ CoverForce carrier interactions.</span>
           </h2>
 
           <p

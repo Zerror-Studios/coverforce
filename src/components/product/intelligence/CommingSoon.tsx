@@ -167,14 +167,14 @@ const CommingSoon = () => {
             ref={headingRef}
             className="mt-5 text-3xl font-heading font-regular leading-tight tracking-tight md:text-5xl lg:text-5xl lg:leading-[1.1]"
           >
-            <span data-split>Predictive intelligence, <br /> coming soon</span>
+            <span data-split>Predictive intelligence, <br /> talk to us</span>
           </h2>
 
           <p
             ref={descRef}
             className="mt-5 font-sans font-regular text-sm leading-[1.4] text-[#FFFFFF] md:text-[1.125rem]"
           >
-           140,000+ proprietary carrier interactions. Every<br /> transaction makes the platform smarter.
+           350,000+ proprietary carrier interactions. Every<br /> transaction makes the platform smarter.
           </p>
 
           <div
