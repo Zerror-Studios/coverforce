@@ -84,6 +84,8 @@ type WayCardProps = {
   mockAlign?: "center" | "bottom";
   mockShiftDown?: boolean;
   hideMock?: boolean;
+  /** Mobile-only scale for the inner mock (desktop unchanged). */
+  mobileMockScale?: number;
   backgroundScene?: ReactNode;
   backgroundInteractive?: boolean;
   backgroundSceneBlendScreen?: boolean;
@@ -108,6 +110,7 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "wholesaler",
     dotGrid: true,
     mockShiftDown: true,
+    mobileMockScale: 0.6,
     mock: <WholesalerMock />,
     modalPreview: <WholesalerMock />,
   },
@@ -119,6 +122,7 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "broker",
     backgroundScene: <BrokersCardEarth />,
     backgroundSceneBlendScreen: true,
+    mobileMockScale: 0.64,
     mock: <BrokerMockWithCardHover />,
     modalPreview: <BrokerMock />,
   },
@@ -138,6 +142,7 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "developer",
     className: "md:col-span-2",
     mockAlign: "bottom",
+    mobileMockScale: 0.66,
     backgroundScene: <DeveloperTerminalBg />,
     mock: <DeveloperMock />,
     modalPreview: <DeveloperMock align="modal" />,
@@ -151,8 +156,9 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "startup",
     backgroundInteractive: true,
     mockShiftDown: true,
+    mobileMockScale: 0.7,
     mock: (
-      <div className="w-full max-md:mt-10 max-md:sm:mt-12">
+      <div className="w-full max-md:mt-6 max-md:sm:mt-8">
         <AiAppetiteEngineMock />
       </div>
     ),
@@ -167,8 +173,9 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "carrier",
     dotGrid: true,
     mockShiftDown: true,
+    mobileMockScale: 0.7,
     mock: (
-      <div className="w-full max-md:mt-10 max-md:sm:mt-12">
+      <div className="w-full max-md:mt-6 max-md:sm:mt-8">
         <StartupRecentActivityCard />
       </div>
     ),
@@ -227,6 +234,7 @@ const WayCard = memo(function WayCard({
   mockAlign = "center",
   mockShiftDown = false,
   hideMock = false,
+  mobileMockScale,
   backgroundScene,
   backgroundInteractive = false,
   backgroundSceneBlendScreen = false,
@@ -240,6 +248,9 @@ const WayCard = memo(function WayCard({
   const isDark = variant === "dark";
   const enableScene = !isMobile;
   const enableInteractive = backgroundInteractive && !isMobile;
+  const resolvedMobileScale =
+    mobileMockScale ??
+    (mockAlign === "bottom" || mockShiftDown ? 0.72 : 0.82);
   const textClass =
     background === "developer" && !backgroundScene
       ? "text-[#0a143b]"
@@ -320,22 +331,23 @@ const WayCard = memo(function WayCard({
         <div
           className={`way-card-mock pointer-events-none absolute inset-0 z-10 transition-opacity duration-300 ${hideMock ? "opacity-0" : "opacity-100"} ${
             mockAlign === "bottom"
-              ? "max-md:px-0 max-md:pt-3 max-md:sm:pt-5 max-md:pb-0 px-0 pt-4 sm:pt-5 md:pt-6 md:pb-0"
-              : "max-md:p-3 max-md:sm:p-5 p-4 sm:p-5 md:p-6"
-          } ${mockAlign === "center" || mockShiftDown ? "max-md:flex max-md:items-start max-md:justify-center md:flex md:items-center md:justify-center" : ""} ${mockShiftDown ? "max-md:pt-[5.75rem] max-md:sm:pt-24 md:pt-28 lg:pt-32" : mockAlign === "bottom" ? "" : "max-md:pt-[5.75rem] max-md:sm:pt-24"}`}
+              ? "max-md:flex max-md:items-center max-md:justify-center max-md:px-2 max-md:pt-16 max-md:pb-3 max-md:sm:pt-20 px-0 pt-4 sm:pt-5 md:block md:pt-6 md:pb-0"
+              : "max-md:flex max-md:items-center max-md:justify-center max-md:p-3 max-md:pt-[4.25rem] max-md:sm:p-5 max-md:sm:pt-20 p-4 sm:p-5 md:p-6 md:flex md:items-center md:justify-center"
+          } ${mockShiftDown ? "md:pt-28 lg:pt-32" : ""}`}
         >
           <div
             className={`${
-              mockAlign === "bottom" || mockShiftDown
-                ? "max-md:scale-[0.72]"
-                : "max-md:scale-[0.82]"
-            } ${mockAlign === "bottom" ? "max-md:origin-bottom" : "max-md:origin-top"} ${
               mockAlign === "bottom"
-                ? "relative flex h-full w-full min-w-0 flex-col justify-end max-md:overflow-visible md:overflow-hidden"
+                ? "relative flex h-full w-full min-w-0 flex-col justify-end max-md:h-auto max-md:justify-center max-md:overflow-visible md:overflow-hidden"
                 : mockShiftDown
-                  ? "relative mx-auto flex h-full w-full min-w-0 max-w-full max-md:justify-center md:items-center md:justify-center max-md:overflow-visible md:overflow-hidden"
-                  : "relative flex h-full w-full min-w-0 max-md:items-start max-md:justify-center md:items-center md:justify-center max-md:overflow-visible md:overflow-hidden"
-            }`}
+                  ? "relative mx-auto flex h-full w-full min-w-0 max-w-full items-center justify-center max-md:overflow-visible md:overflow-hidden"
+                  : "relative flex h-full w-full min-w-0 items-center justify-center max-md:overflow-visible md:overflow-hidden"
+            } max-md:origin-center md:origin-center`}
+            style={
+              isMobile
+                ? { transform: `scale(${resolvedMobileScale})` }
+                : undefined
+            }
           >
             {inView ? children : <MockPlaceholder />}
           </div>
