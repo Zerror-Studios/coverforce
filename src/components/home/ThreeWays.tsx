@@ -338,7 +338,7 @@ const WayCard = memo(function WayCard({
           <div
             className={`${
               mockAlign === "bottom"
-                ? "relative flex h-full w-full min-w-0 flex-col justify-end max-md:h-auto max-md:justify-center max-md:overflow-visible md:overflow-hidden"
+                ? "relative flex h-full w-full min-w-0 flex-col justify-end max-md:h-auto max-md:items-center max-md:justify-center max-md:overflow-visible md:overflow-hidden"
                 : mockShiftDown
                   ? "relative mx-auto flex h-full w-full min-w-0 max-w-full items-center justify-center max-md:overflow-visible md:overflow-hidden"
                   : "relative flex h-full w-full min-w-0 items-center justify-center max-md:overflow-visible md:overflow-hidden"

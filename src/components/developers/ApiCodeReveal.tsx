@@ -138,7 +138,7 @@ export default function ApiCodeReveal({ className = "" }: { className?: string }
 
   return (
     <div ref={rootRef} className={className} aria-hidden>
-      <pre className="font-mono text-[10px] leading-[1.9] md:text-xs lg:text-[13px] lg:leading-[2]">
+      <pre className="font-mono text-[7px] leading-[1.75] sm:text-[8px] sm:leading-[1.85] md:text-xs md:leading-[1.9] lg:text-[13px] lg:leading-[2]">
         {completedLines.map((line, i) => (
           <div key={i}>
             {line.length ? (
