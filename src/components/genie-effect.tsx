@@ -103,27 +103,30 @@ function computeRowSlice(
   dir: Dir,
   dock: Pt,
   win: Pt,
+  scale = 1,
 ): { left: number; right: number; destY: number } {
   const r = y / WIN_H;
+  const winW = WIN_W * scale;
   const rowXStart = dir === "minimize" ? (1 - r) * 0.65 : r * 0.65;
   const xP = clamp((rawT - rowXStart) / (1 - rowXStart), 0, 1);
   const xE = eioC(xP);
   const rowYStart = dir === "minimize" ? (1 - r) * 0.2 : r * 0.2;
   const yP = clamp((rawT - rowYStart) / (1 - rowYStart), 0, 1);
   const yE = eIn2(yP);
+  const destRowY = win.y + y * scale;
 
   if (dir === "minimize") {
     return {
       left: lerp(win.x, dock.x, xE),
-      right: lerp(win.x + WIN_W, dock.x, xE),
-      destY: lerp(win.y + y, dock.y, yE),
+      right: lerp(win.x + winW, dock.x, xE),
+      destY: lerp(destRowY, dock.y, yE),
     };
   }
 
   return {
     left: lerp(dock.x, win.x, xE),
-    right: lerp(dock.x, win.x + WIN_W, xE),
-    destY: lerp(dock.y, win.y + y, yE),
+    right: lerp(dock.x, win.x + winW, xE),
+    destY: lerp(dock.y, destRowY, yE),
   };
 }
 
@@ -136,12 +139,14 @@ function renderGenie(
   dir: Dir,
   dock: Pt,
   win: Pt,
+  scale = 1,
 ): void {
+  if (!off) return;
   ctx.clearRect(0, 0, W, H);
   ctx.imageSmoothingEnabled = true;
 
   const rows = Array.from({ length: WIN_H }, (_, y) =>
-    computeRowSlice(y, rawT, dir, dock, win),
+    computeRowSlice(y, rawT, dir, dock, win, scale),
   );
 
   const srcW = off.width || WIN_W;
@@ -152,7 +157,7 @@ function renderGenie(
     const rowW = right - left;
     if (rowW < 0.05) continue;
 
-    const nextDestY = y < WIN_H - 1 ? rows[y + 1].destY : destY + 1;
+    const nextDestY = y < WIN_H - 1 ? rows[y + 1].destY : destY + Math.max(1, scale);
     const destH = Math.max(1.5, nextDestY - destY + 1.25);
 
     const srcY = Math.min(srcH - 1, Math.floor((y / WIN_H) * srcH));
@@ -193,11 +198,14 @@ const MacWindow = ({
   winPos,
   onClose,
   domRef,
+  scale = 1,
 }: {
   app: App;
   winPos: Pt;
   onClose: () => void;
   domRef: React.RefCallback<HTMLDivElement>;
+  /** Mobile-only visual scale; desktop stays 1. */
+  scale?: number;
 }) => {
   return (
     <div
@@ -211,6 +219,8 @@ const MacWindow = ({
         borderRadius: 13,
         background: "#1e1e1e",
         zIndex: 40,
+        transform: scale === 1 ? undefined : `scale(${scale})`,
+        transformOrigin: "top left",
         boxShadow:
           "0 32px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.07)",
       }}
@@ -266,6 +276,7 @@ function DockIconButton({
   disabled,
   btnRef,
   onClick,
+  iconSize = DOCK_ICON_SIZE,
 }: {
   app: App;
   isActive: boolean;
@@ -275,6 +286,7 @@ function DockIconButton({
   disabled: boolean;
   btnRef: (el: HTMLButtonElement | null) => void;
   onClick: () => void;
+  iconSize?: number;
 }) {
   const Icon = app.Icon;
 
@@ -286,8 +298,8 @@ function DockIconButton({
           onClick={onClick}
           disabled={disabled}
           style={{
-            width: DOCK_ICON_SIZE,
-            height: DOCK_ICON_SIZE,
+            width: iconSize,
+            height: iconSize,
             cursor: disabled ? "default" : "pointer",
             animationDelay: `${hintDelayMs}ms`,
           }}
@@ -297,8 +309,8 @@ function DockIconButton({
         >
           <div
             style={{
-              width: Math.round(DOCK_ICON_SIZE * 0.92),
-              height: Math.round(DOCK_ICON_SIZE * 0.92),
+              width: Math.round(iconSize * 0.92),
+              height: Math.round(iconSize * 0.92),
               borderRadius: "22%",
               filter: isActive
                 ? `drop-shadow(0 6px 14px ${app.accent}88)`
@@ -333,6 +345,7 @@ function MacDock({
   snapshotsReady,
   dockRefs,
   onOpen,
+  compact = false,
 }: {
   apps: App[];
   activeApp: number | null;
@@ -341,18 +354,25 @@ function MacDock({
   snapshotsReady: boolean;
   dockRefs: MutableRefObject<(HTMLButtonElement | null)[]>;
   onOpen: (idx: number) => void;
+  compact?: boolean;
 }) {
+  const iconSize = compact ? 52 : DOCK_ICON_SIZE;
+  const padX = compact ? 12 : DOCK_PAD_X;
+  const padTop = compact ? 6 : DOCK_PAD_TOP;
+  const padBottom = compact ? 5 : DOCK_PAD_BOTTOM;
+  const gap = compact ? 4 : DOCK_GAP;
+
   return (
     <TooltipProvider delayDuration={400}>
       <div
         className="absolute bottom-3 bg-[#303030]/20 rounded-2xl left-1/2 z-50 flex -translate-x-1/2 items-end"
         style={{
-          height: DOCK_ICON_SIZE + DOCK_PAD_TOP + DOCK_PAD_BOTTOM,
-          gap: DOCK_GAP,
-          paddingLeft: DOCK_PAD_X,
-          paddingRight: DOCK_PAD_X,
-          paddingBottom: DOCK_PAD_BOTTOM,
-          paddingTop: DOCK_PAD_TOP,
+          height: iconSize + padTop + padBottom,
+          gap,
+          paddingLeft: padX,
+          paddingRight: padX,
+          paddingBottom: padBottom,
+          paddingTop: padTop,
           borderRadius: DOCK_RADIUS,
         }}
       >
@@ -365,6 +385,7 @@ function MacDock({
             hintActive={snapshotsReady && !isAnimating && activeApp !== i}
             hintDelayMs={i * 180}
             disabled={isAnimating || !snapshotsReady}
+            iconSize={iconSize}
             btnRef={(el) => {
               dockRefs.current[i] = el;
             }}
@@ -481,13 +502,20 @@ function SnapshotStage({
 export default function GenieEffect() {
   // Render the interactive pieces client-side after mount.
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     setMounted(true);
+    const mql = window.matchMedia("(max-width: 767px)");
+    const sync = () => setIsMobile(mql.matches);
+    sync();
+    mql.addEventListener("change", sync);
+    return () => mql.removeEventListener("change", sync);
   }, []);
 
   const [phase, setPhase] = useState<Phase>("idle");
   const [activeApp, setActiveApp] = useState<number | null>(null);
   const [winPos, setWinPos] = useState<Pt>({ x: 0, y: 0 });
+  const [winScale, setWinScale] = useState(1);
   const [snapshotsReady, setSnapshotsReady] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -520,13 +548,32 @@ export default function GenieEffect() {
     return { w: el.clientWidth, h: el.clientHeight };
   }, []);
 
-  const getWinPos = useCallback((): Pt => {
+  const getWinLayout = useCallback((): { pos: Pt; scale: number } => {
     const { w, h } = getContainerSize();
+    if (isMobile) {
+      // Fit with extra side padding so the display reads a bit smaller.
+      const padX = 28;
+      const fit = Math.min(1, (w - padX * 2) / WIN_W);
+      const scale = fit * 0.92;
+      const scaledW = WIN_W * scale;
+      const scaledH = WIN_H * scale;
+      const dockReserve = 68;
+      return {
+        scale,
+        pos: {
+          x: (w - scaledW) / 2,
+          y: Math.max(24, (h - scaledH - dockReserve) / 2 - 8),
+        },
+      };
+    }
     return {
-      x: (w - WIN_W) / 2,
-      y: (h - WIN_H) / 2 - 20,
+      scale: 1,
+      pos: {
+        x: (w - WIN_W) / 2,
+        y: (h - WIN_H) / 2 - 20,
+      },
     };
-  }, [getContainerSize]);
+  }, [getContainerSize, isMobile]);
 
   // Returns dock-button center in CONTAINER-LOCAL coords (not viewport coords).
   // The genie canvas draws in container-local coords too, so these match.
@@ -563,9 +610,13 @@ export default function GenieEffect() {
     (dir: Dir, appIdx: number, onDone: () => void) => {
       cancelAnimationFrame(rafRef.current);
       const dock = getDockCenter(appIdx);
-      const win = getWinPos();
+      const layout = getWinLayout();
       const { w: cw, h: ch } = getContainerSize();
       const off = offRef.current[appIdx];
+      if (!off) {
+        onDone();
+        return;
+      }
       let start: number | null = null;
       function frame(ts: number) {
         if (!start) start = ts;
@@ -580,7 +631,8 @@ export default function GenieEffect() {
           rawT,
           dir,
           dock,
-          win,
+          layout.pos,
+          layout.scale,
         );
         if (rawT < 1) {
           rafRef.current = requestAnimationFrame(frame);
@@ -590,17 +642,18 @@ export default function GenieEffect() {
       }
       rafRef.current = requestAnimationFrame(frame);
     },
-    [getDockCenter, getWinPos, getContainerSize],
+    [getDockCenter, getWinLayout, getContainerSize],
   );
 
   const doOpen = useCallback(
     (idx: number) => {
       if (stateRef.current.phase !== "idle") return;
       windowRef.current = null;
-      const wp = getWinPos();
+      const layout = getWinLayout();
       setupCanvas();
       stateRef.current = { phase: "opening", activeApp: idx };
-      setWinPos(wp);
+      setWinPos(layout.pos);
+      setWinScale(layout.scale);
       setPhase("opening");
       setActiveApp(idx);
       startAnim("open", idx, () => {
@@ -618,7 +671,7 @@ export default function GenieEffect() {
         clearCanvas();
       });
     },
-    [getWinPos, setupCanvas, startAnim, clearCanvas],
+    [getWinLayout, setupCanvas, startAnim, clearCanvas],
   );
 
   const doMinimize = useCallback(
@@ -631,11 +684,21 @@ export default function GenieEffect() {
 
       setupCanvas();
       const dock = getDockCenter(a);
-      const win = getWinPos();
+      const layout = getWinLayout();
       const { w: cw, h: ch } = getContainerSize();
       const ctx = cvs?.getContext("2d");
       if (ctx && cvs) {
-        renderGenie(ctx, offRef.current[a], cw, ch, 0, "minimize", dock, win);
+        renderGenie(
+          ctx,
+          offRef.current[a],
+          cw,
+          ch,
+          0,
+          "minimize",
+          dock,
+          layout.pos,
+          layout.scale,
+        );
       }
 
       if (windowRef.current) {
@@ -655,7 +718,7 @@ export default function GenieEffect() {
         onComplete?.();
       });
     },
-    [setupCanvas, getDockCenter, getWinPos, getContainerSize, startAnim, clearCanvas],
+    [setupCanvas, getDockCenter, getWinLayout, getContainerSize, startAnim, clearCanvas],
   );
 
   const handleDockClick = useCallback(
@@ -690,12 +753,13 @@ export default function GenieEffect() {
     if (!mounted || !snapshotsReady) return;
     if (stateRef.current.phase !== "idle") return;
 
-    const wp = getWinPos();
+    const layout = getWinLayout();
     stateRef.current = { phase: "open", activeApp: 0 };
-    setWinPos(wp);
+    setWinPos(layout.pos);
+    setWinScale(layout.scale);
     setActiveApp(0);
     setPhase("open");
-  }, [mounted, snapshotsReady, getWinPos]);
+  }, [mounted, snapshotsReady, getWinLayout]);
 
   // Re-center the open window when the container resizes (browser resize,
   // sidebar collapse, parent flexbox changes, etc.). ResizeObserver fires
@@ -705,12 +769,14 @@ export default function GenieEffect() {
     if (!el || typeof ResizeObserver === "undefined") return;
     const ro = new ResizeObserver(() => {
       if (stateRef.current.phase === "open") {
-        setWinPos(getWinPos());
+        const layout = getWinLayout();
+        setWinPos(layout.pos);
+        setWinScale(layout.scale);
       }
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, [getWinPos]);
+  }, [getWinLayout]);
 
   const isAnimating = phase === "opening" || phase === "closing";
   const app = activeApp !== null ? APPS[activeApp] : null;
@@ -718,7 +784,7 @@ export default function GenieEffect() {
   return (
     <div
       ref={containerRef}
-      className="relative h-[min(85vh,860px)] min-h-162.5 w-full select-none"
+      className="relative h-[min(52vh,420px)] min-h-[18rem] w-full select-none overflow-hidden md:h-[min(85vh,860px)] md:min-h-162.5"
     >
       <style>{`
         @keyframes blink { 0%,49% { opacity: 1 } 50%,100% { opacity: 0 } }
@@ -772,7 +838,7 @@ export default function GenieEffect() {
 
       {/* Menubar - safe to SSR (no motion values, no client-only state) */}
       <div
-        className="absolute top-0 left-0 right-0 flex items-center justify-between px-3"
+        className="absolute top-0 left-0 right-0 flex items-center justify-between px-2 md:px-3"
         style={{
           height: 27,
           zIndex: 50,
@@ -781,11 +847,13 @@ export default function GenieEffect() {
           borderBottom: "1px solid rgba(255,255,255,.06)",
         }}
       >
-        <span className="text-white/70 flex items-center text-[11px] gap-1 font-semibold tracking-tight">
-         <img src="/macicon.png" alt="mac-icon" aria-hidden="true" className="w-4 h-4" />{app?.label ?? "CoverForce"} &nbsp; File &nbsp; Edit &nbsp; View
-          &nbsp; Window &nbsp; Help
+        <span className="text-white/70 flex max-w-[70%] items-center gap-1 truncate text-[10px] font-semibold tracking-tight md:max-w-none md:text-[11px]">
+         <img src="/macicon.png" alt="mac-icon" aria-hidden="true" className="w-4 h-4 shrink-0" />
+          <span className="truncate">{app?.label ?? "CoverForce"}</span>
+          <span className="hidden md:inline">&nbsp; File &nbsp; Edit &nbsp; View
+          &nbsp; Window &nbsp; Help</span>
         </span>
-        <span className="text-white/60 text-[11px] font-medium">9:41 AM</span>
+        <span className="text-white/60 text-[10px] font-medium md:text-[11px]">9:41 AM</span>
       </div>
 
       </div>
@@ -802,6 +870,7 @@ export default function GenieEffect() {
         <MacWindow
           app={app}
           winPos={winPos}
+          scale={winScale}
           onClose={doMinimize}
           domRef={(el) => {
             windowRef.current = el;
@@ -823,6 +892,7 @@ export default function GenieEffect() {
             snapshotsReady={snapshotsReady}
             dockRefs={dockRefs}
             onOpen={handleDockClick}
+            compact={isMobile}
           />
         </>
       )}
