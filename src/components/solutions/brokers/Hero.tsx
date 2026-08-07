@@ -8,13 +8,10 @@ const BROKERS_HERO_LOGOS = [
     { src: "/images/broker/logo/broker-Brooks.png", alt: "Brooks" },
     { src: "/images/broker/logo/broker-Diligence Brokerage.png", alt: "Diligence Brokerage" },
     { src: "/images/broker/logo/broker-Direct Work Comp.png", alt: "Direct Work Comp" },
-    { src: "/images/broker/logo/broker-Insurance Masters.png", alt: "Insurance Masters" },
-    { src: "/images/broker/logo/broker-Insurox.png", alt: "Insurox" },
     { src: "/images/broker/logo/broker-IronPoint Insurance.png", alt: "IronPoint Insurance" },
     { src: "/images/broker/logo/broker-Paramount Exclusive.png", alt: "Paramount Exclusive" },
     { src: "/images/broker/logo/broker-PCFG Insurance.png", alt: "PCFG Insurance" },
     { src: "/images/broker/logo/broker-Skyscraper Insurance.png", alt: "Skyscraper Insurance" },
-    { src: "/images/broker/logo/broker-True Guardian MGA.png", alt: "True Guardian MGA" },
     { src: "/images/broker/logo/broker-WorkCompOne.png", alt: "WorkCompOne" },
     { src: "/images/broker/logo/network-Agentero.png", alt: "Agentero" },
     { src: "/images/broker/logo/network-ASNOA.png", alt: "ASNOA" },
@@ -22,6 +19,7 @@ const BROKERS_HERO_LOGOS = [
     { src: "/images/broker/logo/network-ISU Steadfast.png", alt: "ISU Steadfast" },
     { src: "/images/broker/logo/network-SAN of Florida.png", alt: "SAN of Florida" },
     { src: "/images/broker/logo/network-Voldico.png", alt: "Voldico" },
+    { src: "/images/broker/logo/partner-Justworks.png", alt: "Justworks" },
   ] as const;
   
 

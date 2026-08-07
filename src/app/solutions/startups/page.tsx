@@ -26,7 +26,7 @@ const page = async () => {
       <WhosFor />
       <ProgramOverview />
       <Launch />
-      <Enablement />
+      {/* <Enablement /> */}
       <EducationalResources posts={posts} />
       <StartupFaq />
       <StartupTestimonials />

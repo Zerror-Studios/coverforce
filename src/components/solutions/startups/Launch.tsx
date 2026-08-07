@@ -68,7 +68,10 @@ const launchSteps: LaunchStep[] = [
 // Single, consistent color treatment for every step (no more per-step colors)
 const CARD_BACKGROUND = "linear-gradient(135deg, #0a143b 0%, #1c2b63 100%)";
 const TAB_ACCENT = "#0a143b";
-const COMPLETE_ACCENT = "#72AF23"; // lime/green used for completed-state checks + progress fill
+/** Startup hero palette, green-weighted — completed checks + progress fill */
+const COMPLETE_GRADIENT =
+  "linear-gradient(45deg, #30DF71 0%, #28DB8A 35%, #1ED5B3 70%, #12D8D0 100%)";
+const COMPLETE_ACCENT = "#30DF71";
 
 type LaunchPreviewCardProps = {
   step: LaunchStep;
@@ -193,7 +196,7 @@ const Launch = () => {
         }
 
         .launch-tab-icon-inner {
-          transition: background-color 300ms ease, color 300ms ease, transform 300ms ease;
+          transition: background 300ms ease, color 300ms ease, transform 300ms ease;
         }
       `}</style>
 
@@ -264,7 +267,7 @@ const Launch = () => {
                             ? "bg-white text-[#0a143b]"
                             : "bg-[#0a143b] text-white"
                         }`}
-                      style={isComplete ? { backgroundColor: COMPLETE_ACCENT } : undefined}
+                      style={isComplete ? { background: COMPLETE_GRADIENT } : undefined}
                     >
                       {isComplete ? <CheckIcon /> : index + 1}
                     </span>
@@ -294,7 +297,7 @@ const Launch = () => {
             >
               <div
                 className="launch-progress-fill h-full rounded-full"
-                style={{ width: `${progressPercent}%`, backgroundColor: COMPLETE_ACCENT }}
+                style={{ width: `${progressPercent}%`, background: COMPLETE_GRADIENT }}
               />
             </div>
           </div>
