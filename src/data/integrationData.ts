@@ -270,7 +270,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "CompWest",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/CompWest.png",
     website: "",
     status: "Live on CoverForce",
     products: [
@@ -568,7 +568,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Navigators (E&S)",
-    logoSrc: "",
+    logoSrc: "/images/integration-logos/navigators.png",
     website: "",
     status: "API available",
     products: [
