@@ -523,10 +523,29 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                 onSlideChange={(swiper) => setRotation(swiper.activeIndex)}
                 className="why-coverforce-swiper !overflow-visible"
               >
-                {whySlides.map((slide, slideIndex) => (
+                {whySlides.map((slide) => (
                   <SwiperSlide key={slide.id}>
-                    {slide.href ? (
-                      <Link href={slide.href} className="block">
+                    <div className="flex flex-col">
+                      {slide.href ? (
+                        <Link href={slide.href} className="block">
+                          <article className="why-swiper-slide">
+                            <Image
+                              width={1000}
+                              height={1000}
+                              sizes="85vw"
+                              className="h-full w-full object-cover"
+                              src={slide.image}
+                              alt={slide.alt}
+                              draggable={false}
+                            />
+                            <div className="absolute inset-x-0 bottom-0 z-10 bg-linear-to-t from-black/70 via-black/20 to-transparent px-4 pb-4 pt-10">
+                              <h3 className="max-w-[14rem] font-heading text-lg font-medium leading-[1.12] tracking-tight text-white sm:max-w-[18rem] sm:text-xl">
+                                {slide.title}
+                              </h3>
+                            </div>
+                          </article>
+                        </Link>
+                      ) : (
                         <article className="why-swiper-slide">
                           <Image
                             width={1000}
@@ -537,42 +556,20 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                             alt={slide.alt}
                             draggable={false}
                           />
-                          {active === slideIndex ? (
-                            <div className="absolute inset-x-0 bottom-0 z-10 bg-linear-to-t from-black/70 via-black/20 to-transparent px-4 pb-4 pt-10">
-                              <h3 className="max-w-[14rem] font-heading text-lg font-medium leading-[1.12] tracking-tight text-white sm:max-w-[18rem] sm:text-xl">
-                                {slide.title}
-                              </h3>
-                            </div>
-                          ) : null}
-                        </article>
-                      </Link>
-                    ) : (
-                      <article className="why-swiper-slide">
-                        <Image
-                          width={1000}
-                          height={1000}
-                          sizes="85vw"
-                          className="h-full w-full object-cover"
-                          src={slide.image}
-                          alt={slide.alt}
-                          draggable={false}
-                        />
-                        {active === slideIndex ? (
                           <div className="absolute inset-x-0 bottom-0 z-10 bg-linear-to-t from-black/70 via-black/20 to-transparent px-4 pb-4 pt-10">
                             <h3 className="max-w-[14rem] font-heading text-lg font-medium leading-[1.12] tracking-tight text-white sm:max-w-[18rem] sm:text-xl">
                               {slide.title}
                             </h3>
                           </div>
-                        ) : null}
-                      </article>
-                    )}
+                        </article>
+                      )}
+                      <div className="mt-3 pr-2">
+                        <ActiveSlideContent slide={slide} compact />
+                      </div>
+                    </div>
                   </SwiperSlide>
                 ))}
               </Swiper>
-
-              <div className="mt-4 flex flex-col gap-3">
-                <ActiveSlideContent slide={activeSlide} compact />
-              </div>
             </div>
 
             {/* ── Desktop: expanding slider ── */}
