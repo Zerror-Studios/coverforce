@@ -20,6 +20,7 @@ const BROKERS_HERO_LOGOS = [
     { src: "/images/broker/logo/network-SAN of Florida.png", alt: "SAN of Florida" },
     { src: "/images/broker/logo/network-Voldico.png", alt: "Voldico" },
     { src: "/images/broker/logo/partner-Justworks.png", alt: "Justworks" },
+    { src: "/images/broker/logo/localedge.png", alt: "Localedge" },
   ] as const;
   
 

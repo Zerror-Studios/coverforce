@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -16,6 +16,74 @@ gsap.registerPlugin(ScrollTrigger);
 const REVEAL_EASE = "power3.out";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const NAME_PATTERN = /^[\p{L}][\p{L}\s'.-]{1,49}$/u;
+const GEO_TIMEOUT_MS = 6000;
+const DEVICE_GEO_TIMEOUT_MS = 4500;
+
+function getTimeOfDayPeriod(date = new Date()) {
+  const hour = date.getHours();
+  if (hour < 12) return "morning";
+  if (hour < 17) return "afternoon";
+  return "evening";
+}
+
+function buildGreeting(location: string | null) {
+  const period = getTimeOfDayPeriod();
+  if (location) {
+    return `Hey there! How can we assist you on this ${period} in ${location}?`;
+  }
+  return `Hey there! How can we assist you on this ${period}?`;
+}
+
+function getDeviceCoordinates(): Promise<{ lat: number; lon: number } | null> {
+  if (typeof navigator === "undefined" || !navigator.geolocation) {
+    return Promise.resolve(null);
+  }
+
+  return new Promise((resolve) => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
+        });
+      },
+      () => resolve(null),
+      {
+        enableHighAccuracy: false,
+        timeout: DEVICE_GEO_TIMEOUT_MS,
+        maximumAge: 10 * 60 * 1000,
+      },
+    );
+  });
+}
+
+async function fetchGeoLocation(
+  signal: AbortSignal,
+  coords?: { lat: number; lon: number } | null,
+): Promise<string | null> {
+  const url =
+    coords != null
+      ? `/api/geo?lat=${encodeURIComponent(String(coords.lat))}&lon=${encodeURIComponent(String(coords.lon))}`
+      : "/api/geo";
+
+  const res = await fetch(url, { signal });
+  if (!res.ok) return null;
+
+  const data = (await res.json()) as { location?: string | null };
+  return typeof data.location === "string" && data.location ? data.location : null;
+}
+
+async function resolveGreetingLocation(signal: AbortSignal): Promise<string | null> {
+  const ipPromise = fetchGeoLocation(signal);
+
+  const coords = await getDeviceCoordinates();
+  if (coords) {
+    const precise = await fetchGeoLocation(signal, coords);
+    if (precise) return precise;
+  }
+
+  return ipPromise;
+}
 
 type FormDataState = {
   businessType: string[];
@@ -130,11 +198,47 @@ const ContactForm = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [greetingReady, setGreetingReady] = useState(false);
+  const [greeting, setGreeting] = useState(() => buildGreeting(null));
 
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const splitsRef = useRef<SplitText[]>([]);
   const [borderOpacity, setBorderOpacity] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    let settled = false;
+    const controller = new AbortController();
+
+    const finish = (location: string | null) => {
+      if (cancelled || settled) return;
+      settled = true;
+      setGreeting(buildGreeting(location));
+      setGreetingReady(true);
+    };
+
+    const timeoutId = window.setTimeout(() => {
+      finish(null);
+      controller.abort();
+    }, GEO_TIMEOUT_MS);
+
+    resolveGreetingLocation(controller.signal)
+      .then((location) => {
+        window.clearTimeout(timeoutId);
+        finish(location);
+      })
+      .catch(() => {
+        window.clearTimeout(timeoutId);
+        finish(null);
+      });
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+      controller.abort();
+    };
+  }, []);
 
   const cleanupSplits = () => {
     splitsRef.current.forEach((split) => split.revert());
@@ -146,6 +250,7 @@ const ContactForm = () => {
       const section = sectionRef.current;
       const content = contentRef.current;
       if (!section || !content) return;
+      if (step === 0 && !greetingReady) return;
 
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -282,7 +387,7 @@ const ContactForm = () => {
 
       reveal();
     },
-    { dependencies: [step], scope: sectionRef },
+    { dependencies: [step, greeting, greetingReady], scope: sectionRef },
   );
 
   const clearFieldError = (field: keyof FieldErrors) => {
@@ -462,14 +567,14 @@ const ContactForm = () => {
               </div>
             )}
 
-            {step === 0 && (
+            {step === 0 && greetingReady && (
               <div className="flex w-full flex-col items-center">
                 <h2
                   data-heading
                   className="mt-5 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
                 >
                   <span data-split>
-                    Hey there! How can we assist you on this afternoon in Chicago, USA?
+                    {greeting}
                   </span>
                 </h2>
 
