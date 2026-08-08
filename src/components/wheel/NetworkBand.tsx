@@ -54,12 +54,11 @@ const CARRIER_LOGO_POOL = [
   "/images/home/carrier/carrier-berkshire-hathaway.png",
   "/images/home/carrier/carrier-chubb.png",
   "/images/home/carrier/carrier-coalition.png",
-  "/images/home/carrier/carrier-compwest.png",
   "/images/home/carrier/carrier-cowbell.png",
   "/images/home/carrier/carrier-employers.png",
   "/images/home/carrier/carrier-markel.png",
   "/images/home/carrier/carrier-merchants-insurance-group.png",
-  "/images/home/carrier/carrier-republic-indemnity.png",
+  "/images/home/carrier/carrier-nationwide.png",
 ];
 
 const BROKER_LOGO_POOL = [
@@ -71,7 +70,8 @@ const BROKER_LOGO_POOL = [
   "/images/home/distributors/startup-harper.png",
   "/images/home/distributors/startup-latent-insurance.png",
   "/images/home/distributors/startup-rosella.png",
-  "/images/home/distributors/startup-snapBind.png",
+  "/images/home/distributors/wholesaler-jencap.png",
+  "/images/home/distributors/wholesaler-one80.png",
   "/images/home/distributors/wholesaler-international-underwriting-agency.png",
 ];
 

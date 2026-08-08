@@ -13,7 +13,7 @@ type CacheEntry<T> = {
 let accessTokenCache: CacheEntry<string> | null = null;
 
 function requireEnv(name: string): string {
-  const value = process.env[name]?.trim();
+  const value = process.env?.[name]?.trim();
   if (!value) {
     throw new Error(`Missing required env var: ${name}`);
   }
