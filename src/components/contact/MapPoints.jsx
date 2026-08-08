@@ -78,7 +78,9 @@ export default function MapPoints() {
   const hoveringRef = useRef(false);
 
   const groupPosition = useMemo(() => {
-    if (size.width < 1024) return [-95, 4, 0];
+    // Shift map right on small screens so Denver stays in frame (was -95, which cropped west).
+    if (size.width < 640) return [-28, 4, 0];
+    if (size.width < 1024) return [-48, 4, 0];
     return [0, 0, 0];
   }, [size.width]);
 
