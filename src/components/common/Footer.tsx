@@ -226,10 +226,17 @@ const Footer = () => {
           {/* ── Top: CTA banner ── */}
           <div className="relative min-h-[26rem] overflow-hidden border-b border-neutral-200 md:min-h-[26rem] lg:min-h-[30rem]">
             <Image
+              src="/images/footer_banner-mobile.webp"
+              alt="footer-banner"
+              fill
+              className="object-cover object-top md:hidden"
+              sizes="100vw"
+            />
+            <Image
               src="/images/footer_banner.webp"
               alt="footer-banner"
               fill
-              className="object-cover  object-[85%_50%] md:object-right"
+              className="hidden object-cover object-right md:block"
               sizes="100vw"
             />
             <div
