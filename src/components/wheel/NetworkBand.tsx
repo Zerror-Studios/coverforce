@@ -73,6 +73,7 @@ const BROKER_LOGO_POOL = [
   "/images/home/distributors/wholesaler-jencap.png",
   "/images/home/distributors/wholesaler-one80.png",
   "/images/home/distributors/wholesaler-international-underwriting-agency.png",
+  "/images/home/distributors/brown-brown-white.png",
 ];
 
 const CARRIER_LABELS = [

@@ -289,6 +289,7 @@ const STARTUP_LOGO_SRCS = [
   "/images/home/distributors/wholesaler-jencap.png",
   "/images/home/distributors/wholesaler-one80.png",
   "/images/home/distributors/wholesaler-international-underwriting-agency.png",
+  "/images/home/distributors/brown-brown-white.png",
 ] as const;
 
 function startupLogoSrc(index: number) {
