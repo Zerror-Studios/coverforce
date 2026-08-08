@@ -1,3 +1,5 @@
+import { env } from "@/config/env";
+
 type HubSpotField = {
   objectTypeId?: string;
   name: string;
@@ -11,11 +13,6 @@ type HubSpotSubmitInput = {
   pageName?: string;
   hutk?: string;
 };
-
-function requireEnv(name: string): string | null {
-  const value = process.env[name]?.trim();
-  return value || null;
-}
 
 function splitFullName(fullName: string): { firstname: string; lastname: string } {
   const parts = fullName.trim().split(/\s+/).filter(Boolean);
@@ -108,7 +105,7 @@ export async function submitHubSpotForm({
   pageName,
   hutk,
 }: HubSpotSubmitInput): Promise<{ ok: true } | { ok: false; status: number; error: string }> {
-  const portalId = requireEnv("HUBSPOT_PORTAL_ID");
+  const portalId = env.hubspot.portalId;
   if (!portalId) {
     return { ok: false, status: 500, error: "HUBSPOT_PORTAL_ID is not configured" };
   }
@@ -116,7 +113,7 @@ export async function submitHubSpotForm({
     return { ok: false, status: 500, error: "HubSpot form ID is missing" };
   }
 
-  const accessToken = requireEnv("HUBSPOT_ACCESS_TOKEN");
+  const accessToken = env.hubspot.accessToken;
   const endpoint = accessToken
     ? `https://api.hsforms.com/submissions/v3/integration/secure/submit/${portalId}/${formId}`
     : `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`;
@@ -163,14 +160,14 @@ export async function submitHubSpotForm({
 
 export function getHubSpotContactFormId(): string | null {
   return (
-    requireEnv("HUBSPOT_CONTACT_FORM_ID") ||
+    env.hubspot.contactFormId ||
     "a8899fe8-45b1-4022-872e-d79aa4e238ea"
   );
 }
 
 export function getHubSpotApiAccessFormId(): string | null {
   return (
-    requireEnv("HUBSPOT_API_ACCESS_FORM_ID") ||
+    env.hubspot.apiAccessFormId ||
     "a46f0b5e-bfd8-4b7a-9e6b-2a1e0d351415"
   );
 }

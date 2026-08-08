@@ -1,4 +1,5 @@
 import type { BlogCategory, BlogPost } from "@/data/blogPosts";
+import { env } from "@/config/env";
 
 const WEBFLOW_API = "https://api.webflow.com/v2";
 const REVALIDATE_SECONDS = 3600;
@@ -96,13 +97,6 @@ export type BlogDetail = BlogPost & {
   tagSlug?: string;
 };
 
-function requireEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`Missing required env var: ${name}`);
-  }
-  return value;
-}
 
 /**
  * Webflow CDN URLs are often already percent-encoded (`Article%204.png`),
@@ -148,7 +142,7 @@ function encodeWebflowAssetUrlForHtml(url: string): string {
 }
 
 async function webflowFetch<T>(path: string): Promise<T> {
-  const token = requireEnv("WEBFLOW_TOKEN");
+  const token = env.webflow.token;
   const response = await fetch(`${WEBFLOW_API}${path}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -300,7 +294,7 @@ function rewriteBlogLinks(html: string): string {
 }
 
 async function getAuthorsById(): Promise<Map<string, BlogAuthor>> {
-  const collectionId = requireEnv("WEBFLOW_AUTHOR_COLLECTION_ID");
+  const collectionId = env.webflow.authorCollectionId;
   const items = await fetchAllCmsItems<AuthorFieldData>(collectionId);
   const map = new Map<string, BlogAuthor>();
 
@@ -372,7 +366,7 @@ export async function getBlogAuthorSlugs(): Promise<string[]> {
 async function getTagsById(): Promise<
   Map<string, { name: string; slug: string }>
 > {
-  const collectionId = requireEnv("WEBFLOW_TAG_COLLECTION_ID");
+  const collectionId = env.webflow.tagCollectionId;
   const items = await fetchAllCmsItems<TagFieldData>(collectionId);
   const map = new Map<string, { name: string; slug: string }>();
 
@@ -425,7 +419,7 @@ function mapBlogItem(
 }
 
 export async function getBlogPosts(): Promise<BlogDetail[]> {
-  const collectionId = requireEnv("WEBFLOW_BLOG_COLLECTION_ID");
+  const collectionId = env.webflow.blogCollectionId;
   const [items, authors, tags] = await Promise.all([
     fetchAllLiveItems<BlogFieldData>(collectionId),
     getAuthorsById(),
@@ -444,7 +438,7 @@ export async function getBlogPosts(): Promise<BlogDetail[]> {
 export async function getBlogPostBySlug(
   slug: string
 ): Promise<BlogDetail | null> {
-  const collectionId = requireEnv("WEBFLOW_BLOG_COLLECTION_ID");
+  const collectionId = env.webflow.blogCollectionId;
   const encoded = encodeURIComponent(slug);
   const [page, authors, tags] = await Promise.all([
     webflowFetch<{ items?: WebflowItem<BlogFieldData>[] }>(

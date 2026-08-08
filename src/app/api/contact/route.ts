@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { env } from "@/config/env";
 import {
   buildContactHubSpotFields,
   getHubSpotContactFormId,
@@ -105,7 +106,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!process.env.HUBSPOT_PORTAL_ID) {
+    if (!env.hubspot.portalId) {
       return NextResponse.json({ error: "HubSpot is not configured" }, { status: 500 });
     }
 

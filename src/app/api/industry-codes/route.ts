@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
+import { env } from "@/config/env";
 import {
   coverforceCacheControlHeader,
   getCachedValue,
   getCoverforceAccessToken,
-  getCoverforceApiBaseUrl,
   setCachedValue,
   COVERFORCE_REFERENCE_CACHE_SECONDS,
 } from "@/lib/coverforceApi";
@@ -140,7 +140,7 @@ function findIndustryArray(value: unknown): CoverforceIndustryItem[] {
 }
 
 async function fetchIndustryCodes(): Promise<IndustryOption[]> {
-  const baseUrl = getCoverforceApiBaseUrl();
+  const baseUrl = env.coverforce.apiBaseUrl;
   const token = await getCoverforceAccessToken();
   const controller = new AbortController();
   const timeoutId = setTimeout(

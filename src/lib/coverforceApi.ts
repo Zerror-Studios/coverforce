@@ -1,6 +1,4 @@
-const COVERFORCE_API_BASE_URL_ENV = "COVERFORCE_API_BASE_URL";
-const COVERFORCE_API_CLIENT_ID_ENV = "COVERFORCE_API_CLIENT_ID";
-const COVERFORCE_API_CLIENT_SECRET_ENV = "COVERFORCE_API_CLIENT_SECRET";
+import { env } from "@/config/env";
 
 /** Shared TTL for rarely changing CoverForce reference data. */
 export const COVERFORCE_REFERENCE_CACHE_SECONDS = 60 * 60 * 6; // 6 hours
@@ -11,18 +9,6 @@ type CacheEntry<T> = {
 };
 
 let accessTokenCache: CacheEntry<string> | null = null;
-
-function requireEnv(name: string): string {
-  const value = process.env?.[name]?.trim();
-  if (!value) {
-    throw new Error(`Missing required env var: ${name}`);
-  }
-  return value;
-}
-
-export function getCoverforceApiBaseUrl(): string {
-  return requireEnv(COVERFORCE_API_BASE_URL_ENV);
-}
 
 export function getCachedValue<T>(
   cache: CacheEntry<T> | null
@@ -52,12 +38,10 @@ export async function getCoverforceAccessToken() {
   const cached = getCachedValue(accessTokenCache);
   if (cached) return cached;
 
-  const baseUrl = getCoverforceApiBaseUrl();
-  const clientId = requireEnv(COVERFORCE_API_CLIENT_ID_ENV);
-  const clientSecret = requireEnv(COVERFORCE_API_CLIENT_SECRET_ENV);
-  const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+  const { apiBaseUrl, apiClientId, apiClientSecret } = env.coverforce;
+  const basicAuth = Buffer.from(`${apiClientId}:${apiClientSecret}`).toString("base64");
 
-  const response = await fetch(`${baseUrl}/auth`, {
+  const response = await fetch(`${apiBaseUrl}/auth`, {
     method: "POST",
     headers: {
       Accept: "application/json",

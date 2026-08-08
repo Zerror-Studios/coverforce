@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
+import { env } from "@/config/env";
 import {
   COVERFORCE_REFERENCE_CACHE_SECONDS,
   coverforceCacheControlHeader,
   getCachedValue,
   getCoverforceAccessToken,
-  getCoverforceApiBaseUrl,
   setCachedValue,
 } from "@/lib/coverforceApi";
 
@@ -31,7 +31,7 @@ let carriersCache: ReturnType<typeof setCachedValue<CarriersCache>> | null =
   null;
 
 async function fetchCarriers(): Promise<AppetiteCarrier[]> {
-  const baseUrl = getCoverforceApiBaseUrl();
+  const baseUrl = env.coverforce.apiBaseUrl;
   const token = await getCoverforceAccessToken();
 
   const response = await fetch(`${baseUrl}/api/get-carriers`, {

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
+import { env } from "@/config/env";
 import {
   getCoverforceAccessToken,
-  getCoverforceApiBaseUrl,
 } from "@/lib/coverforceApi";
 
 type AppetiteStatus = "IN_APPETITE" | "NOT_IN_APPETITE" | "MAYBE_IN_APPETITE";
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const baseUrl = getCoverforceApiBaseUrl();
+    const baseUrl = env.coverforce.apiBaseUrl;
     const token = await getCoverforceAccessToken();
 
     const response = await fetch(`${baseUrl}/api/check-appetite`, {
