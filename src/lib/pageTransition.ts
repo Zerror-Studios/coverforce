@@ -4,12 +4,11 @@ export const PAGE_TRANSITION_DELAY_MS = 120;
 /** Total time until the incoming page has fully settled (desktop). */
 export const PAGE_TRANSITION_MS = PAGE_TRANSITION_DELAY_MS + PAGE_TRANSITION_IN_MS;
 
-/** Faster settle time for mobile / tablet. */
-export const PAGE_TRANSITION_MOBILE_OUT_MS = 220;
-export const PAGE_TRANSITION_MOBILE_IN_MS = 320;
-export const PAGE_TRANSITION_MOBILE_DELAY_MS = 40;
-export const PAGE_TRANSITION_MOBILE_MS =
-  PAGE_TRANSITION_MOBILE_DELAY_MS + PAGE_TRANSITION_MOBILE_IN_MS;
+/** Faster settle time for mobile / tablet — no artificial wait. */
+export const PAGE_TRANSITION_MOBILE_OUT_MS = 0;
+export const PAGE_TRANSITION_MOBILE_IN_MS = 0;
+export const PAGE_TRANSITION_MOBILE_DELAY_MS = 0;
+export const PAGE_TRANSITION_MOBILE_MS = 0;
 
 export const PAGE_TRANSITION_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 

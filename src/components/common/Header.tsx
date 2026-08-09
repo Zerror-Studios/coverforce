@@ -12,7 +12,7 @@ import MegaMenu, {
 } from "./MegaMenu";
 import AnimatedLinkText from "./AnimatedLinkText";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   RiArrowDownSLine,
@@ -364,6 +364,7 @@ const Header = ({
   const navBarRef = useRef<HTMLDivElement>(null);
   const navRevealedRef = useRef(false);
   const router = useTransitionRouter();
+  const plainRouter = useRouter();
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [renderedMenu, setRenderedMenu] = useState<string | null>(null);
   const [clipOpen, setClipOpen] = useState(false);
@@ -578,6 +579,11 @@ const Header = ({
     setRenderedMobileSubMenu(null);
   }, []);
 
+  const closeMobileMenuInstant = useCallback(() => {
+    closeMobileMenu();
+    setMobileMenuRendered(false);
+  }, [closeMobileMenu]);
+
   useEffect(() => {
     if (mobileActiveMenu) {
       setRenderedMobileSubMenu(mobileActiveMenu);
@@ -675,11 +681,20 @@ const Header = ({
   const handleNavigate = useCallback(
     (href: string) => {
       closeMenuImmediately();
-      closeMobileMenu();
 
       const hashIndex = href.indexOf("#");
       const path = hashIndex >= 0 ? href.slice(0, hashIndex) : href;
       const hash = hashIndex >= 0 ? href.slice(hashIndex) : "";
+      const isMobileNav =
+        typeof window !== "undefined" &&
+        window.matchMedia("(max-width: 1023px)").matches;
+
+      // Mobile mega menu: close instantly and skip view-transition delay.
+      if (isMobileNav) {
+        closeMobileMenuInstant();
+      } else {
+        closeMobileMenu();
+      }
 
       if (pathname === path && hash) {
         window.history.pushState(null, "", href);
@@ -689,17 +704,29 @@ const Header = ({
 
       if (pathname === href || (pathname === path && !hash)) return;
 
+      setPendingPathname(path || href);
+
+      if (isMobileNav) {
+        plainRouter.push(href);
+        return;
+      }
+
       if (typeof document !== "undefined" && "startViewTransition" in document) {
         setPageTransitionBg(path || href);
-        setPendingPathname(path || href);
         router.push(href, { onTransitionReady: pageAnimation });
         return;
       }
 
-      setPendingPathname(path || href);
-      router.push(href);
+      plainRouter.push(href);
     },
-    [closeMenuImmediately, closeMobileMenu, pathname, router],
+    [
+      closeMenuImmediately,
+      closeMobileMenu,
+      closeMobileMenuInstant,
+      pathname,
+      plainRouter,
+      router,
+    ],
   );
 
   useEffect(() => {

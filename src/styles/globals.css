@@ -117,20 +117,33 @@ button {
 
   @media (max-width: 1023px) {
     :root {
-      --page-transition-out: 220ms;
-      --page-transition-in: 320ms;
-      --page-transition-delay: 40ms;
+      --page-transition-out: 0ms;
+      --page-transition-in: 0ms;
+      --page-transition-delay: 0ms;
     }
 
     @keyframes site-page-in {
-      0% {
-        opacity: 0;
-        transform: translate3d(0, 12px, 0);
-      }
+      0%,
       100% {
         opacity: 1;
-        transform: translate3d(0, 0, 0);
+        transform: none;
       }
+    }
+
+    @keyframes site-page-out {
+      0%,
+      100% {
+        opacity: 1;
+      }
+    }
+
+    ::view-transition-old(page-content),
+    ::view-transition-new(page-content) {
+      animation: none !important;
+    }
+
+    html[data-page-enter="pricing"] ::view-transition-new(page-content) {
+      animation: none !important;
     }
   }
 
