@@ -5,7 +5,7 @@ import {
   scrollToHashWhenReady,
   scrollToTop,
 } from "@/lib/scrollToTop";
-import { PAGE_TRANSITION_MS } from "@/lib/pageTransition";
+import { getPageTransitionMs } from "@/lib/pageTransition";
 import Lenis from "lenis";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
@@ -29,13 +29,14 @@ export default function LenisScroll({ children }: LenisScrollProps) {
 
   useLayoutEffect(() => {
     let cancelHashScroll = () => {};
+    const transitionMs = getPageTransitionMs();
 
     if (window.location.hash) {
       // Start at the top, then ease down to the hash once layout is ready.
       scrollToTop(true);
       const timer = window.setTimeout(() => {
         cancelHashScroll = scrollToHashWhenReady();
-      }, PAGE_TRANSITION_MS);
+      }, transitionMs);
 
       return () => {
         window.clearTimeout(timer);
@@ -45,7 +46,7 @@ export default function LenisScroll({ children }: LenisScrollProps) {
 
     scrollToTop();
     const frame = window.requestAnimationFrame(() => scrollToTop());
-    const timer = window.setTimeout(() => scrollToTop(), PAGE_TRANSITION_MS);
+    const timer = window.setTimeout(() => scrollToTop(), transitionMs);
 
     return () => {
       window.cancelAnimationFrame(frame);
@@ -133,7 +134,7 @@ export default function LenisScroll({ children }: LenisScrollProps) {
       if (window.location.hash) {
         settleHashTimer = window.setTimeout(() => {
           scrollToHashWhenReady();
-        }, PAGE_TRANSITION_MS);
+        }, getPageTransitionMs());
         return;
       }
       scrollToTop();

@@ -14,7 +14,7 @@ import { scrollToTop } from "@/lib/scrollToTop";
 import {
   getPageTransitionBg,
   installPageTransitionBgSync,
-  PAGE_TRANSITION_MS,
+  getPageTransitionMs,
   setPageTransitionBg,
 } from "@/lib/pageTransition";
 import { usePathname } from "next/navigation";
@@ -102,7 +102,7 @@ export default function SiteLayout({
       if (!window.location.hash) {
         scrollToTop();
       }
-    }, PAGE_TRANSITION_MS + 50);
+    }, getPageTransitionMs() + 50);
 
     return () => window.clearTimeout(timeout);
   }, [pathname]);

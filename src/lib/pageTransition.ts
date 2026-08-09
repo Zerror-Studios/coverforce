@@ -1,10 +1,25 @@
 export const PAGE_TRANSITION_OUT_MS = 520;
 export const PAGE_TRANSITION_IN_MS = 820;
 export const PAGE_TRANSITION_DELAY_MS = 120;
-/** Total time until the incoming page has fully settled. */
+/** Total time until the incoming page has fully settled (desktop). */
 export const PAGE_TRANSITION_MS = PAGE_TRANSITION_DELAY_MS + PAGE_TRANSITION_IN_MS;
 
+/** Faster settle time for mobile / tablet. */
+export const PAGE_TRANSITION_MOBILE_OUT_MS = 220;
+export const PAGE_TRANSITION_MOBILE_IN_MS = 320;
+export const PAGE_TRANSITION_MOBILE_DELAY_MS = 40;
+export const PAGE_TRANSITION_MOBILE_MS =
+  PAGE_TRANSITION_MOBILE_DELAY_MS + PAGE_TRANSITION_MOBILE_IN_MS;
+
 export const PAGE_TRANSITION_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+
+/** Use shorter timing below the `lg` breakpoint. */
+export function getPageTransitionMs(): number {
+  if (typeof window === "undefined") return PAGE_TRANSITION_MS;
+  return window.matchMedia("(max-width: 1023px)").matches
+    ? PAGE_TRANSITION_MOBILE_MS
+    : PAGE_TRANSITION_MS;
+}
 
 export const PAGE_BG_LIGHT = "#ffffff";
 export const PAGE_BG_DARK = "#121C49";
