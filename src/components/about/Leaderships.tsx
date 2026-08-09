@@ -195,12 +195,10 @@ function EmptyLeaderCard() {
       >
         <SectionRadialGlow className="absolute left-1/2 top-1/2 !w-[130%] -translate-x-1/2 -translate-y-1/2 opacity-75" />
         <div className="absolute inset-x-0 bottom-0 z-10 p-5 text-white sm:p-6">
-          <h3 className="font-heading text-[1.65rem] font-medium leading-[1.1] tracking-tight lg:text-[1.75rem] xl:text-[2rem]">
-            Join A Team Of
-            <br />
-            Industry Experts
+          <h3 className="font-heading text-[1.3rem] font-medium leading-[1.1] tracking-tight lg:text-[1.75rem] xl:text-[2rem]">
+            Join a team of industry experts
           </h3>
-          <p className="mt-6 max-w-xs font-sans text-sm leading-snug text-white/90">
+          <p className="mt-3 sm:mt-6 max-w-xs font-sans text-sm leading-snug text-white/90">
             Join us in creating great work. Share your resume.
           </p>
           <Button href="/careers" surface="on-dark" size="sm" className="mt-6">

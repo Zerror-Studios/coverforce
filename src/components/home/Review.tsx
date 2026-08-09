@@ -215,11 +215,9 @@ const Review = () => {
           >
             <h2
               ref={headingRef}
-              className="max-w-2xl text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#9AA8BC] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+              className="max-w-xl text-3xl font-heading font-medium leading-[1.12] tracking-tight text-[#9AA8BC] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
             >
-              <span data-split>Why commercial insurance teams</span>
-              <br />
-              <span data-split>trust CoverForce for smarter workflows</span>
+              <span data-split>Why commercial insurance teams trust CoverForce for smarter workflows</span>
             </h2>
 
             <div className="flex shrink-0 items-center gap-3">

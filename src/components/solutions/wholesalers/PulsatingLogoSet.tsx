@@ -12,9 +12,9 @@ const DEFAULT_LOGOS: MarqueeLogo[] = Array.from({ length: 15 }, (_, index) => ({
 
 const LOGO_SLOT_CLASS = {
   default:
-    "flex h-7 w-[7.5rem] shrink-0 items-center justify-center sm:h-8 sm:w-36 md:h-8 md:w-40 lg:h-9 lg:w-44",
+    "flex h-7 w-full max-w-[7.5rem] shrink-0 items-center justify-center sm:h-8 sm:max-w-36 md:h-8 md:max-w-40 lg:h-9 lg:max-w-44",
   large:
-    "flex h-8 w-36 shrink-0 items-center justify-center sm:h-9 sm:w-40 md:h-9 md:w-44 lg:h-10 lg:w-48",
+    "flex h-8 w-full max-w-[8.5rem] shrink-0 items-center justify-center sm:h-9 sm:max-w-40 md:h-9 md:max-w-44 lg:h-10 lg:max-w-48",
 } as const;
 
 const LOGO_IMAGE_CLASS =
@@ -27,23 +27,41 @@ const LOGO_TONE_CLASS = {
 
 const STAGGER_MS = 110;
 const TRANSITION_MS = 520;
+const MOBILE_MAX_WIDTH = 1023;
 
 type PulsatingLogoSetProps = {
   logos?: readonly MarqueeLogo[];
   size?: "default" | "large";
   tone?: "dark" | "light";
   logosPerSet?: number;
+  /** Logos visible at once below the `lg` breakpoint (default 2). */
+  mobileLogosPerSet?: number;
   /** How long logos stay fully visible between enter and exit */
   intervalMs?: number;
 };
 
 function chunkLogos(logos: readonly MarqueeLogo[], perSet: number) {
+  const safePerSet = Math.max(1, perSet);
   const sets: MarqueeLogo[][] = [];
-  for (let i = 0; i < logos.length; i += perSet) {
-    const slice = logos.slice(i, i + perSet);
-    if (slice.length === perSet) sets.push(slice);
+  for (let i = 0; i < logos.length; i += safePerSet) {
+    const slice = logos.slice(i, i + safePerSet);
+    if (slice.length === safePerSet) sets.push(slice);
   }
-  return sets.length > 0 ? sets : [logos.slice(0, perSet)];
+  return sets.length > 0 ? sets : [logos.slice(0, safePerSet)];
+}
+
+function useResponsiveLogosPerSet(desktopPerSet: number, mobilePerSet: number) {
+  const [perSet, setPerSet] = useState(desktopPerSet);
+
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`);
+    const sync = () => setPerSet(mq.matches ? mobilePerSet : desktopPerSet);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, [desktopPerSet, mobilePerSet]);
+
+  return perSet;
 }
 
 type Phase = "hidden" | "enter" | "visible" | "exit";
@@ -65,11 +83,17 @@ export function PulsatingLogoSet({
   size = "default",
   tone = "light",
   logosPerSet = 5,
+  mobileLogosPerSet = 2,
   intervalMs = 3200,
 }: PulsatingLogoSetProps) {
-  const sets = useMemo(() => chunkLogos(logos, logosPerSet), [logos, logosPerSet]);
+  const activePerSet = useResponsiveLogosPerSet(logosPerSet, mobileLogosPerSet);
+  const sets = useMemo(() => chunkLogos(logos, activePerSet), [logos, activePerSet]);
   const [setIndex, setSetIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>("hidden");
+
+  useEffect(() => {
+    setSetIndex(0);
+  }, [activePerSet, sets.length]);
 
   const activeLogos = sets[setIndex] ?? sets[0] ?? [];
   const count = activeLogos.length;
@@ -119,7 +143,7 @@ export function PulsatingLogoSet({
 
   return (
     <div
-      className="flex w-full items-center justify-between gap-3 px-4 sm:gap-4 sm:px-8 md:px-12 lg:gap-6 lg:px-16"
+      className="flex w-full max-w-full items-center justify-between gap-4 overflow-x-clip px-2 sm:gap-4 sm:px-8 md:px-12 lg:gap-6 lg:px-16"
       aria-label="Partner logos"
     >
       {activeLogos.map((logo, i) => {
@@ -130,7 +154,7 @@ export function PulsatingLogoSet({
         return (
           <div
             key={`${setIndex}-${logo.src}`}
-            className={`logo-set-item shrink-0 logo-set-item--${phase} motion-reduce:translate-y-0 motion-reduce:opacity-100`}
+            className={`logo-set-item flex min-w-0 flex-1 justify-center logo-set-item--${phase} motion-reduce:translate-y-0 motion-reduce:opacity-100`}
             style={{
               transitionDelay: phase === "hidden" ? "0ms" : `${delayMs}ms`,
             }}

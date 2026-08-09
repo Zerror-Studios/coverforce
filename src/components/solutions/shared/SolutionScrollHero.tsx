@@ -305,7 +305,7 @@ export default function SolutionScrollHero({
               </div>
 
               {showMarquee ? (
-                <div className="relative z-10 w-full shrink-0 pb-6 md:pb-8 lg:hidden">
+                <div className="relative z-10 w-full max-w-full shrink-0 overflow-x-clip pb-6 md:pb-8 lg:hidden">
                   {marqueeContent}
                 </div>
               ) : null}

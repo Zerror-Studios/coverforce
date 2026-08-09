@@ -77,9 +77,16 @@ type LaunchPreviewCardProps = {
   step: LaunchStep;
   stepIndex: number;
   onPrevious: () => void;
+  /** Desktop keeps previous + apply; mobile only shows apply on the first card. */
+  footer?: "full" | "apply" | "none";
 };
 
-function LaunchPreviewCard({ step, stepIndex, onPrevious }: LaunchPreviewCardProps) {
+function LaunchPreviewCard({
+  step,
+  stepIndex,
+  onPrevious,
+  footer = "full",
+}: LaunchPreviewCardProps) {
   return (
     <article className="launch-preview-card way-card-shell relative flex w-full flex-col overflow-hidden rounded-md text-white">
       <div
@@ -108,22 +115,30 @@ function LaunchPreviewCard({ step, stepIndex, onPrevious }: LaunchPreviewCardPro
           ))}
         </div>
 
-        <div className="mt-auto flex items-center justify-between gap-4 border-t border-white/30 pt-6 sm:pt-8">
-          {stepIndex > 0 ? (
-            <button
-              type="button"
-              onClick={onPrevious}
-              className="font-sans text-sm font-medium text-white/90 transition-colors hover:text-white"
-            >
-              ← Previous
-            </button>
-          ) : (
-            <span aria-hidden />
-          )}
-          <Button href="/contact" surface="on-dark">
-            Apply now
-          </Button>
-        </div>
+        {footer !== "none" ? (
+          <div
+            className={`mt-auto flex items-center gap-4 border-t border-white/30 pt-6 sm:pt-8 ${
+              footer === "full" ? "justify-between" : "justify-end"
+            }`}
+          >
+            {footer === "full" ? (
+              stepIndex > 0 ? (
+                <button
+                  type="button"
+                  onClick={onPrevious}
+                  className="font-sans text-sm font-medium text-white/90 transition-colors hover:text-white"
+                >
+                  ← Previous
+                </button>
+              ) : (
+                <span aria-hidden />
+              )
+            ) : null}
+            <Button href="/contact" surface="on-dark">
+              Apply now
+            </Button>
+          </div>
+        ) : null}
       </div>
     </article>
   );
@@ -229,8 +244,12 @@ const Launch = () => {
               step={step}
               stepIndex={index}
               onPrevious={() => selectStep(index - 1)}
+              footer="none"
             />
           ))}
+          <div className="flex justify-start">
+            <Button href="/contact">Apply now</Button>
+          </div>
         </div>
 
         <div className="hidden grid-cols-7 items-stretch gap-16 pb-24 xl:gap-23 lg:grid">

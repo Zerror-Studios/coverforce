@@ -230,7 +230,7 @@ const Workflow = ({ coverforceBackground = "broker" }: WorkflowProps) => {
     { scope: sectionRef },
   );
   return (
-    <section ref={sectionRef} id="workflow" className="scroll-mt-14 bg-white text-[#0a143b] lg:scroll-mt-0">
+    <section ref={sectionRef} id="workflow" className="scroll-mt-14 overflow-hidden bg-white text-[#0a143b] lg:scroll-mt-0">
       <style>{`
         .workflow-comparison-card.way-card-shell {
           --way-card-hover-scale: 1.03;
