@@ -14,8 +14,6 @@ import Flags from "react-phone-number-input/flags";
 gsap.registerPlugin(ScrollTrigger);
 
 const REVEAL_EASE = "power3.out";
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const NAME_PATTERN = /^[\p{L}][\p{L}\s'.-]{1,49}$/u;
 const GEO_TIMEOUT_MS = 6000;
 const DEVICE_GEO_TIMEOUT_MS = 4500;
 
@@ -90,6 +88,8 @@ type FormDataState = {
   problems: string;
   bookSize: string;
   fullName: string;
+  firstName: string;
+  lastName: string;
   phoneCode: string;
   countryCode: string;
   phone: string;
@@ -97,7 +97,72 @@ type FormDataState = {
   jobTitle: string;
   companyName: string;
   heardAboutUs: string[];
+  heardAboutUsSingle: string;
+  isDigitalBrokerageStartup: "" | "Yes" | "No";
+  startupType: string;
+  fundraisingStage: string;
+  hasActiveBook: "" | "Yes" | "No";
+  existingBookGwp: string;
+  pcLicense: string;
+  hasDirectAppointments: string;
+  appointedCarriers: string;
+  interestedLobs: string[];
+  marketAccessPartners: string;
 };
+
+const STARTUP_TYPE_OPTIONS = [
+  "Stealth",
+  "VC-Backed",
+  "Accelerator Participant/Alumni",
+  "Bootstrapped",
+  "Incubated",
+];
+const FUNDRAISING_STAGE_OPTIONS = [
+  "Accelerator",
+  "Pre-Seed",
+  "Seed",
+  "Series A",
+  "Series B+",
+  "Bootstrapped",
+  "Other",
+];
+const BOOK_GWP_OPTIONS = [
+  "$0",
+  "$1-$500K",
+  "$500K-$1M",
+  "$1-$2M",
+  "$2-$4M",
+  "$4M+",
+];
+const PC_LICENSE_OPTIONS = [
+  "Yes - I have both an individual and entity license",
+  "In progress - I have my individual license and my entity application is pending",
+  "In progress - I have an individual license only (no entity license yet)",
+  "In progress - I'm currently completing my individual licensing (exam / application)",
+  "No - I haven't started the licensing process yet",
+  "Not sure / I need help understanding what I need",
+];
+const DIRECT_APPOINTMENT_OPTIONS = [
+  "Yes - I have direct appointments with carriers",
+  "No - I am in direct appointment discussions with carriers currently",
+  "No - I access markets through a wholesaler / MGA / agency network",
+  "No - I'm looking for a platform to access carrier markets (no appointments)",
+  "Not sure / I don't know what carrier appointments are",
+];
+const LOB_OPTIONS = [
+  "General Liability (GL)",
+  "Business Owners' Policy (BOP)",
+  "Workers' Compensation (WC)",
+  "Cyber Liability",
+  "Miscellaneous Professional Liability (MPL)",
+  "Inland Marine",
+  "Property",
+  "Commercial Auto",
+  "Other",
+];
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const NAME_PATTERN = /^[\p{L}][\p{L}\s'.-]{0,49}$/u;
 
 type FieldErrors = Partial<Record<keyof FormDataState | "form", string>>;
 
@@ -107,7 +172,98 @@ function buildFullPhone(phoneCode: string, phone: string) {
   return `${phoneCode}${digits}`;
 }
 
-function validateStep(step: number, data: FormDataState): FieldErrors {
+function validateStartupStep(step: number, data: FormDataState): FieldErrors {
+  const errors: FieldErrors = {};
+
+  if (step === 1 && data.businessType.length === 0) {
+    errors.businessType = "Please select a business type.";
+  }
+
+  if (step === 2) {
+    if (!data.fullName.trim()) errors.fullName = "Full name is required.";
+    else if (!NAME_PATTERN.test(data.fullName.trim())) {
+      errors.fullName = "Enter a valid full name.";
+    }
+
+    if (!data.lastName.trim()) errors.lastName = "Last name is required.";
+    else if (!NAME_PATTERN.test(data.lastName.trim())) {
+      errors.lastName = "Enter a valid last name.";
+    }
+
+    const fullPhone = buildFullPhone(data.phoneCode, data.phone);
+    if (!data.phone.trim()) errors.phone = "Phone number is required.";
+    else if (!isValidPhoneNumber(fullPhone)) {
+      errors.phone = "Please enter a valid phone number.";
+    }
+
+    if (!data.email.trim()) errors.email = "Email is required.";
+    else if (!EMAIL_PATTERN.test(data.email.trim())) {
+      errors.email = "Please enter a valid email address.";
+    }
+
+    if (!data.jobTitle.trim()) errors.jobTitle = "Job title is required.";
+    else if (data.jobTitle.trim().length < 2) {
+      errors.jobTitle = "Enter a valid job title.";
+    }
+
+    if (!data.companyName.trim()) errors.companyName = "Company name is required.";
+    else if (data.companyName.trim().length < 2) {
+      errors.companyName = "Enter a valid company name.";
+    }
+  }
+
+  if (step === 3) {
+    if (!data.isDigitalBrokerageStartup) {
+      errors.isDigitalBrokerageStartup = "Please select Yes or No.";
+    }
+
+    if (!data.heardAboutUsSingle) {
+      errors.heardAboutUsSingle = "Please tell us how you heard about CoverForce.";
+    }
+
+    if (!data.startupType) errors.startupType = "Please select a startup type.";
+
+    if (!data.fundraisingStage) {
+      errors.fundraisingStage = "Please select a fundraising stage.";
+    }
+  }
+
+  if (step === 4) {
+    if (!data.hasActiveBook) {
+      errors.hasActiveBook = "Please select Yes or No.";
+    }
+    if (!data.existingBookGwp) {
+      errors.existingBookGwp = "Please select your book size.";
+    }
+    if (!data.pcLicense) errors.pcLicense = "Please select a license option.";
+    if (!data.hasDirectAppointments) {
+      errors.hasDirectAppointments = "Please select an appointments option.";
+    }
+  }
+
+  if (step === 5) {
+    if (!data.appointedCarriers.trim()) {
+      errors.appointedCarriers = "Please tell us which carriers you are appointed with.";
+    }
+    if (data.interestedLobs.length === 0) {
+      errors.interestedLobs = "Please select an LOB.";
+    }
+    if (!data.marketAccessPartners.trim()) {
+      errors.marketAccessPartners =
+        "Please tell us which wholesaler, MGA, or agency network you work with.";
+    }
+    const problems = data.problems.trim();
+    if (!problems) {
+      errors.problems = "Please describe which CoverForce capabilities matter most.";
+    } else if (problems.length < 10) {
+      errors.problems = "Please write a bit more detail (10+ characters).";
+    }
+  }
+
+  return errors;
+}
+
+function validateDefaultStep(step: number, data: FormDataState): FieldErrors {
   const errors: FieldErrors = {};
 
   if (step === 1 && data.businessType.length === 0) {
@@ -116,18 +272,16 @@ function validateStep(step: number, data: FormDataState): FieldErrors {
 
   if (step === 2) {
     const problems = data.problems.trim();
-    if (!problems) {
-      errors.problems = "Please describe what CoverForce would solve.";
-    } else if (problems.length < 10) {
+    if (!problems) errors.problems = "Please describe what CoverForce would solve.";
+    else if (problems.length < 10) {
       errors.problems = "Please write at least a couple of sentences (10+ characters).";
     }
   }
 
   if (step === 3) {
     const bookSize = data.bookSize.trim();
-    if (!bookSize) {
-      errors.bookSize = "Please enter your book of business size.";
-    } else if (bookSize.length < 2) {
+    if (!bookSize) errors.bookSize = "Please enter your book of business size.";
+    else if (bookSize.length < 2) {
       errors.bookSize = "Please enter a valid book of business size.";
     }
   }
@@ -140,13 +294,10 @@ function validateStep(step: number, data: FormDataState): FieldErrors {
     const fullPhone = buildFullPhone(data.phoneCode, data.phone);
 
     if (!fullName) errors.fullName = "Full name is required.";
-    else if (!NAME_PATTERN.test(fullName)) {
-      errors.fullName = "Enter a valid full name.";
-    }
+    else if (!NAME_PATTERN.test(fullName)) errors.fullName = "Enter a valid full name.";
 
-    if (!data.phone.trim()) {
-      errors.phone = "Phone number is required.";
-    } else if (!isValidPhoneNumber(fullPhone)) {
+    if (!data.phone.trim()) errors.phone = "Phone number is required.";
+    else if (!isValidPhoneNumber(fullPhone)) {
       errors.phone = "Please enter a valid phone number.";
     }
 
@@ -156,14 +307,10 @@ function validateStep(step: number, data: FormDataState): FieldErrors {
     }
 
     if (!jobTitle) errors.jobTitle = "Job title is required.";
-    else if (jobTitle.length < 2) {
-      errors.jobTitle = "Enter a valid job title.";
-    }
+    else if (jobTitle.length < 2) errors.jobTitle = "Enter a valid job title.";
 
     if (!companyName) errors.companyName = "Company name is required.";
-    else if (companyName.length < 2) {
-      errors.companyName = "Enter a valid company name.";
-    }
+    else if (companyName.length < 2) errors.companyName = "Enter a valid company name.";
   }
 
   if (step === 5 && data.heardAboutUs.length === 0) {
@@ -173,12 +320,6 @@ function validateStep(step: number, data: FormDataState): FieldErrors {
   return errors;
 }
 
-function fieldBorderClass(hasError: boolean) {
-  return hasError
-    ? "border-red-400 focus:border-red-300"
-    : "border-white/40 focus:border-white";
-}
-
 const ContactForm = () => {
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<FormDataState>({
@@ -186,6 +327,8 @@ const ContactForm = () => {
     problems: "",
     bookSize: "",
     fullName: "",
+    firstName: "",
+    lastName: "",
     phoneCode: "+1",
     countryCode: "US",
     phone: "",
@@ -193,13 +336,28 @@ const ContactForm = () => {
     jobTitle: "",
     companyName: "",
     heardAboutUs: [],
+    heardAboutUsSingle: "",
+    isDigitalBrokerageStartup: "",
+    startupType: "",
+    fundraisingStage: "",
+    hasActiveBook: "",
+    existingBookGwp: "",
+    pcLicense: "",
+    hasDirectAppointments: "",
+    appointedCarriers: "",
+    interestedLobs: [],
+    marketAccessPartners: "",
   });
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [greetingReady, setGreetingReady] = useState(false);
   const [greeting, setGreeting] = useState(() => buildGreeting(null));
+
+  const isStartupFlow = formData.businessType[0] === "Startup / Insure Tech";
+  const thankYouStep = 6;
+  const totalSteps = 5;
 
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -406,25 +564,34 @@ const ContactForm = () => {
   };
 
   const goNext = () => {
-    const errors = validateStep(step, formData);
-    setFieldErrors(errors);
-    if (Object.keys(errors).length > 0) return;
+    if (isStartupFlow) {
+      const errors = validateStartupStep(step, formData);
+      setFieldErrors(errors);
+      if (Object.keys(errors).length > 0) return;
+    } else {
+      const errors = validateDefaultStep(step, formData);
+      setFieldErrors(errors);
+      if (Object.keys(errors).length > 0) return;
+    }
     setSubmitError(null);
-    setStep((s) => Math.min(s + 1, 6));
+    setStep((s) => Math.min(s + 1, thankYouStep));
   };
 
   const prevStep = () => {
-    setSubmitError(null);
     setFieldErrors({});
+    setSubmitError(null);
     setStep((s) => Math.max(s - 1, 0));
   };
 
   const handleSubmit = async () => {
-    const errors = validateStep(5, formData);
-    setFieldErrors(errors);
-    if (Object.keys(errors).length > 0) {
-      setSubmitError("Please fix the highlighted fields before submitting.");
-      return;
+    if (isStartupFlow) {
+      const errors = validateStartupStep(5, formData);
+      setFieldErrors(errors);
+      if (Object.keys(errors).length > 0) return;
+    } else {
+      const errors = validateDefaultStep(5, formData);
+      setFieldErrors(errors);
+      if (Object.keys(errors).length > 0) return;
     }
 
     setSubmitError(null);
@@ -439,33 +606,76 @@ const ContactForm = () => {
               ?.split("=")[1]
           : undefined;
 
+      const payload = isStartupFlow
+        ? {
+            flow: "startup" as const,
+            businessType: formData.businessType,
+            fullName: formData.fullName.trim(),
+            lastName: formData.lastName.trim(),
+            email: formData.email.trim(),
+            phoneCode: formData.phoneCode,
+            phone: formData.phone.replace(/\D/g, ""),
+            companyName: formData.companyName.trim(),
+            jobTitle: formData.jobTitle.trim(),
+            isDigitalBrokerageStartup: formData.isDigitalBrokerageStartup,
+            startupType: formData.startupType,
+            fundraisingStage: formData.fundraisingStage,
+            hasActiveBook: formData.hasActiveBook,
+            existingBookGwp: formData.existingBookGwp,
+            pcLicense: formData.pcLicense,
+            hasDirectAppointments: formData.hasDirectAppointments,
+            appointedCarriers: formData.appointedCarriers.trim(),
+            interestedLobs: formData.interestedLobs,
+            marketAccessPartners: formData.marketAccessPartners.trim(),
+            heardAboutUsSingle: formData.heardAboutUsSingle,
+            problems: formData.problems.trim(),
+            pageUri: typeof window !== "undefined" ? window.location.href : undefined,
+            pageName: "API Access",
+            hutk,
+          }
+        : {
+            flow: "contact" as const,
+            businessType: formData.businessType,
+            problems: formData.problems.trim(),
+            bookSize: formData.bookSize.trim(),
+            fullName: formData.fullName.trim(),
+            email: formData.email.trim(),
+            phoneCode: formData.phoneCode,
+            phone: formData.phone.replace(/\D/g, ""),
+            companyName: formData.companyName.trim(),
+            jobTitle: formData.jobTitle.trim(),
+            heardAboutUs: formData.heardAboutUs,
+            pageUri: typeof window !== "undefined" ? window.location.href : undefined,
+            pageName: "Contact Us",
+            hutk,
+          };
+
+      console.log("[ContactForm] submit payload", payload);
+
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          fullName: formData.fullName.trim(),
-          email: formData.email.trim(),
-          jobTitle: formData.jobTitle.trim(),
-          companyName: formData.companyName.trim(),
-          problems: formData.problems.trim(),
-          bookSize: formData.bookSize.trim(),
-          heardAboutUs: formData.heardAboutUs,
-          phone: formData.phone.replace(/\D/g, ""),
-          submittedAt: new Date().toISOString(),
-          pageUri: typeof window !== "undefined" ? window.location.href : undefined,
-          pageName: "Contact",
-          hutk,
-        }),
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json().catch(() => ({}));
+      console.log("[ContactForm] submit response", {
+        status: response.status,
+        ok: response.ok,
+        result,
       });
 
       if (!response.ok) {
-        const result = await response.json().catch(() => ({}));
-        throw new Error(result.error || "Something went wrong. Please try again.");
+        throw new Error(
+          typeof result.error === "string"
+            ? result.error
+            : "Something went wrong. Please try again.",
+        );
       }
 
-      setStep(6);
+      setStep(thankYouStep);
     } catch (error) {
+      console.error("[ContactForm] submit error", error);
       setSubmitError(
         error instanceof Error ? error.message : "Something went wrong. Please try again.",
       );
@@ -478,27 +688,24 @@ const ContactForm = () => {
     "Agency Network",
     "AMS",
     "MGA",
-    "Association",
     "Brokerage",
     "Carrier",
     "Independent Agent",
     "Wholesaler",
     "Technology Provider",
+    "Startup / Insure Tech",
     "Other",
   ];
 
   const heardAboutUsOptions = [
     "Search (Google, other engine)",
     "AI Tool (Claude, ChatGPT, etc)",
-    "Blog post or article",
+    "LinkedIn or social media",
     "Newsletter",
     "Online advertisement",
-    "Referral from an existing CoverForce carrier",
-    "Referral from an existing CoverForce customer",
     "Referral from an investor or advisor",
-    "Other referral (word of mouth, partner, integration, etc)",
+    "Other referral (word of mouth, etc)",
     "Event or conference",
-    "LinkedIn or social media",
     "Other",
   ];
 
@@ -516,7 +723,6 @@ const ContactForm = () => {
       businessType: prev.businessType[0] === type ? [] : [type],
     }));
     clearFieldError("businessType");
-    setSubmitError(null);
   };
 
   const toggleHeardAboutUs = (option: string) => {
@@ -530,6 +736,22 @@ const ContactForm = () => {
     clearFieldError("heardAboutUs");
     setSubmitError(null);
   };
+
+  const fieldLabelClass =
+    "text-left text-[11px] font-medium uppercase tracking-widest text-white/70";
+  const underlineInputClass = (hasError = false) =>
+    `w-full border-b bg-transparent pb-2 text-left text-white outline-none transition-colors ${
+      hasError ? "border-red-400 focus:border-red-300" : "border-white/40 focus:border-white"
+    }`;
+  const selectClass = (hasError = false) =>
+    `w-full appearance-none border-b bg-transparent pb-2 pr-6 text-left text-white outline-none transition-colors ${
+      hasError ? "border-red-400 focus:border-red-300" : "border-white/40 focus:border-white"
+    }`;
+  const fieldErrorClass = "mt-2 text-left text-sm text-red-300";
+  const radioOptionClass =
+    "flex cursor-pointer items-center gap-2.5 text-sm text-white/90";
+  const radioInputClass =
+    "size-4 shrink-0 accent-white cursor-pointer";
 
   return (
     <>
@@ -555,20 +777,21 @@ const ContactForm = () => {
         <Container
           borderColor="#FFFFFF33"
           borderOpacity={borderOpacity}
-          className="relative z-10 flex h-full w-full items-center"
+          className="relative z-10 flex h-full w-full items-center overflow-hidden"
         >
           <div
             ref={contentRef}
-            className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center justify-center text-center"
+            data-lenis-prevent
+            className="relative z-10 mx-auto flex max-h-full w-full max-w-3xl flex-col items-center justify-center overflow-y-auto overscroll-contain py-8 text-center [-webkit-overflow-scrolling:touch]"
           >
-            {step > 0 && step < 6 && (
+            {step > 0 && step < thankYouStep && (
               <div className="mb-8 text-sm font-medium uppercase tracking-widest text-white/60">
-                0{step} / <span className="opacity-30"> 05</span>
+                0{step} / <span className="opacity-30"> 0{totalSteps}</span>
               </div>
             )}
 
             {step === 0 && greetingReady && (
-              <div className="flex w-full flex-col items-center">
+              <div data-lenis-prevent className="flex w-full flex-col items-center">
                 <h2
                   data-heading
                   className="mt-5 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
@@ -595,7 +818,7 @@ const ContactForm = () => {
             )}
 
             {step === 1 && (
-              <div className="flex w-full flex-col items-center">
+              <div data-lenis-prevent className="flex w-full flex-col items-center">
                 <h2
                   data-heading
                   className="mb-12 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
@@ -619,124 +842,64 @@ const ContactForm = () => {
                     </button>
                   ))}
                 </div>
-                {fieldErrors.businessType && (
-                  <p className="mt-6 text-sm text-red-300" role="alert">
-                    {fieldErrors.businessType}
-                  </p>
-                )}
                 <div className="mt-16" data-animate-btn>
                   <Button surface="on-dark" onClick={goNext} balanced>
                     NEXT
                   </Button>
                 </div>
+                {fieldErrors.businessType && (
+                  <p className="mt-4 text-sm text-red-300" role="alert">
+                    {fieldErrors.businessType}
+                  </p>
+                )}
               </div>
             )}
 
-            {step === 2 && (
-              <div className="flex w-full flex-col items-center">
+            {/* ── Startup flow ── */}
+            {isStartupFlow && step === 2 && (
+              <div data-lenis-prevent className="flex w-full flex-col items-center">
                 <h2
                   data-heading
                   className="mb-12 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
                 >
-                  <span data-split>
-                    Please describe in a few sentences what problems CoverForce would solve for
-                    your company *
-                  </span>
-                </h2>
-                <div className="w-full" data-animate-field>
-                  <input
-                    type="text"
-                    value={formData.problems}
-                    onChange={(e) => updateData("problems", e.target.value)}
-                    aria-invalid={Boolean(fieldErrors.problems)}
-                    className={`w-full border-b bg-transparent pb-3 text-center text-lg text-white outline-none transition-colors ${fieldBorderClass(Boolean(fieldErrors.problems))}`}
-                  />
-                  {fieldErrors.problems && (
-                    <p className="mt-3 text-sm text-red-300" role="alert">
-                      {fieldErrors.problems}
-                    </p>
-                  )}
-                </div>
-                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
-                  <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
-                    GO BACK
-                  </Button>
-                  <Button surface="on-dark" onClick={goNext} balanced>
-                    NEXT
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {step === 3 && (
-              <div className="flex w-full flex-col items-center">
-                <h2
-                  data-heading
-                  className="mb-12 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
-                >
-                  <span data-split>
-                    How big is your existing commercial book of business ($ of Gross Written
-                    Premium)?*
-                  </span>
-                </h2>
-                <div className="w-full" data-animate-field>
-                  <input
-                    type="text"
-                    value={formData.bookSize}
-                    onChange={(e) => updateData("bookSize", e.target.value)}
-                    aria-invalid={Boolean(fieldErrors.bookSize)}
-                    className={`w-full border-b bg-transparent pb-3 text-center text-lg text-white outline-none transition-colors ${fieldBorderClass(Boolean(fieldErrors.bookSize))}`}
-                  />
-                  {fieldErrors.bookSize && (
-                    <p className="mt-3 text-sm text-red-300" role="alert">
-                      {fieldErrors.bookSize}
-                    </p>
-                  )}
-                </div>
-                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
-                  <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
-                    GO BACK
-                  </Button>
-                  <Button surface="on-dark" onClick={goNext} balanced>
-                    NEXT
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {step === 4 && (
-              <div className="flex w-full flex-col items-center">
-                <h2
-                  data-heading
-                  className="mb-12 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
-                >
-                  <span data-split>Almost there! Tell us about you and your company.</span>
+                  <span data-split>Tell us how to reach you</span>
                 </h2>
 
                 <div className="mt-4 grid w-full grid-cols-1 gap-x-12 gap-y-10 text-left md:grid-cols-2">
-                  <div className="flex flex-col gap-2 md:col-span-2" data-animate-field>
-                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
-                      FULL NAME *
-                    </label>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className={fieldLabelClass}>Full Name *</label>
                     <input
                       type="text"
                       placeholder="Arjun Sharma"
                       autoComplete="name"
                       value={formData.fullName}
                       onChange={(e) => updateData("fullName", e.target.value)}
-                      aria-invalid={Boolean(fieldErrors.fullName)}
-                      className={`w-full border-b bg-transparent pb-2 text-white outline-none transition-colors ${fieldBorderClass(Boolean(fieldErrors.fullName))}`}
+                      className={underlineInputClass(Boolean(fieldErrors.fullName))}
                     />
                     {fieldErrors.fullName && (
-                      <p className="text-xs text-red-300" role="alert">
+                      <p className={fieldErrorClass} role="alert">
                         {fieldErrors.fullName}
                       </p>
                     )}
                   </div>
                   <div className="flex flex-col gap-2" data-animate-field>
-                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
-                      PHONE NUMBER *
-                    </label>
+                    <label className={fieldLabelClass}>Last Name *</label>
+                    <input
+                      type="text"
+                      placeholder="Sharma"
+                      autoComplete="family-name"
+                      value={formData.lastName}
+                      onChange={(e) => updateData("lastName", e.target.value)}
+                      className={underlineInputClass(Boolean(fieldErrors.lastName))}
+                    />
+                    {fieldErrors.lastName && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.lastName}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className={fieldLabelClass}>Phone Number *</label>
                     <div
                       className={`relative flex items-center border-b pb-2 transition-colors ${
                         fieldErrors.phone
@@ -745,7 +908,7 @@ const ContactForm = () => {
                       }`}
                     >
                       <div
-                        className="mr-2 flex cursor-pointer select-none items-center gap-x-2 text-sm opacity-100"
+                        className="mr-2 flex cursor-pointer select-none items-center gap-x-2 text-sm"
                         onClick={() =>
                           setActiveDropdown(activeDropdown === "phone" ? null : "phone")
                         }
@@ -820,69 +983,59 @@ const ContactForm = () => {
                         onChange={(e) =>
                           updateData("phone", e.target.value.replace(/[^\d\s()-]/g, ""))
                         }
-                        aria-invalid={Boolean(fieldErrors.phone)}
                         className="w-full bg-transparent text-white outline-none"
                       />
                     </div>
                     {fieldErrors.phone && (
-                      <p className="text-xs text-red-300" role="alert">
+                      <p className={fieldErrorClass} role="alert">
                         {fieldErrors.phone}
                       </p>
                     )}
                   </div>
                   <div className="flex flex-col gap-2" data-animate-field>
-                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
-                      EMAIL ADDRESS *
-                    </label>
+                    <label className={fieldLabelClass}>Email Address *</label>
                     <input
                       type="email"
                       autoComplete="email"
                       placeholder="arjun@company.com"
                       value={formData.email}
                       onChange={(e) => updateData("email", e.target.value)}
-                      aria-invalid={Boolean(fieldErrors.email)}
-                      className={`w-full border-b bg-transparent pb-2 text-white outline-none transition-colors ${fieldBorderClass(Boolean(fieldErrors.email))}`}
+                      className={underlineInputClass(Boolean(fieldErrors.email))}
                     />
                     {fieldErrors.email && (
-                      <p className="text-xs text-red-300" role="alert">
+                      <p className={fieldErrorClass} role="alert">
                         {fieldErrors.email}
                       </p>
                     )}
                   </div>
                   <div className="flex flex-col gap-2" data-animate-field>
-                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
-                      JOB TITLE *
-                    </label>
+                    <label className={fieldLabelClass}>Job Title *</label>
                     <input
                       type="text"
                       autoComplete="organization-title"
                       placeholder="Product Manager"
                       value={formData.jobTitle}
                       onChange={(e) => updateData("jobTitle", e.target.value)}
-                      aria-invalid={Boolean(fieldErrors.jobTitle)}
-                      className={`w-full border-b bg-transparent pb-2 text-white outline-none transition-colors ${fieldBorderClass(Boolean(fieldErrors.jobTitle))}`}
+                      className={underlineInputClass(Boolean(fieldErrors.jobTitle))}
                     />
                     {fieldErrors.jobTitle && (
-                      <p className="text-xs text-red-300" role="alert">
+                      <p className={fieldErrorClass} role="alert">
                         {fieldErrors.jobTitle}
                       </p>
                     )}
                   </div>
                   <div className="flex flex-col gap-2" data-animate-field>
-                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
-                      COMPANY NAME *
-                    </label>
+                    <label className={fieldLabelClass}>Company Name *</label>
                     <input
                       type="text"
                       autoComplete="organization"
                       placeholder="Acme Technologies"
                       value={formData.companyName}
                       onChange={(e) => updateData("companyName", e.target.value)}
-                      aria-invalid={Boolean(fieldErrors.companyName)}
-                      className={`w-full border-b bg-transparent pb-2 text-white outline-none transition-colors ${fieldBorderClass(Boolean(fieldErrors.companyName))}`}
+                      className={underlineInputClass(Boolean(fieldErrors.companyName))}
                     />
                     {fieldErrors.companyName && (
-                      <p className="text-xs text-red-300" role="alert">
+                      <p className={fieldErrorClass} role="alert">
                         {fieldErrors.companyName}
                       </p>
                     )}
@@ -897,6 +1050,350 @@ const ContactForm = () => {
                     NEXT
                   </Button>
                 </div>
+              </div>
+            )}
+
+            {isStartupFlow && step === 3 && (
+              <div data-lenis-prevent className="flex w-full flex-col items-center">
+                <h2
+                  data-heading
+                  className="mb-12 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
+                >
+                  <span data-split>A bit more about your company</span>
+                </h2>
+                <div className="flex w-full max-w-xl flex-col gap-8 text-left">
+                  <div className="flex flex-col gap-3" data-animate-field>
+                    <label className={fieldLabelClass}>
+                      Are you a digital brokerage startup? *
+                    </label>
+                    <div
+                      className="flex flex-wrap gap-6"
+                      role="radiogroup"
+                      aria-label="Digital brokerage startup"
+                    >
+                      {(["Yes", "No"] as const).map((option) => (
+                        <label key={option} className={radioOptionClass}>
+                          <input
+                            type="radio"
+                            name="isDigitalBrokerageStartup"
+                            value={option}
+                            checked={formData.isDigitalBrokerageStartup === option}
+                            onChange={() => updateData("isDigitalBrokerageStartup", option)}
+                            className={radioInputClass}
+                          />
+                          <span>{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                    {fieldErrors.isDigitalBrokerageStartup && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.isDigitalBrokerageStartup}
+                      </p>
+                    )}
+                  </div>
+                  <div className="relative flex flex-col gap-2" data-animate-field>
+                    <label className={fieldLabelClass}>
+                      How did you hear about CoverForce? *
+                    </label>
+                    <select
+                      value={formData.heardAboutUsSingle}
+                      onChange={(e) => updateData("heardAboutUsSingle", e.target.value)}
+                      className={selectClass(Boolean(fieldErrors.heardAboutUsSingle))}
+                    >
+                      <option value="" disabled className="bg-[#1e2a5e] text-white">
+                        Select an option
+                      </option>
+                      {heardAboutUsOptions.map((option) => (
+                        <option key={option} value={option} className="bg-[#1e2a5e] text-white">
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                    {fieldErrors.heardAboutUsSingle && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.heardAboutUsSingle}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className={fieldLabelClass}>Startup Type *</label>
+                    <select
+                      value={formData.startupType}
+                      onChange={(e) => updateData("startupType", e.target.value)}
+                      className={selectClass(Boolean(fieldErrors.startupType))}
+                    >
+                      <option value="" disabled className="bg-[#1e2a5e] text-white">
+                        Select an option
+                      </option>
+                      {STARTUP_TYPE_OPTIONS.map((option) => (
+                        <option key={option} value={option} className="bg-[#1e2a5e] text-white">
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                    {fieldErrors.startupType && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.startupType}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className={fieldLabelClass}>Startup Fundraising Stage *</label>
+                    <select
+                      value={formData.fundraisingStage}
+                      onChange={(e) => updateData("fundraisingStage", e.target.value)}
+                      className={selectClass(Boolean(fieldErrors.fundraisingStage))}
+                    >
+                      <option value="" disabled className="bg-[#1e2a5e] text-white">
+                        Select an option
+                      </option>
+                      {FUNDRAISING_STAGE_OPTIONS.map((option) => (
+                        <option key={option} value={option} className="bg-[#1e2a5e] text-white">
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                    {fieldErrors.fundraisingStage && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.fundraisingStage}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
+                  <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
+                    GO BACK
+                  </Button>
+                  <Button surface="on-dark" onClick={goNext} balanced>
+                    NEXT
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {isStartupFlow && step === 4 && (
+              <div data-lenis-prevent className="flex w-full flex-col items-center">
+                <h2
+                  data-heading
+                  className="mb-12 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
+                >
+                  <span data-split>Tell us about your startup</span>
+                </h2>
+                <div className="flex w-full max-w-xl flex-col gap-8 text-left">
+                  <div className="flex flex-col gap-3" data-animate-field>
+                    <label className={fieldLabelClass}>
+                      Do you have an existing agency/brokerage with an active book? *
+                    </label>
+                    <div
+                      className="flex flex-wrap gap-6"
+                      role="radiogroup"
+                      aria-label="Existing agency or brokerage with active book"
+                    >
+                      {(["Yes", "No"] as const).map((option) => (
+                        <label key={option} className={radioOptionClass}>
+                          <input
+                            type="radio"
+                            name="hasActiveBook"
+                            value={option}
+                            checked={formData.hasActiveBook === option}
+                            onChange={() => updateData("hasActiveBook", option)}
+                            className={radioInputClass}
+                          />
+                          <span>{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                    {fieldErrors.hasActiveBook && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.hasActiveBook}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className={fieldLabelClass}>
+                      How big is your existing book ($ in GWP)? *
+                    </label>
+                    <select
+                      value={formData.existingBookGwp}
+                      onChange={(e) => updateData("existingBookGwp", e.target.value)}
+                      className={selectClass(Boolean(fieldErrors.existingBookGwp))}
+                    >
+                      <option value="" disabled className="bg-[#1e2a5e] text-white">
+                        Select an option
+                      </option>
+                      {BOOK_GWP_OPTIONS.map((option) => (
+                        <option key={option} value={option} className="bg-[#1e2a5e] text-white">
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                    {fieldErrors.existingBookGwp && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.existingBookGwp}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className={fieldLabelClass}>
+                      Do you have an individual and an entity level P&amp;C license? *
+                    </label>
+                    <select
+                      value={formData.pcLicense}
+                      onChange={(e) => updateData("pcLicense", e.target.value)}
+                      className={selectClass(Boolean(fieldErrors.pcLicense))}
+                    >
+                      <option value="" disabled className="bg-[#1e2a5e] text-white">
+                        Select an option
+                      </option>
+                      {PC_LICENSE_OPTIONS.map((option) => (
+                        <option key={option} value={option} className="bg-[#1e2a5e] text-white">
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                    {fieldErrors.pcLicense && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.pcLicense}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className={fieldLabelClass}>
+                      Do you have direct carrier appointments? *
+                    </label>
+                    <select
+                      value={formData.hasDirectAppointments}
+                      onChange={(e) => updateData("hasDirectAppointments", e.target.value)}
+                      className={selectClass(Boolean(fieldErrors.hasDirectAppointments))}
+                    >
+                      <option value="" disabled className="bg-[#1e2a5e] text-white">
+                        Select an option
+                      </option>
+                      {DIRECT_APPOINTMENT_OPTIONS.map((option) => (
+                        <option key={option} value={option} className="bg-[#1e2a5e] text-white">
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                    {fieldErrors.hasDirectAppointments && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.hasDirectAppointments}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
+                  <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
+                    GO BACK
+                  </Button>
+                  <Button surface="on-dark" onClick={goNext} balanced>
+                    NEXT
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {isStartupFlow && step === 5 && (
+              <div data-lenis-prevent className="flex w-full flex-col items-center">
+                <h2
+                  data-heading
+                  className="mb-12 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
+                >
+                  <span data-split>Markets and coverage interest</span>
+                </h2>
+                <div className="flex w-full max-w-xl flex-col gap-8 text-left">
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className={fieldLabelClass}>
+                      Which carriers are you appointed with? *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.appointedCarriers}
+                      onChange={(e) => updateData("appointedCarriers", e.target.value)}
+                      className={underlineInputClass(Boolean(fieldErrors.appointedCarriers))}
+                    />
+                    {fieldErrors.appointedCarriers && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.appointedCarriers}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className={fieldLabelClass}>What LOBs are you interested in? *</label>
+                    <select
+                      value={formData.interestedLobs[0] ?? ""}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setFormData((prev) => ({
+                          ...prev,
+                          interestedLobs: value ? [value] : [],
+                        }));
+                        clearFieldError("interestedLobs");
+                      }}
+                      className={selectClass(Boolean(fieldErrors.interestedLobs))}
+                    >
+                      <option value="" disabled className="bg-[#1e2a5e] text-white">
+                        Select an option
+                      </option>
+                      {LOB_OPTIONS.map((option) => (
+                        <option key={option} value={option} className="bg-[#1e2a5e] text-white">
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                    {fieldErrors.interestedLobs && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.interestedLobs}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className={fieldLabelClass}>
+                      Which wholesaler, MGA, or agency network do you work with for market access
+                      today? *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.marketAccessPartners}
+                      onChange={(e) => updateData("marketAccessPartners", e.target.value)}
+                      className={underlineInputClass(Boolean(fieldErrors.marketAccessPartners))}
+                    />
+                    {fieldErrors.marketAccessPartners && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.marketAccessPartners}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className={fieldLabelClass}>
+                      Which CoverForce capabilities are most relevant to your needs? *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.problems}
+                      onChange={(e) => updateData("problems", e.target.value)}
+                      className={underlineInputClass(Boolean(fieldErrors.problems))}
+                    />
+                    {fieldErrors.problems && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.problems}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
+                  <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
+                    GO BACK
+                  </Button>
+                  <Button
+                    surface="on-dark"
+                    onClick={handleSubmit}
+                    balanced
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "SUBMITTING..." : "SUBMIT"}
+                  </Button>
+                </div>
                 {submitError && (
                   <p className="mt-4 text-sm text-red-300" role="alert" data-animate-field>
                     {submitError}
@@ -905,8 +1402,246 @@ const ContactForm = () => {
               </div>
             )}
 
-            {step === 5 && (
-              <div className="flex w-full flex-col items-center">
+            {/* ── Default contact flow ── */}
+            {!isStartupFlow && step === 2 && (
+              <div data-lenis-prevent className="flex w-full flex-col items-center">
+                <h2
+                  data-heading
+                  className="mb-12 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
+                >
+                  <span data-split>
+                    Please describe in a few sentences what problems CoverForce would solve for
+                    your company *
+                  </span>
+                </h2>
+                <div className="w-full" data-animate-field>
+                  <input
+                    type="text"
+                    value={formData.problems}
+                    onChange={(e) => updateData("problems", e.target.value)}
+                    className={`w-full border-b bg-transparent pb-3 text-center text-lg text-white outline-none transition-colors ${
+                      fieldErrors.problems
+                        ? "border-red-400 focus:border-red-300"
+                        : "border-white/40 focus:border-white"
+                    }`}
+                  />
+                  {fieldErrors.problems && (
+                    <p className="mt-3 text-sm text-red-300" role="alert">
+                      {fieldErrors.problems}
+                    </p>
+                  )}
+                </div>
+                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
+                  <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
+                    GO BACK
+                  </Button>
+                  <Button surface="on-dark" onClick={goNext} balanced>
+                    NEXT
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {!isStartupFlow && step === 3 && (
+              <div data-lenis-prevent className="flex w-full flex-col items-center">
+                <h2
+                  data-heading
+                  className="mb-12 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
+                >
+                  <span data-split>
+                    How big is your existing commercial book of business ($ of Gross Written
+                    Premium)?*
+                  </span>
+                </h2>
+                <div className="w-full" data-animate-field>
+                  <input
+                    type="text"
+                    value={formData.bookSize}
+                    onChange={(e) => updateData("bookSize", e.target.value)}
+                    className={`w-full border-b bg-transparent pb-3 text-center text-lg text-white outline-none transition-colors ${
+                      fieldErrors.bookSize
+                        ? "border-red-400 focus:border-red-300"
+                        : "border-white/40 focus:border-white"
+                    }`}
+                  />
+                  {fieldErrors.bookSize && (
+                    <p className="mt-3 text-sm text-red-300" role="alert">
+                      {fieldErrors.bookSize}
+                    </p>
+                  )}
+                </div>
+                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
+                  <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
+                    GO BACK
+                  </Button>
+                  <Button surface="on-dark" onClick={goNext} balanced>
+                    NEXT
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {!isStartupFlow && step === 4 && (
+              <div data-lenis-prevent className="flex w-full flex-col items-center">
+                <h2
+                  data-heading
+                  className="mb-12 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
+                >
+                  <span data-split>Almost there! Tell us about you and your company.</span>
+                </h2>
+
+                <div className="mt-4 grid w-full grid-cols-1 gap-x-12 gap-y-10 text-left md:grid-cols-2">
+                  <div className="flex flex-col gap-2 md:col-span-2" data-animate-field>
+                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
+                      FULL NAME *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Arjun Sharma"
+                      autoComplete="name"
+                      value={formData.fullName}
+                      onChange={(e) => updateData("fullName", e.target.value)}
+                      className="w-full border-b border-white/40 bg-transparent pb-2 text-white outline-none transition-colors focus:border-white"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
+                      PHONE NUMBER *
+                    </label>
+                    <div className="relative flex items-center border-b border-white/40 pb-2 transition-colors focus-within:border-white">
+                      <div
+                        className="mr-2 flex cursor-pointer select-none items-center gap-x-2 text-sm opacity-100"
+                        onClick={() =>
+                          setActiveDropdown(activeDropdown === "phone" ? null : "phone")
+                        }
+                      >
+                        <div className="flex w-6 items-center justify-center">
+                          {(() => {
+                            const ActiveFlag = Flags[formData.countryCode as keyof typeof Flags];
+                            return ActiveFlag ? (
+                              <span className="flex w-5 items-center justify-center">
+                                <ActiveFlag title={formData.countryCode} />
+                              </span>
+                            ) : (
+                              <span>{formData.countryCode}</span>
+                            );
+                          })()}
+                        </div>
+                        <span
+                          className={`text-[10px] transition-transform duration-200 ${activeDropdown === "phone" ? "rotate-180" : ""}`}
+                        >
+                          ▼
+                        </span>
+                        {activeDropdown === "phone" && (
+                          <div
+                            data-lenis-prevent
+                            className="custom-scrollbar absolute top-full left-0 z-20 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-white/20 bg-[#1e2a5e] shadow-xl"
+                          >
+                            {countryCodes.map((c) => {
+                              const Flag = Flags[c.countryCode as keyof typeof Flags];
+                              return (
+                                <div
+                                  key={`${c.country}-${c.code}`}
+                                  className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-white/10"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      phoneCode: c.code,
+                                      countryCode: c.countryCode,
+                                    }));
+                                    setActiveDropdown(null);
+                                  }}
+                                >
+                                  <div className="flex w-6 items-center justify-center">
+                                    {Flag ? (
+                                      <span className="flex w-5 items-center justify-center">
+                                        <Flag title={c.countryCode} />
+                                      </span>
+                                    ) : (
+                                      <span>{c.countryCode}</span>
+                                    )}
+                                  </div>
+                                  <span className="w-12 text-white/70">{c.code}</span>
+                                  <span className="flex-1 truncate" title={c.country}>
+                                    {c.country}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                      <span className="mr-2 select-none text-sm text-white/60">
+                        {formData.phoneCode}
+                      </span>
+                      <input
+                        type="tel"
+                        inputMode="tel"
+                        autoComplete="tel-national"
+                        placeholder="98765 43210"
+                        value={formData.phone}
+                        onChange={(e) =>
+                          updateData("phone", e.target.value.replace(/[^\d\s()-]/g, ""))
+                        }
+                        className="w-full bg-transparent text-white outline-none"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
+                      EMAIL ADDRESS *
+                    </label>
+                    <input
+                      type="email"
+                      autoComplete="email"
+                      placeholder="arjun@company.com"
+                      value={formData.email}
+                      onChange={(e) => updateData("email", e.target.value)}
+                      className="w-full border-b border-white/40 bg-transparent pb-2 text-white outline-none transition-colors focus:border-white"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
+                      JOB TITLE *
+                    </label>
+                    <input
+                      type="text"
+                      autoComplete="organization-title"
+                      placeholder="Product Manager"
+                      value={formData.jobTitle}
+                      onChange={(e) => updateData("jobTitle", e.target.value)}
+                      className="w-full border-b border-white/40 bg-transparent pb-2 text-white outline-none transition-colors focus:border-white"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2" data-animate-field>
+                    <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
+                      COMPANY NAME *
+                    </label>
+                    <input
+                      type="text"
+                      autoComplete="organization"
+                      placeholder="Acme Technologies"
+                      value={formData.companyName}
+                      onChange={(e) => updateData("companyName", e.target.value)}
+                      className="w-full border-b border-white/40 bg-transparent pb-2 text-white outline-none transition-colors focus:border-white"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
+                  <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
+                    GO BACK
+                  </Button>
+                  <Button surface="on-dark" onClick={goNext} balanced>
+                    NEXT
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {!isStartupFlow && step === 5 && (
+              <div data-lenis-prevent className="flex w-full flex-col items-center">
                 <h2
                   data-heading
                   className="mb-12 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
@@ -930,11 +1665,6 @@ const ContactForm = () => {
                     </button>
                   ))}
                 </div>
-                {fieldErrors.heardAboutUs && (
-                  <p className="mt-6 text-sm text-red-300" role="alert">
-                    {fieldErrors.heardAboutUs}
-                  </p>
-                )}
                 <div className="mt-16 flex w-full items-center justify-between" data-animate-btn>
                   <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
                     GO BACK
@@ -948,6 +1678,11 @@ const ContactForm = () => {
                     {isSubmitting ? "SUBMITTING..." : "SUBMIT"}
                   </Button>
                 </div>
+                {fieldErrors.heardAboutUs && (
+                  <p className="mt-4 text-sm text-red-300" role="alert">
+                    {fieldErrors.heardAboutUs}
+                  </p>
+                )}
                 {submitError && (
                   <p className="mt-4 text-sm text-red-300" role="alert" data-animate-btn>
                     {submitError}
@@ -956,8 +1691,8 @@ const ContactForm = () => {
               </div>
             )}
 
-            {step === 6 && (
-              <div className="flex w-full flex-col items-center">
+            {step === thankYouStep && (
+              <div data-lenis-prevent className="flex w-full flex-col items-center">
                 <h2
                   data-heading
                   className="mb-6 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"

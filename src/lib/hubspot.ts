@@ -1,6 +1,6 @@
 import { env } from "@/config/env";
 
-type HubSpotField = {
+export type HubSpotField = {
   objectTypeId?: string;
   name: string;
   value: string;
@@ -8,7 +8,7 @@ type HubSpotField = {
 
 type HubSpotSubmitInput = {
   formId: string;
-  fields: HubSpotField[] | Record<string, string | string[] | undefined | null>;
+  fields: HubSpotField[];
   pageUri?: string;
   pageName?: string;
   hutk?: string;
@@ -24,36 +24,15 @@ function splitFullName(fullName: string): { firstname: string; lastname: string 
   };
 }
 
-function toFieldValue(value: string | string[] | undefined | null): string {
-  if (Array.isArray(value)) return value.filter(Boolean).join("; ");
-  return String(value ?? "").trim();
+function field(
+  name: string,
+  value: string,
+  objectTypeId: "0-1" | "0-2" = "0-1",
+): HubSpotField | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  return { objectTypeId, name, value: trimmed };
 }
-
-/**
- * HubSpot contact form internal names (portal form a8899fe8-…).
- * Company-scoped properties use objectTypeId "0-2".
- */
-export const HUBSPOT_CONTACT_FIELD_MAP = {
-  email: { name: "email", objectTypeId: "0-1" },
-  firstname: { name: "firstname", objectTypeId: "0-1" },
-  lastname: { name: "lastname", objectTypeId: "0-1" },
-  phone: { name: "phone", objectTypeId: "0-1" },
-  company: { name: "company", objectTypeId: "0-1" },
-  jobtitle: { name: "jobtitle", objectTypeId: "0-1" },
-  businessType: { name: "company_business_type", objectTypeId: "0-1" },
-  bookSize: {
-    name: "how_big_is_your_existing_commercial_book_of_business____in_gwp__",
-    objectTypeId: "0-1",
-  },
-  problems: {
-    name: "which_coverforce_capabilities_are_most_relevant_to_your_needs_",
-    objectTypeId: "0-1",
-  },
-  heardAboutUs: {
-    name: "how_did_you_hear_about_us_form",
-    objectTypeId: "0-2",
-  },
-} as const;
 
 export function buildContactHubSpotFields(payload: {
   fullName: string;
@@ -67,35 +46,87 @@ export function buildContactHubSpotFields(payload: {
   problems: string;
   heardAboutUs: string[];
 }): HubSpotField[] {
-  const { firstname, lastname } = splitFullName(payload.fullName);
+  const { firstname } = splitFullName(payload.fullName);
   const phone = `${payload.phoneCode}${payload.phone.replace(/\D/g, "")}`;
 
-  const entries: Array<{
-    key: keyof typeof HUBSPOT_CONTACT_FIELD_MAP;
-    value: string;
-  }> = [
-    { key: "email", value: payload.email },
-    { key: "firstname", value: firstname },
-    { key: "lastname", value: lastname },
-    { key: "phone", value: phone },
-    { key: "company", value: payload.companyName },
-    { key: "jobtitle", value: payload.jobTitle },
-    { key: "businessType", value: payload.businessType.join("; ") },
-    { key: "bookSize", value: payload.bookSize },
-    { key: "problems", value: payload.problems },
-    { key: "heardAboutUs", value: payload.heardAboutUs.join("; ") },
-  ];
+  return [
+    field("firstname", firstname),
+    field("email", payload.email),
+    field("phone", phone),
+    field("jobtitle", payload.jobTitle),
+    field("company", payload.companyName),
+    field("company_business_type", payload.businessType.join("; ")),
+    field(
+      "which_coverforce_capabilities_are_most_relevant_to_your_needs_",
+      payload.problems,
+    ),
+    field(
+      "how_big_is_your_existing_commercial_book_of_business____in_gwp__",
+      payload.bookSize,
+    ),
+    field("how_did_you_hear_about_us_form", payload.heardAboutUs.join("; "), "0-2"),
+  ].filter((item): item is HubSpotField => Boolean(item));
+}
 
-  return entries
-    .map(({ key, value }) => {
-      const field = HUBSPOT_CONTACT_FIELD_MAP[key];
-      return {
-        objectTypeId: field.objectTypeId,
-        name: field.name,
-        value: toFieldValue(value),
-      };
-    })
-    .filter((field) => field.value.length > 0);
+export function buildStartupHubSpotFields(payload: {
+  fullName: string;
+  lastName: string;
+  email: string;
+  phoneCode: string;
+  phone: string;
+  companyName: string;
+  jobTitle: string;
+  businessType: string[];
+  isDigitalBrokerageStartup: string;
+  startupType: string;
+  fundraisingStage: string;
+  hasActiveBook: string;
+  existingBookGwp: string;
+  pcLicense: string;
+  hasDirectAppointments: string;
+  appointedCarriers: string;
+  interestedLobs: string[];
+  marketAccessPartners: string;
+  heardAboutUsSingle: string;
+  problems: string;
+}): HubSpotField[] {
+  const { firstname } = splitFullName(payload.fullName);
+  const phone = `${payload.phoneCode}${payload.phone.replace(/\D/g, "")}`;
+  const hasActiveBook =
+    payload.hasActiveBook === "Yes"
+      ? "true"
+      : payload.hasActiveBook === "No"
+        ? "false"
+        : "";
+
+  return [
+    field("firstname", firstname || payload.fullName),
+    field("lastname", payload.lastName),
+    field("email", payload.email),
+    field("phone", phone),
+    field("company", payload.companyName),
+    field("jobtitle", payload.jobTitle),
+    field("startup__api_form_yn", payload.isDigitalBrokerageStartup),
+    field("startup_type", payload.startupType),
+    field("startup_fundraising_stage", payload.fundraisingStage),
+    field("startup__existing_agency_with_an_active_book", hasActiveBook),
+    field("startup_existing_book_in_gwp", payload.existingBookGwp),
+    field("startup_insurance_licenses", payload.pcLicense),
+    field("startup_direct_carrier_appointments", payload.hasDirectAppointments),
+    field("startup_carriers_appointed_with", payload.appointedCarriers),
+    field("startup_lobs", payload.interestedLobs.join(";")),
+    field("startup_market_acccess", payload.marketAccessPartners),
+    field("company_business_type", payload.businessType.join("; ")),
+    field(
+      "which_coverforce_capabilities_are_most_relevant_to_your_needs_",
+      payload.problems,
+    ),
+    field(
+      "how_big_is_your_existing_commercial_book_of_business____in_gwp__",
+      payload.existingBookGwp,
+    ),
+    field("how_did_you_hear_about_us_form", payload.heardAboutUsSingle, "0-2"),
+  ].filter((item): item is HubSpotField => Boolean(item));
 }
 
 export async function submitHubSpotForm({
@@ -104,32 +135,19 @@ export async function submitHubSpotForm({
   pageUri,
   pageName,
   hutk,
-}: HubSpotSubmitInput): Promise<{ ok: true } | { ok: false; status: number; error: string }> {
-  const portalId = env.hubspot.portalId;
-  if (!portalId) {
-    return { ok: false, status: 500, error: "HUBSPOT_PORTAL_ID is not configured" };
-  }
+}: HubSpotSubmitInput): Promise<
+  | { ok: true; status: number; body: string }
+  | { ok: false; status: number; error: string; body: string }
+> {
+  const portalId = env.hubspot.portalId || "44742739";
   if (!formId) {
-    return { ok: false, status: 500, error: "HubSpot form ID is missing" };
+    return { ok: false, status: 500, error: "HubSpot form ID is missing", body: "" };
   }
 
-  const accessToken = env.hubspot.accessToken;
-  const endpoint = accessToken
-    ? `https://api.hsforms.com/submissions/v3/integration/secure/submit/${portalId}/${formId}`
-    : `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`;
-
-  const hsFields: HubSpotField[] = Array.isArray(fields)
-    ? fields.filter((field) => field.value.trim().length > 0)
-    : Object.entries(fields)
-        .map(([name, value]) => ({
-          objectTypeId: "0-1",
-          name,
-          value: toFieldValue(value),
-        }))
-        .filter((field) => field.value.length > 0);
+  const endpoint = `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`;
 
   const body = {
-    fields: hsFields,
+    fields,
     context: {
       ...(pageUri ? { pageUri } : {}),
       ...(pageName ? { pageName } : {}),
@@ -137,37 +155,42 @@ export async function submitHubSpotForm({
     },
   };
 
+  console.log("[HubSpot] submit payload", {
+    endpoint,
+    formId,
+    portalId,
+    body,
+  });
+
   const response = await fetch(endpoint, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
 
+  const responseText = await response.text().catch(() => "");
+  console.log("[HubSpot] submit response", {
+    status: response.status,
+    ok: response.ok,
+    body: responseText,
+  });
+
   if (response.ok) {
-    return { ok: true };
+    return { ok: true, status: response.status, body: responseText };
   }
 
-  const errorText = await response.text().catch(() => "");
   return {
     ok: false,
     status: response.status,
-    error: errorText || `HubSpot submit failed (${response.status})`,
+    error: responseText || `HubSpot submit failed (${response.status})`,
+    body: responseText,
   };
 }
 
-export function getHubSpotContactFormId(): string | null {
-  return (
-    env.hubspot.contactFormId ||
-    "a8899fe8-45b1-4022-872e-d79aa4e238ea"
-  );
+export function getHubSpotContactFormId(): string {
+  return env.hubspot.contactFormId || "a8899fe8-45b1-4022-872e-d79aa4e238ea";
 }
 
-export function getHubSpotApiAccessFormId(): string | null {
-  return (
-    env.hubspot.apiAccessFormId ||
-    "a46f0b5e-bfd8-4b7a-9e6b-2a1e0d351415"
-  );
+export function getHubSpotApiAccessFormId(): string {
+  return env.hubspot.apiAccessFormId || "a46f0b5e-bfd8-4b7a-9e6b-2a1e0d351415";
 }

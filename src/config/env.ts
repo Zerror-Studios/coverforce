@@ -9,7 +9,6 @@ export const env = {
   },
   hubspot: {
     portalId: process.env.NEXT_PUBLIC_HUBSPOT_PORTAL_ID?.trim() ?? "",
-    accessToken: process.env.NEXT_PUBLIC_HUBSPOT_ACCESS_TOKEN?.trim() ?? "",
     contactFormId: process.env.NEXT_PUBLIC_HUBSPOT_CONTACT_FORM_ID?.trim() ?? "",
     apiAccessFormId: process.env.NEXT_PUBLIC_HUBSPOT_API_ACCESS_FORM_ID?.trim() ?? "",
   },
