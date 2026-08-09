@@ -151,13 +151,13 @@ const CardSection = () => {
               <IntegrationCodeTypingBg />
               <div className="relative z-10 flex h-full flex-1 flex-col">
                 <h3 className="font-heading text-2xl font-regular leading-[1.15] tracking-tight text-white md:text-3xl lg:text-4xl lg:leading-[1.1]">
-                  Direct Carrier API
+                  Direct carrier API
                   <br />
                   connections
                 </h3>
                 <div className="mt-auto pt-8">
                   <p className="font-heading text-lg font-medium leading-snug text-white/90 md:text-xl lg:text-2xl">
-                    20+ API integrations
+                    200+ API integrations
                   </p>
                   <p className="mt-2 text-sm leading-relaxed text-white/80 md:text-base">
                     Real-time quoting, binding and policy issuance - no portals,

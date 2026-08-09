@@ -76,7 +76,7 @@ export async function loadIndustryOptions() {
 
 export const POLICY_TYPE_OPTIONS = [
   { value: "BOP", label: "Business Owner's Policy" },
-  { value: "CGL", label: "Commercial General Liability" },
+  { value: "CGL", label: "General Liability" },
   { value: "CYBER", label: "Cyber" },
   { value: "WC", label: "Worker's Compensation" },
 ] as const satisfies readonly SelectOption[];

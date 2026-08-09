@@ -355,7 +355,7 @@ const ContactForm = () => {
   const [greetingReady, setGreetingReady] = useState(false);
   const [greeting, setGreeting] = useState(() => buildGreeting(null));
 
-  const isStartupFlow = formData.businessType[0] === "Startup / Insure Tech";
+  const isStartupFlow = formData.businessType[0] === "Startup / InsurTech";
   const thankYouStep = 6;
   const totalSteps = 5;
 
@@ -693,7 +693,7 @@ const ContactForm = () => {
     "Independent Agent",
     "Wholesaler",
     "Technology Provider",
-    "Startup / Insure Tech",
+    "Startup / InsurTech",
     "Other",
   ];
 
@@ -978,7 +978,7 @@ const ContactForm = () => {
                         type="tel"
                         inputMode="tel"
                         autoComplete="tel-national"
-                        placeholder="98765 43210"
+                        placeholder="646 355 6077"
                         value={formData.phone}
                         onChange={(e) =>
                           updateData("phone", e.target.value.replace(/[^\d\s()-]/g, ""))
@@ -1579,7 +1579,7 @@ const ContactForm = () => {
                         type="tel"
                         inputMode="tel"
                         autoComplete="tel-national"
-                        placeholder="98765 43210"
+                        placeholder="646 355 6077"
                         value={formData.phone}
                         onChange={(e) =>
                           updateData("phone", e.target.value.replace(/[^\d\s()-]/g, ""))
