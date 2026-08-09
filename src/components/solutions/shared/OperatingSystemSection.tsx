@@ -220,7 +220,7 @@ export default function OperatingSystemSection({
   );
 
   return (
-    <section ref={sectionRef} id={id} className="relative z-10 min-h-screen bg-white text-[#0a143b]">
+    <section ref={sectionRef} id={id} className="relative z-10 min-h-screen overflow-x-clip bg-white text-[#0a143b]">
       <ShrimpLineAnimation className="h-full" />
       <ShrimpLineAnimation2 className="h-full" />
       <Container borderColor="#53535380">

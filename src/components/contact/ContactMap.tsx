@@ -5,9 +5,9 @@ import { Canvas } from '@react-three/fiber';
 import MapPoints, { MobileOfficePopup } from './MapPoints';
 
 const ContactMap = () => {
-  const [activeOffice, setActiveOffice] = useState(null);
+  const [activeOffice, setActiveOffice] = useState<string | null>(null);
 
-  const handleActiveOfficeChange = useCallback((office) => {
+  const handleActiveOfficeChange = useCallback((office: string | null) => {
     setActiveOffice(office);
   }, []);
 

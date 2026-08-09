@@ -14,10 +14,10 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => ({}));
     const flow: ContactFlow = body?.flow === "startup" ? "startup" : "contact";
 
-    console.log("[Contact API] incoming request", {
-      flow,
-      body,
-    });
+    // console.log("[Contact API] incoming request", {
+    //   flow,
+    //   body,
+    // });
 
     if (flow === "startup") {
       const payload = {
@@ -57,10 +57,10 @@ export async function POST(request: Request) {
         hutk: String(body?.hutk ?? "").trim() || undefined,
       };
 
-      console.log("[Contact API] startup HubSpot payload", hubspotPayload);
+      // console.log("[Contact API] startup HubSpot payload", hubspotPayload);
 
       const result = await submitHubSpotForm(hubspotPayload);
-      console.log("[Contact API] startup HubSpot result", result);
+      // console.log("[Contact API] startup HubSpot result", result);
 
       if (!result.ok) {
         return NextResponse.json(
@@ -95,10 +95,10 @@ export async function POST(request: Request) {
       hutk: String(body?.hutk ?? "").trim() || undefined,
     };
 
-    console.log("[Contact API] contact HubSpot payload", hubspotPayload);
+    // console.log("[Contact API] contact HubSpot payload", hubspotPayload);
 
     const result = await submitHubSpotForm(hubspotPayload);
-    console.log("[Contact API] contact HubSpot result", result);
+    // console.log("[Contact API] contact HubSpot result", result);
 
     if (!result.ok) {
       return NextResponse.json(

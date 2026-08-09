@@ -272,7 +272,7 @@ export default function SolutionScrollHero({
   );
 
   return (
-    <section ref={sectionRef} className="relative z-20 bg-white text-[#0a143b]">
+    <section ref={sectionRef} className="relative z-20 overflow-x-clip bg-white text-[#0a143b]">
       <Container borderColor="#53535380" className="relative z-10">
         <div className="relative grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="flex flex-col">
@@ -456,7 +456,7 @@ export default function SolutionScrollHero({
         </div>
       </Container>
 
-      <div className="pointer-events-none absolute left-0 top-0 z-0 h-svh w-[calc(100vw+2rem)] overflow-hidden">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-svh overflow-hidden">
         <GradFlow
           className="absolute inset-0 h-full w-full"
           config={{

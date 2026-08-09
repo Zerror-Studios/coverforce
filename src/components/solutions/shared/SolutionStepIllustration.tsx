@@ -17,13 +17,13 @@ type SolutionStepIllustrationProps = {
 
 function SolutionStepIllustration({ src, alt }: SolutionStepIllustrationProps) {
   return (
-    <div className={SOLUTION_STEP_IMAGE_CLASS}>
+    <div className={`${SOLUTION_STEP_IMAGE_CLASS} overflow-x-clip`}>
       <Image
         src={src}
         alt={alt}
         width={1040}
         height={780}
-        className="h-auto w-full origin-center object-contain scale-[1.06]"
+        className="h-auto w-full origin-center object-contain scale-100 sm:scale-[1.06]"
         draggable={false}
       />
     </div>

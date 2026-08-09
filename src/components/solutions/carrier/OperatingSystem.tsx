@@ -4,7 +4,7 @@ import OperatingSystemSection from "@/components/solutions/shared/OperatingSyste
 import { createSolutionStepMock } from "@/components/solutions/shared/SolutionStepIllustration";
 
 export const carrierHeroCardMock = createSolutionStepMock(
-  "/images/solution/carriers1.svg",
+  "/images/solution/carriers12.svg",
   "One Integration Across Your Distribution",
 );
 
