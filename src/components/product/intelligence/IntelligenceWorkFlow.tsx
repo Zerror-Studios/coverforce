@@ -152,8 +152,9 @@ function WorkflowStepPanel({
             src={step.image}
             alt={`${step.label} preview`}
             fill
+            unoptimized
             className={`object-contain ${alignLeft ? "object-left" : "object-center"}`}
-            sizes="(max-width: 640px) 420px, (max-width: 768px) 480px, (max-width: 1024px) 720px, 960px"
+            sizes="(max-width: 1023px) 100vw, 960px"
           />
         </div>
       </div>
@@ -188,7 +189,9 @@ const IntelligenceWorkFlow = () => {
 
   useGSAP(
     () => {
+      // Layout switches at lg; image Y scrub only on true desktop (xl+) so iPads stay sharp.
       const isLg = window.matchMedia("(min-width: 1024px)").matches;
+      const enableImageY = window.matchMedia("(min-width: 1280px)").matches;
       const headlines = (isLg ? headlineRefs : mobileHeadlineRefs).current.filter(
         (el): el is HTMLParagraphElement => Boolean(el),
       );
@@ -206,22 +209,29 @@ const IntelligenceWorkFlow = () => {
         }),
       );
 
-      images.forEach((image) => {
-        gsap.fromTo(
-          image,
-          { y: 56 },
-          {
-            y: 0,
-            ease: "none",
-            scrollTrigger: {
-              trigger: image,
-              start: "top bottom",
-              end: "top 58%",
-              scrub: 0.35,
+      if (enableImageY) {
+        images.forEach((image) => {
+          gsap.fromTo(
+            image,
+            { y: 56 },
+            {
+              y: 0,
+              ease: "none",
+              force3D: true,
+              scrollTrigger: {
+                trigger: image,
+                start: "top bottom",
+                end: "top 58%",
+                scrub: 0.35,
+              },
             },
-          },
-        );
-      });
+          );
+        });
+      } else {
+        images.forEach((image) => {
+          gsap.set(image, { clearProps: "transform" });
+        });
+      }
 
       return () => cleanups.forEach((cleanup) => cleanup());
     },

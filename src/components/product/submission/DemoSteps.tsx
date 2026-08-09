@@ -146,8 +146,9 @@ function DemoStepPanel({
           alt={`${step.label} preview`}
           width={800}
           height={346}
+          unoptimized
           className="h-auto w-full"
-          sizes="(max-width: 640px) 420px, (max-width: 768px) 460px, (max-width: 1024px) 640px, 800px"
+          sizes="(max-width: 1023px) 100vw, 800px"
         />
       </div>
     </article>
@@ -166,7 +167,9 @@ const DemoSteps = () => {
 
   useGSAP(
     () => {
+      // Layout switches at lg; image Y scrub only on true desktop (xl+) so iPads stay sharp.
       const isLg = window.matchMedia("(min-width: 1024px)").matches;
+      const enableImageY = window.matchMedia("(min-width: 1280px)").matches;
       const headlines = (isLg ? headlineRefs : mobileHeadlineRefs).current.filter(
         (el): el is HTMLParagraphElement => Boolean(el),
       );
@@ -184,22 +187,29 @@ const DemoSteps = () => {
         }),
       );
 
-      images.forEach((image) => {
-        gsap.fromTo(
-          image,
-          { y: 40 },
-          {
-            y: 0,
-            ease: "none",
-            scrollTrigger: {
-              trigger: image,
-              start: "top 100%",
-              end: "top 68%",
-              scrub: 0.3,
+      if (enableImageY) {
+        images.forEach((image) => {
+          gsap.fromTo(
+            image,
+            { y: 40 },
+            {
+              y: 0,
+              ease: "none",
+              force3D: true,
+              scrollTrigger: {
+                trigger: image,
+                start: "top 100%",
+                end: "top 68%",
+                scrub: 0.3,
+              },
             },
-          },
-        );
-      });
+          );
+        });
+      } else {
+        images.forEach((image) => {
+          gsap.set(image, { clearProps: "transform" });
+        });
+      }
 
       return () => cleanups.forEach((cleanup) => cleanup());
     },
