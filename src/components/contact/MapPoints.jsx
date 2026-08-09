@@ -219,17 +219,17 @@ export default function MapPoints({ activeOffice = null, onActiveOfficeChange })
   const smoothMouse = useRef(new THREE.Vector2(-9999, -9999));
 
   useFrame((state) => {
-    if (materialRef.current) {
-      if (hoveringRef.current || activeOffice) {
-        // When hovering button/popup, send bulge far offscreen so it disappears
-        smoothMouse.current.lerp(new THREE.Vector2(-9999, -9999), 0.12);
-      } else {
-        const mouseX = (state.pointer.x * viewport.width) / 2;
-        const mouseY = (state.pointer.y * viewport.height) / 2;
-        smoothMouse.current.lerp(new THREE.Vector2(mouseX, mouseY), 0.15);
-      }
-      materialRef.current.uniforms.uMouse.value.copy(smoothMouse.current);
+    if (!materialRef.current) return;
+
+    // No pointer bulge on mobile — touch tracking makes the map feel jumpy.
+    if (isMobile || hoveringRef.current || activeOffice) {
+      smoothMouse.current.lerp(new THREE.Vector2(-9999, -9999), 0.12);
+    } else {
+      const mouseX = (state.pointer.x * viewport.width) / 2;
+      const mouseY = (state.pointer.y * viewport.height) / 2;
+      smoothMouse.current.lerp(new THREE.Vector2(mouseX, mouseY), 0.15);
     }
+    materialRef.current.uniforms.uMouse.value.copy(smoothMouse.current);
   });
 
   const uniforms = useMemo(() => ({

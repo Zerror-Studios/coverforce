@@ -191,7 +191,7 @@ function CarrierGrid({
   return (
     <div>
       <div
-        className={`grid grid-cols-4 gap-2 md:gap-2.5 ${gradientWrapper ? "rounded-xl p-2.5 md:p-3" : ""}`}
+        className={`grid grid-cols-3 sm:grid-cols-4 gap-2 md:gap-2.5 ${gradientWrapper ? "rounded-xl p-2.5 md:p-3" : ""}`}
         style={
           gradientWrapper
             ? { backgroundImage: isBlue ? WRAPPER_GRADIENT_BLUE : WRAPPER_GRADIENT_ORANGE }
