@@ -86,10 +86,12 @@ function CompanyLogo({
   src,
   alt,
   scale = 1,
+  align = "right",
 }: {
   src: string;
   alt: string;
   scale?: number;
+  align?: "left" | "right";
 }) {
   return (
     <div className="relative h-10 w-[160px] shrink-0 md:h-12 md:w-[200px]">
@@ -97,9 +99,12 @@ function CompanyLogo({
         src={src}
         alt={alt}
         fill
-        className="object-contain object-right"
+        className={`object-contain ${align === "left" ? "object-left" : "object-right"}`}
         sizes="(max-width: 768px) 160px, 200px"
-        style={{ transform: `scale(${scale})`, transformOrigin: "right center" }}
+        style={{
+          transform: `scale(${scale})`,
+          transformOrigin: align === "left" ? "left center" : "right center",
+        }}
       />
     </div>
   );
@@ -109,22 +114,9 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
     <article className="relative flex h-[420px] flex-col overflow-hidden rounded-sm bg-white p-5 md:h-[460px] md:p-7 lg:h-[480px] lg:p-8">
       <div className="relative z-10 flex h-full flex-1 flex-col">
-        <div className="flex flex-1 items-center overflow-hidden">
-          <blockquote className="line-clamp-6 w-full text-left text-xl font-heading font-regular leading-[1.35] tracking-tight text-[#1a1a2e] md:text-2xl lg:text-3xl lg:leading-[1.32]">
-            &ldquo;{testimonial.quote}&rdquo;
-          </blockquote>
-        </div>
-
-        <div className="relative mt-6 shrink-0 md:mt-7">
-          <div className="pointer-events-none absolute bottom-0 right-0 z-0 opacity-90">
-            <CompanyLogo
-              src={testimonial.logo}
-              alt={testimonial.company}
-              scale={testimonial.logoScale}
-            />
-          </div>
-
-          <div className="relative z-10 flex min-w-0 max-w-[70%] items-center gap-4 md:gap-5">
+        {/* Author — top on mobile, bottom-left on desktop */}
+        <div className="relative order-1 shrink-0 md:order-2 md:mt-7">
+          <div className="relative z-10 flex min-w-0 items-center gap-4 md:max-w-[70%] md:gap-5">
             <div className="size-16 shrink-0 overflow-hidden border-2 border-gray md:size-20">
               <Image
                 src={testimonial.avatar}
@@ -144,6 +136,33 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
               </p>
             </div>
           </div>
+
+          {/* Logo — bottom-right on desktop only */}
+          <div className="pointer-events-none absolute bottom-0 right-0 z-0 hidden opacity-90 md:block">
+            <CompanyLogo
+              src={testimonial.logo}
+              alt={testimonial.company}
+              scale={testimonial.logoScale}
+              align="right"
+            />
+          </div>
+        </div>
+
+        {/* Quote — center on mobile, top on desktop */}
+        <div className="order-2 flex flex-1 items-center overflow-hidden py-5 md:order-1 md:py-0">
+          <blockquote className="line-clamp-6 w-full text-left text-xl font-heading font-regular leading-[1.35] tracking-tight text-[#1a1a2e] md:text-2xl lg:text-3xl lg:leading-[1.32]">
+            &ldquo;{testimonial.quote}&rdquo;
+          </blockquote>
+        </div>
+
+        {/* Logo — bottom-left on mobile only */}
+        <div className="order-3 mt-auto shrink-0 md:hidden">
+          <CompanyLogo
+            src={testimonial.logo}
+            alt={testimonial.company}
+            scale={testimonial.logoScale}
+            align="left"
+          />
         </div>
       </div>
     </article>

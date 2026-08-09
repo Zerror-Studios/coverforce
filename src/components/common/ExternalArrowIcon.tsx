@@ -14,14 +14,14 @@ type ExternalArrowIconProps = {
         <path
           d="M6 14L18 2"
           stroke="currentColor"
-          strokeWidth="1.8"
+          strokeWidth="2.4"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
           d="M10.5 2H18V9.5"
           stroke="currentColor"
-          strokeWidth="1.8"
+          strokeWidth="2.4"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
