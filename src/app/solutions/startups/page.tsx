@@ -16,9 +16,15 @@ export const revalidate = 3600;
 
 const page = async () => {
   const allPosts = await getBlogPosts();
-  const featured = allPosts.filter((post) => post.featured);
-  const rest = allPosts.filter((post) => !post.featured);
-  const posts = [...featured, ...rest].slice(0, 3).map(toListingPost);
+  const startupHighlights = allPosts.filter((post) => post.highlightOnStartupPage);
+
+  // Prefer startup highlights; if none, use latest posts. Never special-case featured.
+  const selected =
+    startupHighlights.length > 0
+      ? startupHighlights
+      : allPosts;
+
+  const posts = selected.slice(0, 3).map(toListingPost);
 
   return (
     <PageWrapper>

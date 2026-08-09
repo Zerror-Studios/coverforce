@@ -21,6 +21,7 @@ type BlogFieldData = {
   "post-summary"?: string | null;
   "thumbnail-image"?: WebflowImage | null;
   featured?: boolean;
+  "highlight-on-startup-page"?: boolean;
   author?: string | null;
   tag?: string | null;
   "created-at-manual"?: string;
@@ -88,6 +89,7 @@ export type BlogDetail = BlogPost & {
   bodyHtml: string;
   summary: string;
   featured: boolean;
+  highlightOnStartupPage: boolean;
   publishedAt: string;
   authorRole: string;
   authorBio: string;
@@ -196,6 +198,10 @@ async function fetchAllCmsItems<T>(
   }
 
   return items;
+}
+
+function toWebflowBoolean(value: unknown): boolean {
+  return value === true || value === 1 || value === "true" || value === "1";
 }
 
 function formatBlogDate(value?: string): string {
@@ -407,7 +413,8 @@ function mapBlogItem(
     category: mapCategory(tag?.name),
     bodyHtml: rewriteBlogLinks(fields["post-body"] ?? ""),
     summary,
-    featured: Boolean(fields.featured),
+    featured: toWebflowBoolean(fields.featured),
+    highlightOnStartupPage: toWebflowBoolean(fields["highlight-on-startup-page"]),
     publishedAt,
     authorRole: "",
     authorBio: author?.bio ?? "",
@@ -420,14 +427,30 @@ function mapBlogItem(
 
 export async function getBlogPosts(): Promise<BlogDetail[]> {
   const collectionId = env.webflow.blogCollectionId;
-  const [items, authors, tags] = await Promise.all([
+  const [items, cmsItems, authors, tags] = await Promise.all([
     fetchAllLiveItems<BlogFieldData>(collectionId),
+    // Live Items API currently omits `highlight-on-startup-page`; CMS items include it.
+    fetchAllCmsItems<BlogFieldData>(collectionId).catch(() => [] as WebflowItem<BlogFieldData>[]),
     getAuthorsById(),
     getTagsById(),
   ]);
 
+  const highlightById = new Map<string, boolean>();
+  for (const item of cmsItems) {
+    highlightById.set(
+      item.id,
+      toWebflowBoolean(item.fieldData["highlight-on-startup-page"]),
+    );
+  }
+
   return items
-    .map((item) => mapBlogItem(item, authors, tags))
+    .map((item) => {
+      const post = mapBlogItem(item, authors, tags);
+      if (highlightById.has(item.id)) {
+        post.highlightOnStartupPage = highlightById.get(item.id)!;
+      }
+      return post;
+    })
     .filter((post) => Boolean(post.slug))
     .sort(
       (a, b) =>
