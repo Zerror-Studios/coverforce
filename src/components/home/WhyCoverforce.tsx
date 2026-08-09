@@ -489,11 +489,9 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
               <div className="flex flex-col justify-end space-y-5">
                 <h2
                   ref={headingRef}
-                  className="max-w-2xl text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+                  className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
                 >
-                  <span data-split>Infrastructure to run your distribution</span>
-                  <br />
-                  <span data-split>not a tool to quote one risk.</span>
+                  <span data-split>Infrastructure to run your distribution not a tool to quote one risk.</span>
                 </h2>
                 <p
                   ref={descRef}
