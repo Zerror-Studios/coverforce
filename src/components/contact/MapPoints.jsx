@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useRef, useState, useCallback } from 'react';
+import React, { useMemo, useRef, useState, useCallback, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
@@ -52,7 +52,6 @@ const fragmentShader = `
   }
 `;
 
-/* Inline SVG icons */
 const IconPin = () => (
   <svg className="shrink-0 w-3.5 h-3.5 mt-px opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
@@ -71,11 +70,127 @@ const IconMail = () => (
   </svg>
 );
 
-export default function MapPoints() {
+const OFFICES = {
+  'new-york': {
+    imageClass: 'bg-[url(/images/contact/thumbnail_cv.jpg)] bg-cover bg-center',
+    address: (
+      <a
+        href="https://maps.app.goo.gl/vEtrvY2mQdCTLye38"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-start gap-2 transition-colors hover:text-[#413CC0]"
+      >
+        <IconPin />
+        <span>485 Madison Ave Ste 1702, New York, NY 10022, United States</span>
+      </a>
+    ),
+  },
+  denver: {
+    imageClass: 'bg-[url(/images/denver.avif)] bg-cover bg-top',
+    address: (
+      <div className="flex items-start gap-2">
+        <IconPin />
+        <span>Denver, CO, United States</span>
+      </div>
+    ),
+  },
+};
+
+function OfficeCardBody({ office, largeImage = false }) {
+  const data = OFFICES[office];
+  if (!data) return null;
+
+  return (
+    <>
+      <div
+        className={`w-full rounded-md ${data.imageClass} ${
+          largeImage ? "h-48 sm:h-56" : "h-28 sm:h-32"
+        }`}
+      />
+      <div className="mt-4 flex flex-col gap-2 font-sans text-sm font-regular leading-[1.6] text-[#454545]">
+        {data.address}
+        <a
+          href="tel:+19179056508"
+          className="flex items-start gap-2 transition-colors hover:text-[#413CC0]"
+        >
+          <IconPhone />
+          <span>+1 917-905-6508</span>
+        </a>
+        <a
+          href="mailto:sales@coverforce.com"
+          className="flex items-start gap-2 transition-colors hover:text-[#413CC0]"
+        >
+          <IconMail />
+          <span>sales@coverforce.com</span>
+        </a>
+      </div>
+    </>
+  );
+}
+
+export function MobileOfficePopup({ office, onClose }) {
+  useEffect(() => {
+    if (!office) return undefined;
+
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [office, onClose]);
+
+  if (!office) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label={office === 'new-york' ? 'New York office' : 'Denver office'}
+    >
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/45"
+        aria-label="Close office details"
+        onClick={onClose}
+      />
+      <div
+        className="relative z-10 w-full rounded-md border border-[#EDEDED] bg-white p-4 shadow-[0_16px_40px_-18px_rgba(10,20,59,0.22)]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-2 top-2 z-20 flex size-9 items-center justify-center rounded-full bg-white text-[#303030] shadow-[0_2px_10px_rgba(0,0,0,0.18)] transition-colors hover:bg-[#f5f5f5]"
+          aria-label="Close"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+            <path
+              d="M4 4l8 8M12 4L4 12"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
+        <OfficeCardBody office={office} largeImage />
+      </div>
+    </div>
+  );
+}
+
+export default function MapPoints({ activeOffice = null, onActiveOfficeChange }) {
   const materialRef = useRef();
   const { viewport, size } = useThree();
   const [hoveredOffice, setHoveredOffice] = useState(null);
   const hoveringRef = useRef(false);
+  const isMobile = size.width < 640;
 
   const groupPosition = useMemo(() => {
     // Shift map right on small screens so Denver stays in frame (was -95, which cropped west).
@@ -105,7 +220,7 @@ export default function MapPoints() {
 
   useFrame((state) => {
     if (materialRef.current) {
-      if (hoveringRef.current) {
+      if (hoveringRef.current || activeOffice) {
         // When hovering button/popup, send bulge far offscreen so it disappears
         smoothMouse.current.lerp(new THREE.Vector2(-9999, -9999), 0.12);
       } else {
@@ -124,14 +239,29 @@ export default function MapPoints() {
   }), []);
 
   const handleEnter = useCallback((office) => {
+    if (isMobile) return;
     hoveringRef.current = true;
     setHoveredOffice(office);
-  }, []);
+  }, [isMobile]);
 
   const handleLeave = useCallback(() => {
+    if (isMobile) return;
     hoveringRef.current = false;
     setHoveredOffice(null);
-  }, []);
+  }, [isMobile]);
+
+  const handleToggle = useCallback((office) => {
+    if (!isMobile) return;
+    const next = activeOffice === office ? null : office;
+    onActiveOfficeChange?.(next);
+  }, [isMobile, activeOffice, onActiveOfficeChange]);
+
+  useEffect(() => {
+    if (!isMobile) onActiveOfficeChange?.(null);
+  }, [isMobile, onActiveOfficeChange]);
+
+  const isOpen = (office) =>
+    isMobile ? activeOffice === office : hoveredOffice === office;
 
   return (
     <group position={groupPosition}>
@@ -169,69 +299,42 @@ export default function MapPoints() {
             onMouseEnter={() => handleEnter('new-york')}
             onMouseLeave={handleLeave}
           >
-            {/* ── Dot indicator ── */}
             <span
               className={`absolute left-[-18.5px] top-[20%] w-2 h-2 rounded-full bg-white transition-shadow duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                hoveredOffice === 'new-york'
+                isOpen('new-york')
                   ? 'shadow-[0_0_12px_4px_rgba(255,255,255,0.5)]'
                   : 'shadow-[0_0_6px_2px_rgba(255,255,255,0.3)]'
               }`}
             />
 
-            {/* ── NEW YORK Button ── */}
-            <div
+            <button
+              type="button"
+              onClick={() => handleToggle('new-york')}
               className={`px-2.5 py-1 font-bold text-[11px] whitespace-nowrap rounded-[2px] cursor-pointer transition-all duration-350 ease-[cubic-bezier(0.16,1,0.3,1)] select-none ${
-                hoveredOffice === 'new-york'
+                isOpen('new-york')
                   ? 'bg-white/80 text-[#1e3a8a] shadow-[0_4px_12px_rgba(0,0,0,0.25)]'
                   : 'bg-white/95 text-[#1e3a8a] shadow-[0_2px_8px_rgba(0,0,0,0.2)]'
               }`}
             >
               NEW YORK
-            </div>
+            </button>
 
-            {/* ── Popup Card ── */}
-            <div
-              className={`absolute top-full left-1/2 mt-[14px] w-90 max-w-[calc(100vw-3rem)] rounded-md border border-[#EDEDED] bg-white p-4 shadow-[0_16px_40px_-18px_rgba(10,20,59,0.22)] origin-top transition-all duration-350 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                hoveredOffice === 'new-york'
-                  ? 'opacity-100 pointer-events-auto -translate-x-1/2 translate-y-0'
-                  : 'opacity-0 pointer-events-none -translate-x-1/2 translate-y-2'
-              }`}
-            >
-              <div className="h-28 w-full rounded-md bg-[url(/images/contact/thumbnail_cv.jpg)] bg-cover bg-center sm:h-32" />
-
-              <div className="mt-4 flex flex-col gap-2 font-sans text-sm font-regular leading-[1.6] text-[#454545]">
-                <a
-                  href="https://maps.app.goo.gl/vEtrvY2mQdCTLye38"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-start gap-2 transition-colors hover:text-[#413CC0]"
-                >
-                  <IconPin />
-                  <span>485 Madison Ave Ste 1702, New York, NY 10022, United States</span>
-                </a>
-
-                <a
-                  href="tel:+19179056508"
-                  className="flex items-start gap-2 transition-colors hover:text-[#413CC0]"
-                >
-                  <IconPhone />
-                  <span>+1 917-905-6508</span>
-                </a>
-
-                <a
-                  href="mailto:sales@coverforce.com"
-                  className="flex items-start gap-2 transition-colors hover:text-[#413CC0]"
-                >
-                  <IconMail />
-                  <span>sales@coverforce.com</span>
-                </a>
+            {/* Desktop anchored card */}
+            {!isMobile && (
+              <div
+                className={`absolute top-full left-1/2 mt-[14px] w-90 max-w-[calc(100vw-3rem)] rounded-md border border-[#EDEDED] bg-white p-4 shadow-[0_16px_40px_-18px_rgba(10,20,59,0.22)] origin-top transition-all duration-350 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                  hoveredOffice === 'new-york'
+                    ? 'opacity-100 pointer-events-auto -translate-x-1/2 translate-y-0'
+                    : 'opacity-0 pointer-events-none -translate-x-1/2 translate-y-2'
+                }`}
+              >
+                <OfficeCardBody office="new-york" />
+                <span
+                  className="absolute left-1/2 -top-[6px] size-3 -translate-x-1/2 rotate-45 border-l border-t border-[#EDEDED] bg-white"
+                  aria-hidden
+                />
               </div>
-
-              <span
-                className="absolute left-1/2 -top-[6px] size-3 -translate-x-1/2 rotate-45 border-l border-t border-[#EDEDED] bg-white"
-                aria-hidden
-              />
-            </div>
+            )}
           </div>
         </Html>
       </mesh>
@@ -247,60 +350,40 @@ export default function MapPoints() {
           >
             <span
               className={`absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white transition-shadow duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                hoveredOffice === 'denver'
+                isOpen('denver')
                   ? 'shadow-[0_0_12px_4px_rgba(255,255,255,0.5)]'
                   : 'shadow-[0_0_6px_2px_rgba(255,255,255,0.3)]'
               }`}
             />
 
             <div className="absolute left-[25px] top-[-10px] -translate-y-1/2">
-              <div
+              <button
+                type="button"
+                onClick={() => handleToggle('denver')}
                 className={`px-2.5 py-1 font-bold text-[11px] whitespace-nowrap rounded-[2px] cursor-pointer transition-all duration-350 ease-[cubic-bezier(0.16,1,0.3,1)] select-none ${
-                  hoveredOffice === 'denver'
+                  isOpen('denver')
                     ? 'bg-white/80 text-[#1e3a8a] shadow-[0_4px_12px_rgba(0,0,0,0.25)]'
                     : 'bg-white/95 text-[#1e3a8a] shadow-[0_2px_8px_rgba(0,0,0,0.2)]'
                 }`}
               >
                 DENVER
-              </div>
+              </button>
 
-              <div
-                className={`absolute top-full left-1/2 mt-[14px] w-90 max-w-[calc(100vw-3rem)] rounded-md border border-[#EDEDED] bg-white p-4 shadow-[0_16px_40px_-18px_rgba(10,20,59,0.22)] origin-top transition-all duration-350 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                  hoveredOffice === 'denver'
-                    ? 'opacity-100 pointer-events-auto -translate-x-1/2 translate-y-0'
-                    : 'opacity-0 pointer-events-none -translate-x-1/2 translate-y-2'
-                }`}
-              >
-                <div className="h-28 w-full rounded-md bg-[url(/images/denver.avif)] bg-cover bg-top sm:h-32" />
-
-                <div className="mt-4 flex flex-col gap-2 font-sans text-sm font-regular leading-[1.6] text-[#454545]">
-                  <div className="flex items-start gap-2">
-                    <IconPin />
-                    <span>Denver, CO, United States</span>
-                  </div>
-
-                  <a
-                    href="tel:+19179056508"
-                    className="flex items-start gap-2 transition-colors hover:text-[#413CC0]"
-                  >
-                    <IconPhone />
-                    <span>+1 917-905-6508</span>
-                  </a>
-
-                  <a
-                    href="mailto:sales@coverforce.com"
-                    className="flex items-start gap-2 transition-colors hover:text-[#413CC0]"
-                  >
-                    <IconMail />
-                    <span>sales@coverforce.com</span>
-                  </a>
+              {!isMobile && (
+                <div
+                  className={`absolute top-full left-1/2 mt-[14px] w-90 max-w-[calc(100vw-3rem)] rounded-md border border-[#EDEDED] bg-white p-4 shadow-[0_16px_40px_-18px_rgba(10,20,59,0.22)] origin-top transition-all duration-350 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                    hoveredOffice === 'denver'
+                      ? 'opacity-100 pointer-events-auto -translate-x-1/2 translate-y-0'
+                      : 'opacity-0 pointer-events-none -translate-x-1/2 translate-y-2'
+                  }`}
+                >
+                  <OfficeCardBody office="denver" />
+                  <span
+                    className="absolute left-1/2 -top-[6px] size-3 -translate-x-1/2 rotate-45 border-l border-t border-[#EDEDED] bg-white"
+                    aria-hidden
+                  />
                 </div>
-
-                <span
-                  className="absolute left-1/2 -top-[6px] size-3 -translate-x-1/2 rotate-45 border-l border-t border-[#EDEDED] bg-white"
-                  aria-hidden
-                />
-              </div>
+              )}
             </div>
           </div>
         </Html>

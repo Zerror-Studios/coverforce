@@ -26,6 +26,8 @@ export type MegaMenuLink = {
   badge?: string;
   icon: RemixiconComponentType;
   multiline?: boolean;
+  /** Shown in mobile/tablet menu only; hidden from desktop mega menu. */
+  mobileOnly?: boolean;
 };
 
 export type MegaMenuColumn = {
@@ -245,6 +247,13 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
             description: "Product updates, guides, and industry perspective.",
             icon: RiArticleLine,
           },
+          {
+            label: "Contact",
+            href: "/contact",
+            description: "Talk with our team about your distribution goals.",
+            icon: RiMailLine,
+            mobileOnly: true,
+          },
         ],
       },
       {
@@ -281,7 +290,9 @@ const MEGA_MENU_COLUMN_TITLE_HEIGHT_REM = 1.25;
 
 export const MEGA_MENU_MAX_COLUMN_LINKS = Math.max(
   ...Object.values(MEGA_MENUS).flatMap((menu) =>
-    menu.columns.map((column) => column.links.length),
+    menu.columns.map(
+      (column) => column.links.filter((link) => !link.mobileOnly).length,
+    ),
   ),
 );
 

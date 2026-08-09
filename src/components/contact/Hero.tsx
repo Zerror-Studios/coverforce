@@ -1,8 +1,8 @@
 "use client";
 
-import React, { Suspense, useRef } from "react";
+import React, { Suspense, useCallback, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import MapPoints from "./MapPoints";
+import MapPoints, { MobileOfficePopup } from "./MapPoints";
 import ContactForm from "./ContactForm";
 import SectionRadialGlow from "@/components/common/SectionRadialGlow";
 import { useGSAP } from "@gsap/react";
@@ -16,6 +16,15 @@ const Hero = () => {
   const formRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
+  const [activeOffice, setActiveOffice] = useState<string | null>(null);
+
+  const handleActiveOfficeChange = useCallback((office: string | null) => {
+    setActiveOffice(office);
+  }, []);
+
+  const closeOfficePopup = useCallback(() => {
+    setActiveOffice(null);
+  }, []);
 
   useGSAP(() => {
     const container = containerRef.current;
@@ -103,11 +112,16 @@ const Hero = () => {
             style={{ width: "100%", height: "100%" }}
           >
             <Suspense fallback={null}>
-              <MapPoints />
+              <MapPoints
+                activeOffice={activeOffice}
+                onActiveOfficeChange={handleActiveOfficeChange}
+              />
             </Suspense>
           </Canvas>
         </div>
       </div>
+
+      <MobileOfficePopup office={activeOffice} onClose={closeOfficePopup} />
     </section>
   );
 };

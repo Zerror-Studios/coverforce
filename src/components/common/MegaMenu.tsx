@@ -161,17 +161,19 @@ function MegaMenuColumnBlock({
         </p>
       </Reveal>
       <ul>
-        {column.links.map((link, index) => (
-          <MegaMenuLinkItem
-            key={link.label}
-            link={link}
-            enterKey={enterKey}
-            resetKey={resetKey}
-            delay={columnBaseDelay + CONTENT_STAG * (index + 1)}
-            onClose={onClose}
-            onNavigate={onNavigate}
-          />
-        ))}
+        {column.links
+          .filter((link) => !link.mobileOnly)
+          .map((link, index) => (
+            <MegaMenuLinkItem
+              key={link.label}
+              link={link}
+              enterKey={enterKey}
+              resetKey={resetKey}
+              delay={columnBaseDelay + CONTENT_STAG * (index + 1)}
+              onClose={onClose}
+              onNavigate={onNavigate}
+            />
+          ))}
       </ul>
     </div>
   );
