@@ -198,7 +198,7 @@ const WhosFor = () => {
   );
 
   return (
-    <section ref={sectionRef} className="relative bg-[#121C49] text-white">
+    <section ref={sectionRef} className="relative overflow-hidden bg-[#121C49] text-white">
       <Container borderColor="#FFFFFF33" className="relative z-10">
         <div className="flex flex-col gap-10 py-16 md:gap-12 md:py-20 lg:gap-14 lg:py-24">
           <div
