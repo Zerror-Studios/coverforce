@@ -143,20 +143,19 @@ function WorkflowStepPanel({
 
       <div
         ref={imageRef}
-        className={`relative w-full max-w-[420px] sm:max-w-[480px] md:max-w-[720px] lg:max-w-[960px] ${
-          alignLeft ? "self-start" : "self-center"
+        className={`relative -mx-3 w-[calc(100%+1.5rem)] max-w-none self-stretch sm:mx-0 sm:w-full sm:max-w-[560px] md:max-w-[760px] lg:max-w-[960px] ${
+          alignLeft ? "lg:self-start" : "lg:self-center"
         }`}
       >
-        <div className="relative aspect-[3/2] w-full">
-          <Image
-            src={step.image}
-            alt={`${step.label} preview`}
-            fill
-            unoptimized
-            className={`object-contain ${alignLeft ? "object-left" : "object-center"}`}
-            sizes="(max-width: 1023px) 100vw, 960px"
-          />
-        </div>
+        <Image
+          src={step.image}
+          alt={`${step.label} preview`}
+          width={1000}
+          height={1000}
+          unoptimized
+          className="h-auto w-full"
+          sizes="(max-width: 1023px) 100vw, 960px"
+        />
       </div>
     </article>
   );

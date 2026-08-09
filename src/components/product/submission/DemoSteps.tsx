@@ -139,13 +139,13 @@ function DemoStepPanel({
 
       <div
         ref={imageRef}
-        className="relative mr-auto w-full max-w-[420px] sm:max-w-[460px] md:max-w-[640px] lg:max-w-[800px]"
+        className="relative -mx-3 mr-auto w-[calc(100%+1.5rem)] max-w-none self-stretch sm:mx-0 sm:mr-auto sm:w-full sm:max-w-[540px] md:max-w-[680px] lg:max-w-[800px]"
       >
         <Image
           src={step.image}
           alt={`${step.label} preview`}
-          width={800}
-          height={346}
+          width={1000}
+          height={1000}
           unoptimized
           className="h-auto w-full"
           sizes="(max-width: 1023px) 100vw, 800px"
