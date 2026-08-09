@@ -21,7 +21,7 @@ const CARDS: RecognitionCard[] = [
   {
     id: "recognition-1",
     type: "image",
-    src: "/images/about/recoginition1.png",
+    src: "/images/about/recoginition-1.webp",
     alt: "CoverForce Insurtech 50 2025 recognition",
   },
   {
@@ -32,7 +32,7 @@ const CARDS: RecognitionCard[] = [
   {
     id: "recognition-3",
     type: "image",
-    src: "/images/about/recoginition3.png",
+    src: "/images/about/recoginition-3.webp",
     alt: "Insurtech industry event",
   },
 ];
