@@ -27,8 +27,10 @@ export type StatSlide = {
 export type HeroSlide = CopySlide | StatSlide;
 
 const ROTATE_MS = 4800;
-const EXIT_MS = 700;
-const ENTER_MS = 700;
+/** Keep in sync with `.submission-hero-content--exit` CSS duration. */
+const EXIT_MS = 820;
+/** Keep in sync with `.submission-hero-content--enter` CSS duration. */
+const ENTER_MS = 460;
 
 const STAT_GRADIENT =
   "bg-gradient-to-r from-[#F0784A] to-[#E63946] bg-clip-text text-transparent";
@@ -93,8 +95,10 @@ function getSlideState(
   }
 
   if (index === activeIndex) return "active";
-  if (index === nextIndex) return "waiting-right";
-  return "hidden-left";
+  // Park next slide off-stage fully hidden — peeking "waiting-right" slots
+  // bleed through on iOS Safari and cause overlap.
+  if (index === nextIndex) return "hidden";
+  return "hidden";
 }
 
 const slideStateClass: Record<SlideState, string> = {
@@ -339,13 +343,18 @@ export function useHeroCarousel(slides: HeroSlide[]) {
             slides.length,
           );
           const isVisible =
-            state === "active" || state === "enter" || state === "exit" || state === "exit-right";
+            state === "active" ||
+            state === "enter" ||
+            state === "exit" ||
+            state === "exit-right" ||
+            state === "pre-enter-forward" ||
+            state === "pre-enter-backward";
 
           return (
             <div
               key={getSlideKey(slide, index)}
               className={`submission-hero-content ${slideStateClass[state]}`}
-              aria-hidden={!isVisible}
+              aria-hidden={!isVisible || state.startsWith("pre-enter")}
             >
               <HeroSlideContent slide={slide} />
             </div>
