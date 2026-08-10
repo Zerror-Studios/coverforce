@@ -7,6 +7,8 @@ import type { Viewport } from "next";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { ViewTransitions } from "next-view-transitions";
+import Script from "next/script";
+import Head from "next/head";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -26,6 +28,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <ViewTransitions>
       <html lang="en" className={cn("font-sans", geist.variable)}>
+        <head>
+          <Script id="cookieyes" src="https://cdn-cookieyes.com/client_data/e14d3cac29528160d6d1925ec7368161/script.js" strategy="beforeInteractive" />
+        </head>
         <body suppressHydrationWarning>
           <script
             dangerouslySetInnerHTML={{
