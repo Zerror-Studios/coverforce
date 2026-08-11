@@ -881,14 +881,14 @@ const ContactForm = () => {
 
             {step === 0 && greetingReady && (
               <div data-lenis-prevent className="flex w-full flex-col items-center">
-                <h2
+                <h1
                   data-heading
                   className="mt-5 max-w-2xl px-2 text-balance font-heading text-[1.625rem] font-regular leading-[1.15] tracking-tight sm:px-0 sm:text-3xl md:text-5xl lg:leading-[1.1]"
                 >
                   <span data-split>
                     {greeting}
                   </span>
-                </h2>
+                </h1>
 
                 <div
                   data-buttons-container

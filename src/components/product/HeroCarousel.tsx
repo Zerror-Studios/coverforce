@@ -120,7 +120,13 @@ function getSlideKey(slide: HeroSlide, index: number) {
   return `${slide.value}-${index}`;
 }
 
-function HeroSlideContent({ slide }: { slide: HeroSlide }) {
+function HeroSlideContent({
+  slide,
+  isPageHeading = false,
+}: {
+  slide: HeroSlide;
+  isPageHeading?: boolean;
+}) {
   if (slide.type === "stat") {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center text-center">
@@ -136,13 +142,18 @@ function HeroSlideContent({ slide }: { slide: HeroSlide }) {
     );
   }
 
+  const titleClassName =
+    "max-w-4xl text-3xl font-heading font-normal leading-[1.15] tracking-tight md:text-4xl lg:whitespace-nowrap lg:text-6xl xl:text-6xl [&_br]:hidden md:[&_br]:inline";
+
   return (
     <div className="flex h-full w-full flex-col items-center justify-center text-center">
       <EyebrowPill surface="dark">{slide.label}</EyebrowPill>
 
-      <h1 className="max-w-4xl text-3xl font-heading font-normal leading-[1.15] tracking-tight md:text-4xl lg:whitespace-nowrap lg:text-6xl xl:text-6xl [&_br]:hidden md:[&_br]:inline">
-        {slide.title}
-      </h1>
+      {isPageHeading ? (
+        <h1 className={titleClassName}>{slide.title}</h1>
+      ) : (
+        <p className={titleClassName}>{slide.title}</p>
+      )}
 
       {slide.description ? (
         <p className="mt-8 max-w-xl font-sans text-sm font-regular leading-relaxed text-white/85 md:text-sm">
@@ -327,6 +338,8 @@ export function useHeroCarousel(slides: HeroSlide[]) {
     [goToSlide, restartInterval],
   );
 
+  const firstCopyIndex = slides.findIndex((slide) => slide.type === "copy");
+
   return {
     activeIndex,
     handleSelectSlide,
@@ -356,7 +369,10 @@ export function useHeroCarousel(slides: HeroSlide[]) {
               className={`submission-hero-content ${slideStateClass[state]}`}
               aria-hidden={!isVisible || state.startsWith("pre-enter")}
             >
-              <HeroSlideContent slide={slide} />
+              <HeroSlideContent
+                slide={slide}
+                isPageHeading={slide.type === "copy" && index === firstCopyIndex}
+              />
             </div>
           );
         })}

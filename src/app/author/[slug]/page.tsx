@@ -1,12 +1,16 @@
+import AuthorPosts from "@/components/author/AuthorPosts";
 import Hero from "@/components/author/Hero";
-import MoreBlogs from "@/components/blogDets/MoreBlogs";
 import PageWrapper from "@/components/PageWrapper";
-import { getAuthorSeo } from "@/data/authorSeo";
-import { createArticleMetadata } from "@/lib/seo";
+import {
+  buildAuthorPersonJsonLd,
+  getAuthorSeo,
+} from "@/data/authorSeo";
+import { createMetadata } from "@/lib/seo";
 import {
   getBlogAuthorBySlug,
   getBlogAuthorSlugs,
   getBlogPosts,
+  toListingPost,
 } from "@/lib/webflow";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -15,7 +19,7 @@ type AuthorPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -25,18 +29,38 @@ export async function generateMetadata({
   if (!author) notFound();
   const seo = getAuthorSeo(slug);
 
-  return createArticleMetadata({
-    title: seo.title || `${author.name} | Author at CoverForce`,
-    description:
-      seo.description ||
-      `Read articles by ${author.name} on commercial insurance distribution, technology, and the future of the P&C industry.`,
+  const title =
+    seo.title || `${author.name} | Author at CoverForce`;
+  const description =
+    seo.description ||
+    `Read articles by ${author.name} on commercial insurance distribution, technology, and the future of the P&C industry.`;
+
+  const meta = createMetadata({
+    title,
+    description,
     path: `/author/${slug}`,
+    image: author.avatar,
   });
+
+  return {
+    ...meta,
+    title: { absolute: title },
+    openGraph: {
+      ...meta.openGraph,
+      title,
+      description,
+      type: "profile",
+    },
+  };
 }
 
 export async function generateStaticParams() {
-  const slugs = await getBlogAuthorSlugs();
-  return slugs.map((slug) => ({ slug }));
+  try {
+    const slugs = await getBlogAuthorSlugs();
+    return slugs.map((slug) => ({ slug }));
+  } catch {
+    return [];
+  }
 }
 
 const AuthorPage = async ({ params }: AuthorPageProps) => {
@@ -44,20 +68,25 @@ const AuthorPage = async ({ params }: AuthorPageProps) => {
   const author = await getBlogAuthorBySlug(slug);
   if (!author) notFound();
 
+  const profile = getAuthorSeo(slug);
   const posts = await getBlogPosts();
-  const authorPosts = posts.filter(
-    (post) => post.authorHref === `/author/${slug}` || post.author === author.name
-  );
-  const morePosts = authorPosts.slice(0, 3).map((post) => ({
-    slug: post.slug,
-    title: post.title,
-    image: post.image,
-  }));
+  const authorPosts = posts
+    .filter(
+      (post) =>
+        post.authorHref === `/author/${slug}` || post.author === author.name
+    )
+    .map(toListingPost);
+
+  const personJsonLd = buildAuthorPersonJsonLd(author, profile);
 
   return (
     <PageWrapper>
-      <Hero author={author} />
-      <MoreBlogs title={`More Insights from ${author.name}`} posts={morePosts} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <Hero author={author} profile={profile} />
+      <AuthorPosts authorName={author.name} posts={authorPosts} />
     </PageWrapper>
   );
 };
