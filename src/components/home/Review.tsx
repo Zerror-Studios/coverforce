@@ -64,8 +64,8 @@ const testimonials: Testimonial[] = [
     quote:
       "As a new brokerage, securing direct carrier appointments on our own was challenging. With CoverForce's support, we connected with the right carrier teams and were appointed in a matter of days, which would have been far more difficult and time-consuming on our own.",
     name: "Alex Ledbetter",
-    role: "Founder, Diligence Brokerage",
-    company: "Diligence Brokerage",
+    role: "Founder, Delegance Brokerage",
+    company: "Delegance Brokerage",
     avatar: "/images/testimonals/Alex Ledbetter.webp",
     logo: "/images/testimonals/Diligence Brokerage.png",
   },
