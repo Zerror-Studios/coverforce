@@ -36,13 +36,84 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: "/commercial-api",
+        destination: "/developers",
+        permanent: true,
+      },
+      {
+        source: "/for-brokers-agents",
+        destination: "/solutions/brokers",
+        permanent: true,
+      },
+      {
         source: "/for-peos",
         destination: "/solutions/brokers",
         permanent: true,
       },
       {
+        source: "/quote-bind-platform",
+        destination: "/product/quote-bind",
+        permanent: true,
+      },
+      {
+        source: "/embedded-commercial",
+        destination: "/developers",
+        permanent: true,
+      },
+      {
+        source: "/brokers",
+        destination: "/solutions/brokers",
+        permanent: true,
+      },
+      {
+        source: "/peos",
+        destination: "/solutions/brokers",
+        permanent: true,
+      },
+      {
+        source: "/carrier-partners",
+        destination: "/solutions/carrier",
+        permanent: true,
+      },
+      {
         source: "/products/:path*",
         destination: "/product/quote-bind",
+        permanent: true,
+      },
+      // Old CoverForce website archive paths (specific before catch-all)
+      {
+        source: "/old-coverforce-website/old-home",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/old-coverforce-website/for-brokers-agents",
+        destination: "/solutions/brokers",
+        permanent: true,
+      },
+      {
+        source: "/old-coverforce-website/quote-bind-platform",
+        destination: "/product/quote-bind",
+        permanent: true,
+      },
+      {
+        source: "/old-coverforce-website/for-peos",
+        destination: "/solutions/brokers",
+        permanent: true,
+      },
+      {
+        source: "/old-coverforce-website/carrier-partners",
+        destination: "/solutions/carrier",
+        permanent: true,
+      },
+      {
+        source: "/old-coverforce-website/commercial-api",
+        destination: "/developers",
+        permanent: true,
+      },
+      {
+        source: "/old-coverforce-website/:path*",
+        destination: "/",
         permanent: true,
       },
       {
