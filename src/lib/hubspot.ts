@@ -34,6 +34,21 @@ function field(
   return { objectTypeId, name, value: trimmed };
 }
 
+/** UI keeps short labels ($500K-$1M); HubSpot gets a plain number (upper bound of range). */
+const STARTUP_BOOK_GWP_TO_NUMBER: Record<string, string> = {
+  $0: "0",
+  "$1-$500K": "500000",
+  "$500K-$1M": "1000000",
+  "$1-$2M": "2000000",
+  "$2-$4M": "4000000",
+  "$4M+": "4000000",
+};
+
+function startupBookGwpToNumber(label: string): string {
+  const trimmed = label.trim();
+  return STARTUP_BOOK_GWP_TO_NUMBER[trimmed] ?? trimmed.replace(/\D/g, "");
+}
+
 export function buildContactHubSpotFields(payload: {
   fullName: string;
   email: string;
@@ -98,6 +113,7 @@ export function buildStartupHubSpotFields(payload: {
       : payload.hasActiveBook === "No"
         ? "false"
         : "";
+  const existingBookGwpNumber = startupBookGwpToNumber(payload.existingBookGwp);
 
   return [
     field("firstname", firstname || payload.fullName),
@@ -110,7 +126,7 @@ export function buildStartupHubSpotFields(payload: {
     field("startup_type", payload.startupType),
     field("startup_fundraising_stage", payload.fundraisingStage),
     field("startup__existing_agency_with_an_active_book", hasActiveBook),
-    field("startup_existing_book_in_gwp", payload.existingBookGwp),
+    field("startup_existing_book_in_gwp", existingBookGwpNumber),
     field("startup_insurance_licenses", payload.pcLicense),
     field("startup_direct_carrier_appointments", payload.hasDirectAppointments),
     field("startup_carriers_appointed_with", payload.appointedCarriers),
@@ -123,7 +139,7 @@ export function buildStartupHubSpotFields(payload: {
     ),
     field(
       "how_big_is_your_existing_commercial_book_of_business____in_gwp__",
-      payload.existingBookGwp,
+      existingBookGwpNumber,
     ),
     field("how_did_you_hear_about_us_form", payload.heardAboutUsSingle, "0-2"),
   ].filter((item): item is HubSpotField => Boolean(item));

@@ -167,9 +167,49 @@ const NAME_PATTERN = /^[\p{L}][\p{L}\s'.-]{0,79}$/u;
 type FieldErrors = Partial<Record<keyof FormDataState | "form", string>>;
 
 function buildFullPhone(phoneCode: string, phone: string) {
-  const digits = phone.replace(/\D/g, "");
+  const digits = sanitizePhone(phone);
   if (!digits) return "";
   return `${phoneCode}${digits}`;
+}
+
+/** Digits only — no spaces or punctuation in the phone field. */
+function sanitizePhone(phone: string) {
+  return phone.replace(/\D/g, "");
+}
+
+/** Digits only for book of business GWP (payload sends plain number). */
+function sanitizeBookSize(value: string) {
+  return value.replace(/\D/g, "");
+}
+
+/** Format stored digits for UI, e.g. 3000000 → 3,000,000 */
+function formatBookSizeDisplay(digits: string) {
+  if (!digits) return "";
+  return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+/** Trim free-text fields; strip phone/book size to digits. Used before validate / submit. */
+function normalizeFormData(data: FormDataState): FormDataState {
+  return {
+    ...data,
+    fullName: data.fullName.trim(),
+    firstName: data.firstName.trim(),
+    lastName: data.lastName.trim(),
+    phone: sanitizePhone(data.phone),
+    email: data.email.trim(),
+    jobTitle: data.jobTitle.trim(),
+    companyName: data.companyName.trim(),
+    problems: data.problems.trim(),
+    bookSize: sanitizeBookSize(data.bookSize),
+    appointedCarriers: data.appointedCarriers.trim(),
+    marketAccessPartners: data.marketAccessPartners.trim(),
+    heardAboutUsSingle: data.heardAboutUsSingle.trim(),
+    startupType: data.startupType.trim(),
+    fundraisingStage: data.fundraisingStage.trim(),
+    existingBookGwp: data.existingBookGwp.trim(),
+    pcLicense: data.pcLicense.trim(),
+    hasDirectAppointments: data.hasDirectAppointments.trim(),
+  };
 }
 
 function validateStartupStep(step: number, data: FormDataState): FieldErrors {
@@ -191,7 +231,7 @@ function validateStartupStep(step: number, data: FormDataState): FieldErrors {
     }
 
     const fullPhone = buildFullPhone(data.phoneCode, data.phone);
-    if (!data.phone.trim()) errors.phone = "Phone number is required.";
+    if (!sanitizePhone(data.phone)) errors.phone = "Phone number is required.";
     else if (!isValidPhoneNumber(fullPhone)) {
       errors.phone = "Please enter a valid phone number.";
     }
@@ -279,10 +319,11 @@ function validateDefaultStep(step: number, data: FormDataState): FieldErrors {
   }
 
   if (step === 3) {
-    const bookSize = data.bookSize.trim();
-    if (!bookSize) errors.bookSize = "Please enter your book of business size.";
-    else if (bookSize.length < 2) {
-      errors.bookSize = "Please enter a valid book of business size.";
+    const bookSize = sanitizeBookSize(data.bookSize);
+    if (!bookSize) {
+      errors.bookSize = "Please enter your book of business size.";
+    } else if (!/^\d+$/.test(bookSize)) {
+      errors.bookSize = "Please enter a valid number.";
     }
   }
 
@@ -296,7 +337,7 @@ function validateDefaultStep(step: number, data: FormDataState): FieldErrors {
     if (!fullName) errors.fullName = "Full name is required.";
     else if (!NAME_PATTERN.test(fullName)) errors.fullName = "Enter a valid full name.";
 
-    if (!data.phone.trim()) errors.phone = "Phone number is required.";
+    if (!sanitizePhone(data.phone)) errors.phone = "Phone number is required.";
     else if (!isValidPhoneNumber(fullPhone)) {
       errors.phone = "Please enter a valid phone number.";
     }
@@ -591,14 +632,37 @@ const ContactForm = () => {
   };
 
   const updateData = (field: keyof FormDataState, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    const nextValue =
+      field === "phone"
+        ? sanitizePhone(value)
+        : field === "bookSize"
+          ? sanitizeBookSize(value)
+          : value;
+    setFormData((prev) => ({ ...prev, [field]: nextValue }));
     clearFieldError(field);
     setSubmitError(null);
   };
 
+  const trimFieldOnBlur = (field: keyof FormDataState) => {
+    setFormData((prev) => {
+      const current = prev[field];
+      if (typeof current !== "string") return prev;
+      const next =
+        field === "phone"
+          ? sanitizePhone(current)
+          : field === "bookSize"
+            ? sanitizeBookSize(current)
+            : current.trim();
+      if (next === current) return prev;
+      return { ...prev, [field]: next };
+    });
+  };
+
   const goNext = () => {
     if (isSubmitting) return;
-    const errors = validateStep(step, formData, isStartupFlow);
+    const normalized = normalizeFormData(formData);
+    setFormData(normalized);
+    const errors = validateStep(step, normalized, isStartupFlow);
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
     setSubmitError(null);
@@ -613,7 +677,9 @@ const ContactForm = () => {
 
   const handleSubmit = async () => {
     if (isSubmitting) return;
-    const errors = validateStep(5, formData, isStartupFlow);
+    const normalized = normalizeFormData(formData);
+    setFormData(normalized);
+    const errors = validateStep(5, normalized, isStartupFlow);
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
 
@@ -632,42 +698,42 @@ const ContactForm = () => {
       const payload = isStartupFlow
         ? {
             flow: "startup" as const,
-            businessType: formData.businessType,
-            fullName: formData.fullName.trim(),
-            lastName: formData.lastName.trim(),
-            email: formData.email.trim(),
-            phoneCode: formData.phoneCode,
-            phone: formData.phone.replace(/\D/g, ""),
-            companyName: formData.companyName.trim(),
-            jobTitle: formData.jobTitle.trim(),
-            isDigitalBrokerageStartup: formData.isDigitalBrokerageStartup,
-            startupType: formData.startupType,
-            fundraisingStage: formData.fundraisingStage,
-            hasActiveBook: formData.hasActiveBook,
-            existingBookGwp: formData.existingBookGwp,
-            pcLicense: formData.pcLicense,
-            hasDirectAppointments: formData.hasDirectAppointments,
-            appointedCarriers: formData.appointedCarriers.trim(),
-            interestedLobs: formData.interestedLobs,
-            marketAccessPartners: formData.marketAccessPartners.trim(),
-            heardAboutUsSingle: formData.heardAboutUsSingle,
-            problems: formData.problems.trim(),
+            businessType: normalized.businessType,
+            fullName: normalized.fullName,
+            lastName: normalized.lastName,
+            email: normalized.email,
+            phoneCode: normalized.phoneCode,
+            phone: normalized.phone,
+            companyName: normalized.companyName,
+            jobTitle: normalized.jobTitle,
+            isDigitalBrokerageStartup: normalized.isDigitalBrokerageStartup,
+            startupType: normalized.startupType,
+            fundraisingStage: normalized.fundraisingStage,
+            hasActiveBook: normalized.hasActiveBook,
+            existingBookGwp: normalized.existingBookGwp,
+            pcLicense: normalized.pcLicense,
+            hasDirectAppointments: normalized.hasDirectAppointments,
+            appointedCarriers: normalized.appointedCarriers,
+            interestedLobs: normalized.interestedLobs,
+            marketAccessPartners: normalized.marketAccessPartners,
+            heardAboutUsSingle: normalized.heardAboutUsSingle,
+            problems: normalized.problems,
             pageUri: typeof window !== "undefined" ? window.location.href : undefined,
             pageName: "API Access",
             hutk,
           }
         : {
             flow: "contact" as const,
-            businessType: formData.businessType,
-            problems: formData.problems.trim(),
-            bookSize: formData.bookSize.trim(),
-            fullName: formData.fullName.trim(),
-            email: formData.email.trim(),
-            phoneCode: formData.phoneCode,
-            phone: formData.phone.replace(/\D/g, ""),
-            companyName: formData.companyName.trim(),
-            jobTitle: formData.jobTitle.trim(),
-            heardAboutUs: formData.heardAboutUs,
+            businessType: normalized.businessType,
+            problems: normalized.problems,
+            bookSize: normalized.bookSize,
+            fullName: normalized.fullName,
+            email: normalized.email,
+            phoneCode: normalized.phoneCode,
+            phone: normalized.phone,
+            companyName: normalized.companyName,
+            jobTitle: normalized.jobTitle,
+            heardAboutUs: normalized.heardAboutUs,
             pageUri: typeof window !== "undefined" ? window.location.href : undefined,
             pageName: "Contact Us",
             hutk,
@@ -897,6 +963,7 @@ const ContactForm = () => {
                       autoComplete="name"
                       value={formData.fullName}
                       onChange={(e) => updateData("fullName", e.target.value)}
+                      onBlur={() => trimFieldOnBlur("fullName")}
                       className={underlineInputClass(Boolean(fieldErrors.fullName))}
                     />
                     {fieldErrors.fullName && (
@@ -913,6 +980,7 @@ const ContactForm = () => {
                       autoComplete="family-name"
                       value={formData.lastName}
                       onChange={(e) => updateData("lastName", e.target.value)}
+                      onBlur={() => trimFieldOnBlur("lastName")}
                       className={underlineInputClass(Boolean(fieldErrors.lastName))}
                     />
                     {fieldErrors.lastName && (
@@ -1003,9 +1071,8 @@ const ContactForm = () => {
                         autoComplete="tel-national"
                         placeholder="646 355 6077"
                         value={formData.phone}
-                        onChange={(e) =>
-                          updateData("phone", e.target.value.replace(/[^\d\s()-]/g, ""))
-                        }
+                        onChange={(e) => updateData("phone", e.target.value)}
+                        onBlur={() => trimFieldOnBlur("phone")}
                         className="w-full bg-transparent text-white outline-none"
                       />
                     </div>
@@ -1023,6 +1090,7 @@ const ContactForm = () => {
                       placeholder="arjun@company.com"
                       value={formData.email}
                       onChange={(e) => updateData("email", e.target.value)}
+                      onBlur={() => trimFieldOnBlur("email")}
                       className={underlineInputClass(Boolean(fieldErrors.email))}
                     />
                     {fieldErrors.email && (
@@ -1039,6 +1107,7 @@ const ContactForm = () => {
                       placeholder="Product Manager"
                       value={formData.jobTitle}
                       onChange={(e) => updateData("jobTitle", e.target.value)}
+                      onBlur={() => trimFieldOnBlur("jobTitle")}
                       className={underlineInputClass(Boolean(fieldErrors.jobTitle))}
                     />
                     {fieldErrors.jobTitle && (
@@ -1055,6 +1124,7 @@ const ContactForm = () => {
                       placeholder="Acme Technologies"
                       value={formData.companyName}
                       onChange={(e) => updateData("companyName", e.target.value)}
+                      onBlur={() => trimFieldOnBlur("companyName")}
                       className={underlineInputClass(Boolean(fieldErrors.companyName))}
                     />
                     {fieldErrors.companyName && (
@@ -1333,6 +1403,7 @@ const ContactForm = () => {
                       type="text"
                       value={formData.appointedCarriers}
                       onChange={(e) => updateData("appointedCarriers", e.target.value)}
+                      onBlur={() => trimFieldOnBlur("appointedCarriers")}
                       className={underlineInputClass(Boolean(fieldErrors.appointedCarriers))}
                     />
                     {fieldErrors.appointedCarriers && (
@@ -1379,6 +1450,7 @@ const ContactForm = () => {
                       type="text"
                       value={formData.marketAccessPartners}
                       onChange={(e) => updateData("marketAccessPartners", e.target.value)}
+                      onBlur={() => trimFieldOnBlur("marketAccessPartners")}
                       className={underlineInputClass(Boolean(fieldErrors.marketAccessPartners))}
                     />
                     {fieldErrors.marketAccessPartners && (
@@ -1395,6 +1467,7 @@ const ContactForm = () => {
                       type="text"
                       value={formData.problems}
                       onChange={(e) => updateData("problems", e.target.value)}
+                      onBlur={() => trimFieldOnBlur("problems")}
                       className={underlineInputClass(Boolean(fieldErrors.problems))}
                     />
                     {fieldErrors.problems && (
@@ -1442,6 +1515,7 @@ const ContactForm = () => {
                     type="text"
                     value={formData.problems}
                     onChange={(e) => updateData("problems", e.target.value)}
+                      onBlur={() => trimFieldOnBlur("problems")}
                     className={`w-full border-b bg-transparent pb-3 text-center text-lg text-white outline-none transition-colors ${
                       fieldErrors.problems
                         ? "border-red-400 focus:border-red-300"
@@ -1479,8 +1553,12 @@ const ContactForm = () => {
                 <div className="w-full" data-animate-field>
                   <input
                     type="text"
-                    value={formData.bookSize}
+                    inputMode="numeric"
+                    autoComplete="off"
+                    placeholder="3,000,000"
+                    value={formatBookSizeDisplay(formData.bookSize)}
                     onChange={(e) => updateData("bookSize", e.target.value)}
+                    onBlur={() => trimFieldOnBlur("bookSize")}
                     className={`w-full border-b bg-transparent pb-3 text-center text-lg text-white outline-none transition-colors ${
                       fieldErrors.bookSize
                         ? "border-red-400 focus:border-red-300"
@@ -1524,6 +1602,7 @@ const ContactForm = () => {
                       autoComplete="name"
                       value={formData.fullName}
                       onChange={(e) => updateData("fullName", e.target.value)}
+                      onBlur={() => trimFieldOnBlur("fullName")}
                       className={underlineInputClass(Boolean(fieldErrors.fullName))}
                     />
                     {fieldErrors.fullName && (
@@ -1616,9 +1695,8 @@ const ContactForm = () => {
                         autoComplete="tel-national"
                         placeholder="646 355 6077"
                         value={formData.phone}
-                        onChange={(e) =>
-                          updateData("phone", e.target.value.replace(/[^\d\s()-]/g, ""))
-                        }
+                        onChange={(e) => updateData("phone", e.target.value)}
+                        onBlur={() => trimFieldOnBlur("phone")}
                         className="w-full bg-transparent text-white outline-none"
                       />
                     </div>
@@ -1638,6 +1716,7 @@ const ContactForm = () => {
                       placeholder="arjun@company.com"
                       value={formData.email}
                       onChange={(e) => updateData("email", e.target.value)}
+                      onBlur={() => trimFieldOnBlur("email")}
                       className={underlineInputClass(Boolean(fieldErrors.email))}
                     />
                     {fieldErrors.email && (
@@ -1656,6 +1735,7 @@ const ContactForm = () => {
                       placeholder="Product Manager"
                       value={formData.jobTitle}
                       onChange={(e) => updateData("jobTitle", e.target.value)}
+                      onBlur={() => trimFieldOnBlur("jobTitle")}
                       className={underlineInputClass(Boolean(fieldErrors.jobTitle))}
                     />
                     {fieldErrors.jobTitle && (
@@ -1674,6 +1754,7 @@ const ContactForm = () => {
                       placeholder="Acme Technologies"
                       value={formData.companyName}
                       onChange={(e) => updateData("companyName", e.target.value)}
+                      onBlur={() => trimFieldOnBlur("companyName")}
                       className={underlineInputClass(Boolean(fieldErrors.companyName))}
                     />
                     {fieldErrors.companyName && (
