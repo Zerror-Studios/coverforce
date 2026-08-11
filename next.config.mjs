@@ -45,6 +45,16 @@ const nextConfig = {
         destination: "/product/quote-bind",
         permanent: true,
       },
+      {
+        source: "/blog/page",
+        destination: "/blog",
+        permanent: true,
+      },
+      {
+        source: "/blog/page/1",
+        destination: "/blog",
+        permanent: true,
+      },
     ];
   },
 };

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import {
   RiArrowUpDownLine,
   RiSearchLine,
@@ -10,12 +11,12 @@ import ButtonArrowIcon from "@/components/common/ButtonArrowIcon";
 import Container from "@/components/common/Container";
 import BlogCard from "@/components/blog/BlogCard";
 import type { BlogPost } from "@/data/blogPosts";
+import { BLOG_PAGE_SIZE, blogPageHref } from "@/lib/blogPagination";
 
 function ButtonArrowLeftIcon({ className = "" }: { className?: string }) {
   return <ButtonArrowIcon className={`-scale-x-100 ${className}`} />;
 }
 
-const PAGE_SIZE = 9;
 const FILTERS = ["All", "Insights", "Case Study", "News"] as const;
 type Filter = (typeof FILTERS)[number];
 
@@ -35,24 +36,38 @@ function getVisiblePages(page: number, totalPages: number): Array<number | "elli
   return [1, "ellipsis", page - 1, page, page + 1, "ellipsis", totalPages];
 }
 
+function pageLinkClass(isActive: boolean) {
+  return `flex h-10 min-w-10 items-center justify-center rounded-[5px] border px-2.5 font-heading text-xs font-medium transition-colors ${
+    isActive
+      ? "border-[#121C49] bg-[#121C49] text-white"
+      : "border-[#535353]/40 bg-transparent text-[#2E2E2E] hover:bg-[#2E2E2E]/[0.04]"
+  }`;
+}
+
 function Pagination({
   page,
   totalPages,
   totalItems,
   pageSize,
+  useRoutes,
   onChange,
 }: {
   page: number;
   totalPages: number;
   totalItems: number;
   pageSize: number;
-  onChange: (page: number) => void;
+  /** Crawlable /blog and /blog/page/N links when true */
+  useRoutes: boolean;
+  onChange?: (page: number) => void;
 }) {
   if (totalPages <= 1) return null;
 
   const visiblePages = getVisiblePages(page, totalPages);
   const rangeStart = (page - 1) * pageSize + 1;
   const rangeEnd = Math.min(page * pageSize, totalItems);
+
+  const prevHref = blogPageHref(page - 1);
+  const nextHref = blogPageHref(page + 1);
 
   return (
     <nav className="mt-14 md:mt-16" aria-label="Blog pagination">
@@ -72,17 +87,29 @@ function Pagination({
         </div>
 
         <div className="flex items-center justify-between gap-4">
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            icon={ButtonArrowLeftIcon}
-            disabled={page <= 1}
-            onClick={() => onChange(page - 1)}
-            aria-label="Previous page"
-          >
-            Previous
-          </Button>
+          {useRoutes && page > 1 ? (
+            <Button
+              href={prevHref}
+              variant="secondary"
+              size="sm"
+              icon={ButtonArrowLeftIcon}
+              aria-label="Previous page"
+            >
+              Previous
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              icon={ButtonArrowLeftIcon}
+              disabled={page <= 1}
+              onClick={() => onChange?.(page - 1)}
+              aria-label="Previous page"
+            >
+              Previous
+            </Button>
+          )}
 
           <div className="hidden items-center gap-1.5 md:flex">
             {visiblePages.map((item, index) => {
@@ -99,17 +126,26 @@ function Pagination({
               }
 
               const isActive = item === page;
+              if (useRoutes) {
+                return (
+                  <Link
+                    key={item}
+                    href={blogPageHref(item)}
+                    aria-current={isActive ? "page" : undefined}
+                    className={pageLinkClass(isActive)}
+                  >
+                    {String(item).padStart(2, "0")}
+                  </Link>
+                );
+              }
+
               return (
                 <button
                   key={item}
                   type="button"
-                  onClick={() => onChange(item)}
+                  onClick={() => onChange?.(item)}
                   aria-current={isActive ? "page" : undefined}
-                  className={`flex h-10 min-w-10 items-center justify-center rounded-[5px] border px-2.5 font-heading text-xs font-medium transition-colors ${
-                    isActive
-                      ? "border-[#121C49] bg-[#121C49] text-white"
-                      : "border-[#535353]/40 bg-transparent text-[#2E2E2E] hover:bg-[#2E2E2E]/[0.04]"
-                  }`}
+                  className={pageLinkClass(isActive)}
                 >
                   {String(item).padStart(2, "0")}
                 </button>
@@ -120,11 +156,27 @@ function Pagination({
           <div className="flex items-center gap-2 md:hidden">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((item) => {
               const isActive = item === page;
+              if (useRoutes) {
+                return (
+                  <Link
+                    key={item}
+                    href={blogPageHref(item)}
+                    aria-current={isActive ? "page" : undefined}
+                    aria-label={`Page ${item}`}
+                    className={`h-2.5 rounded-full transition-all ${
+                      isActive
+                        ? "w-6 bg-[#413CC0]"
+                        : "w-2.5 bg-[#D8D8E2] hover:bg-[#B0B0BA]"
+                    }`}
+                  />
+                );
+              }
+
               return (
                 <button
                   key={item}
                   type="button"
-                  onClick={() => onChange(item)}
+                  onClick={() => onChange?.(item)}
                   aria-current={isActive ? "page" : undefined}
                   aria-label={`Page ${item}`}
                   className={`h-2.5 rounded-full transition-all ${
@@ -137,16 +189,27 @@ function Pagination({
             })}
           </div>
 
-          <Button
-            type="button"
-            variant="primary"
-            size="sm"
-            disabled={page >= totalPages}
-            onClick={() => onChange(page + 1)}
-            aria-label="Next page"
-          >
-            Next
-          </Button>
+          {useRoutes && page < totalPages ? (
+            <Button
+              href={nextHref}
+              variant="primary"
+              size="sm"
+              aria-label="Next page"
+            >
+              Next
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              variant="primary"
+              size="sm"
+              disabled={page >= totalPages}
+              onClick={() => onChange?.(page + 1)}
+              aria-label="Next page"
+            >
+              Next
+            </Button>
+          )}
         </div>
       </div>
     </nav>
@@ -155,13 +218,26 @@ function Pagination({
 
 type ListingProps = {
   posts: BlogPost[];
+  currentPage?: number;
+  pageSize?: number;
 };
 
-const Listing = ({ posts }: ListingProps) => {
+const Listing = ({
+  posts,
+  currentPage = 1,
+  pageSize = BLOG_PAGE_SIZE,
+}: ListingProps) => {
   const [activeFilter, setActiveFilter] = useState<Filter>("All");
   const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
+  const [clientPage, setClientPage] = useState(currentPage);
   const [sortNewest, setSortNewest] = useState(true);
+
+  const isFiltered =
+    activeFilter !== "All" || query.trim().length > 0 || !sortNewest;
+
+  useEffect(() => {
+    setClientPage(currentPage);
+  }, [currentPage]);
 
   const filteredPosts = useMemo(() => {
     const filtered = posts.filter((post) => {
@@ -180,24 +256,27 @@ const Listing = ({ posts }: ListingProps) => {
     });
   }, [activeFilter, posts, query, sortNewest]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredPosts.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(filteredPosts.length / pageSize));
+  const page = isFiltered ? clientPage : currentPage;
 
   useEffect(() => {
-    setPage(1);
+    setClientPage(1);
   }, [activeFilter, query, sortNewest]);
 
   useEffect(() => {
-    if (page > totalPages) setPage(totalPages);
-  }, [page, totalPages]);
+    if (isFiltered && clientPage > totalPages) setClientPage(totalPages);
+  }, [clientPage, isFiltered, totalPages]);
 
   const pagedPosts = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE;
-    return filteredPosts.slice(start, start + PAGE_SIZE);
-  }, [filteredPosts, page]);
+    const start = (page - 1) * pageSize;
+    return filteredPosts.slice(start, start + pageSize);
+  }, [filteredPosts, page, pageSize]);
 
-  const handlePageChange = (nextPage: number) => {
-    setPage(nextPage);
-    document.getElementById("blog-listing")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const handleClientPageChange = (nextPage: number) => {
+    setClientPage(nextPage);
+    document
+      .getElementById("blog-listing")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -262,8 +341,9 @@ const Listing = ({ posts }: ListingProps) => {
                 page={page}
                 totalPages={totalPages}
                 totalItems={filteredPosts.length}
-                pageSize={PAGE_SIZE}
-                onChange={handlePageChange}
+                pageSize={pageSize}
+                useRoutes={!isFiltered}
+                onChange={isFiltered ? handleClientPageChange : undefined}
               />
             </>
           ) : (

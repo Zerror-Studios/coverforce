@@ -1,6 +1,7 @@
 import Hero from "@/components/blog/Hero";
 import Listing from "@/components/blog/Listing";
 import PageWrapper from "@/components/PageWrapper";
+import { BLOG_PAGE_SIZE } from "@/lib/blogPagination";
 import { createPageMetadata } from "@/lib/seo";
 import { getBlogPosts, toListingPost } from "@/lib/webflow";
 
@@ -35,7 +36,11 @@ const BlogPage = async () => {
           latest={latest}
         />
       ) : null}
-      <Listing posts={posts.map(toListingPost)} />
+      <Listing
+        posts={posts.map(toListingPost)}
+        currentPage={1}
+        pageSize={BLOG_PAGE_SIZE}
+      />
     </PageWrapper>
   );
 };
