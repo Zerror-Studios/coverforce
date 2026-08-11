@@ -1,8 +1,14 @@
 import Hero from "@/components/blogDets/Hero";
 import Content from "@/components/blogDets/Content";
 import MoreBlogs from "@/components/blogDets/MoreBlogs";
+import JsonLd from "@/components/common/JsonLd";
 import PageWrapper from "@/components/PageWrapper";
 import { createArticleMetadata } from "@/lib/seo";
+import {
+  buildArticleJsonLd,
+  buildBreadcrumbJsonLd,
+  breadcrumbsForPath,
+} from "@/lib/jsonLd";
 import { getBlogPostBySlug, getBlogPosts } from "@/lib/webflow";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -48,8 +54,16 @@ const BlogDetailPage = async ({ params }: BlogDetailPageProps) => {
       image: item.image,
     }));
 
+  const breadcrumbs = [
+    ...breadcrumbsForPath("/blog"),
+    { name: post.title, path: `/blog/${post.slug}` },
+  ];
+
   return (
     <PageWrapper>
+      <JsonLd
+        data={[buildArticleJsonLd(post), buildBreadcrumbJsonLd(breadcrumbs)]}
+      />
       <Hero
         post={{
           category: post.category,

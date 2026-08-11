@@ -8,12 +8,14 @@ import DataAdvantage from "@/components/home/DataAdvantage";
 import Review from "@/components/home/Review";
 import SectionRadialGlow from "@/components/common/SectionRadialGlow";
 import CarrierResults from "@/components/home/CarrierResults";
+import PageJsonLd from "@/components/common/PageJsonLd";
 import { createPageMetadata } from "@/lib/seo";
 import PageWrapper from "@/components/PageWrapper";
 
 const HomePage = () => {
   return (
     <>
+      <PageJsonLd path="/" />
       <PageWrapper>
         <Hero />
         <HomeSectionsAfterIntro>

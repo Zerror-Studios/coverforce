@@ -5,6 +5,7 @@ import CarrierResults from '@/components/home/CarrierResults'
 import Hero from '@/components/solutions/carrier/Hero'
 import Stat from '@/components/solutions/carrier/Stat'
 import PageWrapper from '@/components/PageWrapper'
+import PageJsonLd from '@/components/common/PageJsonLd'
 import { createPageMetadata } from '@/lib/seo'
 
 export const metadata = createPageMetadata('/solutions/carrier')
@@ -12,6 +13,7 @@ export const metadata = createPageMetadata('/solutions/carrier')
 const page = () => {
   return (
     <>
+    <PageJsonLd path="/solutions/carrier" />
     <PageWrapper>
     <Hero/>
     <OperatingSystem/>

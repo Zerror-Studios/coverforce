@@ -1,6 +1,7 @@
 import Hero from "@/components/blog/Hero";
 import Listing from "@/components/blog/Listing";
 import PageWrapper from "@/components/PageWrapper";
+import PageJsonLd from "@/components/common/PageJsonLd";
 import { BLOG_PAGE_SIZE } from "@/lib/blogPagination";
 import { createPageMetadata } from "@/lib/seo";
 import { getBlogPosts, toListingPost } from "@/lib/webflow";
@@ -24,6 +25,7 @@ const BlogPage = async () => {
 
   return (
     <PageWrapper>
+      <PageJsonLd path="/blog" />
       {featuredPost ? (
         <Hero
           featured={{

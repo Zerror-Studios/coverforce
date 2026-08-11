@@ -7,11 +7,18 @@ import EducationalResources from "@/components/solutions/startups/EducationalRes
 import StartupFaq from "@/components/solutions/startups/StartupFaq";
 import StartupTestimonials from "@/components/solutions/startups/StartupTestimonials";
 import Hero from "@/components/solutions/startups/Hero";
+import JsonLd from "@/components/common/JsonLd";
 import PageWrapper from "@/components/PageWrapper";
+import { STARTUP_FAQS } from "@/data/startupFaqs";
 import { createPageMetadata } from "@/lib/seo";
+import {
+  buildFaqPageJsonLd,
+  buildMarketingPageJsonLd,
+} from "@/lib/jsonLd";
 import { getBlogPosts, toListingPost } from "@/lib/webflow";
 
-export const metadata = createPageMetadata("/solutions/startups");
+const PATH = "/solutions/startups";
+export const metadata = createPageMetadata(PATH);
 export const revalidate = 3600;
 
 const page = async () => {
@@ -28,6 +35,12 @@ const page = async () => {
 
   return (
     <PageWrapper>
+      <JsonLd
+        data={[
+          ...buildMarketingPageJsonLd(PATH),
+          buildFaqPageJsonLd(STARTUP_FAQS),
+        ]}
+      />
       <Hero />
       <WhosFor />
       <ProgramOverview />

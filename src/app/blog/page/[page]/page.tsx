@@ -1,10 +1,15 @@
 import Hero from "@/components/blog/Hero";
 import Listing from "@/components/blog/Listing";
+import JsonLd from "@/components/common/JsonLd";
 import PageWrapper from "@/components/PageWrapper";
 import {
   BLOG_PAGE_SIZE,
   getBlogTotalPages,
 } from "@/lib/blogPagination";
+import {
+  buildBreadcrumbJsonLd,
+  buildWebPageJsonLd,
+} from "@/lib/jsonLd";
 import { createMetadata, getPageSeo } from "@/lib/seo";
 import { getBlogPosts, toListingPost } from "@/lib/webflow";
 import type { Metadata } from "next";
@@ -76,8 +81,26 @@ const BlogPagedPage = async ({ params }: BlogPagedPageProps) => {
       date: post.date,
     }));
 
+  const seo = getPageSeo("/blog");
+  const path = `/blog/page/${pageNum}`;
+  const title = `${seo.title} — Page ${pageNum}`;
+
   return (
     <PageWrapper>
+      <JsonLd
+        data={[
+          buildWebPageJsonLd({
+            path,
+            title,
+            description: seo.description,
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" },
+            { name: `Page ${pageNum}`, path },
+          ]),
+        ]}
+      />
       {featuredPost ? (
         <Hero
           featured={{

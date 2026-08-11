@@ -4,6 +4,7 @@ import Hero from "@/components/careers/Hero";
 import OurValues from "@/components/careers/OurValues";
 import OurCluture from "@/components/careers/OurCluture";
 import Positions from "@/components/careers/Positions";
+import PageJsonLd from "@/components/common/PageJsonLd";
 import { createPageMetadata } from "@/lib/seo";
 import { getDoverJobCategories, JobCategory } from "@/lib/doverJobs";
 
@@ -21,6 +22,7 @@ const CareerPage = async () => {
 
   return (
     <>
+      <PageJsonLd path="/careers" />
       <PageWrapper>
         <Hero />
         <OurValues />

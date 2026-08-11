@@ -6,6 +6,7 @@ import WhyCoverforce from "@/components/home/WhyCoverforce";
 import PageWrapper from "@/components/PageWrapper";
 import Endpoints from "@/components/developers/Endpoints";
 import OperatingSystem from "@/components/solutions/developers/OperatingSystem";
+import PageJsonLd from "@/components/common/PageJsonLd";
 import { createPageMetadata } from "@/lib/seo";
 
 
@@ -14,6 +15,7 @@ export const metadata = createPageMetadata("/developers");
 const DevelopersPage = () => {
   return (
     <>
+      <PageJsonLd path="/developers" />
       <PageWrapper>
         <Hero />
         <Endpoints />

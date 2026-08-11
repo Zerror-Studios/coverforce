@@ -6,6 +6,7 @@ import Milestones from "@/components/about/Milestones";
 import Investors from "@/components/about/Investors";
 import Leaderships from "@/components/about/Leaderships";
 import Recognition from "@/components/about/Recognition";
+import PageJsonLd from "@/components/common/PageJsonLd";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata = createPageMetadata("/about");
@@ -13,6 +14,7 @@ export const metadata = createPageMetadata("/about");
 const AboutPage = () => {
   return (
     <>
+      <PageJsonLd path="/about" />
       <PageWrapper>
         <Hero />
         <OurStory />

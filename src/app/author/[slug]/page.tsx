@@ -1,10 +1,15 @@
 import AuthorPosts from "@/components/author/AuthorPosts";
 import Hero from "@/components/author/Hero";
+import JsonLd from "@/components/common/JsonLd";
 import PageWrapper from "@/components/PageWrapper";
 import {
   buildAuthorPersonJsonLd,
   getAuthorSeo,
 } from "@/data/authorSeo";
+import {
+  buildBreadcrumbJsonLd,
+  buildWebPageJsonLd,
+} from "@/lib/jsonLd";
 import { createMetadata } from "@/lib/seo";
 import {
   getBlogAuthorBySlug,
@@ -77,13 +82,24 @@ const AuthorPage = async ({ params }: AuthorPageProps) => {
     )
     .map(toListingPost);
 
-  const personJsonLd = buildAuthorPersonJsonLd(author, profile);
+  const path = `/author/${slug}`;
+  const title = profile.title || `${author.name} | Author at CoverForce`;
+  const description =
+    profile.description ||
+    `Read articles by ${author.name} on commercial insurance distribution, technology, and the future of the P&C industry.`;
 
   return (
     <PageWrapper>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      <JsonLd
+        data={[
+          buildAuthorPersonJsonLd(author, profile),
+          buildWebPageJsonLd({ path, title, description }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" },
+            { name: author.name, path },
+          ]),
+        ]}
       />
       <Hero author={author} profile={profile} />
       <AuthorPosts authorName={author.name} posts={authorPosts} />
