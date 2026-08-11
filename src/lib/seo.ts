@@ -15,8 +15,15 @@ type CreateMetadataOptions = {
   noIndex?: boolean;
 };
 
+function resolveMetadataImage(image = siteConfig.ogImage): string {
+  // Keep absolute CDN/external URLs as-is; keep site assets as path-only
+  // (Next resolves relative paths via metadataBase).
+  if (/^https?:\/\//i.test(image)) return image;
+  return image.startsWith("/") ? image : `/${image}`;
+}
+
 function buildOgImages(alt: string, image = siteConfig.ogImage) {
-  const imageUrl = absoluteUrl(image);
+  const imageUrl = resolveMetadataImage(image);
 
   return {
     imageUrl,
@@ -66,9 +73,9 @@ export function createMetadata({
     title: pageTitle,
     description,
     keywords,
-    authors: [{ name: siteConfig.name }],
-    creator: siteConfig.name,
-    publisher: siteConfig.name,
+    authors: [{ name: "CoverForce" }],
+    creator: "CoverForce",
+    publisher: "CoverForce",
     robots: {
       index: !noIndex,
       follow: !noIndex,
@@ -84,7 +91,7 @@ export function createMetadata({
     openGraph: {
       type,
       locale: siteConfig.locale,
-      siteName: siteConfig.name,
+      siteName: "CoverForce",
       title: pageTitle,
       description,
       url,

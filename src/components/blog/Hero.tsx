@@ -65,9 +65,9 @@ const Hero = ({ featured, latest }: HeroProps) => {
                 </p>
               </div>
 
-              <h2 className="mt-4 max-w-none font-heading text-2xl font-medium leading-[1.15] tracking-tight text-[#0a143b] transition-colors group-hover:text-[#413CC0] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:max-w-xl lg:text-[1.625rem] lg:leading-[1.12]">
+              <h1 className="mt-4 max-w-none font-heading text-2xl font-medium leading-[1.15] tracking-tight text-[#0a143b] transition-colors group-hover:text-[#413CC0] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:max-w-xl lg:text-[1.625rem] lg:leading-[1.12]">
                 {featured.title}
-              </h2>
+              </h1>
             </Link>
 
             <aside className="hidden min-w-0 lg:block lg:pl-4 xl:pl-5">

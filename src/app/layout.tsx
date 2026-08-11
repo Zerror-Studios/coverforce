@@ -27,7 +27,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
 
   return (
     <ViewTransitions>
-      <html lang="en" className={cn("font-sans", geist.variable)}>
+      <html lang="en-US" className={cn("font-sans", geist.variable)}>
         <head>
           <Script id="cookieyes" src="https://cdn-cookieyes.com/client_data/e14d3cac29528160d6d1925ec7368161/script.js" strategy="beforeInteractive" />
         </head>

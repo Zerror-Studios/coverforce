@@ -139,9 +139,9 @@ const Hero = ({ post }: HeroProps) => {
             </p>
           </div>
 
-          <h2 className="mt-4 max-w-3xl font-heading text-2xl font-medium leading-[1.15] tracking-tight text-[#0a143b] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
+          <h1 className="mt-4 max-w-3xl font-heading text-2xl font-medium leading-[1.15] tracking-tight text-[#0a143b] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
             {post.title}
-          </h2>
+          </h1>
 
           <div className="relative z-30 mt-5 flex items-center justify-between gap-4">
             <div ref={authorRef} className="group relative">

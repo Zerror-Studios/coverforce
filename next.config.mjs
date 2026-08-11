@@ -29,6 +29,22 @@ const nextConfig = {
         destination: "/developers",
         permanent: true,
       },
+      // Legacy pages from the previous site (still indexed in search)
+      {
+        source: "/company",
+        destination: "/about",
+        permanent: true,
+      },
+      {
+        source: "/for-peos",
+        destination: "/solutions/brokers",
+        permanent: true,
+      },
+      {
+        source: "/products/:path*",
+        destination: "/product/quote-bind",
+        permanent: true,
+      },
     ];
   },
 };

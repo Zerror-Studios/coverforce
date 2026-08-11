@@ -38,8 +38,8 @@ export const siteConfig: SiteConfig = {
   description:
     "Generate, compare, and bind commercial insurance quotes with CoverForce. Access leading P&C carriers through one API marketplace and distribution platform built to scale.",
   url: "https://www.coverforce.com",
-  locale: "en_IN",
-  language: "en-IN",
+  locale: "en_US",
+  language: "en-US",
   ogImage: "/og.png",
   keywords: ["CoverForce", "Insurance", "Platform", "Management", "Policy", "Creation"],
   contact: {
@@ -72,9 +72,9 @@ export const siteRoutes: SiteRoute[] = [
   {
     path: "/product/submission-intake",
     label: "Submission Intake",
-    title: "AI Submission Intake for Commercial Insurance | CoverForce",
+    title: "Commercial Insurance Distribution Platform | CoverForce",
     description:
-      "Turn emails, PDFs, and ACORD forms into carrier-ready submissions. CoverForce helps brokers and wholesalers automate intake and process commercial submissions faster.",
+      "CoverForce connects brokers, networks and wholesalers to leading commercial P&C; carriers through one API for submission, quoting, binding and payment.",
     priority: 0.9,
   },
   {
@@ -82,39 +82,39 @@ export const siteRoutes: SiteRoute[] = [
     label: "Quote & Bind",
     title: "Commercial Quote and Bind Software | CoverForce",
     description:
-      "Generate, compare, and bind commercial quotes from top P&C carriers in one workflow. Speed placements and close policies faster with CoverForce quote and bind.",
+      "Submit once, compare bindable quotes from dozens of carriers side by side, and bind and collect payment without leaving the CoverForce workflow.",
     priority: 0.9,
   },
   {
     path: "/product/intelligence",
     label: "Intelligence",
-    title: "Insurance Intelligence and Appetite Matching | CoverForce",
+    title: "Insurance Carrier Appetite Intelligence | CoverForce",
     description:
-      "AI-powered insurance intelligence for appetite matching and placement decisions. Help brokers and wholesalers gain risk insights and place more commercial business.",
+      "Match risks to the carriers most likely to write them. Appetite data by state, industry and line of business, built from live submission outcomes.",
     priority: 0.9,
   },
   {
     path: "/solutions/carrier",
     label: "Carriers",
-    title: "Insurance Distribution Solutions for Carriers | CoverForce",
+    title: "Insurance Carrier Distribution API Platform | CoverForce",
     description:
-      "Expand distribution and modernize underwriting with CoverForce. Connect to brokers, streamline submissions, and deliver faster quote-to-bind experiences at scale.",
+      "Reach thousands of appointed agents through one integration. Open new distribution, cut submission handling cost and see richer data on every risk.",
     priority: 0.8,
   },
   {
     path: "/solutions/brokers",
     label: "Brokers",
-    title: "Insurance Workflow Software for Brokers | CoverForce",
+    title: "Insurance Software for Brokers and Agencies | CoverForce",
     description:
-      "One platform from intake to bind for retail and independent brokers. Streamline submissions, compare carrier quotes, and grow placements with CoverForce.",
+      "Quote, compare and bind commercial policies from one platform. Keep your book, keep your commissions, and cut hours of duplicate carrier paperwork.",
     priority: 0.8,
   },
   {
     path: "/solutions/wholesalers",
     label: "Wholesalers",
-    title: "Digital Submission Platform for Wholesalers | CoverForce",
+    title: "Wholesale Insurance Broker Platform and API | CoverForce",
     description:
-      "Manage broker codes, delegate access, and streamline surplus lines distribution with white-label storefronts, reporting, and digital submissions on CoverForce.",
+      "Give retail partners a branded submission and quoting experience, route business to preferred markets, and handle E&S; compliance inside the workflow.",
     priority: 0.8,
   },
   {
@@ -176,9 +176,9 @@ export const siteRoutes: SiteRoute[] = [
   {
     path: "/contact",
     label: "Contact",
-    title: "Contact CoverForce | Talk to Our Team",
+    title: "Contact CoverForce | Request a Commercial Demo",
     description:
-      "Get in touch with CoverForce to request a demo, explore partnerships, or learn how our insurance distribution platform can help your agency, network, or carrier grow.",
+      "Talk to the CoverForce team about a platform demo, an API integration or a carrier partnership. Sales, support and partnership routes in one place.",
     priority: 0.6,
   },
   {
