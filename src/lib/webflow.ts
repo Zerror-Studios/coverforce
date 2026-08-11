@@ -400,8 +400,7 @@ function mapBlogItem(
   const summary =
     fields["post-summary"]?.trim() ||
     stripHtml(fields["post-body"] ?? "").slice(0, 180);
-  const publishedAt =
-    fields["published-at-manual"] || item.lastPublished || "";
+  const publishedAt = fields["published-at-manual"] || "";
   const date = formatBlogDate(publishedAt);
 
   return {
