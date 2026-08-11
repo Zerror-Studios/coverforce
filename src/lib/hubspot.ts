@@ -46,11 +46,11 @@ export function buildContactHubSpotFields(payload: {
   problems: string;
   heardAboutUs: string[];
 }): HubSpotField[] {
-  const { firstname } = splitFullName(payload.fullName);
+  // Contact form has a single full-name field; HubSpot example sends it as firstname.
   const phone = `${payload.phoneCode}${payload.phone.replace(/\D/g, "")}`;
 
   return [
-    field("firstname", firstname),
+    field("firstname", payload.fullName),
     field("email", payload.email),
     field("phone", phone),
     field("jobtitle", payload.jobTitle),
