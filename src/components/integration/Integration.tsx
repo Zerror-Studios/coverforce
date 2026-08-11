@@ -55,19 +55,19 @@ const CarrierCard = ({
   const cardRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
 
-  // Filter products based on market filter + status filter (live vs request)
+  // Filter products by market. When status is "live", keep every product on
+  // that carrier (request products stay visible with a hollow ball). When
+  // status is "api", only show request products.
   const displayProducts = useMemo(() => {
     return carrier.products.filter((p) => {
       const matchesMarket = marketFilter === "all" ? true : p.market === marketFilter;
 
-      let matchesStatus = true;
-      if (statusFilter === "live") {
-        matchesStatus = p.availability === "live";
-      } else if (statusFilter === "api") {
-        matchesStatus = p.availability === "request";
+      if (statusFilter === "api") {
+        return matchesMarket && p.availability === "request";
       }
 
-      return matchesMarket && matchesStatus;
+      // "all" and "live" — show all products that match the market
+      return matchesMarket;
     });
   }, [carrier.products, marketFilter, statusFilter]);
 
@@ -93,6 +93,7 @@ const CarrierCard = ({
     <div
       ref={cardRef}
       data-carrier-card
+      data-carrier-key={carrier.name}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className="group relative overflow-hidden rounded-[20px] bg-[#ECECEC] p-[1.5px] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform hover:-translate-y-1 hover:scale-[1.015]"
@@ -312,6 +313,7 @@ function FormSelect({ id, label, value, options, onChange }: FormSelectProps) {
 const Integration = () => {
   const PAGE_SIZE = 12;
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const revealedKeysRef = useRef<Set<string>>(new Set());
 
   const gridRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
@@ -370,16 +372,14 @@ const Integration = () => {
         hasMarket = hasESProducts;
       }
 
-      // Status filter — based on whether the carrier has any product
-      // with matching availability, not the carrier's overall status badge.
-      // This lets a mixed carrier (e.g. one with both live AD products
-      // and request-only ES products) show up correctly under either filter,
-      // with only the matching products rendered inside the card.
+      // Status filter — use the carrier's overall status badge.
+      // "Live on CoverForce" shows those carriers with all of their products
+      // (request products render with a hollow ball inside the card).
       let hasStatus = true;
       if (status === "live") {
-        hasStatus = carrier.products.some((p) => p.availability === "live");
+        hasStatus = carrier.status === "Live on CoverForce";
       } else if (status === "api") {
-        hasStatus = carrier.products.some((p) => p.availability === "request");
+        hasStatus = carrier.status === "API available";
       }
 
       return hasLob && hasMarket && hasStatus;
@@ -393,28 +393,95 @@ const Integration = () => {
     setVisibleCount(PAGE_SIZE);
   }, [lob, market, status]);
 
+  const filtersKey = `${lob}|${market}|${status}`;
+  const prevFiltersKeyRef = useRef(filtersKey);
+
   useGSAP(
     () => {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      // Reset reveal tracking whenever filters change (not on "Show more")
+      if (prevFiltersKeyRef.current !== filtersKey) {
+        revealedKeysRef.current = new Set();
+        prevFiltersKeyRef.current = filtersKey;
+      }
+
       const cards = gsap.utils.toArray<HTMLElement>("[data-carrier-card]");
       if (!cards.length) return;
 
-      gsap.set(cards, { opacity: 0, y: 40 });
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        gsap.set(cards, { clearProps: "opacity,transform" });
+        cards.forEach((card) => {
+          const key = card.dataset.carrierKey;
+          if (key) revealedKeysRef.current.add(key);
+        });
+        return;
+      }
 
-      ScrollTrigger.batch(cards, {
-        start: "top 88%",
-        onEnter: (batch) =>
-          gsap.to(batch, {
+      // Cards already revealed (e.g. before "Show more") stay put.
+      // Everything else is split so in-viewport cards animate immediately —
+      // ScrollTrigger alone misses reused nodes that kept opacity: 0 after a filter.
+      const inView: HTMLElement[] = [];
+      const belowFold: HTMLElement[] = [];
+      const threshold = window.innerHeight * 0.88;
+
+      cards.forEach((card) => {
+        const key = card.dataset.carrierKey ?? "";
+        if (key && revealedKeysRef.current.has(key)) {
+          gsap.set(card, { opacity: 1, y: 0 });
+          return;
+        }
+
+        if (card.getBoundingClientRect().top < threshold) {
+          inView.push(card);
+        } else {
+          belowFold.push(card);
+        }
+      });
+
+      if (inView.length) {
+        inView.forEach((card) => {
+          const key = card.dataset.carrierKey;
+          if (key) revealedKeysRef.current.add(key);
+        });
+
+        gsap.fromTo(
+          inView,
+          { opacity: 0, y: 40 },
+          {
             opacity: 1,
             y: 0,
-            duration: 0.6,
+            duration: 0.55,
             ease: "power2.out",
-            stagger: 0.08,
+            stagger: 0.06,
             overwrite: true,
-          }),
-      });
+          },
+        );
+      }
+
+      if (belowFold.length) {
+        gsap.set(belowFold, { opacity: 0, y: 40 });
+
+        ScrollTrigger.batch(belowFold, {
+          start: "top 88%",
+          once: true,
+          onEnter: (batch) => {
+            batch.forEach((card) => {
+              const key = (card as HTMLElement).dataset.carrierKey;
+              if (key) revealedKeysRef.current.add(key);
+            });
+
+            gsap.to(batch, {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              stagger: 0.08,
+              overwrite: true,
+            });
+          },
+        });
+      }
     },
-    { scope: gridRef, dependencies: [directory] },
+    { scope: gridRef, dependencies: [filtersKey, visibleCount] },
   );
 
   return (
