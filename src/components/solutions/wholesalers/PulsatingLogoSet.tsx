@@ -12,9 +12,9 @@ const DEFAULT_LOGOS: MarqueeLogo[] = Array.from({ length: 15 }, (_, index) => ({
 
 const LOGO_SLOT_CLASS = {
   default:
-    "flex h-7 w-full max-w-[7.5rem] shrink-0 items-center justify-center sm:h-8 sm:max-w-36 md:h-8 md:max-w-40 lg:h-9 lg:max-w-44",
+    "flex h-7 w-[6.5rem] shrink-0 items-center justify-center sm:h-8 sm:w-32 md:h-8 md:w-36 lg:h-9 lg:w-40",
   large:
-    "flex h-8 w-full max-w-[8.5rem] shrink-0 items-center justify-center sm:h-9 sm:max-w-40 md:h-9 md:max-w-44 lg:h-10 lg:max-w-48",
+    "flex h-8 w-[7.25rem] shrink-0 items-center justify-center sm:h-9 sm:w-36 md:h-9 md:w-40 lg:h-10 lg:w-44",
 } as const;
 
 const LOGO_IMAGE_CLASS =
@@ -143,7 +143,7 @@ export function PulsatingLogoSet({
 
   return (
     <div
-      className="flex w-full max-w-full items-center justify-between gap-4 overflow-x-clip px-2 sm:gap-4 sm:px-8 md:px-12 lg:gap-6 lg:px-16"
+      className="flex w-full items-center justify-between gap-3 overflow-x-clip sm:gap-5 md:gap-6 lg:gap-8"
       aria-label="Partner logos"
     >
       {activeLogos.map((logo, i) => {
@@ -154,7 +154,7 @@ export function PulsatingLogoSet({
         return (
           <div
             key={`${setIndex}-${logo.src}`}
-            className={`logo-set-item flex min-w-0 flex-1 justify-center logo-set-item--${phase} motion-reduce:translate-y-0 motion-reduce:opacity-100`}
+            className={`logo-set-item shrink-0 logo-set-item--${phase} motion-reduce:translate-y-0 motion-reduce:opacity-100`}
             style={{
               transitionDelay: phase === "hidden" ? "0ms" : `${delayMs}ms`,
             }}
@@ -163,7 +163,7 @@ export function PulsatingLogoSet({
               <Image
                 src={logo.src}
                 alt={logo.alt}
-                width={size === "large" ? 192 : 176}
+                width={size === "large" ? 176 : 160}
                 height={size === "large" ? 40 : 36}
                 className={`${LOGO_IMAGE_CLASS} ${LOGO_TONE_CLASS[tone]}`}
                 draggable={false}
