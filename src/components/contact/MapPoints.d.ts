@@ -1,9 +1,16 @@
-import type { FC } from "react";
+import type { FC, ReactElement } from "react";
 
 export declare function MobileOfficePopup(props: {
   office: string | null;
   onClose: () => void;
-}): React.ReactElement | null;
+}): ReactElement | null;
+
+export declare function OfficeCardBody(props: {
+  office: string;
+  largeImage?: boolean;
+}): ReactElement | null;
+
+export declare function MobileOfficeAddresses(): ReactElement;
 
 declare const MapPoints: FC<{
   activeOffice?: string | null;

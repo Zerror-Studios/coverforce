@@ -96,7 +96,7 @@ const OFFICES = {
   },
 };
 
-function OfficeCardBody({ office, largeImage = false }) {
+export function OfficeCardBody({ office, largeImage = false }) {
   const data = OFFICES[office];
   if (!data) return null;
 
@@ -125,6 +125,31 @@ function OfficeCardBody({ office, largeImage = false }) {
         </a>
       </div>
     </>
+  );
+}
+
+/** Static office cards for mobile contact layout (no map). */
+export function MobileOfficeAddresses() {
+  return (
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 px-5 pb-12 pt-2 sm:px-10">
+      {(
+        [
+          { id: "new-york", label: "New York" },
+          { id: "denver", label: "Denver" },
+        ]
+      ).map(({ id, label }) => (
+        <article
+          key={id}
+          className="rounded-md border border-[#EDEDED] bg-white p-4 shadow-[0_16px_40px_-18px_rgba(10,20,59,0.22)]"
+          aria-label={`${label} office`}
+        >
+          <h3 className="mb-3 font-heading text-base font-medium tracking-tight text-[#1A1A1A]">
+            {label}
+          </h3>
+          <OfficeCardBody office={id} />
+        </article>
+      ))}
+    </div>
   );
 }
 

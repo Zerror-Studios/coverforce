@@ -772,17 +772,17 @@ const ContactForm = () => {
       `}</style>
       <section
         ref={sectionRef}
-        className="relative flex h-full items-center overflow-hidden text-white"
+        className="relative flex h-auto min-h-svh items-center overflow-visible pt-24 pb-10 text-white lg:h-full lg:min-h-0 lg:overflow-hidden lg:pt-0 lg:pb-0"
       >
         <Container
           borderColor="#FFFFFF33"
           borderOpacity={borderOpacity}
-          className="relative z-10 flex h-full w-full items-center overflow-hidden"
+          className="relative z-10 flex h-auto w-full flex-1 items-center overflow-visible lg:h-full lg:overflow-hidden"
         >
           <div
             ref={contentRef}
             data-lenis-prevent
-            className="relative z-10 mx-auto flex max-h-full w-full max-w-3xl flex-col items-center justify-center overflow-y-auto overscroll-contain py-8 text-center [-webkit-overflow-scrolling:touch]"
+            className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center justify-center overflow-visible py-8 text-center lg:max-h-full lg:overflow-y-auto lg:overscroll-contain [-webkit-overflow-scrolling:touch]"
           >
             {step > 0 && step < thankYouStep && (
               <div className="mb-8 text-sm font-medium uppercase tracking-widest text-white/60">
