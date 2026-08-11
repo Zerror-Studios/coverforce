@@ -148,14 +148,14 @@ const CarrierCard = ({
                   }`}
                 >
                   <span
-                    className={`size-1.5 shrink-0 rounded-full ${
+                    className={`box-border size-2 shrink-0 rounded-full border ${
                       requestable
                         ? isES
-                          ? "bg-transparent ring-1 ring-[#8B5CF6]"
-                          : "bg-transparent ring-1 ring-[#185FA5]"
+                          ? "border-[#8B5CF6] bg-transparent"
+                          : "border-[#185FA5] bg-transparent"
                         : isES
-                          ? "bg-[#8B5CF6]"
-                          : "bg-[#4F8A2E]"
+                          ? "border-[#8B5CF6] bg-[#8B5CF6]"
+                          : "border-[#4F8A2E] bg-[#4F8A2E]"
                     }`}
                     aria-hidden
                   />
@@ -188,6 +188,8 @@ const CarrierCard = ({
 type FormSelectOption = {
   value: string;
   label: string;
+  /** Optional status legend: filled = live, hollow = request/API */
+  dot?: "filled" | "hollow";
 };
 
 type FormSelectProps = {
@@ -197,6 +199,19 @@ type FormSelectProps = {
   options: readonly FormSelectOption[] | readonly string[];
   onChange: (value: string) => void;
 };
+
+function StatusDot({ variant }: { variant: "filled" | "hollow" }) {
+  return (
+    <span
+      className={`box-border size-2 shrink-0 rounded-full border ${
+        variant === "filled"
+          ? "border-[#4F8A2E] bg-[#4F8A2E]"
+          : "border-[#185FA5] bg-transparent"
+      }`}
+      aria-hidden
+    />
+  );
+}
 
 function FormSelect({ id, label, value, options, onChange }: FormSelectProps) {
   const [open, setOpen] = useState(false);
@@ -257,12 +272,17 @@ function FormSelect({ id, label, value, options, onChange }: FormSelectProps) {
             : "border-[#E4E7EC] hover:border-[#5B35E0]/40"
         }`}
       >
-        <span className={`truncate ${value ? "text-[#1A1A1A]" : "text-[#98A2B3]"}`}>
-          {selected?.label ?? "Select"}
+        <span
+          className={`flex min-w-0 items-center gap-2 truncate ${
+            value ? "text-[#1A1A1A]" : "text-[#98A2B3]"
+          }`}
+        >
+          {selected?.dot ? <StatusDot variant={selected.dot} /> : null}
+          <span className="truncate">{selected?.label ?? "Select"}</span>
         </span>
 
         <ChevronDown
-          className={`h-4 w-4 text-[#98A2B3] transition-transform duration-200 ${
+          className={`h-4 w-4 shrink-0 text-[#98A2B3] transition-transform duration-200 ${
             open ? "rotate-180" : ""
           }`}
         />
@@ -289,7 +309,7 @@ function FormSelect({ id, label, value, options, onChange }: FormSelectProps) {
                     onChange(option.value);
                     setOpen(false);
                   }}
-                  className={`flex w-full items-center px-4 py-3.5 text-left font-heading text-xs font-semibold tracking-[0.04em] transition-colors md:text-sm ${
+                  className={`flex w-full items-center gap-2 px-4 py-3.5 text-left font-heading text-xs font-semibold tracking-[0.04em] transition-colors md:text-sm ${
                     index > 0 ? "border-t border-[#EEF1F5]" : ""
                   } ${
                     isSelected
@@ -297,6 +317,11 @@ function FormSelect({ id, label, value, options, onChange }: FormSelectProps) {
                       : "text-[#111110] hover:bg-[#F7F8FA]"
                   }`}
                 >
+                  {option.dot ? (
+                    <StatusDot variant={option.dot} />
+                  ) : (
+                    <span className="size-2 shrink-0" aria-hidden />
+                  )}
                   {option.label}
                 </button>
               </li>
@@ -340,8 +365,8 @@ const Integration = () => {
 
   const STATUS_OPTIONS = [
     { value: "all", label: "All" },
-    { value: "live", label: "Live on CoverForce" },
-    { value: "api", label: "API Available" },
+    { value: "live", label: "Live on CoverForce", dot: "filled" as const },
+    { value: "api", label: "API Available", dot: "hollow" as const },
   ] as const;
 
   const [lob, setLob] = useState("all");
