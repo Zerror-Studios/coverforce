@@ -161,7 +161,7 @@ export default function SolutionHeroCards({
   return (
     <div
       ref={rootRef}
-      className="relative mx-auto w-full max-w-[min(100%,420px)] pb-12 will-change-transform sm:pb-16 md:pb-14"
+      className="relative mx-auto w-full max-w-[min(100%,420px)] pb-12 will-change-transform sm:pb-16 md:pb-14 lg:max-w-[320px] xl:max-w-[min(100%,420px)]"
     >
       <div ref={cardOneRef} className="relative z-10 w-full will-change-transform">
         <Image
@@ -175,7 +175,7 @@ export default function SolutionHeroCards({
       </div>
       <div
         ref={cardTwoRef}
-        className="relative z-20 -ml-8 mt-6 w-[94%] max-w-[360px] will-change-transform sm:-ml-10 sm:mt-8 md:absolute md:bottom-20 md:-left-4 md:mt-0 md:w-[88%] lg:-left-6 lg:w-[86%]"
+        className="relative z-20 -ml-8 mt-6 w-[94%] max-w-[360px] will-change-transform sm:-ml-10 sm:mt-8 md:absolute md:bottom-20 md:-left-4 md:mt-0 md:w-[88%] lg:-left-5 lg:bottom-16 lg:w-[86%] lg:max-w-[280px] xl:-left-6 xl:bottom-20 xl:max-w-[360px]"
       >
         <Image
           src={cardTwo.src}

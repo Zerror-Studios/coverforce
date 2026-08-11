@@ -12,9 +12,9 @@ const DEFAULT_LOGOS: MarqueeLogo[] = Array.from({ length: 15 }, (_, index) => ({
 
 const LOGO_SLOT_CLASS = {
   default:
-    "flex h-7 w-[6.5rem] shrink-0 items-center justify-center sm:h-8 sm:w-32 md:h-8 md:w-36 lg:h-9 lg:w-40",
+    "flex h-7 w-[6.5rem] shrink-0 items-center justify-center sm:h-8 sm:w-32 md:h-8 md:w-36 lg:h-9 lg:w-40 xl:h-8 xl:w-36",
   large:
-    "flex h-8 w-[7.25rem] shrink-0 items-center justify-center sm:h-9 sm:w-36 md:h-9 md:w-40 lg:h-10 lg:w-44",
+    "flex h-8 w-[7.25rem] shrink-0 items-center justify-center sm:h-9 sm:w-36 md:h-9 md:w-40 lg:h-10 lg:w-44 xl:h-9 xl:w-40",
 } as const;
 
 const LOGO_IMAGE_CLASS =
