@@ -12,6 +12,9 @@ type WebflowImage = {
 type WebflowItem<T> = {
   id: string;
   fieldData: T;
+  /** Webflow system timestamp when the item was last published. */
+  lastPublished?: string | null;
+  createdOn?: string | null;
 };
 
 type BlogFieldData = {
@@ -398,7 +401,7 @@ function mapBlogItem(
     fields["post-summary"]?.trim() ||
     stripHtml(fields["post-body"] ?? "").slice(0, 180);
   const publishedAt =
-    fields["published-at-manual"] || fields["created-at-manual"] || "";
+    fields["published-at-manual"] || item.lastPublished || "";
   const date = formatBlogDate(publishedAt);
 
   return {
