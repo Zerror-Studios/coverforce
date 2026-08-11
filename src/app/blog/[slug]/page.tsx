@@ -3,11 +3,7 @@ import Content from "@/components/blogDets/Content";
 import MoreBlogs from "@/components/blogDets/MoreBlogs";
 import PageWrapper from "@/components/PageWrapper";
 import { createArticleMetadata } from "@/lib/seo";
-import {
-  getBlogPostBySlug,
-  getBlogPosts,
-  getBlogSlugs,
-} from "@/lib/webflow";
+import { getBlogPostBySlug, getBlogPosts } from "@/lib/webflow";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -15,7 +11,7 @@ type BlogDetailPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -32,15 +28,6 @@ export async function generateMetadata({
     path: `/blog/${slug}`,
     image: post.image,
   });
-}
-
-export async function generateStaticParams() {
-  try {
-    const slugs = await getBlogSlugs();
-    return slugs.map((slug) => ({ slug }));
-  } catch {
-    return [];
-  }
 }
 
 const BlogDetailPage = async ({ params }: BlogDetailPageProps) => {

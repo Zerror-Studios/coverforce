@@ -2,7 +2,6 @@ import type { BlogCategory, BlogPost } from "@/data/blogPosts";
 import { env } from "@/config/env";
 
 const WEBFLOW_API = "https://api.webflow.com/v2";
-const REVALIDATE_SECONDS = 3600;
 
 type WebflowImage = {
   url?: string;
@@ -153,7 +152,7 @@ async function webflowFetch<T>(path: string): Promise<T> {
       Authorization: `Bearer ${token}`,
       Accept: "application/json",
     },
-    next: { revalidate: REVALIDATE_SECONDS },
+    cache: "no-store",
   });
 
   if (!response.ok) {
