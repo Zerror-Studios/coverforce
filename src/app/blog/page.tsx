@@ -5,7 +5,7 @@ import { createPageMetadata } from "@/lib/seo";
 import { getBlogPosts, toListingPost } from "@/lib/webflow";
 
 export const metadata = createPageMetadata("/blog");
-export const revalidate = 0;
+export const revalidate = 3600;
 
 const BlogPage = async () => {
   const posts = await getBlogPosts();
