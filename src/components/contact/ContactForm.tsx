@@ -162,7 +162,7 @@ const LOB_OPTIONS = [
 ];
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const NAME_PATTERN = /^[\p{L}][\p{L}\s'.-]{0,49}$/u;
+const NAME_PATTERN = /^[\p{L}][\p{L}\s'.-]{0,79}$/u;
 
 type FieldErrors = Partial<Record<keyof FormDataState | "form", string>>;
 
@@ -320,6 +320,16 @@ function validateDefaultStep(step: number, data: FormDataState): FieldErrors {
   return errors;
 }
 
+function validateStep(
+  step: number,
+  data: FormDataState,
+  isStartupFlow: boolean,
+): FieldErrors {
+  return isStartupFlow
+    ? validateStartupStep(step, data)
+    : validateDefaultStep(step, data);
+}
+
 const ContactForm = () => {
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<FormDataState>({
@@ -363,6 +373,11 @@ const ContactForm = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const splitsRef = useRef<SplitText[]>([]);
   const [borderOpacity, setBorderOpacity] = useState(0);
+
+  useEffect(() => {
+    setFieldErrors({});
+    setSubmitError(null);
+  }, [step]);
 
   useEffect(() => {
     let cancelled = false;
@@ -453,6 +468,14 @@ const ContactForm = () => {
       if (animateBtns.length) gsap.set(animateBtns, { opacity: 0, y: 30 });
       if (animateFields.length) gsap.set(animateFields, { opacity: 0, y: 30 });
 
+      const clearAnimatedProps = () => {
+        if (buttonsContainer) gsap.set(buttonsContainer, { clearProps: "opacity,transform" });
+        if (animateBtns.length) gsap.set(animateBtns, { clearProps: "opacity,transform" });
+        if (animateFields.length) gsap.set(animateFields, { clearProps: "opacity,transform" });
+        if (heading) gsap.set(heading, { clearProps: "opacity" });
+        if (chars.length) gsap.set(chars, { clearProps: "opacity,transform" });
+      };
+
       const reveal = () => {
         gsap.to(borderProxy, {
           value: 1,
@@ -467,7 +490,10 @@ const ContactForm = () => {
 
         if (heading) gsap.set(heading, { opacity: 1 });
 
-        const tl = gsap.timeline({ delay: step === 0 ? 0.2 : 0 });
+        const tl = gsap.timeline({
+          delay: step === 0 ? 0.2 : 0,
+          onComplete: clearAnimatedProps,
+        });
 
         if (chars.length) {
           tl.to(chars, {
@@ -476,7 +502,6 @@ const ContactForm = () => {
             duration: 0.45,
             stagger: 0.015,
             ease: "power2.out",
-            onComplete: () => gsap.set(chars, { clearProps: "transform" }),
           });
         }
 
@@ -488,7 +513,6 @@ const ContactForm = () => {
               y: 0,
               duration: 0.55,
               ease: "power2.out",
-              onComplete: () => gsap.set(buttonsContainer, { clearProps: "transform" }),
             },
             "-=0.15",
           );
@@ -503,7 +527,6 @@ const ContactForm = () => {
               duration: 0.5,
               stagger: 0.025,
               ease: "power2.out",
-              onComplete: () => gsap.set(animateBtns, { clearProps: "transform" }),
             },
             "-=0.2",
           );
@@ -518,19 +541,23 @@ const ContactForm = () => {
               duration: 0.5,
               stagger: 0.025,
               ease: "power2.out",
-              onComplete: () => gsap.set(animateFields, { clearProps: "transform" }),
             },
             "-=0.2",
           );
         }
+
+        return tl;
       };
 
       if (step === 0) {
+        let revealTl: gsap.core.Timeline | null = null;
         const st = ScrollTrigger.create({
           trigger: section,
           start: "top 82%",
           once: true,
-          onEnter: reveal,
+          onEnter: () => {
+            revealTl = reveal();
+          },
         });
 
         const lenis = window.lenis;
@@ -540,10 +567,16 @@ const ContactForm = () => {
         return () => {
           lenis?.off("scroll", onLenisScroll);
           st.kill();
+          revealTl?.kill();
+          clearAnimatedProps();
         };
       }
 
-      reveal();
+      const revealTl = reveal();
+      return () => {
+        revealTl.kill();
+        clearAnimatedProps();
+      };
     },
     { dependencies: [step, greeting, greetingReady], scope: sectionRef },
   );
@@ -564,15 +597,10 @@ const ContactForm = () => {
   };
 
   const goNext = () => {
-    if (isStartupFlow) {
-      const errors = validateStartupStep(step, formData);
-      setFieldErrors(errors);
-      if (Object.keys(errors).length > 0) return;
-    } else {
-      const errors = validateDefaultStep(step, formData);
-      setFieldErrors(errors);
-      if (Object.keys(errors).length > 0) return;
-    }
+    if (isSubmitting) return;
+    const errors = validateStep(step, formData, isStartupFlow);
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
     setSubmitError(null);
     setStep((s) => Math.min(s + 1, thankYouStep));
   };
@@ -584,15 +612,10 @@ const ContactForm = () => {
   };
 
   const handleSubmit = async () => {
-    if (isStartupFlow) {
-      const errors = validateStartupStep(5, formData);
-      setFieldErrors(errors);
-      if (Object.keys(errors).length > 0) return;
-    } else {
-      const errors = validateDefaultStep(5, formData);
-      setFieldErrors(errors);
-      if (Object.keys(errors).length > 0) return;
-    }
+    if (isSubmitting) return;
+    const errors = validateStep(5, formData, isStartupFlow);
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
 
     setSubmitError(null);
     setIsSubmitting(true);
@@ -842,7 +865,7 @@ const ContactForm = () => {
                     </button>
                   ))}
                 </div>
-                <div className="mt-16" data-animate-btn>
+                <div className="mt-16">
                   <Button surface="on-dark" onClick={goNext} balanced>
                     NEXT
                   </Button>
@@ -1042,7 +1065,7 @@ const ContactForm = () => {
                   </div>
                 </div>
 
-                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
+                <div className="mt-16 flex w-full items-center justify-between">
                   <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
                     GO BACK
                   </Button>
@@ -1160,7 +1183,7 @@ const ContactForm = () => {
                     )}
                   </div>
                 </div>
-                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
+                <div className="mt-16 flex w-full items-center justify-between">
                   <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
                     GO BACK
                   </Button>
@@ -1282,7 +1305,7 @@ const ContactForm = () => {
                     )}
                   </div>
                 </div>
-                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
+                <div className="mt-16 flex w-full items-center justify-between">
                   <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
                     GO BACK
                   </Button>
@@ -1381,7 +1404,7 @@ const ContactForm = () => {
                     )}
                   </div>
                 </div>
-                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
+                <div className="mt-16 flex w-full items-center justify-between">
                   <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
                     GO BACK
                   </Button>
@@ -1431,7 +1454,7 @@ const ContactForm = () => {
                     </p>
                   )}
                 </div>
-                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
+                <div className="mt-16 flex w-full items-center justify-between">
                   <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
                     GO BACK
                   </Button>
@@ -1470,7 +1493,7 @@ const ContactForm = () => {
                     </p>
                   )}
                 </div>
-                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
+                <div className="mt-16 flex w-full items-center justify-between">
                   <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
                     GO BACK
                   </Button>
@@ -1501,14 +1524,25 @@ const ContactForm = () => {
                       autoComplete="name"
                       value={formData.fullName}
                       onChange={(e) => updateData("fullName", e.target.value)}
-                      className="w-full border-b border-white/40 bg-transparent pb-2 text-white outline-none transition-colors focus:border-white"
+                      className={underlineInputClass(Boolean(fieldErrors.fullName))}
                     />
+                    {fieldErrors.fullName && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.fullName}
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-col gap-2" data-animate-field>
                     <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
                       PHONE NUMBER *
                     </label>
-                    <div className="relative flex items-center border-b border-white/40 pb-2 transition-colors focus-within:border-white">
+                    <div
+                      className={`relative flex items-center border-b pb-2 transition-colors ${
+                        fieldErrors.phone
+                          ? "border-red-400 focus-within:border-red-300"
+                          : "border-white/40 focus-within:border-white"
+                      }`}
+                    >
                       <div
                         className="mr-2 flex cursor-pointer select-none items-center gap-x-2 text-sm opacity-100"
                         onClick={() =>
@@ -1550,6 +1584,7 @@ const ContactForm = () => {
                                       phoneCode: c.code,
                                       countryCode: c.countryCode,
                                     }));
+                                    clearFieldError("phone");
                                     setActiveDropdown(null);
                                   }}
                                 >
@@ -1587,6 +1622,11 @@ const ContactForm = () => {
                         className="w-full bg-transparent text-white outline-none"
                       />
                     </div>
+                    {fieldErrors.phone && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.phone}
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-col gap-2" data-animate-field>
                     <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
@@ -1598,8 +1638,13 @@ const ContactForm = () => {
                       placeholder="arjun@company.com"
                       value={formData.email}
                       onChange={(e) => updateData("email", e.target.value)}
-                      className="w-full border-b border-white/40 bg-transparent pb-2 text-white outline-none transition-colors focus:border-white"
+                      className={underlineInputClass(Boolean(fieldErrors.email))}
                     />
+                    {fieldErrors.email && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.email}
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-col gap-2" data-animate-field>
                     <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
@@ -1611,8 +1656,13 @@ const ContactForm = () => {
                       placeholder="Product Manager"
                       value={formData.jobTitle}
                       onChange={(e) => updateData("jobTitle", e.target.value)}
-                      className="w-full border-b border-white/40 bg-transparent pb-2 text-white outline-none transition-colors focus:border-white"
+                      className={underlineInputClass(Boolean(fieldErrors.jobTitle))}
                     />
+                    {fieldErrors.jobTitle && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.jobTitle}
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-col gap-2" data-animate-field>
                     <label className="text-[11px] font-medium uppercase tracking-widest text-white/70">
@@ -1624,12 +1674,17 @@ const ContactForm = () => {
                       placeholder="Acme Technologies"
                       value={formData.companyName}
                       onChange={(e) => updateData("companyName", e.target.value)}
-                      className="w-full border-b border-white/40 bg-transparent pb-2 text-white outline-none transition-colors focus:border-white"
+                      className={underlineInputClass(Boolean(fieldErrors.companyName))}
                     />
+                    {fieldErrors.companyName && (
+                      <p className={fieldErrorClass} role="alert">
+                        {fieldErrors.companyName}
+                      </p>
+                    )}
                   </div>
                 </div>
 
-                <div className="mt-16 flex w-full items-center justify-between" data-animate-field>
+                <div className="mt-16 flex w-full items-center justify-between">
                   <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
                     GO BACK
                   </Button>
@@ -1665,7 +1720,7 @@ const ContactForm = () => {
                     </button>
                   ))}
                 </div>
-                <div className="mt-16 flex w-full items-center justify-between" data-animate-btn>
+                <div className="mt-16 flex w-full items-center justify-between">
                   <Button surface="on-dark" variant="outline" onClick={prevStep} balanced>
                     GO BACK
                   </Button>
