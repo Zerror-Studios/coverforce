@@ -22,7 +22,7 @@ const OPTIONAL_PATHS = new Set([
   "/careers",
   "/calculation",
   "/security",
-  "/terms",
+  "/terms-of-service",
   "/privacy",
 ]);
 

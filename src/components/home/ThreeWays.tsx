@@ -262,24 +262,13 @@ const WayCard = memo(function WayCard({
     onOpen();
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      handleOpen();
-    }
-  };
-
   return (
     <WayCardHoverProvider hovered={hovered}>
       <article
         ref={cardRef}
-        role="button"
-        tabIndex={0}
         onClick={handleOpen}
-        onKeyDown={handleKeyDown}
         onMouseEnter={isMobile ? undefined : () => setHovered(true)}
         onMouseLeave={isMobile ? undefined : () => setHovered(false)}
-        aria-label={`Open details`}
         className={`way-card-shell relative cursor-pointer [content-visibility:auto] max-md:aspect-square max-md:[contain-intrinsic-size:auto_100%] max-md:min-h-0 [contain-intrinsic-size:auto_530px] md:min-h-[22rem] ${wide ? "md:aspect-[1179/530]" : "md:aspect-[580/530]"} ${hovered ? "way-card-shell--hovered" : ""} ${textClass} ${className}`}
       >
         <div
@@ -370,20 +359,13 @@ const WayCard = memo(function WayCard({
                 {tagline}
               </p>
             </div>
-            <span
-              className="way-card-expand-btn pointer-events-auto relative flex max-md:size-8 size-9 shrink-0 cursor-pointer items-center justify-center rounded-sm"
-              role="button"
-              tabIndex={0}
+            <button
+              type="button"
+              className="way-card-expand-btn pointer-events-auto relative flex max-md:size-8 size-9 shrink-0 cursor-pointer items-center justify-center rounded-sm border-0 p-0"
+              aria-label={`Expand ${label}`}
               onClick={(e) => {
                 e.stopPropagation();
                 handleOpen();
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleOpen();
-                }
               }}
             >
               <svg
@@ -404,7 +386,7 @@ const WayCard = memo(function WayCard({
                   d="M6.25 10.25L5 10.25L5 15.5L10.25 15.5L10.25 13.75L6.75 13.75L6.75 10.25Z"
                 />
               </svg>
-            </span>
+            </button>
           </div>
         </div>
       </article>

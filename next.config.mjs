@@ -29,15 +29,49 @@ const nextConfig = {
         destination: "/developers",
         permanent: true,
       },
-      // Legacy pages from the previous site (still indexed in search)
       {
         source: "/company",
         destination: "/about",
         permanent: true,
       },
       {
+        source: "/company/about",
+        destination: "/about",
+        permanent: true,
+      },
+      {
+        source: "/ai",
+        destination: "/product/intelligence",
+        permanent: true,
+      },
+      {
+        source: "/api",
+        destination: "/developers",
+        permanent: true,
+      },
+      {
         source: "/commercial-api",
         destination: "/developers",
+        permanent: true,
+      },
+      {
+        source: "/carriers/api-index",
+        destination: "/integration",
+        permanent: true,
+      },
+      {
+        source: "/api-access",
+        destination: "/contact",
+        permanent: true,
+      },
+      {
+        source: "/news/isulaunch",
+        destination: "/blog/news-releases-isu-insurance-agency-network-launches-exclusive-digital-quotebind-platform-powered-by-coverforce",
+        permanent: true,
+      },
+      {
+        source: "/carriers/appetite-guide",
+        destination: "/product/intelligence",
         permanent: true,
       },
       {
@@ -78,6 +112,16 @@ const nextConfig = {
       {
         source: "/products/:path*",
         destination: "/product/quote-bind",
+        permanent: true,
+      },
+      {
+        source: "/wholesaler-platform",
+        destination: "/product/wholesaler",
+        permanent: true,
+      },
+      {
+        source: "/carrier-platform",
+        destination: "/solutions/carrier",
         permanent: true,
       },
       // Old CoverForce website archive paths (specific before catch-all)

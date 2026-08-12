@@ -190,7 +190,7 @@ export const siteRoutes: SiteRoute[] = [
     priority: 0.5,
   },
   {
-    path: "/terms",
+    path: "/terms-of-service",
     label: "Terms",
     title: "Terms of Service | CoverForce",
     description:

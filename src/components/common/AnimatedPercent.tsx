@@ -375,7 +375,6 @@ export function AnimatedEightyFivePercent({
     <ScrollTriggeredAnimatedStat
       className={className}
       suffix="%"
-      ariaLabel="85 percent"
       columns={[
         { sequence: TENS_85_SEQUENCE, duration: tensDuration },
         { sequence: ONES_85_SEQUENCE, duration: onesDuration, delay: onesDelay },

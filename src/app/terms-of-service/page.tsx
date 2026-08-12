@@ -1,15 +1,15 @@
 import PageWrapper from "@/components/PageWrapper";
 import LegalPage from "@/components/legal/LegalPage";
-import { termsContent } from "@/content/legal/termsContent";
 import PageJsonLd from "@/components/common/PageJsonLd";
 import { createPageMetadata } from "@/lib/seo";
+import { termsContent } from "@/content/legal/termsContent";
 
-export const metadata = createPageMetadata("/terms");
+export const metadata = createPageMetadata("/terms-of-service");
 
 const TermsPage = () => {
   return (
     <PageWrapper>
-      <PageJsonLd path="/terms" />
+      <PageJsonLd path="/terms-of-service" />
       <LegalPage {...termsContent} />
     </PageWrapper>
   );

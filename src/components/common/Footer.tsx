@@ -66,7 +66,7 @@ const standaloneLinks: FooterLinkData[] = [
 ];
 
 const legalLinks: LegalLink[] = [
-  { label: "Terms of Service", href: "/terms" },
+  { label: "Terms of Service", href: "/terms-of-service" },
   { label: "Privacy", href: "/privacy" },
   { label: "Security", href: "/security" },
 ];
@@ -227,14 +227,14 @@ const Footer = () => {
           <div className="relative min-h-[26rem] overflow-hidden border-b border-neutral-200 md:min-h-[26rem] lg:min-h-[30rem]">
             <Image
               src="/images/footer_banner-mobile.webp"
-              alt="footer-banner"
+              alt="CoverForce"
               fill
               className="object-cover object-top md:hidden"
               sizes="100vw"
             />
             <Image
               src="/images/footer_banner.webp"
-              alt="footer-banner"
+              alt="CoverForce"
               fill
               className="hidden object-cover object-right md:block"
               sizes="100vw"

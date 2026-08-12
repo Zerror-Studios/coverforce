@@ -23,7 +23,7 @@ export const privacyContent: LegalPageProps = {
     <>
       <p>
         Thank you for visiting coverforce.com. Please read our{" "}
-        <Link href="/terms" className="text-[#3D3D3D] underline underline-offset-2">
+        <Link href="/terms-of-service" className="text-[#3D3D3D] underline underline-offset-2">
           Terms of Service
         </Link>{" "}
         and this Privacy Policy carefully, as your first use of the websites, products or services

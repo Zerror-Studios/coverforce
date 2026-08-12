@@ -33,8 +33,8 @@ export const termsContent: LegalPageProps = {
       paragraphs: [
         <>
           We reserve the right to change this Agreement at any time upon notice. We may give notice by posting the updated Agreement on the Website or by any other reasonable means. You can review the most current version of this Agreement at any time at{" "}
-          <Link href="/terms" className="text-[#3D3D3D] underline underline-offset-2">
-            coverforce.com/terms
+          <Link href="/terms-of-service" className="text-[#3D3D3D] underline underline-offset-2">
+            coverforce.com/terms-of-service
           </Link>
           . The Agreement in effect at the time of your use of the Website and purchase of the Services will apply. Updated Agreements are binding on you with respect to your use of the Website or purchase of Services on or after the date indicated in the updated Agreement. If you do not agree to the updated Agreement, you must stop using the Website and may not continue to purchase Services. Your continued use of the Website and purchase of Services after the date of the updated Agreement will constitute your acceptance of the updated Agreement.
         </>,

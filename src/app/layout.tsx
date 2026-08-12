@@ -23,7 +23,6 @@ type RootLayoutProps = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  userScalable: false,
 };
 
 export default async function RootLayout({ children }: RootLayoutProps) {
