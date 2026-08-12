@@ -120,7 +120,7 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: "/carrier-platform",
+        source: "/products/carrier-platform",
         destination: "/solutions/carrier",
         permanent: true,
       },
