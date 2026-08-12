@@ -684,8 +684,8 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Westchester Surplus",
-    logoSrc: "Westchester Surplus",
-    website: "https://www.chubb.com/",
+    logoSrc: "/images/integration-logos/westchester.png",
+    website: "https://www.westchester.com/en/home.html",
     status: "Live on CoverForce",
     products: [
       { market: "ES", name: "Business Owner's Policy", availability: "request" },

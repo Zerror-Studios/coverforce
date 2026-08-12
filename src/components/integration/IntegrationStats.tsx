@@ -32,8 +32,8 @@ const STATS = [
     id: "integrated-products",
     value: 8,
     suffix: "",
-    label: "Avg integration in weeks",
-    ariaLabel: "8 Avg integration in weeks",
+    label: "week average integration",
+    ariaLabel: "8 week average integration",
   },
 ] as const;
 
