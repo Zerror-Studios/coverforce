@@ -56,7 +56,7 @@ const nextConfig = {
       },
       {
         source: "/carriers/api-index",
-        destination: "/integration",
+        destination: "/integration#integration",
         permanent: true,
       },
       {
