@@ -108,7 +108,7 @@ export function AnimatedStat({
       ref={rootRef}
       className={`inline-flex items-baseline leading-none ${className}`}
       style={style}
-      aria-label={ariaLabel ?? `${displayValue}${suffix}`}
+      aria-label={ariaLabel}
     >
       <span className="inline-flex tabular-nums" aria-hidden>
         {columns.map((col, index) => (

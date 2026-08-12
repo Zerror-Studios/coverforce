@@ -821,10 +821,7 @@ const Header = ({
                 </span>
               </Link>
 
-              <div
-                className="relative z-10 size-12 shrink-0 lg:hidden"
-                aria-expanded={mobileMenuOpen}
-              >
+              <div className="relative z-10 size-12 shrink-0 lg:hidden">
                 <div className="absolute inset-0 flex items-center justify-center">
                   {mobileMenuOpen && mobileActiveMenu ? (
                     <button
