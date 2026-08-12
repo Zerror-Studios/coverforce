@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { RiSearchEyeLine } from "@remixicon/react";
+import { RiSearchEyeLine, RiSearchLine } from "@remixicon/react";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
@@ -213,6 +213,41 @@ function StatusDot({ variant }: { variant: "filled" | "hollow" }) {
   );
 }
 
+type SearchInputProps = {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+};
+
+function SearchInput({ id, label, value, onChange }: SearchInputProps) {
+  return (
+    <div className="relative block min-w-0 flex-1">
+      <label
+        htmlFor={id}
+        className="mb-2 block font-mono text-sm font-medium uppercase text-[#2A297C]"
+      >
+        {label}
+      </label>
+
+      <div className="relative">
+        <RiSearchLine
+          className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-[#98A2B3]"
+          aria-hidden
+        />
+        <input
+          id={id}
+          type="search"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder="Search carriers"
+          className="h-10 w-full rounded-lg border border-[#E4E7EC] bg-white py-2 pl-10 pr-4 font-heading text-sm font-medium text-[#1A1A1A] transition-colors outline-none placeholder:text-[#98A2B3] hover:border-[#5B35E0]/40 focus:border-[#5B35E0] focus:ring-1 focus:ring-[#5B35E0]/20"
+        />
+      </div>
+    </div>
+  );
+}
+
 function FormSelect({ id, label, value, options, onChange }: FormSelectProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -372,6 +407,7 @@ const Integration = () => {
   const [lob, setLob] = useState("all");
   const [market, setMarket] = useState("all");
   const [status, setStatus] = useState<"all" | "live" | "api">("all");
+  const [carrierQuery, setCarrierQuery] = useState("");
 
   useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef, descRef });
 
@@ -407,18 +443,23 @@ const Integration = () => {
         hasStatus = carrier.status === "API available";
       }
 
-      return hasLob && hasMarket && hasStatus;
+      const normalizedQuery = carrierQuery.trim().toLowerCase();
+      const hasCarrierName = normalizedQuery
+        ? carrier.name.toLowerCase().includes(normalizedQuery)
+        : true;
+
+      return hasLob && hasMarket && hasStatus && hasCarrierName;
     });
-  }, [directory, lob, market, status]);
+  }, [directory, lob, market, status, carrierQuery]);
 
   const visibleCards = filteredDirectory.slice(0, visibleCount);
   const hasMore = visibleCount < filteredDirectory.length;
 
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
-  }, [lob, market, status]);
+  }, [lob, market, status, carrierQuery]);
 
-  const filtersKey = `${lob}|${market}|${status}`;
+  const filtersKey = `${lob}|${market}|${status}|${carrierQuery}`;
   const prevFiltersKeyRef = useRef(filtersKey);
 
   useGSAP(
@@ -545,7 +586,7 @@ const Integration = () => {
 
             {/* Filters */}
             <div className="relative z-20 mt-8 space-y-5 lg:mt-10 lg:space-y-3">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 <FormSelect
                   id="integration-lob"
                   label="Product Type"
@@ -568,6 +609,13 @@ const Integration = () => {
                   value={status}
                   options={STATUS_OPTIONS}
                   onChange={(v) => setStatus(v as "all" | "live" | "api")}
+                />
+
+                <SearchInput
+                  id="integration-carrier-search"
+                  label="Carrier"
+                  value={carrierQuery}
+                  onChange={setCarrierQuery}
                 />
               </div>
 
