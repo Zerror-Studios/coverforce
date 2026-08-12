@@ -44,7 +44,7 @@ export const WAY_CARD_MODALS: Record<string, WayCardModalContent> = {
     primaryCta: { label: "Explore developer APIs", href: "/developers" },
     secondaryCta: {
       label: "View API docs",
-      href: "https://developer.coverforce.com/docs/coverforce-api/lxj5tz15jwgjy-authentication",
+      href: "https://developer.coverforce.com/docs/coverforce-api/cucsxu65m1jkf-introduction-to-cover-force-api",
     },
     features: [
       "Sandbox and production environments",
