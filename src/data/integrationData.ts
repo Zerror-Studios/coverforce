@@ -377,7 +377,7 @@ export const INTEGRATION_DATA: Carrier[] = [
     website: "https://myfirstinsurance.com/",
     status: "API available",
     products: [
-      { market: "AD", name: "General Liability", availability: "request" },
+      { market: "AD", name: "General Liability", availability: "live" },
     ],
   },
   {
@@ -388,7 +388,7 @@ export const INTEGRATION_DATA: Carrier[] = [
     products: [
       { market: "AD", name: "Business Owner's Policy", availability: "live" },
       { market: "AD", name: "General Liability", availability: "live" },
-      { market: "AD", name: "Inland Marine", availability: "request" },
+      { market: "AD", name: "Inland Marine", availability: "live" },
       { market: "AD", name: "Worker's Compensation", availability: "live" },
     ],
   },
@@ -461,8 +461,8 @@ export const INTEGRATION_DATA: Carrier[] = [
     status: "Live on CoverForce",
     products: [
       { market: "ES", name: "Business Owner's Policy", availability: "request" },
-      { market: "ES", name: "General Liability", availability: "live" },
-      { market: "ES", name: "Property", availability: "live" },
+      { market: "ES", name: "General Liability", availability: "request" },
+      { market: "ES", name: "Property", availability: "request" },
     ],
   },
   {
@@ -481,7 +481,7 @@ export const INTEGRATION_DATA: Carrier[] = [
     status: "Live on CoverForce",
     products: [
       { market: "AD", name: "Business Owner's Policy", availability: "live" },
-      { market: "AD", name: "Commercial Auto", availability: "live" },
+      { market: "AD", name: "Commercial Auto", availability: "request" },
       { market: "AD", name: "General Liability", availability: "live" },
       { market: "AD", name: "Inland Marine", availability: "request" },
       { market: "AD", name: "Worker's Compensation", availability: "live" },
@@ -525,7 +525,7 @@ export const INTEGRATION_DATA: Carrier[] = [
     status: "Live on CoverForce",
     products: [
       { market: "AD", name: "Business Owner's Policy", availability: "live" },
-      { market: "AD", name: "General Liability", availability: "request" },
+      { market: "AD", name: "General Liability", availability: "live" },
     ],
   },
   {
@@ -551,8 +551,8 @@ export const INTEGRATION_DATA: Carrier[] = [
       { market: "AD", name: "Umbrella", availability: "request" },
       { market: "AD", name: "Worker's Compensation", availability: "request" },
       { market: "ES", name: "Business Owner's Policy", availability: "request" },
-      { market: "ES", name: "General Liability", availability: "live" },
-      { market: "ES", name: "Property", availability: "live" },
+      { market: "ES", name: "General Liability", availability: "request" },
+      { market: "ES", name: "Property", availability: "request" },
     ],
   },
   {
