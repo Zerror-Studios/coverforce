@@ -1,126 +1,126 @@
 /* Inter - body & UI (default) */
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-Thin-BETA.otf") format("opentype");
+  src: url("/fonts/inter/Inter-Thin-BETA.woff2") format("woff2");
   font-weight: 100;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-ThinItalic-BETA.otf") format("opentype");
+  src: url("/fonts/inter/Inter-ThinItalic-BETA.woff2") format("woff2");
   font-weight: 100;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-ExtraLight-BETA.otf") format("opentype");
+  src: url("/fonts/inter/Inter-ExtraLight-BETA.woff2") format("woff2");
   font-weight: 200;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-ExtraLightItalic-BETA.otf") format("opentype");
+  src: url("/fonts/inter/Inter-ExtraLightItalic-BETA.woff2") format("woff2");
   font-weight: 200;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-Light-BETA.otf") format("opentype");
+  src: url("/fonts/inter/Inter-Light-BETA.woff2") format("woff2");
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-LightItalic-BETA.otf") format("opentype");
+  src: url("/fonts/inter/Inter-LightItalic-BETA.woff2") format("woff2");
   font-weight: 300;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-Regular.otf") format("opentype");
+  src: url("/fonts/inter/Inter-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-Italic.otf") format("opentype");
+  src: url("/fonts/inter/Inter-Italic.woff2") format("woff2");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-Medium.otf") format("opentype");
+  src: url("/fonts/inter/Inter-Medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-MediumItalic.otf") format("opentype");
+  src: url("/fonts/inter/Inter-MediumItalic.woff2") format("woff2");
   font-weight: 500;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-SemiBold.otf") format("opentype");
+  src: url("/fonts/inter/Inter-SemiBold.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-SemiBoldItalic.otf") format("opentype");
+  src: url("/fonts/inter/Inter-SemiBoldItalic.woff2") format("woff2");
   font-weight: 600;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-Bold.otf") format("opentype");
+  src: url("/fonts/inter/Inter-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-BoldItalic.otf") format("opentype");
+  src: url("/fonts/inter/Inter-BoldItalic.woff2") format("woff2");
   font-weight: 700;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-ExtraBold.otf") format("opentype");
+  src: url("/fonts/inter/Inter-ExtraBold.woff2") format("woff2");
   font-weight: 800;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-ExtraBoldItalic.otf") format("opentype");
+  src: url("/fonts/inter/Inter-ExtraBoldItalic.woff2") format("woff2");
   font-weight: 800;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-Black.otf") format("opentype");
+  src: url("/fonts/inter/Inter-Black.woff2") format("woff2");
   font-weight: 900;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter/Inter-BlackItalic.otf") format("opentype");
+  src: url("/fonts/inter/Inter-BlackItalic.woff2") format("woff2");
   font-weight: 900;
   font-style: italic;
   font-display: swap;
@@ -129,126 +129,126 @@
 /* Poppins - headings / display */
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-Thin.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-Thin.woff2") format("woff2");
   font-weight: 100;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-ThinItalic.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-ThinItalic.woff2") format("woff2");
   font-weight: 100;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-ExtraLight.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-ExtraLight.woff2") format("woff2");
   font-weight: 200;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-ExtraLightItalic.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-ExtraLightItalic.woff2") format("woff2");
   font-weight: 200;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-Light.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-Light.woff2") format("woff2");
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-LightItalic.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-LightItalic.woff2") format("woff2");
   font-weight: 300;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-Regular.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-Italic.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-Italic.woff2") format("woff2");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-Medium.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-Medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-MediumItalic.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-MediumItalic.woff2") format("woff2");
   font-weight: 500;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-SemiBold.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-SemiBold.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-SemiBoldItalic.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-SemiBoldItalic.woff2") format("woff2");
   font-weight: 600;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-Bold.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-BoldItalic.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-BoldItalic.woff2") format("woff2");
   font-weight: 700;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-ExtraBold.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-ExtraBold.woff2") format("woff2");
   font-weight: 800;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-ExtraBoldItalic.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-ExtraBoldItalic.woff2") format("woff2");
   font-weight: 800;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-Black.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-Black.woff2") format("woff2");
   font-weight: 900;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/fonts/poppins/Poppins-BlackItalic.ttf") format("truetype");
+  src: url("/fonts/poppins/Poppins-BlackItalic.woff2") format("woff2");
   font-weight: 900;
   font-style: italic;
   font-display: swap;
@@ -257,42 +257,42 @@
 /* DM Mono - labels / eyebrows / mono UI */
 @font-face {
   font-family: "DM Mono";
-  src: url("/fonts/dm-mono-2/DMMono-Light.ttf") format("truetype");
+  src: url("/fonts/dm-mono-2/DMMono-Light.woff2") format("woff2");
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "DM Mono";
-  src: url("/fonts/dm-mono-2/DMMono-LightItalic.ttf") format("truetype");
+  src: url("/fonts/dm-mono-2/DMMono-LightItalic.woff2") format("woff2");
   font-weight: 300;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "DM Mono";
-  src: url("/fonts/dm-mono-2/DMMono-Regular.ttf") format("truetype");
+  src: url("/fonts/dm-mono-2/DMMono-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "DM Mono";
-  src: url("/fonts/dm-mono-2/DMMono-Italic.ttf") format("truetype");
+  src: url("/fonts/dm-mono-2/DMMono-Italic.woff2") format("woff2");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "DM Mono";
-  src: url("/fonts/dm-mono-2/DMMono-Medium.ttf") format("truetype");
+  src: url("/fonts/dm-mono-2/DMMono-Medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "DM Mono";
-  src: url("/fonts/dm-mono-2/DMMono-MediumItalic.ttf") format("truetype");
+  src: url("/fonts/dm-mono-2/DMMono-MediumItalic.woff2") format("woff2");
   font-weight: 500;
   font-style: italic;
   font-display: swap;
