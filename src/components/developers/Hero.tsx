@@ -92,6 +92,7 @@ const Hero = () => {
                     width={1200}
                     height={720}
                     className="h-auto w-full object-contain"
+                    priority
                   />
                 </div>
                 <div className="relative w-full max-w-2xl sm:max-w-3xl md:max-w-xl lg:max-w-3xl">
@@ -101,6 +102,7 @@ const Hero = () => {
                     width={1200}
                     height={720}
                     className="h-auto w-full object-contain"
+                    priority
                   />
                   <ApiCodeReveal className="pointer-events-none absolute inset-0 flex flex-col justify-center pl-[9%] pr-[3%] pb-[8%] pt-[2%] sm:pl-[11%] sm:pb-[10%] md:pl-[11%] md:pb-[10%]" />
                 </div>

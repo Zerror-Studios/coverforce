@@ -38,6 +38,8 @@ type PulsatingLogoSetProps = {
   mobileLogosPerSet?: number;
   /** How long logos stay fully visible between enter and exit */
   intervalMs?: number;
+  /** Preload the first visible logo set (hero marquee above the fold). */
+  preload?: boolean;
 };
 
 function chunkLogos(logos: readonly MarqueeLogo[], perSet: number) {
@@ -85,6 +87,7 @@ export function PulsatingLogoSet({
   logosPerSet = 5,
   mobileLogosPerSet = 2,
   intervalMs = 3200,
+  preload = false,
 }: PulsatingLogoSetProps) {
   const activePerSet = useResponsiveLogosPerSet(logosPerSet, mobileLogosPerSet);
   const sets = useMemo(() => chunkLogos(logos, activePerSet), [logos, activePerSet]);
@@ -167,6 +170,7 @@ export function PulsatingLogoSet({
                 height={size === "large" ? 40 : 36}
                 className={`${LOGO_IMAGE_CLASS} ${LOGO_TONE_CLASS[tone]}`}
                 draggable={false}
+                priority={preload && setIndex === 0}
               />
             </div>
           </div>

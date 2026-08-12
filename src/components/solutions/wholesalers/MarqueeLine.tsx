@@ -21,6 +21,8 @@ type MarqueeRowProps = {
   size?: "default" | "large";
   /** "dark" = black logos on light bg; "light" = white logos on dark/colored bg */
   tone?: "dark" | "light";
+  /** Preload the first visible logo set (hero marquee above the fold). */
+  preload?: boolean;
 };
 
 const LOGO_SLOT_CLASS = {
@@ -44,6 +46,7 @@ export function MarqueeRow({
   logos = DEFAULT_LOGOS,
   size = "default",
   tone = "dark",
+  preload = false,
 }: MarqueeRowProps) {
   const items = [...logos, ...logos];
 
@@ -63,6 +66,7 @@ export function MarqueeRow({
                 height={size === "large" ? 40 : 36}
                 className={`${LOGO_IMAGE_CLASS} ${LOGO_TONE_CLASS[tone]}`}
                 draggable={false}
+                priority={preload && index < logos.length}
               />
             </div>
           </div>

@@ -128,9 +128,10 @@ export default function SolutionScrollHero({
         size={marqueeSize}
         tone="light"
         logosPerSet={marqueeLogosPerSet}
+        preload
       />
     ) : (
-      <MarqueeRow logos={marqueeLogos} size={marqueeSize} tone="light" />
+      <MarqueeRow logos={marqueeLogos} size={marqueeSize} tone="light" preload />
     );
 
   useGSAP(
