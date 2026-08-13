@@ -8,6 +8,7 @@ const HIGHLIGHT_COUNT = 3;
 const INITIAL_ACTIVE = [0, 1, 4];
 const PURPLE = "#5B35E0";
 const ROTATE_MS = 2400;
+const LOGO_ROTATE_MS = 2000;
 
 function pickActiveCards(current: number[]) {
   const all = Array.from({ length: CARD_COUNT }, (_, index) => index);
@@ -30,17 +31,101 @@ const BORDER_TRANSITION = {
   transition: "stroke 0.45s ease, stroke-opacity 0.45s ease",
 };
 
-const CARD_LOGOS = [
-  "/images/integration-logos/AmTrust.png",
+const LOGO_POOL = [
   "/images/integration-logos/Accident Fund.png",
+  "/images/integration-logos/Acuity.png",
+  "/images/integration-logos/AmTrust.png",
+  "/images/integration-logos/Arch.png",
+  "/images/integration-logos/At Bay.png",
+  "/images/integration-logos/Ategrity.png",
+  "/images/integration-logos/Atlantic.png",
+  "/images/integration-logos/Attune.png",
+  "/images/integration-logos/Axis.png",
+  "/images/integration-logos/Beazley.png",
+  "/images/integration-logos/Berkeley Management.png",
+  "/images/integration-logos/BerkleyNet.png",
+  "/images/integration-logos/BiBerk.png",
+  "/images/integration-logos/Blitz.png",
+  "/images/integration-logos/Btis.png",
+  "/images/integration-logos/Burlington ifg.png",
+  "/images/integration-logos/Century.png",
+  "/images/integration-logos/CFC.png",
   "/images/integration-logos/Chubbs.png",
-  "/images/integration-logos/CompWest.png",
+  "/images/integration-logos/CNA.png",
+  "/images/integration-logos/CoAction.png",
   "/images/integration-logos/Coliation.png",
+  "/images/integration-logos/CompWest.png",
+  "/images/integration-logos/Core Specialty.png",
+  "/images/integration-logos/Corvus.png",
+  "/images/integration-logos/Coterie.png",
+  "/images/integration-logos/Counterpart.png",
   "/images/integration-logos/Cowbell.png",
+  "/images/integration-logos/Crum.png",
+  "/images/integration-logos/Doe Emuss.png",
+  "/images/integration-logos/Elpha.png",
+  "/images/integration-logos/Employers.png",
+  "/images/integration-logos/First.png",
+  "/images/integration-logos/Gaig.jpg",
+  "/images/integration-logos/General Star.png",
+  "/images/integration-logos/Guard.png",
+  "/images/integration-logos/Hanover.png",
+  "/images/integration-logos/Hiscox.png",
+  "/images/integration-logos/Homesite.png",
+  "/images/integration-logos/HSB.png",
+  "/images/integration-logos/IAT.png",
+  "/images/integration-logos/Killara.png",
   "/images/integration-logos/Liberty Mutual.png",
+  "/images/integration-logos/Main Street.png",
+  "/images/integration-logos/Markel.png",
   "/images/integration-logos/Merchants.png",
-  "/images/integration-logos/Markel.png"
+  "/images/integration-logos/Music.png",
+  "/images/integration-logos/Nationwide.png",
+  "/images/integration-logos/Nautilus.png",
+  "/images/integration-logos/navigators.png",
+  "/images/integration-logos/Northfield.png",
+  "/images/integration-logos/Penn American.png",
+  "/images/integration-logos/pie.png",
+  "/images/integration-logos/Republic.png",
+  "/images/integration-logos/RSUI.png",
+  "/images/integration-logos/seneca-insurance.jpg",
+  "/images/integration-logos/State Auto Insurance.webp",
+  "/images/integration-logos/thimble.png",
+  "/images/integration-logos/Travelers.png",
+  "/images/integration-logos/USLI.png",
+  "/images/integration-logos/westchester.png",
+  "/images/integration-logos/Western World.png",
+  "/images/integration-logos/Westfield.png",
 ] as const;
+
+const INITIAL_LOGOS = [
+  LOGO_POOL[2],
+  LOGO_POOL[0],
+  LOGO_POOL[18],
+  LOGO_POOL[22],
+  LOGO_POOL[21],
+  LOGO_POOL[27],
+  LOGO_POOL[42],
+  LOGO_POOL[45],
+  LOGO_POOL[44],
+] as string[];
+
+function pickNextLogos(current: string[]) {
+  const next = [...current];
+  // Sometimes one card, sometimes a few (1–4)
+  const changeCount = 1 + Math.floor(Math.random() * 4);
+  const cardIndices = Array.from({ length: CARD_COUNT }, (_, i) => i)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, changeCount);
+
+  for (const cardIndex of cardIndices) {
+    const used = new Set(next.filter((_, i) => i !== cardIndex));
+    const unused = LOGO_POOL.filter((logo) => !used.has(logo) && logo !== next[cardIndex]);
+    const pool = unused.length > 0 ? unused : LOGO_POOL.filter((logo) => logo !== next[cardIndex]);
+    next[cardIndex] = pool[Math.floor(Math.random() * pool.length)]!;
+  }
+
+  return next;
+}
 
 const CARD_LOGO_SLOTS = [
   { x: 92.6943, y: 215.347, width: 42.5968, height: 28.3979 },
@@ -95,12 +180,11 @@ function avatar(index: number, uid: string) {
   );
 }
 
-function cardLogo(index: number) {
-  const logo = CARD_LOGOS[index];
+function cardLogo(index: number, src: string) {
   const slot = CARD_LOGO_SLOTS[index];
   return (
     <image
-      href={logo}
+      href={src}
       x={slot.x}
       y={slot.y}
       width={slot.width}
@@ -125,17 +209,25 @@ function cardBorderProps(index: number, activeCards: number[]) {
 export default function NaicsIllustration(props: SVGProps<SVGSVGElement>) {
   const uid = useId();
   const [activeCards, setActiveCards] = useState(INITIAL_ACTIVE);
+  const [cardLogos, setCardLogos] = useState(INITIAL_LOGOS);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
 
-    const timer = window.setInterval(() => {
+    const borderTimer = window.setInterval(() => {
       setActiveCards((current) => pickActiveCards(current));
     }, ROTATE_MS);
 
-    return () => window.clearInterval(timer);
+    const logoTimer = window.setInterval(() => {
+      setCardLogos((current) => pickNextLogos(current));
+    }, LOGO_ROTATE_MS);
+
+    return () => {
+      window.clearInterval(borderTimer);
+      window.clearInterval(logoTimer);
+    };
   }, []);
 
   return (
@@ -163,51 +255,51 @@ export default function NaicsIllustration(props: SVGProps<SVGSVGElement>) {
 <path d="M73.1001 212.551C73.1001 210.645 74.6453 209.1 76.5514 209.1H152.377C154.283 209.1 155.828 210.645 155.828 212.551V246.542C155.828 248.448 154.283 249.993 152.377 249.993H76.5514C74.6453 249.993 73.1001 248.448 73.1001 246.542V212.551Z" fill="white"/>
 <path id="naics-card-border-0" d="M76.5513 209.384H152.377C154.126 209.385 155.544 210.802 155.544 212.551V246.542C155.544 248.291 154.126 249.709 152.377 249.709H76.5513C74.8021 249.709 73.3843 248.291 73.3843 246.542V212.551C73.3843 210.802 74.8021 209.384 76.5513 209.384Z" {...cardBorderProps(0, activeCards)}/>
 <rect x="92.4106" y="214.78" width="43.1647" height="29.5338" rx="3.60247" fill="white"/>
-{cardLogo(0)}
+{cardLogo(0, cardLogos[0]!)}
 </g>
 <rect x="166.02" y="209.384" width="82.1602" height="40.325" rx="3.16729" fill="white"/>
 <rect id="naics-card-border-1" x="166.02" y="209.384" width="82.1602" height="40.325" rx="3.16729" {...cardBorderProps(1, activeCards)}/>
 <rect x="185.046" y="214.78" width="43.1647" height="29.5338" rx="3.60247" fill="white"/>
-{cardLogo(1)}
+{cardLogo(1, cardLogos[1]!)}
 <g filter="url(#filter1_d_106_2319)">
 <path d="M258.372 212.551C258.372 210.645 259.917 209.1 261.823 209.1H337.649C339.555 209.1 341.1 210.645 341.1 212.551V246.542C341.1 248.448 339.555 249.993 337.649 249.993H261.823C259.917 249.993 258.372 248.448 258.372 246.542V212.551Z" fill="white"/>
 <path id="naics-card-border-2" d="M261.823 209.384H337.649C339.398 209.385 340.816 210.802 340.816 212.551V246.542C340.816 248.291 339.398 249.709 337.649 249.709H261.823C260.074 249.709 258.656 248.291 258.656 246.542V212.551C258.656 210.802 260.074 209.384 261.823 209.384Z" {...cardBorderProps(2, activeCards)}/>
 <rect x="277.683" y="214.78" width="43.1647" height="29.5338" rx="3.60247" fill="white"/>
-{cardLogo(2)}
+{cardLogo(2, cardLogos[2]!)}
 </g>
 <g filter="url(#filter2_d_106_2319)">
 <path d="M73.1001 262.526C73.1001 260.62 74.6453 259.075 76.5514 259.075H152.377C154.283 259.075 155.828 260.62 155.828 262.526V296.517C155.828 298.423 154.283 299.968 152.377 299.968H76.5514C74.6453 299.968 73.1001 298.423 73.1001 296.517V262.526Z" fill="white"/>
 <path id="naics-card-border-3" d="M76.5513 259.359H152.377C154.126 259.36 155.544 260.777 155.544 262.526V296.517C155.544 298.266 154.126 299.684 152.377 299.685H76.5513C74.8021 299.685 73.3843 298.266 73.3843 296.517V262.526C73.3843 260.777 74.8021 259.359 76.5513 259.359Z" {...cardBorderProps(3, activeCards)}/>
 <rect x="92.4106" y="264.755" width="43.1647" height="29.5338" rx="3.60247" fill="white"/>
-{cardLogo(3)}
+{cardLogo(3, cardLogos[3]!)}
 </g>
 <rect x="166.02" y="259.359" width="82.1602" height="40.325" rx="3.16729" fill="white"/>
 <rect id="naics-card-border-4" x="166.02" y="259.359" width="82.1602" height="40.325" rx="3.16729" {...cardBorderProps(4, activeCards)}/>
 <rect x="185.046" y="264.755" width="43.1647" height="29.5338" rx="3.60247" fill="white"/>
-{cardLogo(4)}
+{cardLogo(4, cardLogos[4]!)}
 <g filter="url(#filter3_d_106_2319)">
 <path d="M258.372 262.526C258.372 260.62 259.917 259.075 261.823 259.075H337.649C339.555 259.075 341.1 260.62 341.1 262.526V296.517C341.1 298.423 339.555 299.968 337.649 299.968H261.823C259.917 299.968 258.372 298.423 258.372 296.517V262.526Z" fill="white"/>
 <path id="naics-card-border-5" d="M261.823 259.359H337.649C339.398 259.36 340.816 260.777 340.816 262.526V296.517C340.816 298.266 339.398 299.684 337.649 299.685H261.823C260.074 299.685 258.656 298.266 258.656 296.517V262.526C258.656 260.777 260.074 259.359 261.823 259.359Z" {...cardBorderProps(5, activeCards)}/>
 <rect x="277.683" y="264.755" width="43.1647" height="29.5338" rx="3.60247" fill="white"/>
-{cardLogo(5)}
+{cardLogo(5, cardLogos[5]!)}
 </g>
 <g filter="url(#filter4_d_106_2319)">
 <path d="M73.1001 312.502C73.1001 310.595 74.6453 309.05 76.5514 309.05H152.377C154.283 309.05 155.828 310.595 155.828 312.502V346.492C155.828 348.398 154.283 349.943 152.377 349.943H76.5514C74.6453 349.943 73.1001 348.398 73.1001 346.492V312.502Z" fill="white"/>
 <path id="naics-card-border-6" d="M76.5513 309.334H152.377C154.126 309.335 155.544 310.752 155.544 312.501V346.492C155.544 348.241 154.126 349.659 152.377 349.66H76.5513C74.8021 349.66 73.3843 348.241 73.3843 346.492V312.501C73.3843 310.752 74.8021 309.335 76.5513 309.334Z" {...cardBorderProps(6, activeCards)}/>
 <rect x="92.4106" y="314.73" width="43.1647" height="29.5338" rx="3.60247" fill="white"/>
-{cardLogo(6)}
+{cardLogo(6, cardLogos[6]!)}
 </g>
 <g filter="url(#filter5_d_106_2319)">
 <path d="M165.736 312.502C165.736 310.595 167.281 309.05 169.187 309.05H245.013C246.919 309.05 248.464 310.595 248.464 312.502V346.492C248.464 348.398 246.919 349.943 245.013 349.943H169.187C167.281 349.943 165.736 348.398 165.736 346.492V312.502Z" fill="white"/>
 <path id="naics-card-border-7" d="M169.187 309.334H245.013C246.762 309.335 248.18 310.752 248.18 312.501V346.492C248.18 348.241 246.762 349.659 245.013 349.66H169.187C167.438 349.66 166.02 348.241 166.02 346.492V312.501C166.02 310.752 167.438 309.335 169.187 309.334Z" {...cardBorderProps(7, activeCards)}/>
 <rect x="185.046" y="314.73" width="43.1647" height="29.5338" rx="3.60247" fill="white"/>
-{cardLogo(7)}
+{cardLogo(7, cardLogos[7]!)}
 </g>
 <g filter="url(#filter6_d_106_2319)">
 <path d="M258.372 312.502C258.372 310.595 259.917 309.05 261.823 309.05H337.649C339.555 309.05 341.1 310.595 341.1 312.502V346.492C341.1 348.398 339.555 349.943 337.649 349.943H261.823C259.917 349.943 258.372 348.398 258.372 346.492V312.502Z" fill="white"/>
 <path id="naics-card-border-8" d="M261.823 309.334H337.649C339.398 309.335 340.816 310.752 340.816 312.501V346.492C340.816 348.241 339.398 349.659 337.649 349.66H261.823C260.074 349.66 258.656 348.241 258.656 346.492V312.501C258.656 310.752 260.074 309.335 261.823 309.334Z" {...cardBorderProps(8, activeCards)}/>
 <rect x="277.683" y="314.73" width="43.1647" height="29.5338" rx="3.60247" fill="white"/>
-{cardLogo(8)}
+{cardLogo(8, cardLogos[8]!)}
 </g>
 <path d="M332.1 121.6L334.393 123.893C334.726 124.226 334.893 124.393 335.1 124.393C335.307 124.393 335.474 124.226 335.807 123.893L338.1 121.6" stroke="#141B34" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 <line x1="73.1001" y1="190.8" x2="341.1" y2="190.8" stroke="black" strokeOpacity="0.05" strokeWidth="0.6"/>

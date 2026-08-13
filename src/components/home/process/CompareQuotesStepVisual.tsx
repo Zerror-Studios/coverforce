@@ -4,7 +4,6 @@ import { useRef } from "react";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import BindIllustration from "@/components/home/BindIllustration";
 
 export default function CompareQuotesStepVisual() {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -83,7 +82,14 @@ export default function CompareQuotesStepVisual() {
           style={{ transformOrigin: "center center" }}
         >
           <div ref={floatRef} className="will-change-transform">
-            <BindIllustration className="w-full" />
+            <Image
+              src="/images/process/bind.png"
+              alt=""
+              width={720}
+              height={540}
+              className="pointer-events-none h-auto w-full object-contain"
+              aria-hidden
+            />
           </div>
         </div>
       </div>
