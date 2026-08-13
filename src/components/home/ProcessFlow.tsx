@@ -10,6 +10,7 @@ import { processSteps } from "@/data/processSteps";
 import { RiArrowRightLine } from "@remixicon/react";
 import { applyWaveToChars, COLOR_THEMES } from "@/lib/animateSplitTextReveal";
 import { PRIMARY_BUTTON_GRADIENT } from "@/data/wayCardStyles";
+import ProcessStepVisual from "@/components/home/process/ProcessStepVisual";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -38,31 +39,6 @@ function ProcessPointText({ text }: { text: string }) {
         </span>
       ))}
     </p>
-  );
-}
-
-function ProcessStepVideo({
-  src,
-  label,
-  className = "",
-}: {
-  src: string;
-  label: string;
-  className?: string;
-}) {
-  return (
-    <div className={`relative h-full w-full overflow-hidden ${className}`}>
-      <video
-        src={src}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        className="absolute inset-0 h-full w-full border-0 object-cover object-center outline-none"
-        aria-label={label}
-      />
-    </div>
   );
 }
 
@@ -170,7 +146,7 @@ function ProcessStepStrip({
 function MobileProcessFlow() {
   return (
     <div className="flex flex-col gap-16 py-12 pb-20 lg:hidden">
-      {processSteps.map((step) => (
+      {processSteps.map((step, index) => (
         <div key={step.id} className="flex flex-col">
           <div className="w-fit">
             <EyebrowPill background={PRIMARY_BUTTON_GRADIENT}>{step.tag}</EyebrowPill>
@@ -199,7 +175,7 @@ function MobileProcessFlow() {
           </ul>
 
           <div className="relative mt-8 aspect-square w-full overflow-hidden">
-            <ProcessStepVideo src={step.videoSrc} label={step.heading} />
+            <ProcessStepVisual step={step} stepIndex={index} />
           </div>
         </div>
       ))}
@@ -494,10 +470,10 @@ const ProcessFlow = () => {
           </div>
 
           <div className="rightScroll relative flex flex-col will-change-transform">
-            {processSteps.map((step) => (
+            {processSteps.map((step, index) => (
               <div key={step.id} className="flex h-screen items-center justify-center">
                 <div className="relative aspect-square w-full overflow-hidden">
-                  <ProcessStepVideo src={step.videoSrc} label={step.heading} />
+                  <ProcessStepVisual step={step} stepIndex={index} />
                 </div>
               </div>
             ))}
