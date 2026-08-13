@@ -120,11 +120,16 @@ function normalizeSplitLayout(chars: HTMLSpanElement[], words: HTMLSpanElement[]
     });
 }
 
+export type LoaderWordsWaveCleanup = (() => void) & {
+    /** Kill the wave tween but keep split chars in the DOM for a handoff. */
+    stopTween?: () => void;
+};
+
 /** Wave fill per word - keeps spaces between mask wrappers untouched */
 export function animateLoaderWordsWave(
     line: HTMLElement,
     options: SplitTextWaveTimelineOptions = {},
-): () => void {
+): LoaderWordsWaveCleanup {
     const {
         theme = "light",
         colors = COLOR_THEMES[theme],
@@ -171,10 +176,17 @@ export function animateLoaderWordsWave(
         onComplete: () => applyWaveToChars(chars, 1, colors),
     });
 
-    return () => {
+    const cleanup = () => {
         tween.kill();
         splits.forEach((split) => split.revert());
     };
+    /** Stop color updates but keep split chars in the DOM (for handoff to another tween). */
+    cleanup.stopTween = () => {
+        tween.kill();
+        applyWaveToChars(chars, 1, colors);
+    };
+
+    return cleanup;
 }
 
 function smootherstep(t: number): number {

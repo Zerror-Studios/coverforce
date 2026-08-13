@@ -1,6 +1,7 @@
 "use client";
 
 import { scrollToTop } from "@/lib/scrollToTop";
+import gsap from "gsap";
 import { createContext, useContext, useEffect, useLayoutEffect, useState, type ReactNode } from "react";
 
 export type HomeIntroPhase =
@@ -67,21 +68,25 @@ export function HomeIntroProvider({
 
     setPhase("loader-in");
 
-    const loaderFadeAt = HOME_INTRO_LOADER_IN_MS;
-    const loaderWaveAt = loaderFadeAt + HOME_INTRO_LOADER_FADE_MS;
-    const heroRiseAt = loaderWaveAt + HOME_INTRO_LOADER_WAVE_MS;
-    const navAt = heroRiseAt + HOME_INTRO_HERO_RISE_MS;
-    const doneAt = navAt + HOME_INTRO_REVEAL_MS;
+    // One GSAP timeline keeps phase changes in sync (setTimeout drifts when the tab
+    // is backgrounded / throttled, which desyncs Hero wave vs rise).
+    const tl = gsap.timeline({ defaults: { ease: "none" } });
+    const hold = (ms: number) => tl.to({}, { duration: ms / 1000 });
 
-    const timers = [
-      setTimeout(() => setPhase("loader-fade"), loaderFadeAt),
-      setTimeout(() => setPhase("loader-wave"), loaderWaveAt),
-      setTimeout(() => setPhase("hero-rise"), heroRiseAt),
-      setTimeout(() => setPhase("nav"), navAt),
-      setTimeout(() => setPhase("done"), doneAt),
-    ];
+    hold(HOME_INTRO_LOADER_IN_MS);
+    tl.call(() => setPhase("loader-fade"));
+    hold(HOME_INTRO_LOADER_FADE_MS);
+    tl.call(() => setPhase("loader-wave"));
+    hold(HOME_INTRO_LOADER_WAVE_MS);
+    tl.call(() => setPhase("hero-rise"));
+    hold(HOME_INTRO_HERO_RISE_MS);
+    tl.call(() => setPhase("nav"));
+    hold(HOME_INTRO_REVEAL_MS);
+    tl.call(() => setPhase("done"));
 
-    return () => timers.forEach(clearTimeout);
+    return () => {
+      tl.kill();
+    };
   }, [enabled]);
 
   useEffect(() => {

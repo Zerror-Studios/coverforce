@@ -27,7 +27,7 @@ import {
   type MegaMenuLink,
 } from "@/data/megaMenu";
 import CmsImage from "@/components/common/CmsImage";
-import { HOME_INTRO_NAV_MS, useHomeIntro } from "@/contexts/HomeIntroContext";
+import { HOME_INTRO_NAV_MS, isPreNavIntroPhase, useHomeIntro } from "@/contexts/HomeIntroContext";
 import { pageAnimation, setPageTransitionBg, setPendingPathname, subscribePendingPathname } from "@/lib/pageTransition";
 import { scrollToHashWhenReady } from "@/lib/scrollToTop";
 import { useTransitionRouter } from "next-view-transitions";
@@ -430,7 +430,7 @@ const Header = ({
       return;
     }
 
-    if (introPhase !== "nav" || navRevealedRef.current) return;
+    if (isPreNavIntroPhase(introPhase) || navRevealedRef.current) return;
 
     navRevealedRef.current = true;
     gsap.to(navBar, {

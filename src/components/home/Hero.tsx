@@ -71,8 +71,11 @@ const Hero = () => {
   const introUiLocked = introEnabled && introPhase !== "done";
   const heroRiseStartedRef = useRef(false);
   const introFadeStartedRef = useRef(false);
-  const introWaveStartedRef = useRef(false);
-  const waveCleanupRef = useRef<(() => void) | null>(null);
+  const waveCleanupRef = useRef<
+    (ReturnType<typeof animateLoaderWordsWave>) | null
+  >(null);
+  const riseTlRef = useRef<gsap.core.Timeline | null>(null);
+  const revealTlRef = useRef<gsap.core.Timeline | null>(null);
   const moveTargetRef = useRef({ x: 0, y: 0 });
 
   const statsWrapRef = useRef<HTMLDivElement | null>(null);
@@ -178,8 +181,19 @@ const Hero = () => {
     return () => {
       waveCleanupRef.current?.();
       waveCleanupRef.current = null;
+      riseTlRef.current?.kill();
+      riseTlRef.current = null;
+      revealTlRef.current?.kill();
+      revealTlRef.current = null;
     };
   }, []);
+
+  const clearTitleInlineColors = (title: HTMLElement) => {
+    gsap.set(title.querySelectorAll<HTMLElement>(".loader-wave-char, .loader-wave-word, [data-loader-word-inner]"), {
+      clearProps: "color",
+    });
+    gsap.set(title, { clearProps: "color" });
+  };
 
   useLayoutEffect(() => {
     if (!introEnabled || introPhase !== "loader-fade" || introFadeStartedRef.current) return;
@@ -203,17 +217,17 @@ const Hero = () => {
   }, [introEnabled, introPhase]);
 
   useEffect(() => {
-    if (!introEnabled || introPhase !== "loader-wave" || introWaveStartedRef.current) return;
+    if (!introEnabled || introPhase !== "loader-wave") return;
     const line = titleLineRef.current;
     if (!line) return;
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    introWaveStartedRef.current = true;
     waveCleanupRef.current?.();
     waveCleanupRef.current = animateLoaderWordsWave(line, {
       theme: "light",
-      duration: HOME_INTRO_LOADER_WAVE_MS / 1000 - 0.15,
+      // Finish slightly before the phase ends so rise never fights the wave painter
+      duration: Math.max(0.4, HOME_INTRO_LOADER_WAVE_MS / 1000 - 0.35),
       delay: 0.05,
       charsClass: "loader-wave-char",
       wordsClass: "loader-wave-word",
@@ -224,6 +238,11 @@ const Hero = () => {
         if (!heroRiseStartedRef.current) centerIntroTitle();
       });
     });
+
+    return () => {
+      // Stop painting only — keep split chars so hero-rise can tween them to white
+      waveCleanupRef.current?.stopTween?.();
+    };
   }, [introEnabled, introPhase]);
 
   useLayoutEffect(() => {
@@ -239,32 +258,57 @@ const Hero = () => {
         clearProps:
           "position,left,top,xPercent,yPercent,zIndex,margin,transform,opacity",
       });
+      clearTitleInlineColors(title);
+      waveCleanupRef.current?.();
+      waveCleanupRef.current = null;
       setIntroSettled(true);
       return;
     }
 
     heroRiseStartedRef.current = true;
+
+    // Halt wave color writes but keep .loader-wave-char nodes for the white tween
+    waveCleanupRef.current?.stopTween?.();
+
     centerIntroTitle();
-    const chars = title.querySelectorAll<HTMLElement>(".loader-wave-char");
+    const chars = Array.from(title.querySelectorAll<HTMLElement>(".loader-wave-char"));
     const { x, y } = moveTargetRef.current;
     const riseDur = HOME_INTRO_HERO_RISE_MS / 1000;
 
+    riseTlRef.current?.kill();
     const tl = gsap.timeline({
       defaults: { ease: "power2.inOut" },
       onComplete: () => {
         gsap.set(title, {
           clearProps:
-            "position,left,top,xPercent,yPercent,zIndex,margin,transform,opacity",
+            "position,left,top,xPercent,yPercent,zIndex,margin,transform,opacity,color",
         });
+        clearTitleInlineColors(title);
+        waveCleanupRef.current?.();
+        waveCleanupRef.current = null;
         gsap.set(section, { backgroundColor: "#151f4d" });
         setIntroSettled(true);
+        riseTlRef.current = null;
       },
     });
+    riseTlRef.current = tl;
 
     tl.to(section, { backgroundColor: "#151f4d", duration: riseDur }, 0);
     tl.to(title, { x, y, duration: riseDur }, 0);
     if (chars.length) {
-      tl.to(chars, { color: "#ffffff", duration: riseDur, ease: "power2.inOut" }, 0);
+      tl.fromTo(
+        chars,
+        { color: "#3D3D3D" },
+        { color: "#ffffff", duration: riseDur, ease: "power2.inOut", overwrite: true },
+        0,
+      );
+    } else {
+      tl.fromTo(
+        title,
+        { color: "#3D3D3D" },
+        { color: "#ffffff", duration: riseDur, ease: "power2.inOut", overwrite: true },
+        0,
+      );
     }
   }, [introEnabled, introPhase]);
 
@@ -272,6 +316,12 @@ const Hero = () => {
     if (!introEnabled || introPhase !== "nav" || revealAnimatedRef.current) return;
     revealAnimatedRef.current = true;
     sectionRef.current?.removeAttribute("data-intro-reveal");
+
+    // Ensure title is white once chrome/nav comes in (safety if rise raced)
+    const title = titleLineRef.current;
+    if (title) {
+      clearTitleInlineColors(title);
+    }
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       if (gdpLineRef.current) gsap.set(gdpLineRef.current, { clearProps: "all" });
@@ -282,6 +332,7 @@ const Hero = () => {
     }
 
     const revealDur = 0.5;
+    revealTlRef.current?.kill();
     const tl = gsap.timeline({
       defaults: { ease: "power2.out" },
       onComplete: () => {
@@ -289,31 +340,21 @@ const Hero = () => {
         if (buttonsRef.current) gsap.set(buttonsRef.current, { clearProps: "all" });
         if (statsWrapRef.current) gsap.set(statsWrapRef.current, { clearProps: "all" });
         if (dataLinesRef.current) gsap.set(dataLinesRef.current, { clearProps: "all" });
+        revealTlRef.current = null;
       },
     });
+    revealTlRef.current = tl;
 
     if (gdpLineRef.current) {
-      tl.to(
-        gdpLineRef.current,
-        { autoAlpha: 1, duration: revealDur },
-        0,
-      );
+      tl.to(gdpLineRef.current, { autoAlpha: 1, duration: revealDur }, 0);
     }
 
     if (buttonsRef.current) {
-      tl.to(
-        buttonsRef.current,
-        { autoAlpha: 1, duration: revealDur },
-        0,
-      );
+      tl.to(buttonsRef.current, { autoAlpha: 1, duration: revealDur }, 0);
     }
 
     if (statsWrapRef.current) {
-      tl.to(
-        statsWrapRef.current,
-        { autoAlpha: 1, duration: revealDur },
-        0.05,
-      );
+      tl.to(statsWrapRef.current, { autoAlpha: 1, duration: revealDur }, 0.05);
     }
 
     if (dataLinesRef.current) {
