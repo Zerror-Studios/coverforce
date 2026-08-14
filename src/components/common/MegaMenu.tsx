@@ -118,8 +118,8 @@ function MegaMenuLinkItem({
           ) : (
             <AnimatedLinkText
               hovered={hovered}
-              textClip="h-[0.9375rem]"
-              textLine="h-[0.9375rem] leading-none"
+              textClip="h-[1.25em]"
+              textLine="h-[1.25em] leading-[1.25]"
             >
               {link.label}
             </AnimatedLinkText>

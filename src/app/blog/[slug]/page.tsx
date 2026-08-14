@@ -52,6 +52,8 @@ const BlogDetailPage = async ({ params }: BlogDetailPageProps) => {
       slug: item.slug,
       title: item.title,
       image: item.image,
+      date: item.date,
+      author: item.author,
     }));
 
   const breadcrumbs = [
