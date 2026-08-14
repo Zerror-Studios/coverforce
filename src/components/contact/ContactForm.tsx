@@ -166,6 +166,90 @@ const NAME_PATTERN = /^[\p{L}][\p{L}\s'.-]{0,79}$/u;
 
 type FieldErrors = Partial<Record<keyof FormDataState | "form", string>>;
 
+function getCountryLabel(countryCode?: string, phoneCode?: string) {
+  if (countryCode) {
+    const name = (en as Record<string, string>)[countryCode];
+    if (name) return name;
+  }
+  return phoneCode || "this country";
+}
+
+function getEmailError(email: string, mode: "live" | "submit" = "submit") {
+  const trimmed = email.trim();
+  if (!trimmed) return mode === "submit" ? "Email is required." : undefined;
+  if (mode === "live" && !trimmed.includes("@")) return undefined;
+
+  if (/\s/.test(trimmed)) return "Email can't contain spaces.";
+
+  const atCount = (trimmed.match(/@/g) || []).length;
+  if (atCount === 0) return "Email is missing @. Use a format like name@company.com.";
+  if (atCount > 1) return "Email can only have one @.";
+
+  const [local, domain] = trimmed.split("@");
+  if (!local) return "Add a name before @ (for example, name@company.com).";
+  if (!domain) return "Add a domain after @ (for example, company.com).";
+  if (local.startsWith(".") || local.endsWith(".")) {
+    return "The part before @ can't start or end with a period.";
+  }
+  if (local.includes("..") || domain.includes("..")) {
+    return "Email can't have two periods in a row.";
+  }
+  if (domain.startsWith("-") || domain.endsWith("-") || domain.startsWith(".") || domain.endsWith(".")) {
+    return "The domain after @ looks incomplete.";
+  }
+  if (!domain.includes(".")) {
+    return "Add a domain extension like .com after the company name.";
+  }
+
+  const tld = domain.split(".").pop() || "";
+  if (tld.length < 2) return "The domain extension is too short. Use something like .com or .io.";
+  if (!/^[a-zA-Z]{2,}$/.test(tld)) {
+    return "The domain extension can only contain letters (for example .com).";
+  }
+  if (!EMAIL_PATTERN.test(trimmed)) {
+    return "Use a complete email like name@company.com.";
+  }
+  return undefined;
+}
+
+function getPhoneError(
+  phoneCode: string,
+  phone: string,
+  mode: "live" | "submit" = "submit",
+  countryCode?: string,
+) {
+  const digits = sanitizePhone(phone);
+  if (!digits) return mode === "submit" ? "Phone number is required." : undefined;
+  if (mode === "live" && digits.length < 6) return undefined;
+
+  const full = buildFullPhone(phoneCode, digits);
+  if (isValidPhoneNumber(full)) return undefined;
+
+  const country = getCountryLabel(countryCode, phoneCode);
+  const callingDigits = phoneCode.replace(/\D/g, "");
+  const totalDigits = callingDigits.length + digits.length;
+
+  if (callingDigits && digits.startsWith(callingDigits) && digits.length > callingDigits.length + 3) {
+    return `Don't include the country code ${phoneCode} in the number field.`;
+  }
+  if (totalDigits > 15) {
+    return `This number is too long for ${country}. Enter the local number only.`;
+  }
+  if (phoneCode === "+1") {
+    if (digits.length < 10) {
+      return `${country} numbers need 10 digits. You entered ${digits.length}.`;
+    }
+    if (digits.length > 10) {
+      return `${country} numbers are 10 digits. You entered ${digits.length}.`;
+    }
+    return `This isn't a valid ${country} number. Check the area code and digits.`;
+  }
+  if (digits.length < 7) {
+    return `This number is too short for ${country} (${phoneCode}).`;
+  }
+  return `This number doesn't match ${country} (${phoneCode}) format.`;
+}
+
 function buildFullPhone(phoneCode: string, phone: string) {
   const digits = sanitizePhone(phone);
   if (!digits) return "";
@@ -189,12 +273,18 @@ function formatBookSizeDisplay(digits: string) {
 }
 
 /** Trim free-text fields; strip phone/book size to digits. Used before validate / submit. */
+function buildStartupFullName(firstName: string, lastName: string) {
+  return [firstName.trim(), lastName.trim()].filter(Boolean).join(" ");
+}
+
 function normalizeFormData(data: FormDataState): FormDataState {
+  const firstName = data.firstName.trim();
+  const lastName = data.lastName.trim();
   return {
     ...data,
-    fullName: data.fullName.trim(),
-    firstName: data.firstName.trim(),
-    lastName: data.lastName.trim(),
+    fullName: data.fullName.trim() || buildStartupFullName(firstName, lastName),
+    firstName,
+    lastName,
     phone: sanitizePhone(data.phone),
     email: data.email.trim(),
     jobTitle: data.jobTitle.trim(),
@@ -220,9 +310,9 @@ function validateStartupStep(step: number, data: FormDataState): FieldErrors {
   }
 
   if (step === 2) {
-    if (!data.fullName.trim()) errors.fullName = "Full name is required.";
-    else if (!NAME_PATTERN.test(data.fullName.trim())) {
-      errors.fullName = "Enter a valid full name.";
+    if (!data.firstName.trim()) errors.firstName = "First name is required.";
+    else if (!NAME_PATTERN.test(data.firstName.trim())) {
+      errors.firstName = "Enter a valid first name.";
     }
 
     if (!data.lastName.trim()) errors.lastName = "Last name is required.";
@@ -230,16 +320,11 @@ function validateStartupStep(step: number, data: FormDataState): FieldErrors {
       errors.lastName = "Enter a valid last name.";
     }
 
-    const fullPhone = buildFullPhone(data.phoneCode, data.phone);
-    if (!sanitizePhone(data.phone)) errors.phone = "Phone number is required.";
-    else if (!isValidPhoneNumber(fullPhone)) {
-      errors.phone = "Please enter a valid phone number.";
-    }
+    const phoneError = getPhoneError(data.phoneCode, data.phone, "submit", data.countryCode);
+    if (phoneError) errors.phone = phoneError;
 
-    if (!data.email.trim()) errors.email = "Email is required.";
-    else if (!EMAIL_PATTERN.test(data.email.trim())) {
-      errors.email = "Please enter a valid email address.";
-    }
+    const emailError = getEmailError(data.email);
+    if (emailError) errors.email = emailError;
 
     if (!data.jobTitle.trim()) errors.jobTitle = "Job title is required.";
     else if (data.jobTitle.trim().length < 2) {
@@ -329,22 +414,19 @@ function validateDefaultStep(step: number, data: FormDataState): FieldErrors {
 
   if (step === 4) {
     const fullName = data.fullName.trim();
-    const email = data.email.trim();
     const jobTitle = data.jobTitle.trim();
     const companyName = data.companyName.trim();
-    const fullPhone = buildFullPhone(data.phoneCode, data.phone);
 
     if (!fullName) errors.fullName = "Full name is required.";
     else if (!NAME_PATTERN.test(fullName)) errors.fullName = "Enter a valid full name.";
 
-    if (!sanitizePhone(data.phone)) errors.phone = "Phone number is required.";
-    else if (!isValidPhoneNumber(fullPhone)) {
-      errors.phone = "Please enter a valid phone number.";
-    }
+    const phoneError = getPhoneError(data.phoneCode, data.phone, "submit", data.countryCode);
+    if (phoneError) errors.phone = phoneError;
 
-    if (!email) errors.email = "Email address is required.";
-    else if (!EMAIL_PATTERN.test(email)) {
-      errors.email = "Please enter a valid email address.";
+    const emailError = getEmailError(data.email);
+    if (emailError) {
+      errors.email =
+        emailError === "Email is required." ? "Email address is required." : emailError;
     }
 
     if (!jobTitle) errors.jobTitle = "Job title is required.";
@@ -631,6 +713,19 @@ const ContactForm = () => {
     });
   };
 
+  const setFieldError = (field: keyof FieldErrors, message?: string) => {
+    setFieldErrors((prev) => {
+      if (!message) {
+        if (!prev[field]) return prev;
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      }
+      if (prev[field] === message) return prev;
+      return { ...prev, [field]: message };
+    });
+  };
+
   const updateData = (field: keyof FormDataState, value: string) => {
     const nextValue =
       field === "phone"
@@ -639,23 +734,45 @@ const ContactForm = () => {
           ? sanitizeBookSize(value)
           : value;
     setFormData((prev) => ({ ...prev, [field]: nextValue }));
-    clearFieldError(field);
     setSubmitError(null);
+
+    if (field === "email") {
+      setFieldError("email", getEmailError(nextValue, "live"));
+      return;
+    }
+    if (field === "phone") {
+      setFieldError("phone", getPhoneError(formData.phoneCode, nextValue, "live", formData.countryCode));
+      return;
+    }
+
+    clearFieldError(field);
+  };
+
+  const updatePhoneCountry = (code: string, countryCode: string) => {
+    setFormData((prev) => ({ ...prev, phoneCode: code, countryCode }));
+    setFieldError("phone", getPhoneError(code, formData.phone, "live", countryCode));
+    setActiveDropdown(null);
   };
 
   const trimFieldOnBlur = (field: keyof FormDataState) => {
-    setFormData((prev) => {
-      const current = prev[field];
-      if (typeof current !== "string") return prev;
-      const next =
-        field === "phone"
-          ? sanitizePhone(current)
-          : field === "bookSize"
-            ? sanitizeBookSize(current)
-            : current.trim();
-      if (next === current) return prev;
-      return { ...prev, [field]: next };
-    });
+    const current = formData[field];
+    if (typeof current !== "string") return;
+    const next =
+      field === "phone"
+        ? sanitizePhone(current)
+        : field === "bookSize"
+          ? sanitizeBookSize(current)
+          : current.trim();
+
+    if (next !== current) {
+      setFormData((prev) => ({ ...prev, [field]: next }));
+    }
+
+    if (field === "email") {
+      setFieldError("email", getEmailError(next, "submit"));
+    } else if (field === "phone") {
+      setFieldError("phone", getPhoneError(formData.phoneCode, next, "submit", formData.countryCode));
+    }
   };
 
   const goNext = () => {
@@ -699,7 +816,8 @@ const ContactForm = () => {
         ? {
             flow: "startup" as const,
             businessType: normalized.businessType,
-            fullName: normalized.fullName,
+            firstName: normalized.firstName,
+            fullName: buildStartupFullName(normalized.firstName, normalized.lastName),
             lastName: normalized.lastName,
             email: normalized.email,
             phoneCode: normalized.phoneCode,
@@ -956,19 +1074,19 @@ const ContactForm = () => {
 
                 <div className="mt-4 grid w-full grid-cols-1 gap-x-12 gap-y-10 text-left md:grid-cols-2">
                   <div className="flex flex-col gap-2" data-animate-field>
-                    <label className={fieldLabelClass}>Full Name *</label>
+                    <label className={fieldLabelClass}>First Name *</label>
                     <input
                       type="text"
-                      placeholder="Arjun Sharma"
-                      autoComplete="name"
-                      value={formData.fullName}
-                      onChange={(e) => updateData("fullName", e.target.value)}
-                      onBlur={() => trimFieldOnBlur("fullName")}
-                      className={underlineInputClass(Boolean(fieldErrors.fullName))}
+                      placeholder="John"
+                      autoComplete="given-name"
+                      value={formData.firstName}
+                      onChange={(e) => updateData("firstName", e.target.value)}
+                      onBlur={() => trimFieldOnBlur("firstName")}
+                      className={underlineInputClass(Boolean(fieldErrors.firstName))}
                     />
-                    {fieldErrors.fullName && (
+                    {fieldErrors.firstName && (
                       <p className={fieldErrorClass} role="alert">
-                        {fieldErrors.fullName}
+                        {fieldErrors.firstName}
                       </p>
                     )}
                   </div>
@@ -976,7 +1094,7 @@ const ContactForm = () => {
                     <label className={fieldLabelClass}>Last Name *</label>
                     <input
                       type="text"
-                      placeholder="Sharma"
+                      placeholder="Smith"
                       autoComplete="family-name"
                       value={formData.lastName}
                       onChange={(e) => updateData("lastName", e.target.value)}
@@ -1034,13 +1152,7 @@ const ContactForm = () => {
                                   className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-white/10"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      phoneCode: c.code,
-                                      countryCode: c.countryCode,
-                                    }));
-                                    clearFieldError("phone");
-                                    setActiveDropdown(null);
+                                    updatePhoneCountry(c.code, c.countryCode);
                                   }}
                                 >
                                   <div className="flex w-6 items-center justify-center">
@@ -1087,7 +1199,7 @@ const ContactForm = () => {
                     <input
                       type="email"
                       autoComplete="email"
-                      placeholder="arjun@company.com"
+                      placeholder="john@company.com"
                       value={formData.email}
                       onChange={(e) => updateData("email", e.target.value)}
                       onBlur={() => trimFieldOnBlur("email")}
@@ -1104,7 +1216,7 @@ const ContactForm = () => {
                     <input
                       type="text"
                       autoComplete="organization-title"
-                      placeholder="Product Manager"
+                      placeholder="President"
                       value={formData.jobTitle}
                       onChange={(e) => updateData("jobTitle", e.target.value)}
                       onBlur={() => trimFieldOnBlur("jobTitle")}
@@ -1598,7 +1710,7 @@ const ContactForm = () => {
                     </label>
                     <input
                       type="text"
-                      placeholder="Arjun Sharma"
+                      placeholder="John Smith"
                       autoComplete="name"
                       value={formData.fullName}
                       onChange={(e) => updateData("fullName", e.target.value)}
@@ -1658,13 +1770,7 @@ const ContactForm = () => {
                                   className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-white/10"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      phoneCode: c.code,
-                                      countryCode: c.countryCode,
-                                    }));
-                                    clearFieldError("phone");
-                                    setActiveDropdown(null);
+                                    updatePhoneCountry(c.code, c.countryCode);
                                   }}
                                 >
                                   <div className="flex w-6 items-center justify-center">
@@ -1713,7 +1819,7 @@ const ContactForm = () => {
                     <input
                       type="email"
                       autoComplete="email"
-                      placeholder="arjun@company.com"
+                      placeholder="john@company.com"
                       value={formData.email}
                       onChange={(e) => updateData("email", e.target.value)}
                       onBlur={() => trimFieldOnBlur("email")}
@@ -1732,7 +1838,7 @@ const ContactForm = () => {
                     <input
                       type="text"
                       autoComplete="organization-title"
-                      placeholder="Product Manager"
+                      placeholder="President"
                       value={formData.jobTitle}
                       onChange={(e) => updateData("jobTitle", e.target.value)}
                       onBlur={() => trimFieldOnBlur("jobTitle")}

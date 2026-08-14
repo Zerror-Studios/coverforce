@@ -21,6 +21,7 @@ export async function POST(request: Request) {
 
     if (flow === "startup") {
       const payload = {
+        firstName: String(body?.firstName ?? "").trim(),
         fullName: String(body?.fullName ?? "").trim(),
         lastName: String(body?.lastName ?? "").trim(),
         email: String(body?.email ?? "").trim(),
