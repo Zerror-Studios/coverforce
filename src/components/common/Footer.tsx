@@ -229,7 +229,7 @@ const Footer = () => {
               src="/images/footer_banner-mobile.webp"
               alt="CoverForce"
               fill
-              className="object-cover object-top md:hidden"
+              className="object-cover object-top sm:object-center md:hidden"
               sizes="100vw"
             />
             <Image

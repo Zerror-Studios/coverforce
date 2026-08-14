@@ -37,7 +37,7 @@ const BADGES: Badge[] = [
 
 export default function ApiConnectionCard() {
   return (
-    <div className="mx-auto w-full max-w-[400px] overflow-hidden rounded-xl bg-white px-3.5 py-4 shadow-[0_8px_30px_rgba(20,20,40,0.08)] sm:max-w-[440px] sm:px-4 sm:py-5">
+    <div className="mx-auto w-full max-w-[400px] overflow-hidden rounded-xl bg-white px-3.5 py-4 shadow-[0_8px_30px_rgba(20,20,40,0.08)] sm:max-w-none sm:px-3 sm:py-2.5 lg:max-w-[440px] lg:px-4 lg:py-5">
       {/* Header */}
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-[13px] font-bold tracking-tight text-[#14141a] sm:text-sm">
@@ -63,7 +63,7 @@ export default function ApiConnectionCard() {
         </button>
       </div>
 
-      <div className="mt-3.5 grid min-h-[168px] grid-cols-[0.9fr_1.1fr] items-center gap-2.5 sm:min-h-[180px]">
+      <div className="mt-3.5 grid min-h-[168px] grid-cols-[0.9fr_1.1fr] items-center gap-2.5 sm:mt-2 sm:min-h-0 sm:gap-2 lg:mt-3.5 lg:min-h-[180px]">
         {/* Left: illustration — vertically centered */}
         <div className="flex h-full items-center justify-center self-center">
           <Image
@@ -71,7 +71,7 @@ export default function ApiConnectionCard() {
             alt="API connection diagram"
             width={180}
             height={180}
-            className="h-auto w-full"
+            className="h-auto w-full sm:max-h-[7.5rem] sm:object-contain lg:max-h-none"
             priority
           />
         </div>
@@ -86,7 +86,7 @@ export default function ApiConnectionCard() {
             {PARTNERS.map((p, i) => (
               <div
                 key={p.name}
-                className={`flex items-center justify-between gap-1 py-2 ${
+                className={`flex items-center justify-between gap-1 py-2 sm:py-1 lg:py-2 ${
                   i !== PARTNERS.length - 1 ? "border-b border-[#ECECEF]" : ""
                 }`}
               >
@@ -100,7 +100,7 @@ export default function ApiConnectionCard() {
             ))}
           </div>
 
-          <div className="mt-3 flex flex-wrap gap-1">
+          <div className="mt-3 flex flex-wrap gap-1 sm:mt-1.5 lg:mt-3">
             {BADGES.map((b) => (
               <span
                 key={b.label}

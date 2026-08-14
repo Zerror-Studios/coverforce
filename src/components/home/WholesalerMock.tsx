@@ -513,7 +513,7 @@ export default function WholesalerMock({ liveStats = false }: { liveStats?: bool
   const coverageStatClassName = "inline text-[0.55rem] tracking-wide font-heading font-medium text-[#111827]";
 
   return (
-    <div className="relative mx-auto w-full min-w-0 max-md:mt-8 max-md:h-[300px] max-md:max-w-[300px] max-md:overflow-visible md:max-w-[330px] md:h-auto">
+    <div className="relative mx-auto w-full min-w-0 max-sm:mt-8 max-sm:h-[300px] max-sm:max-w-[300px] max-sm:overflow-visible sm:max-w-[300px] lg:max-w-[330px] lg:h-auto">
       {/* ACORD 25 — primary card */}
       <div className="relative z-10 mx-auto w-full overflow-hidden rounded-md bg-white shadow-[0_8px_40px_rgba(0,0,0,0.18)]">
         <div className="flex items-center justify-between px-4 pt-4 pb-1">
@@ -554,7 +554,7 @@ export default function WholesalerMock({ liveStats = false }: { liveStats?: bool
       </div>
 
       {/* Email Intake — overlapping card */}
-      <div className="absolute z-20 top-[22%] -right-5 w-[72%] max-md:top-[16%] max-md:-right-[6%] max-md:w-[76%] md:-right-7 md:w-[70%]">
+      <div className="absolute z-20 top-[22%] -right-5 w-[72%] max-sm:top-[16%] max-sm:-right-[6%] max-sm:w-[76%] sm:-right-5 sm:w-[72%] lg:-right-7 lg:w-[70%]">
         <div className="w-full overflow-hidden rounded-md bg-white shadow-[0_8px_30px_rgba(0,0,0,0.15)]">
           <div className="flex items-center justify-between bg-[#72AF23]/15 px-3 py-2.5">
             <div className="flex items-center gap-1.5">

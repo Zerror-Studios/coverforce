@@ -243,7 +243,7 @@ export default function RecentActivityCard() {
   }, []);
 
   return (
-    <div className="mx-auto w-full max-w-[360px] overflow-hidden rounded-xl bg-white p-3 shadow-[0_8px_30px_rgba(20,20,40,0.08)] sm:max-w-[390px] sm:p-3.5">
+    <div className="mx-auto w-full max-w-[360px] overflow-hidden rounded-xl bg-white p-3 shadow-[0_8px_30px_rgba(20,20,40,0.08)] sm:max-w-none sm:p-2.5 lg:max-w-[390px] lg:p-3.5">
       {/* Header */}
       <h2 className="text-[13px] font-bold tracking-tight text-[#14141a] sm:text-sm">
         Recent Activity
@@ -271,7 +271,7 @@ export default function RecentActivityCard() {
       </div>
 
       {/* Table — overflow hidden so row entrance never shows a scrollbar */}
-      <div className="mt-1 min-h-[188px] overflow-hidden sm:min-h-[200px]">
+      <div className="mt-1 min-h-[188px] overflow-hidden sm:min-h-0 lg:min-h-[200px]">
         <table className="w-full table-fixed border-collapse text-left">
           <thead>
             <tr className="bg-[#F7F6FC]">
@@ -302,7 +302,7 @@ export default function RecentActivityCard() {
                 }}
                 className={i !== rows.length - 1 ? "border-b border-[#ECECEF]" : ""}
               >
-                <td className="px-1.5 py-2 sm:px-2 sm:py-2.5">
+                <td className="px-1.5 py-2 sm:px-2 sm:py-1.5 lg:py-2.5">
                   <div className="flex items-center gap-1.5">
                     <span
                       className="flex size-5 shrink-0 items-center justify-center rounded-full text-[10px]"
@@ -315,15 +315,15 @@ export default function RecentActivityCard() {
                     </span>
                   </div>
                 </td>
-                <td className="truncate px-1.5 py-2 text-[9px] text-[#9a9aa4] sm:px-2 sm:py-2.5 sm:text-[10px]">
+                <td className="truncate px-1.5 py-2 text-[9px] text-[#9a9aa4] sm:px-2 sm:py-1.5 sm:text-[10px] lg:py-2.5">
                   {row.status}
                 </td>
-                <td className="px-1.5 py-2 sm:px-2 sm:py-2.5">
+                <td className="px-1.5 py-2 sm:px-2 sm:py-1.5 lg:py-2.5">
                   <div className="flex justify-center">
                     <Sparkline points={row.points} color={row.color} />
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-1.5 py-2 text-right text-[9px] text-[#9a9aa4] sm:px-2 sm:py-2.5 sm:text-[10px]">
+                <td className="whitespace-nowrap px-1.5 py-2 text-right text-[9px] text-[#9a9aa4] sm:px-2 sm:py-1.5 sm:text-[10px] lg:py-2.5">
                   {row.time}
                 </td>
               </motion.tr>
