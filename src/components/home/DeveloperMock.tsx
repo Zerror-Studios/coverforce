@@ -104,7 +104,7 @@ export default function DeveloperMock({ align = "card" }: DeveloperMockProps) {
       className={
         isModal
           ? "absolute top-1/2 right-6 z-10 w-[min(78%,460px)] -translate-y-1/2 sm:w-[500px] md:right-10"
-          : "relative z-10 mx-auto w-full max-w-[460px] max-sm:mt-2 max-sm:w-[108%] max-sm:max-w-none max-sm:left-1/2 max-sm:-translate-x-1/2 sm:ml-auto sm:mr-10 sm:max-w-[min(92%,420px)] sm:translate-x-0 sm:left-auto lg:absolute lg:top-1/2 lg:right-20 lg:mx-0 lg:mr-0 lg:max-w-[500px] lg:-translate-y-1/2"
+          : "relative z-10 mx-auto w-full min-w-0 max-w-[460px] max-sm:mt-2 max-sm:w-full max-sm:max-w-none sm:ml-auto sm:mr-0 sm:max-w-full sm:translate-x-0 sm:left-auto lg:absolute lg:top-1/2 lg:right-20 lg:mx-0 lg:mr-0 lg:max-w-[500px] lg:-translate-y-1/2"
       }
     >
       <div className="w-full rounded-xl bg-white p-3.5 shadow-[0_8px_30px_rgba(20,20,40,0.08)] max-sm:p-2.5 lg:p-4">

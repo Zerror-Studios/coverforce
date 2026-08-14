@@ -513,7 +513,7 @@ export default function WholesalerMock({ liveStats = false }: { liveStats?: bool
   const coverageStatClassName = "inline text-[0.55rem] tracking-wide font-heading font-medium text-[#111827]";
 
   return (
-    <div className="relative mx-auto w-full min-w-0 max-sm:mt-8 max-sm:h-[300px] max-sm:max-w-[300px] max-sm:overflow-visible sm:max-w-[300px] lg:max-w-[330px] lg:h-auto">
+    <div className="relative mx-auto w-full min-w-0 max-w-full max-sm:mt-8 max-sm:h-[300px] max-sm:max-w-[300px] max-sm:overflow-visible sm:max-w-full lg:max-w-[330px] lg:h-auto">
       {/* ACORD 25 — primary card */}
       <div className="relative z-10 mx-auto w-full overflow-hidden rounded-md bg-white shadow-[0_8px_40px_rgba(0,0,0,0.18)]">
         <div className="flex items-center justify-between px-4 pt-4 pb-1">

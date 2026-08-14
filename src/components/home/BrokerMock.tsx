@@ -59,9 +59,9 @@ export default function BrokerMock({ cardHovered = false }: BrokerMockProps) {
   const chartBars = cardHovered ? CHART_BARS_HOVER : CHART_BARS_REST;
 
   return (
-    <div className="relative mx-auto w-full max-sm:mt-6 max-sm:max-w-[280px] max-sm:overflow-visible sm:pointer-events-none sm:max-w-[280px] md:max-w-[280px]">
+    <div className="relative mx-auto w-full min-w-0 max-w-full max-sm:mt-6 max-sm:max-w-[280px] max-sm:overflow-visible sm:pointer-events-none sm:max-w-full lg:max-w-[280px]">
       {/* Quotes returned today — chart + policy status */}
-      <div className="relative z-10 ml-auto mt-16 w-[92%] translate-x-5 max-sm:mt-12 max-sm:translate-x-3 sm:mt-16 sm:translate-x-10 sm:w-full lg:mt-20 lg:translate-x-16">
+      <div className="relative z-10 ml-auto mt-16 w-[92%] max-w-full translate-x-5 max-sm:mt-12 max-sm:translate-x-3 sm:mt-16 sm:translate-x-0 sm:w-full lg:mt-20 lg:translate-x-16">
         <div className="w-full overflow-hidden rounded-md bg-white shadow-[0_8px_32px_rgba(0,0,0,0.14)]">
           <div className="flex items-start justify-between px-4 pt-3.5">
             <div>

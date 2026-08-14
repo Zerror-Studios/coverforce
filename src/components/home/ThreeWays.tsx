@@ -9,6 +9,8 @@ import { animateSplitTextReveal } from "@/lib/animateSplitTextReveal";
 gsap.registerPlugin(ScrollTrigger);
 import dynamic from "next/dynamic";
 
+import Image from "next/image";
+
 import Container from "../common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import WayCardModal from "./WayCardModal";
@@ -86,6 +88,8 @@ type WayCardProps = {
   hideMock?: boolean;
   /** Mobile-only scale for the inner mock (desktop unchanged). */
   mobileMockScale?: number;
+  /** Static inner mock for sm/md; live mock stays on lg+. */
+  previewImage?: string;
   backgroundScene?: ReactNode;
   backgroundInteractive?: boolean;
   backgroundSceneBlendScreen?: boolean;
@@ -111,6 +115,7 @@ const WAY_CARDS: WayCardConfig[] = [
     dotGrid: true,
     mockShiftDown: true,
     mobileMockScale: 0.6,
+    previewImage: "/images/home/wholesalers.png",
     mock: <WholesalerMock />,
     modalPreview: <WholesalerMock />,
   },
@@ -123,6 +128,7 @@ const WAY_CARDS: WayCardConfig[] = [
     backgroundScene: <BrokersCardEarth />,
     backgroundSceneBlendScreen: true,
     mobileMockScale: 0.64,
+    previewImage: "/images/home/brokers.png",
     mock: <BrokerMockWithCardHover />,
     modalPreview: <BrokerMock />,
   },
@@ -140,9 +146,10 @@ const WAY_CARDS: WayCardConfig[] = [
     variant: "dark",
     wide: true,
     background: "developer",
-    className: "sm:col-span-2",
+    className: "lg:col-span-2",
     mockAlign: "bottom",
     mobileMockScale: 0.7,
+    previewImage: "/images/home/developers.png",
     backgroundScene: <DeveloperTerminalBg />,
     mock: <DeveloperMock />,
     modalPreview: <DeveloperMock align="modal" />,
@@ -157,8 +164,9 @@ const WAY_CARDS: WayCardConfig[] = [
     backgroundInteractive: true,
     mockShiftDown: true,
     mobileMockScale: 0.88,
+    previewImage: "/images/home/startup.png",
     mock: (
-      <div className="w-full max-sm:mt-6 sm:w-[108%] lg:w-full">
+      <div className="w-full max-w-full max-sm:mt-6">
         <AiAppetiteEngineMock />
       </div>
     ),
@@ -174,8 +182,9 @@ const WAY_CARDS: WayCardConfig[] = [
     dotGrid: true,
     mockShiftDown: true,
     mobileMockScale: 0.88,
+    previewImage: "/images/home/carriers.png",
     mock: (
-      <div className="w-full max-sm:mt-6 sm:w-[108%] lg:w-full">
+      <div className="w-full max-w-full max-sm:mt-6">
         <StartupRecentActivityCard />
       </div>
     ),
@@ -235,6 +244,7 @@ const WayCard = memo(function WayCard({
   mockShiftDown = false,
   hideMock = false,
   mobileMockScale,
+  previewImage,
   backgroundScene,
   backgroundInteractive = false,
   backgroundSceneBlendScreen = false,
@@ -270,7 +280,7 @@ const WayCard = memo(function WayCard({
         onClick={handleOpen}
         onMouseEnter={isMobile ? undefined : () => setHovered(true)}
         onMouseLeave={isMobile ? undefined : () => setHovered(false)}
-        className={`way-card-shell relative cursor-pointer [content-visibility:auto] max-sm:aspect-square max-sm:[contain-intrinsic-size:auto_100%] max-sm:min-h-0 [contain-intrinsic-size:auto_530px] sm:min-h-[22rem] md:min-h-[22rem] ${wide ? "sm:aspect-[1179/530]" : "sm:aspect-[580/530]"} ${hovered ? "way-card-shell--hovered" : ""} ${textClass} ${className}`}
+        className={`way-card-shell relative min-w-0 w-full cursor-pointer [content-visibility:auto] max-sm:aspect-square max-sm:min-h-0 max-sm:[contain-intrinsic-size:auto_100%] sm:aspect-square sm:min-h-0 sm:[contain-intrinsic-size:auto_100%] md:min-h-0 lg:min-h-[22rem] lg:[contain-intrinsic-size:auto_530px] ${wide ? "lg:aspect-[1179/530]" : "lg:aspect-[580/530]"} ${hovered ? "way-card-shell--hovered" : ""} ${textClass} ${className}`}
       >
         <div
           className="way-card-body absolute inset-0 flex flex-col overflow-hidden p-4 sm:p-4 lg:p-8"
@@ -319,22 +329,34 @@ const WayCard = memo(function WayCard({
           ) : null}
         </div>
         <div
-          className={`way-card-mock pointer-events-none absolute inset-0 z-10 overflow-visible transition-opacity duration-300 ${hideMock ? "opacity-0" : "opacity-100"} ${
-            mockAlign === "bottom"
-              ? "max-sm:flex max-sm:items-center max-sm:justify-center max-sm:px-2 max-sm:pt-16 max-sm:pb-3 px-0 pt-4 sm:flex sm:items-center sm:justify-end sm:px-3 sm:pt-6 sm:pb-0 lg:block lg:px-0 lg:pt-6"
-              : "max-sm:flex max-sm:items-center max-sm:justify-center max-sm:p-3 max-sm:pt-[4.25rem] p-4 sm:flex sm:items-center sm:justify-center sm:p-3 sm:pt-14 lg:p-6 lg:pt-6"
-          } ${mockShiftDown ? "sm:pt-12 lg:pt-32" : ""}`}
+          className={`way-card-mock pointer-events-none absolute inset-0 z-10 overflow-hidden max-sm:overflow-visible lg:overflow-visible transition-opacity duration-300 ${hideMock ? "opacity-0" : "opacity-100"}`}
         >
+          {previewImage ? (
+            <div className="absolute inset-0 flex items-center justify-center px-3 pb-3 pt-[4.5rem] sm:px-4 sm:pb-4 sm:pt-20 md:px-5 md:pb-5 lg:hidden">
+              {inView ? (
+                <Image
+                  src={previewImage}
+                  alt=""
+                  width={800}
+                  height={800}
+                  className="h-auto w-[92%] max-h-[84%] object-contain object-center"
+                  sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 0px"
+                />
+              ) : (
+                <MockPlaceholder className="max-w-[min(100%,280px)]" />
+              )}
+            </div>
+          ) : null}
           <div
-            className={`${
+            className={`${previewImage ? "hidden" : "flex"} ${
               mockAlign === "bottom"
-                ? "relative flex h-full w-full min-w-0 flex-col justify-end max-sm:h-auto max-sm:items-center max-sm:justify-center overflow-visible lg:overflow-hidden max-sm:origin-center sm:h-auto sm:w-auto sm:max-w-[92%] sm:ml-auto sm:origin-right lg:h-full lg:w-full lg:origin-center"
+                ? "relative h-full w-full min-w-0 max-w-full flex-col justify-end overflow-hidden origin-center max-sm:h-auto max-sm:items-center max-sm:justify-center max-sm:overflow-visible max-sm:px-2 max-sm:pt-16 max-sm:pb-3 px-0 pt-4 sm:items-center sm:justify-end sm:px-3 sm:pt-6 sm:pb-0 lg:block lg:overflow-hidden lg:px-0 lg:pt-6"
                 : mockShiftDown
-                  ? "relative mx-auto flex h-full w-full min-w-0 max-w-full items-center justify-center overflow-visible lg:overflow-hidden origin-center"
-                  : "relative flex h-full w-full min-w-0 items-center justify-center overflow-visible lg:overflow-hidden origin-center"
+                  ? "relative mx-auto h-full w-full min-w-0 max-w-full items-center justify-center overflow-hidden origin-center max-sm:overflow-visible p-4 max-sm:p-3 max-sm:pt-[4.25rem] sm:p-3 sm:pt-14 lg:flex lg:overflow-hidden lg:p-6 lg:pt-32"
+                  : "relative h-full w-full min-w-0 max-w-full items-center justify-center overflow-hidden origin-center max-sm:overflow-visible p-4 max-sm:p-3 max-sm:pt-[4.25rem] sm:p-3 sm:pt-14 lg:flex lg:overflow-hidden lg:p-6 lg:pt-6"
             }`}
             style={
-              isCompactMock
+              isCompactMock && !previewImage
                 ? { transform: `scale(${resolvedMobileScale})` }
                 : undefined
             }
@@ -491,7 +513,7 @@ export default function ThreeWays() {
             </p>
           </div>
 
-          <div className="mt-8 grid grid-cols-1 gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4 md:gap-2 lg:mt-14">
+          <div className="mt-8 grid min-w-0 grid-cols-1 gap-3 overflow-x-clip sm:mt-10 sm:grid-cols-2 sm:gap-4 md:gap-4 lg:mt-14 lg:gap-2 lg:overflow-visible">
             {WAY_CARDS.map(({ mock, modalPreview, modalPreviewAlign, ...card }) => (
               <WayCard
                 key={card.label}
@@ -517,6 +539,7 @@ export default function ThreeWays() {
         backgroundScene={activeConfig?.backgroundScene}
         backgroundSceneBlendScreen={activeConfig?.backgroundSceneBlendScreen}
         previewAlign={activeConfig?.modalPreviewAlign ?? "center"}
+        previewImage={activeConfig?.previewImage}
         onClose={closeModal}
       />
     </section>

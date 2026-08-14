@@ -388,6 +388,16 @@ button {
   transition: clip-path 800ms cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
+/* sm/md: clip-path inset crops cards and hides grid gap; contain mocks instead. */
+@media (max-width: 1023px) {
+  [data-threeways] .way-card-shell,
+  [data-threeways] .way-card-shell:hover {
+    clip-path: none;
+    overflow: hidden;
+    border-radius: 6px;
+  }
+}
+
 .way-card-body {
   isolation: isolate;
 }

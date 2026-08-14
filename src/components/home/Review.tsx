@@ -112,7 +112,7 @@ function CompanyLogo({
 
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
-    <article className="relative flex h-[420px] flex-col overflow-hidden rounded-sm bg-white p-5 md:h-[380px] md:p-7 lg:h-[480px] lg:p-8">
+    <article className="relative flex h-[420px] flex-col overflow-hidden rounded-sm bg-white p-5 sm:h-[340px] md:h-[380px] md:p-7 lg:h-[480px] lg:p-8">
       <div className="relative z-10 flex h-full flex-1 flex-col">
         {/* Author — top on mobile, bottom-left on desktop */}
         <div className="relative order-1 shrink-0 md:order-2 md:mt-7">

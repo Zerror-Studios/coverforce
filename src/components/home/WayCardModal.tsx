@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { RiCheckLine, RiCloseLine } from "@remixicon/react";
+import Image from "next/image";
 
 import type { WayCardModalContent } from "@/data/wayCardModals";
 import {
@@ -32,6 +33,7 @@ type WayCardModalProps = {
   backgroundScene?: ReactNode;
   backgroundSceneBlendScreen?: boolean;
   previewAlign?: "center" | "right";
+  previewImage?: string;
   onClose: () => void;
 };
 
@@ -45,6 +47,7 @@ type StoredModal = {
   backgroundScene?: ReactNode;
   backgroundSceneBlendScreen?: boolean;
   previewAlign: "center" | "right";
+  previewImage?: string;
 };
 
 export default function WayCardModal({
@@ -58,6 +61,7 @@ export default function WayCardModal({
   backgroundScene,
   backgroundSceneBlendScreen,
   previewAlign = "center",
+  previewImage,
   onClose,
 }: WayCardModalProps) {
   const [isClosing, setIsClosing] = useState(false);
@@ -73,6 +77,7 @@ export default function WayCardModal({
   const backgroundSceneRef = useRef(backgroundScene);
   const backgroundSceneBlendScreenRef = useRef(backgroundSceneBlendScreen);
   const previewAlignRef = useRef(previewAlign);
+  const previewImageRef = useRef(previewImage);
 
   contentRef.current = content;
   previewNodeRef.current = preview;
@@ -83,6 +88,7 @@ export default function WayCardModal({
   backgroundSceneRef.current = backgroundScene;
   backgroundSceneBlendScreenRef.current = backgroundSceneBlendScreen;
   previewAlignRef.current = previewAlign;
+  previewImageRef.current = previewImage;
 
   useEffect(() => {
     if (!open || !contentRef.current) return;
@@ -97,6 +103,7 @@ export default function WayCardModal({
       backgroundScene: backgroundSceneRef.current,
       backgroundSceneBlendScreen: backgroundSceneBlendScreenRef.current,
       previewAlign: previewAlignRef.current,
+      previewImage: previewImageRef.current,
     });
     setIsClosing(false);
   }, [open]);
@@ -317,7 +324,21 @@ export default function WayCardModal({
                   : "mx-auto flex max-w-[820px] items-center justify-center max-md:[&>*]:scale-[0.82] md:[&>*]:scale-100 [&>*]:!relative [&>*]:!inset-auto [&>*]:!top-auto [&>*]:!right-auto [&>*]:!bottom-auto [&>*]:!left-auto [&>*]:!translate-x-0 [&>*]:!translate-y-0"
               }`}
             >
-              {stored.preview}
+              {stored.previewImage ? (
+                <div className="flex h-full w-full items-center justify-center max-md:!scale-100 lg:hidden">
+                  <Image
+                    src={stored.previewImage}
+                    alt=""
+                    width={800}
+                    height={800}
+                    className="h-auto w-[92%] max-h-[84%] object-contain object-center"
+                    sizes="(max-width: 1023px) 90vw, 0px"
+                  />
+                </div>
+              ) : null}
+              <div className={stored.previewImage ? "hidden h-full w-full lg:contents" : "h-full w-full"}>
+                {stored.preview}
+              </div>
             </div>
           </div>
         </div>
