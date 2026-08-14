@@ -586,10 +586,10 @@ const Hero = () => {
             <div className=" w-full lg:absolute left-0 items-center  top-1/2 lg:-translate-y-1/2 md:flex justify-between">
               <h2
                 ref={networkHeadingRef}
-                className={` text-left z-10   text-2xl font-heading font-medium leading-[1.15] tracking-tight sm:text-3xl sm:leading-[1.12]  md:text-4xl  lg:text-[1.625rem] lg:leading-[1.12] ${theme.titleMuted}`}
+                className={`text-left z-10 max-w-none text-2xl font-heading font-medium leading-[1.15] tracking-tight sm:text-3xl sm:leading-[1.12] md:max-w-md md:text-[1.625rem] md:leading-[1.12] lg:max-w-none ${theme.titleMuted}`}
               >
                 <span data-split>
-                  Commercial insurance <br className="max-sm:hidden" /> distribution that gets <br className="max-sm:hidden" /> smarter with every <br className="max-sm:hidden" />
+                  Commercial insurance <br className="hidden lg:inline" /> distribution that gets <br className="hidden lg:inline" /> smarter with every <br className="hidden lg:inline" />
                   transaction
                 </span>
               </h2>

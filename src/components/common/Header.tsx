@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import gsap from "gsap";
 import Container from "./Container";
+import { containerPadding } from "./containerStyles";
 import RequestDemoButton from "@/components/request-demo/RequestDemoButton";
 import MegaMenu, {
   CLIP_CLOSE_MS,
@@ -305,7 +306,7 @@ function MobileMenuLinkRow({
       type="button"
       onClick={onClick}
       aria-current={isCurrentPage ? "page" : undefined}
-      className={`flex w-full items-center justify-between border-b px-6 py-5 text-left font-heading text-[1.125rem] font-regular leading-none transition-colors hover:text-[#151F4D] ${
+      className={`flex w-full items-center justify-between border-b py-5 text-left font-heading text-[1.125rem] font-regular leading-none transition-colors hover:text-[#151F4D] ${containerPadding} ${
         isCurrentPage
           ? "border-[#E8ECF0] text-[#151F4D]"
           : "border-[#E8ECF0] text-[#3D3D3D]"
@@ -983,18 +984,18 @@ const Header = ({
                     }
                     className="shrink-0"
                   >
-                    <div className="px-6 pb-4 pt-6">
+                    <div className={`${containerPadding} pb-4 pt-6`}>
                       <button
                         type="button"
                         onClick={() => handleNavigate(featuredCard.href)}
-                        className="group flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-3 text-left transition-colors duration-200 hover:bg-[#FAFAFA]"
+                        className="group flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-3 text-left transition-colors duration-200 hover:bg-[#FAFAFA] sm:w-auto sm:max-w-[22rem]"
                       >
-                        <div className="relative h-[13rem] w-full shrink-0 overflow-hidden rounded-lg bg-[#F7F7FB] sm:h-[14.5rem]">
+                        <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-lg bg-[#F7F7FB]">
                           <CmsImage
                             src={featuredCard.image ?? "/images/blog/blog3.png"}
                             alt={featuredCard.imageAlt ?? featuredCard.title}
                             fill
-                            sizes="100vw"
+                            sizes="(max-width: 639px) 100vw, 22rem"
                             className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.02]"
                           />
                         </div>
@@ -1016,7 +1017,7 @@ const Header = ({
                   }}
                 >
                   {activeMobileConfig ? (
-                    <div key={renderedMobileSubMenu} className="mega-menu-enter px-6 pb-6 pt-4">
+                    <div key={renderedMobileSubMenu} className={`mega-menu-enter ${containerPadding} pb-6 pt-4`}>
                       <div className="space-y-8">
                         {activeMobileConfig.columns.map((column, columnIndex) => {
                           const columnDelay =

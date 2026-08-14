@@ -22,12 +22,12 @@ const DataAdvantage = () => {
         <div className="flex flex-col gap-10 py-16 md:py-20 lg:gap-14 lg:py-24">
           <div
             ref={headerRef}
-            className="grid gap-8 lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-12"
+            className="grid gap-8 md:grid-cols-2 md:items-start md:justify-between md:gap-12"
           >
             <div className="flex flex-col justify-end space-y-5">
               <h2
                 ref={headingRef}
-                className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#9AA8BC] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+                className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#9AA8BC] sm:text-3xl sm:leading-[1.12] md:text-[1.625rem] md:leading-[1.12]"
               >
                 <span data-split>Intelligence built on data</span>
                 <br />
@@ -35,7 +35,7 @@ const DataAdvantage = () => {
               </h2>
               <p
                 ref={descRef}
-                className="font-sans font-regular text-sm leading-[1.4] text-white/80 md:text-[1.125rem] lg:hidden"
+                className="font-sans font-regular text-sm leading-[1.4] text-white/80 md:hidden"
               >
                 Market intelligence and rich underwriting data - now visible so
                 every placement, remarket, and service touch gets smarter.
@@ -45,8 +45,8 @@ const DataAdvantage = () => {
               </Button>
             </div>
 
-            <div className="max-w-md text-left lg:ml-auto">
-              <p className="hidden font-sans font-regular text-sm leading-[1.4] text-white/80 md:text-[1.125rem] lg:block">
+            <div className="max-w-md text-left md:ml-auto">
+              <p className="hidden font-sans font-regular text-sm leading-[1.4] text-white/80 md:block md:text-[1.125rem]">
                 Market intelligence and rich underwriting data - now visible so
                 every placement, remarket, and service touch gets smarter.
               </p>

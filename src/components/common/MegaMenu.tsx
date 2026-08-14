@@ -281,7 +281,7 @@ export default function MegaMenu({
       onMouseEnter={onMouseEnter}
     >
       <div
-        className={`relative mx-auto w-full max-w-7xl ${containerPadding} py-6 transition-[height] duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] motion-reduce:transition-none md:py-7`}
+        className={`relative mx-auto w-full max-w-none min-[1281px]:max-w-7xl ${containerPadding} py-6 transition-[height] duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] motion-reduce:transition-none md:py-7`}
         style={{ minHeight: `${MEGA_MENU_FIXED_HEIGHT_REM}rem` }}
       >
         <div

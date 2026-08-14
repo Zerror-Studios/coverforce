@@ -471,11 +471,11 @@ export default function ThreeWays() {
     <section ref={sectionRef} data-threeways className="relative overflow-hidden bg-white">
       <Container borderColor="#53535380">
         <div className="relative z-10 py-16 md:py-20 lg:py-24">
-          <div ref={headerRef} className="flex flex-col gap-6 md:gap-8 lg:flex-row lg:items-start lg:justify-between">
+          <div ref={headerRef} className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between md:gap-8">
             <div className="space-y-5 md:space-y-6">
               <h2
                 ref={headingRef}
-                className="max-w-xl text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+                className="max-w-xl text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-[1.625rem] md:leading-[1.12]"
               >
                 <span data-split>One platform.</span>
                 <br />
@@ -484,7 +484,7 @@ export default function ThreeWays() {
             </div>
             <p
               ref={descRef}
-              className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:text-left"
+              className="max-w-md font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-left md:text-[1.125rem]"
             >
               Wholesalers, brokers, carriers, startups, and builders - CoverForce
               adapts to how each team works, without changing the platform underneath.

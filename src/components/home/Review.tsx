@@ -112,7 +112,7 @@ function CompanyLogo({
 
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
-    <article className="relative flex h-[420px] flex-col overflow-hidden rounded-sm bg-white p-5 md:h-[460px] md:p-7 lg:h-[480px] lg:p-8">
+    <article className="relative flex h-[420px] flex-col overflow-hidden rounded-sm bg-white p-5 md:h-[380px] md:p-7 lg:h-[480px] lg:p-8">
       <div className="relative z-10 flex h-full flex-1 flex-col">
         {/* Author — top on mobile, bottom-left on desktop */}
         <div className="relative order-1 shrink-0 md:order-2 md:mt-7">
@@ -215,7 +215,7 @@ const Review = () => {
           >
             <h2
               ref={headingRef}
-              className="max-w-xl text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#9AA8BC] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+              className="max-w-xl text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#9AA8BC] sm:text-3xl sm:leading-[1.12] md:text-[1.625rem] md:leading-[1.12]"
             >
               <span data-split>Why commercial insurance teams trust CoverForce for smarter workflows</span>
             </h2>

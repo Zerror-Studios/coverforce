@@ -484,27 +484,27 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
             {/* ── Header (unchanged) ── */}
             <div
               ref={headerRef}
-              className="grid gap-8 lg:grid-cols-2 lg:items-start lg:justify-between lg:gap-12"
+              className="grid gap-8 md:grid-cols-2 md:items-start md:justify-between md:gap-12"
             >
               <div className="flex flex-col justify-end space-y-5">
                 <h2
                   ref={headingRef}
-                  className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+                  className="max-w-md text-2xl font-heading font-medium leading-[1.15] tracking-tight text-[#BCC5D6] sm:text-3xl sm:leading-[1.12] md:text-[1.625rem] md:leading-[1.12]"
                 >
                   <span data-split>Infrastructure to run your distribution not a tool to quote one risk.</span>
                 </h2>
                 <p
                   ref={descRef}
-                  className="font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:hidden"
+                  className="font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:hidden"
                 >
                   Insurance distribution should work like infrastructure - just
                   like Stripe for payments or Plaid for identity.
                 </p>
               </div>
 
-              <div className="flex max-w-md flex-col items-end gap-6 text-left lg:ml-auto">
+              <div className="flex max-w-md flex-col items-end gap-6 text-left md:ml-auto">
                 <p
-                  className="hidden font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:text-[1.125rem] lg:block"
+                  className="hidden font-sans font-regular text-sm leading-[1.4] text-[#50617a] md:block md:text-[1.125rem]"
                 >
                   Insurance distribution should work like infrastructure - just
                   like Stripe for payments or Plaid for identity.
