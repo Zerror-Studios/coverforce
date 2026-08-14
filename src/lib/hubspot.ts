@@ -174,12 +174,12 @@ export async function submitHubSpotForm({
     },
   };
 
-  console.log("[HubSpot] submit payload", {
-    endpoint,
-    formId,
-    portalId,
-    body,
-  });
+  // console.log("[HubSpot] submit payload", {
+  //   endpoint,
+  //   formId,
+  //   portalId,
+  //   body,
+  // });
 
   const response = await fetch(endpoint, {
     method: "POST",
