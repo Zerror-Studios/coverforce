@@ -68,14 +68,14 @@ export default function CompareQuotesStepVisual() {
     >
       <div ref={phoneRef} className="absolute inset-0 will-change-transform">
         <Image
-          src="/images/process/phonemock.png"
-          alt=""
+          src="/images/process/phone-model.png"
+          alt="phone model"
           fill
-          className="object-contain object-right"
+          className="object-cover object-right"
           aria-hidden
         />
       </div>
-      <div className="relative z-10 w-[70%] max-w-[360px] -translate-x-12 -translate-y-11">
+      <div className="relative z-10 w-[70%] max-w-[360px] -translate-x-12">
         <div
           ref={cardRef}
           className="will-change-transform"
@@ -84,7 +84,7 @@ export default function CompareQuotesStepVisual() {
           <div ref={floatRef} className="will-change-transform">
             <Image
               src="/images/process/bind.png"
-              alt=""
+              alt="bind"
               width={720}
               height={540}
               className="pointer-events-none h-auto w-full object-contain"
