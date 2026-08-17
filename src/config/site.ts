@@ -198,7 +198,7 @@ export const siteRoutes: SiteRoute[] = [
     priority: 0.3,
   },
   {
-    path: "/privacy",
+    path: "/privacy-policy",
     label: "Privacy",
     title: "Privacy Policy | CoverForce",
     description:

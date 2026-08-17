@@ -1,15 +1,15 @@
 import PageWrapper from "@/components/PageWrapper";
 import LegalPage from "@/components/legal/LegalPage";
-import { privacyContent } from "@/content/legal/privacyContent";
 import PageJsonLd from "@/components/common/PageJsonLd";
 import { createPageMetadata } from "@/lib/seo";
+import { privacyContent } from "@/content/legal/privacyContent";
 
-export const metadata = createPageMetadata("/privacy");
+export const metadata = createPageMetadata("/privacy-policy");
 
 const PrivacyPage = () => {
   return (
     <PageWrapper>
-      <PageJsonLd path="/privacy" />
+      <PageJsonLd path="/privacy-policy" />
       <LegalPage {...privacyContent} />
     </PageWrapper>
   );

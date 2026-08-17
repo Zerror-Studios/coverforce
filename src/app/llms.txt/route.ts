@@ -23,7 +23,7 @@ const OPTIONAL_PATHS = new Set([
   "/calculation",
   "/security",
   "/terms-of-service",
-  "/privacy",
+  "/privacy-policy",
 ]);
 
 function linkLine(path: string, label: string, description: string): string {

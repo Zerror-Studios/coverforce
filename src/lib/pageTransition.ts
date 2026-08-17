@@ -37,7 +37,7 @@ export function getPageTransitionBg(pathname: string): string {
     pathname.startsWith("/solutions") ||
     pathname.startsWith("/calculation") ||
     pathname.startsWith("/terms-of-service") ||
-    pathname.startsWith("/privacy") ||
+    pathname.startsWith("/privacy-policy") ||
     pathname.startsWith("/security") ||
     pathname.startsWith("/blog") ||
     pathname.startsWith("/author")

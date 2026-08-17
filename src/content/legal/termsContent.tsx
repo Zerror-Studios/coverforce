@@ -21,7 +21,7 @@ export const termsContent: LegalPageProps = {
       paragraphs: [
         <>
           Please read this Agreement carefully before you start to use the Website or procuring Services through the Website. By using the Website, procuring Services through the Website, or by clicking to accept or agree to this Agreement, you warrant that you have read and reviewed this Agreement and that you agree to be bound by this Agreement and our{" "}
-          <Link href="/privacy" className="text-[#3D3D3D] underline underline-offset-2">
+          <Link href="/privacy-policy" className="text-[#3D3D3D] underline underline-offset-2">
             Privacy Policy
           </Link>
           . If you do not agree to be bound by this Agreement, please leave the Website and do not attempt to purchase Services. The Company only agrees to provide the Services and use of this Website to you if you assent to this Agreement. This Agreement shall remain in full force and effect until terminated as set forth in this Agreement.

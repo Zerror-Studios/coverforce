@@ -67,7 +67,7 @@ const standaloneLinks: FooterLinkData[] = [
 
 const legalLinks: LegalLink[] = [
   { label: "Terms of Service", href: "/terms-of-service" },
-  { label: "Privacy", href: "/privacy" },
+  { label: "Privacy", href: "/privacy-policy" },
   { label: "Security", href: "/security" },
 ];
 
