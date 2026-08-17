@@ -52,37 +52,37 @@ export default function ShrimpLineAnimation({
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: "none" } });
-
       pathRefs.current.forEach((pathEl, i) => {
+        if (!pathEl) return;
         const pulseEl = pulseRefs.current[i];
-        // No position arg -> each copy's draw is appended right after
-        // the previous one finishes, so they play in sequence on scroll.
-        tl.fromTo(
+        const trigger = pathEl.closest("svg") ?? pathEl;
+        const lineTl = gsap.timeline({ defaults: { ease: "none" } });
+
+        lineTl.fromTo(
           pathEl,
           { strokeDashoffset: -1000 },
-          { strokeDashoffset: 0 }
+          { strokeDashoffset: 0, duration: 1 },
         );
         if (pulseEl) {
-          tl.fromTo(
+          lineTl.fromTo(
             pulseEl,
             { strokeDashoffset: -1000 },
-            { strokeDashoffset: 200 },
-            "<" // start alongside this copy's base line
+            { strokeDashoffset: 200, duration: 1 },
+            0,
           );
         }
+
+        // Draw each line as it enters the viewport so the second copy
+        // does not wait for the first and miss the screen.
+        ScrollTrigger.create({
+          trigger,
+          start: "top 70%",
+          end: "top 20%",
+          scrub: 1,
+          animation: lineTl,
+        });
       });
 
-      ScrollTrigger.create({
-        trigger: wrapperRef.current,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: 1,
-        animation: tl,
-        // markers: true, // uncomment while debugging
-      });
-
-      // Subtle continuous glow on every pulse line once drawn in
       pulseRefs.current.forEach((pulseEl) => {
         if (!pulseEl) return;
         gsap.to(pulseEl, {
@@ -105,7 +105,7 @@ export default function ShrimpLineAnimation({
     >
       <div className="flex w-full flex-col" style={{ gap, rowGap: gap }}>
         {[0, 1].map((i) => {
-          const gradId = `shrimpGradMain-${i}`;
+          const gradId = `shrimpGradAlt-${i}`;
           const flipped = i === 1;
           return (
             <svg
