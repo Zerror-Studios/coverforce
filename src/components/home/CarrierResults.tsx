@@ -43,7 +43,7 @@ const carrierResults: CarrierResult[] = [
     logoAlt: "Chubb",
     title: "Trust & Quality",
     description:
-      "Submission quality → first wholesale partner appointed in 2+ years.",
+      "Inbuilt Validations lift submission quality, enabling Chubb's first wholesaler appointment in 2+ years.",
   },
   {
     id: "liberty",
