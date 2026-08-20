@@ -346,7 +346,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Doe & Emuss",
-    logoSrc: "/images/integration-logos/Doe Emuss.png",
+    logoSrc: "/images/integration-logos/Doe Emuss.svg",
     website: "https://doeandemuss.com/",
     status: "API available",
     products: [
@@ -382,7 +382,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Gaig",
-    logoSrc: "/images/integration-logos/Gaig.jpg",
+    logoSrc: "/images/integration-logos/Gaig.png",
     website: "https://www.greatamericaninsurancegroup.com/",
     status: "Live on CoverForce",
     products: [
@@ -631,7 +631,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "Seneca",
-    logoSrc: "/images/integration-logos/seneca-insurance.jpg",
+    logoSrc: "/images/integration-logos/seneca-insurance.png",
     website: "https://www.senecainsurance.com/",
     status: "API available",
     products: [
@@ -642,7 +642,7 @@ export const INTEGRATION_DATA: Carrier[] = [
   },
   {
     name: "State Auto Insurance",
-    logoSrc: "/images/integration-logos/State Auto Insurance.webp",
+    logoSrc: "/images/integration-logos/State Auto Insurance.png",
     website: "https://www.stateauto.com/",
     status: "API available",
     products: [

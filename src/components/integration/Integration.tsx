@@ -107,25 +107,25 @@ const CarrierCard = ({
       <div className="relative z-10 flex h-full flex-col rounded-[19px] bg-white p-4 transition-shadow duration-500 group-hover:shadow-[0_18px_40px_-28px_rgba(10,20,59,0.45)] md:p-6">
         {/* Header row */}
         <div className="flex items-center justify-between gap-3">
-          <span className="flex h-10 w-full max-w-44 items-center justify-start transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.02] sm:h-11 sm:max-w-48">
-            {carrier.logoSrc ? (
-              <Image
-                src={carrier.logoSrc}
-                alt={carrier.name}
-                width={176}
-                height={44}
-                className="h-full w-full object-contain object-left"
-              />
-            ) : (
-              <span className="font-heading text-sm font-semibold text-[#0a143b]">
-                {carrier.name}
-              </span>
-            )}
-          </span>
-          <div className="shrink-0">
-            <StatusBadge status={carrier.status} />
-          </div>
-        </div>
+  <span className="relative flex h-8 w-full max-w-44 items-center justify-start transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.02] sm:h-9 sm:max-w-48">
+    {carrier.logoSrc ? (
+      <Image
+        src={carrier.logoSrc}
+        alt={carrier.name}
+        fill
+        className="object-contain object-left"
+        sizes="176px"
+      />
+    ) : (
+      <span className="font-heading text-sm font-semibold text-[#0a143b]">
+        {carrier.name}
+      </span>
+    )}
+  </span>
+  <div className="shrink-0">
+    <StatusBadge status={carrier.status} />
+  </div>
+</div>
 
         {/* Products - only show filtered products */}
         {displayProducts.length > 0 && (
