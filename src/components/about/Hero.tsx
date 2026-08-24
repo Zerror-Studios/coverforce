@@ -88,7 +88,7 @@ const Hero = () => {
       >
         <Image
           src="/images/about/about-banner-mobile.webp"
-          alt="about-hero"
+          alt="about-hero-mobile"
           fill
           priority
           className="object-cover object-top lg:hidden"
