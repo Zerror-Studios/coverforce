@@ -4,24 +4,35 @@ import OperatingSystem from '@/components/solutions/carrier/OperatingSystem'
 import CarrierResults from '@/components/home/CarrierResults'
 import Hero from '@/components/solutions/carrier/Hero'
 import Stat from '@/components/solutions/carrier/Stat'
+import StartupFaq from '@/components/solutions/startups/StartupFaq'
 import PageWrapper from '@/components/PageWrapper'
-import PageJsonLd from '@/components/common/PageJsonLd'
+import JsonLd from '@/components/common/JsonLd'
+import { STARTUP_FAQS } from '@/data/startupFaqs'
 import { createPageMetadata } from '@/lib/seo'
+import {
+  buildFaqPageJsonLd,
+  buildMarketingPageJsonLd,
+} from '@/lib/jsonLd'
 
-export const metadata = createPageMetadata('/solutions/carrier')
+const PATH = '/solutions/carrier'
+export const metadata = createPageMetadata(PATH)
 
 const page = () => {
   return (
-    <>
-    <PageJsonLd path="/solutions/carrier" />
     <PageWrapper>
-    <Hero/>
-    <OperatingSystem/>
-    <Stat/>
-    <Review/>
-    <CarrierResults/>
+      <JsonLd
+        data={[
+          ...buildMarketingPageJsonLd(PATH),
+          buildFaqPageJsonLd(STARTUP_FAQS),
+        ]}
+      />
+      <Hero />
+      <OperatingSystem />
+      <Stat />
+      <Review />
+      <CarrierResults />
+      <StartupFaq />
     </PageWrapper>
-    </>
   )
 }
 

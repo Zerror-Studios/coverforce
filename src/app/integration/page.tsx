@@ -4,7 +4,11 @@ import Hero from "@/components/integration/Hero";
 import CardSection from "@/components/integration/CardSection";
 import IntegrationStats from "@/components/integration/IntegrationStats";
 import Integration from "@/components/integration/Integration";
+import StartupFaq from "@/components/solutions/startups/StartupFaq";
 import PageJsonLd from "@/components/common/PageJsonLd";
+import JsonLd from "@/components/common/JsonLd";
+import { STARTUP_FAQS } from "@/data/startupFaqs";
+import { buildFaqPageJsonLd } from "@/lib/jsonLd";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata = createPageMetadata("/integration");
@@ -14,10 +18,12 @@ const IntegrationPage = async () => {
   return (
     <PageWrapper>
       <PageJsonLd path="/integration" />
+      <JsonLd data={buildFaqPageJsonLd(STARTUP_FAQS)} />
       <Hero />
       <CardSection />
       <IntegrationStats />
       <Integration/>
+      <StartupFaq />
     </PageWrapper>
   );
 };

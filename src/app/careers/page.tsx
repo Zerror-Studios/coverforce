@@ -4,7 +4,11 @@ import Hero from "@/components/careers/Hero";
 import OurValues from "@/components/careers/OurValues";
 import OurCluture from "@/components/careers/OurCluture";
 import Positions from "@/components/careers/Positions";
+import StartupFaq from "@/components/solutions/startups/StartupFaq";
 import PageJsonLd from "@/components/common/PageJsonLd";
+import JsonLd from "@/components/common/JsonLd";
+import { STARTUP_FAQS } from "@/data/startupFaqs";
+import { buildFaqPageJsonLd } from "@/lib/jsonLd";
 import { createPageMetadata } from "@/lib/seo";
 import { getDoverJobCategories, JobCategory } from "@/lib/doverJobs";
 
@@ -23,11 +27,13 @@ const CareerPage = async () => {
   return (
     <>
       <PageJsonLd path="/careers" />
+      <JsonLd data={buildFaqPageJsonLd(STARTUP_FAQS)} />
       <PageWrapper>
         <Hero />
         <OurValues />
         <OurCluture />
         <Positions categories={categories} />
+        <StartupFaq />
       </PageWrapper>
     </>
   );

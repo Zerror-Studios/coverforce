@@ -4,12 +4,15 @@ import Hero from "@/components/product/intelligence/Hero";
 import IntelligenceWorkFlow from "@/components/product/intelligence/IntelligenceWorkFlow";
 import ExplorePlatform from "@/components/product/intelligence/ExplorePlatform";
 import CommingSoon from "@/components/product/intelligence/CommingSoon";
+import StartupFaq from "@/components/solutions/startups/StartupFaq";
 import JsonLd from "@/components/common/JsonLd";
 import PageWrapper from "@/components/PageWrapper";
 import { createPageMetadata, getPageSeo } from "@/lib/seo";
 import CarrierMatch from "@/components/product/quote/CarrierMatch";
+import { STARTUP_FAQS } from "@/data/startupFaqs";
 import {
   buildBreadcrumbJsonLd,
+  buildFaqPageJsonLd,
   buildProductJsonLd,
   breadcrumbsForPath,
 } from "@/lib/jsonLd";
@@ -30,6 +33,7 @@ const IntelligencePage = () => {
             description: seo.description,
           }),
           buildBreadcrumbJsonLd(breadcrumbsForPath(PATH)),
+          buildFaqPageJsonLd(STARTUP_FAQS),
         ]}
       />
       <Hero />
@@ -38,6 +42,7 @@ const IntelligencePage = () => {
       <ExplorePlatform />
       <WhyCoverforce paddingTop={true} />
       <CommingSoon />
+      <StartupFaq />
     </PageWrapper>
   );
 };

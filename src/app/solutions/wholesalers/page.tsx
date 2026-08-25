@@ -5,24 +5,36 @@ import OperatingSystem from '@/components/solutions/wholesalers/OperatingSystem'
 import Workflow from '@/components/solutions/brokers/workflow'
 import CarrierResults from '@/components/home/CarrierResults'
 import Hero from '@/components/solutions/wholesalers/Hero'
+import StartupFaq from '@/components/solutions/startups/StartupFaq'
 import PageWrapper from '@/components/PageWrapper'
-import PageJsonLd from '@/components/common/PageJsonLd'
+import JsonLd from '@/components/common/JsonLd'
+import { STARTUP_FAQS } from '@/data/startupFaqs'
 import { createPageMetadata } from '@/lib/seo'
+import {
+  buildFaqPageJsonLd,
+  buildMarketingPageJsonLd,
+} from '@/lib/jsonLd'
 
-export const metadata = createPageMetadata('/solutions/wholesalers')
-  const page = () => {
+const PATH = '/solutions/wholesalers'
+export const metadata = createPageMetadata(PATH)
+
+const page = () => {
   return (
-    <>
-      <PageJsonLd path="/solutions/wholesalers" />
-      <PageWrapper>
-        <Hero />
-        <OperatingSystem />
-        <Workflow coverforceBackground="wholesaler" />
-        <WhyCoverforce paddingTop={true} />
-        <Review />
-        <CarrierResults />
-      </PageWrapper>
-    </>
+    <PageWrapper>
+      <JsonLd
+        data={[
+          ...buildMarketingPageJsonLd(PATH),
+          buildFaqPageJsonLd(STARTUP_FAQS),
+        ]}
+      />
+      <Hero />
+      <OperatingSystem />
+      <Workflow coverforceBackground="wholesaler" />
+      <WhyCoverforce paddingTop={true} />
+      <Review />
+      <CarrierResults />
+      <StartupFaq />
+    </PageWrapper>
   )
 }
 

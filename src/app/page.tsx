@@ -8,7 +8,11 @@ import DataAdvantage from "@/components/home/DataAdvantage";
 import Review from "@/components/home/Review";
 import SectionRadialGlow from "@/components/common/SectionRadialGlow";
 import CarrierResults from "@/components/home/CarrierResults";
+import StartupFaq from "@/components/solutions/startups/StartupFaq";
 import PageJsonLd from "@/components/common/PageJsonLd";
+import JsonLd from "@/components/common/JsonLd";
+import { STARTUP_FAQS } from "@/data/startupFaqs";
+import { buildFaqPageJsonLd } from "@/lib/jsonLd";
 import { createPageMetadata } from "@/lib/seo";
 import PageWrapper from "@/components/PageWrapper";
 
@@ -16,6 +20,7 @@ const HomePage = () => {
   return (
     <>
       <PageJsonLd path="/" />
+      <JsonLd data={buildFaqPageJsonLd(STARTUP_FAQS)} />
       <PageWrapper>
         <Hero />
         <HomeSectionsAfterIntro>
@@ -29,6 +34,7 @@ const HomePage = () => {
           </div>
           <Review />
           <CarrierResults />
+          <StartupFaq />
         </HomeSectionsAfterIntro>
       </PageWrapper >
     </>
