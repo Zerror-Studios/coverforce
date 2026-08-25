@@ -139,7 +139,7 @@ export default function StartupFaq() {
       <Container borderColor="#53535380">
         <div className="py-16 md:py-20 lg:py-24">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,0.86fr)_minmax(0,1.14fr)] lg:items-start lg:gap-14">
-            <div className="relative order-2 overflow-hidden rounded-md bg-[#EFF3FF] lg:order-1">
+            <div className="relative order-2 hidden overflow-hidden rounded-md bg-[#EFF3FF] lg:order-1 lg:block">
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(21,31,77,0.04),rgba(21,31,77,0.12))]" />
               <Image
                 src="/images/careers/image3.webp"
