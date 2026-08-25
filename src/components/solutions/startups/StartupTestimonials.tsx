@@ -66,7 +66,7 @@ function CompanyLogo({
 
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
-    <article className="relative flex min-h-80 flex-col overflow-hidden rounded-sm bg-white p-5 md:min-h-[360px] md:p-6 lg:min-h-[380px]">
+    <article className="relative flex min-h-80 flex-col overflow-hidden rounded-sm bg-white p-5 md:min-h-[360px] md:p-6 lg:min-h-[320px] xl:min-h-[380px] ">
       <div
         className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_90%_80%_at_50%_0%,rgba(203,190,255,0.45),rgba(255,255,255,0.95)_72%)]"
         aria-hidden

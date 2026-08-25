@@ -243,20 +243,20 @@ export default function RecentActivityCard() {
   }, []);
 
   return (
-    <div className="mx-auto w-full max-w-[360px] overflow-hidden rounded-xl bg-white p-3 shadow-[0_8px_30px_rgba(20,20,40,0.08)] sm:max-w-none sm:p-2.5 lg:max-w-[390px] lg:p-3.5">
+    <div className="mx-auto flex h-[16.5rem] w-full max-w-[400px] flex-col overflow-hidden rounded-xl bg-white px-3.5 py-3.5 shadow-[0_8px_30px_rgba(20,20,40,0.08)] sm:h-auto sm:max-w-none sm:px-3 sm:py-2.5 lg:h-[19rem] lg:max-w-[440px] lg:px-4 lg:py-5 xl:h-[19rem]">
       {/* Header */}
-      <h2 className="text-[13px] font-bold tracking-tight text-[#14141a] sm:text-sm">
+      <h2 className="shrink-0 text-[13px] font-bold tracking-tight text-[#14141a] sm:text-sm lg:text-[0.80rem] xl:text-sm">
         Recent Activity
       </h2>
 
       {/* Tabs */}
-      <div className="mt-2 flex gap-2.5 overflow-hidden border-b border-[#ECECEF] sm:gap-3">
+      <div className="mt-2 flex shrink-0 gap-2.5 overflow-hidden border-b border-[#ECECEF] sm:gap-3">
         {TABS.map((tab) => (
           <button
             key={tab}
             type="button"
             onClick={() => setActiveTab(tab)}
-            className={`relative shrink-0 pb-1.5 text-[9px] font-medium whitespace-nowrap transition-colors sm:text-[10px] ${
+            className={`relative shrink-0 pb-1.5 text-[9px] font-medium whitespace-nowrap transition-colors sm:text-[10px] lg:text-[0.50rem] xl:text-[10px] ${
               activeTab === tab
                 ? "text-[#5B4FE0]"
                 : "text-[#9a9aa4] hover:text-[#14141a]"
@@ -271,20 +271,20 @@ export default function RecentActivityCard() {
       </div>
 
       {/* Table — overflow hidden so row entrance never shows a scrollbar */}
-      <div className="mt-1 min-h-[188px] overflow-hidden sm:min-h-0 lg:min-h-[200px]">
+      <div className="mt-1 min-h-0 flex-1 overflow-hidden">
         <table className="w-full table-fixed border-collapse text-left">
           <thead>
             <tr className="bg-[#F7F6FC]">
-              <th className="w-[28%] px-1.5 py-1.5 text-[9px] font-semibold text-[#14141a] sm:px-2">
+              <th className="w-[28%] px-1.5 py-1.5 text-[9px] font-semibold text-[#14141a] sm:px-2 lg:text-[0.50rem] xl:text-[9px]">
                 Type
               </th>
-              <th className="w-[32%] px-1.5 py-1.5 text-[9px] font-semibold text-[#14141a] sm:px-2">
+              <th className="w-[32%] px-1.5 py-1.5 text-[9px] font-semibold text-[#14141a] sm:px-2 lg:text-[0.50rem] xl:text-[9px]">
                 Status
               </th>
-              <th className="w-[24%] px-1.5 py-1.5 text-center text-[9px] font-semibold text-[#14141a] sm:px-2">
+              <th className="w-[24%] px-1.5 py-1.5 text-center text-[9px] font-semibold text-[#14141a] sm:px-2 lg:text-[0.50rem] xl:text-[9px]">
                 Graph
               </th>
-              <th className="w-[16%] px-1.5 py-1.5 text-right text-[9px] font-semibold text-[#14141a] sm:px-2">
+              <th className="w-[16%] px-1.5 py-1.5 text-right text-[9px] font-semibold text-[#14141a] sm:px-2 lg:text-[0.50rem] xl:text-[9px]">
                 Time
               </th>
             </tr>
@@ -302,28 +302,28 @@ export default function RecentActivityCard() {
                 }}
                 className={i !== rows.length - 1 ? "border-b border-[#ECECEF]" : ""}
               >
-                <td className="px-1.5 py-2 sm:px-2 sm:py-1.5 lg:py-2.5">
+                <td className="px-1.5 py-2 sm:px-2 sm:py-1.5 lg:py-2">
                   <div className="flex items-center gap-1.5">
                     <span
-                      className="flex size-5 shrink-0 items-center justify-center rounded-full text-[10px]"
+                      className="flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] lg:text-[8px] xl:text-[10px]"
                       style={{ backgroundColor: row.iconBg }}
                     >
                       {row.icon}
                     </span>
-                    <span className="truncate text-[10px] font-semibold text-[#14141a]">
+                    <span className="truncate text-[10px] font-semibold text-[#14141a] lg:text-[0.55rem] xl:text-[10px]">
                       {row.carrier}
                     </span>
                   </div>
                 </td>
-                <td className="truncate px-1.5 py-2 text-[9px] text-[#9a9aa4] sm:px-2 sm:py-1.5 sm:text-[10px] lg:py-2.5">
+                <td className="truncate px-1.5 py-2 text-[9px] text-[#9a9aa4] sm:px-2 sm:py-1.5 sm:text-[10px] lg:py-2 lg:text-[0.55rem] xl:text-[10px]">
                   {row.status}
                 </td>
-                <td className="px-1.5 py-2 sm:px-2 sm:py-1.5 lg:py-2.5">
+                <td className="px-1.5 py-2 sm:px-2 sm:py-1.5 lg:py-2">
                   <div className="flex justify-center">
                     <Sparkline points={row.points} color={row.color} />
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-1.5 py-2 text-right text-[9px] text-[#9a9aa4] sm:px-2 sm:py-1.5 sm:text-[10px] lg:py-2.5">
+                <td className="whitespace-nowrap px-1.5 py-2 text-right text-[9px] text-[#9a9aa4] sm:px-2 sm:py-1.5 sm:text-[10px] lg:py-2 lg:text-[0.55rem] xl:text-[10px]">
                   {row.time}
                 </td>
               </motion.tr>

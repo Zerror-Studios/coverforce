@@ -798,14 +798,14 @@ const Header = ({
                 }}
                 className="relative z-10 shrink-0"
               >
-                <span className="relative block h-5 w-[148px] md:h-6 md:w-[170px]">
+                <span className="relative block h-5 w-[148px] xl:h-6 xl:w-[170px]">
                   <Image
                     src={headerThemes.dark.logo}
                     alt="CoverForce"
                     width={180}
                     height={34}
                     priority
-                    className={`absolute left-0 top-1/2 h-7 w-auto -translate-y-1/2 ${logoMotionClass} md:h-8 ${
+                    className={`absolute left-0 top-1/2 h-7 w-auto -translate-y-1/2 ${logoMotionClass} xl:h-8 ${
                       activeLogo === headerThemes.dark.logo ? "opacity-100" : "opacity-0"
                     }`}
                   />
@@ -815,7 +815,7 @@ const Header = ({
                     width={180}
                     height={34}
                     priority
-                    className={`absolute left-0 top-1/2 h-7 w-auto -translate-y-1/2 grayscale brightness-0 ${logoMotionClass} md:h-8 ${
+                    className={`absolute left-0 top-1/2 h-7 w-auto -translate-y-1/2 grayscale brightness-0 ${logoMotionClass} xl:h-8 ${
                       activeLogo === headerThemes.light.logo ? "opacity-100" : "opacity-0"
                     }`}
                   />
