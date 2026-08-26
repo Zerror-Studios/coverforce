@@ -27,13 +27,13 @@ const navStyles: Record<
       incoming: "bg-[#121C49] text-white",
       outgoing: "bg-transparent text-black",
       iconShift:
-        "translate-x-px group-hover:-translate-x-[calc(2.25rem-2px)]",
+        "translate-x-px group-[:not(:disabled):hover]:-translate-x-[calc(2.25rem-2px)]",
     },
     next: {
       root: "border border-black",
       incoming: "bg-white text-[#121C49]",
       outgoing: "bg-[#121C49] text-white",
-      iconShift: "-translate-x-1/2 group-hover:translate-x-0",
+      iconShift: "-translate-x-1/2 group-[:not(:disabled):hover]:translate-x-0",
     },
   },
   dark: {
@@ -42,13 +42,13 @@ const navStyles: Record<
       incoming: "bg-white text-[#121C49]",
       outgoing: "bg-transparent text-white",
       iconShift:
-        "translate-x-px group-hover:-translate-x-[calc(2.25rem-2px)]",
+        "translate-x-px group-[:not(:disabled):hover]:-translate-x-[calc(2.25rem-2px)]",
     },
     next: {
       root: "",
       incoming: "bg-[#121C49] text-white",
       outgoing: "bg-white text-[#0a143b]",
-      iconShift: "-translate-x-1/2 group-hover:translate-x-0",
+      iconShift: "-translate-x-1/2 group-[:not(:disabled):hover]:translate-x-0",
     },
   },
 };
@@ -65,7 +65,7 @@ const ArrowNavButton = forwardRef<HTMLButtonElement, ArrowNavButtonProps>(
       <button
         ref={ref}
         type={type}
-        className={`group relative size-9 shrink-0 overflow-hidden rounded-[5px] leading-none ${styles.root} ${className}`}
+        className={`group relative size-9 shrink-0 cursor-pointer overflow-hidden rounded-[5px] leading-none disabled:!cursor-not-allowed disabled:opacity-40 ${styles.root} ${className}`}
         {...props}
       >
         <span className="absolute inset-0 overflow-hidden rounded-[5px]">

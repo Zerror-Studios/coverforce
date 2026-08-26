@@ -31,7 +31,7 @@ const page = async () => {
       ? startupHighlights
       : allPosts;
 
-  const posts = selected.slice(0, 3).map(toListingPost);
+  const posts = selected.map(toListingPost);
 
   return (
     <PageWrapper>
