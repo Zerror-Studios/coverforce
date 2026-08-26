@@ -126,7 +126,6 @@ export default function SolutionScrollHero({
       <PulsatingLogoSet
         logos={marqueeLogos}
         size={marqueeSize}
-        tone="light"
         logosPerSet={marqueeLogosPerSet}
         preload
       />
@@ -306,7 +305,7 @@ export default function SolutionScrollHero({
               </div>
 
               {showMarquee ? (
-                <div className="relative z-10 w-full max-w-full shrink-0 overflow-x-clip pb-6 md:pb-8 lg:hidden">
+                <div className="relative z-10 w-full max-w-full shrink-0 overflow-x-clip pb-2 md:pb-3 lg:hidden">
                   {marqueeContent}
                 </div>
               ) : null}
@@ -450,7 +449,7 @@ export default function SolutionScrollHero({
           ) : null}
 
           {showMarquee ? (
-            <div className="pointer-events-none absolute inset-x-0 top-0 z-10 hidden h-svh flex-col justify-end pb-6 md:pb-8 lg:flex">
+            <div className="pointer-events-none absolute inset-x-0 top-0 z-10 hidden h-svh flex-col justify-end pb-2 md:pb-3 lg:flex">
               <div className="pointer-events-auto w-full">{marqueeContent}</div>
             </div>
           ) : null}

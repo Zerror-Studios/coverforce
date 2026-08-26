@@ -107,25 +107,25 @@ const CarrierCard = ({
       <div className="relative z-10 flex h-full flex-col rounded-[19px] bg-white p-4 transition-shadow duration-500 group-hover:shadow-[0_18px_40px_-28px_rgba(10,20,59,0.45)] md:p-6">
         {/* Header row */}
         <div className="flex items-center justify-between gap-3">
-  <span className="relative flex h-8 w-full max-w-44 items-center justify-start transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.02] sm:h-9 sm:max-w-48">
-    {carrier.logoSrc ? (
-      <Image
-        src={carrier.logoSrc}
-        alt={carrier.name}
-        fill
-        className="object-contain object-left"
-        sizes="176px"
-      />
-    ) : (
-      <span className="font-heading text-sm font-semibold text-[#0a143b]">
-        {carrier.name}
-      </span>
-    )}
-  </span>
-  <div className="shrink-0">
-    <StatusBadge status={carrier.status} />
-  </div>
-</div>
+          <span className="flex w-full max-w-44 items-center justify-start transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.02] sm:max-w-48">
+            {carrier.logoSrc ? (
+              <Image
+                src={carrier.logoSrc}
+                alt={carrier.name}
+                width={1000}
+                height={1000}
+                className="h-16 w-auto object-contain object-left sm:h-18"
+              />
+            ) : (
+              <span className="font-heading text-sm font-semibold text-[#0a143b]">
+                {carrier.name}
+              </span>
+            )}
+          </span>
+          <div className="shrink-0">
+            <StatusBadge status={carrier.status} />
+          </div>
+        </div>
 
         {/* Products - only show filtered products */}
         {displayProducts.length > 0 && (
@@ -137,26 +137,24 @@ const CarrierCard = ({
                 <span
                   key={`${product.market}-${product.name}-${idx}`}
                   title={requestable ? "Available to request" : "Live on CoverForce"}
-                  className={`inline-flex w-fit max-w-full items-center gap-1.5 rounded-full py-1 pl-2.5 pr-4 text-xs font-sans font-medium tracking-wide transition-colors duration-300 ${
-                    isES
+                  className={`inline-flex w-fit max-w-full items-center gap-1.5 rounded-full py-1 pl-2.5 pr-4 text-xs font-sans font-medium tracking-wide transition-colors duration-300 ${isES
                       ? requestable
                         ? "border border-dashed border-[#C9B7F6] bg-[#F7F1FF] text-[#6F3CC3] group-hover:bg-[#EFE4FF]"
                         : "bg-[#F7F1FF] text-[#6F3CC3] group-hover:bg-[#EFE4FF]"
                       : requestable
                         ? "border border-dashed border-[#B8D4F2] bg-[#F2F8FC] text-[#185FA5]/95 group-hover:bg-[#E8F2FA]"
                         : "bg-[#F2F8FC] text-[#185FA5]/95 group-hover:bg-[#E8F2FA]"
-                  }`}
+                    }`}
                 >
                   <span
-                    className={`box-border size-2 shrink-0 rounded-full border ${
-                      requestable
+                    className={`box-border size-2 shrink-0 rounded-full border ${requestable
                         ? isES
                           ? "border-[#8B5CF6] bg-transparent"
                           : "border-[#185FA5] bg-transparent"
                         : isES
                           ? "border-[#8B5CF6] bg-[#8B5CF6]"
                           : "border-[#4F8A2E] bg-[#4F8A2E]"
-                    }`}
+                      }`}
                     aria-hidden
                   />
                   <span className="truncate">
@@ -203,11 +201,10 @@ type FormSelectProps = {
 function StatusDot({ variant }: { variant: "filled" | "hollow" }) {
   return (
     <span
-      className={`box-border size-2 shrink-0 rounded-full border ${
-        variant === "filled"
+      className={`box-border size-2 shrink-0 rounded-full border ${variant === "filled"
           ? "border-[#4F8A2E] bg-[#4F8A2E]"
           : "border-[#185FA5] bg-transparent"
-      }`}
+        }`}
       aria-hidden
     />
   );
@@ -301,25 +298,22 @@ function FormSelect({ id, label, value, options, onChange }: FormSelectProps) {
         aria-controls={listId}
         aria-labelledby={`${id}-label`}
         onClick={() => setOpen((prev) => !prev)}
-        className={`flex h-10 w-full items-center justify-between rounded-lg border bg-white px-4 text-left font-heading text-sm font-medium transition-colors ${
-          open
+        className={`flex h-10 w-full items-center justify-between rounded-lg border bg-white px-4 text-left font-heading text-sm font-medium transition-colors ${open
             ? "border-[#5B35E0] ring-1 ring-[#5B35E0]/20"
             : "border-[#E4E7EC] hover:border-[#5B35E0]/40"
-        }`}
+          }`}
       >
         <span
-          className={`flex min-w-0 items-center gap-2 truncate ${
-            value ? "text-[#1A1A1A]" : "text-[#98A2B3]"
-          }`}
+          className={`flex min-w-0 items-center gap-2 truncate ${value ? "text-[#1A1A1A]" : "text-[#98A2B3]"
+            }`}
         >
           {selected?.dot ? <StatusDot variant={selected.dot} /> : null}
           <span className="truncate">{selected?.label ?? "Select"}</span>
         </span>
 
         <ChevronDown
-          className={`h-4 w-4 shrink-0 text-[#98A2B3] transition-transform duration-200 ${
-            open ? "rotate-180" : ""
-          }`}
+          className={`h-4 w-4 shrink-0 text-[#98A2B3] transition-transform duration-200 ${open ? "rotate-180" : ""
+            }`}
         />
       </button>
 
@@ -344,13 +338,11 @@ function FormSelect({ id, label, value, options, onChange }: FormSelectProps) {
                     onChange(option.value);
                     setOpen(false);
                   }}
-                  className={`flex w-full items-center gap-2 px-4 py-3.5 text-left font-heading text-xs font-semibold tracking-[0.04em] transition-colors md:text-sm ${
-                    index > 0 ? "border-t border-[#EEF1F5]" : ""
-                  } ${
-                    isSelected
+                  className={`flex w-full items-center gap-2 px-4 py-3.5 text-left font-heading text-xs font-semibold tracking-[0.04em] transition-colors md:text-sm ${index > 0 ? "border-t border-[#EEF1F5]" : ""
+                    } ${isSelected
                       ? "bg-[#F5F3FF] text-[#2A297C]"
                       : "text-[#111110] hover:bg-[#F7F8FA]"
-                  }`}
+                    }`}
                 >
                   {option.dot ? (
                     <StatusDot variant={option.dot} />

@@ -23,7 +23,7 @@ type CarrierResult = {
 const carrierResults: CarrierResult[] = [
   {
     id: "employers",
-    logo: "/images/carrier-employers.png",
+    logo: "/images/home/Employers.svg",
     logoAlt: "Employers",
     title: "0% Error Rate",
     description:
@@ -31,7 +31,7 @@ const carrierResults: CarrierResult[] = [
   },
   {
     id: "nationwide",
-    logo: "/images/carrier - Nationwide.png",
+    logo: "/images/home/Nationwide.svg",
     logoAlt: "Nationwide",
     title: "Live in 12 Weeks",
     description:
@@ -39,7 +39,7 @@ const carrierResults: CarrierResult[] = [
   },
   {
     id: "chubb",
-    logo: "/images/carrier - Chubb.png",
+    logo: "/images/home/Chubbs.svg",
     logoAlt: "Chubb",
     title: "Trust & Quality",
     description:
@@ -47,7 +47,7 @@ const carrierResults: CarrierResult[] = [
   },
   {
     id: "liberty",
-    logo: "/images/carrier - Liberty Mutual.png",
+    logo: "/images/home/Liberty Mutual.svg",
     logoAlt: "Liberty Mutual",
     title: "5-Point Bind Advantage",
     description:
@@ -57,22 +57,20 @@ const carrierResults: CarrierResult[] = [
 
 function CarrierLogo({ src, alt }: { src: string; alt: string }) {
   return (
-    <div className="relative h-10 w-[132px] max-w-full md:h-11 md:w-[148px]">
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        className="object-contain object-left brightness-0 invert"
-        sizes="(max-width: 768px) 132px, 148px"
-      />
-    </div>
+    <Image
+      src={src}
+      alt={alt}
+      width={240}
+      height={64}
+      className="h-14 w-auto max-w-full object-cover object-left brightness-0 invert md:h-16"
+    />
   );
 }
 
 function CarrierCard({ result }: { result: CarrierResult }) {
   return (
     <article className="flex flex-col gap-6 border-t border-white/10 pt-8 first:border-t-0 first:pt-0 sm:gap-8 sm:border-t-0 sm:pt-0 lg:gap-12 lg:px-8 xl:px-10 first:lg:pl-0 last:lg:pr-0">
-      <div className="min-h-[2.5rem] sm:min-h-[2.75rem]">
+      <div className="flex h-14 w-full items-center md:h-16">
         <CarrierLogo src={result.logo} alt={result.logoAlt} />
       </div>
       <div className="space-y-2 sm:space-y-3">

@@ -5,22 +5,22 @@ import SolutionHeroCards from "@/components/solutions/shared/SolutionHeroCards";
 import { SOLUTION_GRAD_FLOW } from "@/data/wayCardStyles";
 
 const BROKERS_HERO_LOGOS = [
-    { src: "/images/broker/logo/broker-Brooks.png", alt: "Brooks" },
-    { src: "/images/broker/logo/broker-Diligence Brokerage.png", alt: "Diligence Brokerage" },
-    { src: "/images/broker/logo/broker-Direct Work Comp.png", alt: "Direct Work Comp" },
-    { src: "/images/broker/logo/broker-IronPoint Insurance.png", alt: "IronPoint Insurance" },
-    { src: "/images/broker/logo/broker-Paramount Exclusive.png", alt: "Paramount Exclusive" },
-    { src: "/images/broker/logo/broker-PCFG Insurance.png", alt: "PCFG Insurance" },
-    { src: "/images/broker/logo/broker-Skyscraper Insurance.png", alt: "Skyscraper Insurance" },
-    { src: "/images/broker/logo/broker-WorkCompOne.png", alt: "WorkCompOne" },
-    { src: "/images/broker/logo/network-Agentero.png", alt: "Agentero" },
-    { src: "/images/broker/logo/network-ASNOA.png", alt: "ASNOA" },
-    { src: "/images/broker/logo/network-First Connect.png", alt: "First Connect" },
-    { src: "/images/broker/logo/network-ISU Steadfast.png", alt: "ISU Steadfast" },
-    { src: "/images/broker/logo/network-SAN of Florida.png", alt: "SAN of Florida" },
-    { src: "/images/broker/logo/network-Voldico.png", alt: "Voldico" },
-    { src: "/images/broker/logo/partner-Justworks.png", alt: "Justworks" },
-    { src: "/images/broker/logo/localedge.png", alt: "Localedge" },
+    { src: "/images/broker/logo/broker-Brooks.svg", alt: "Brooks" },
+    { src: "/images/broker/logo/broker-Diligence Brokerage.svg", alt: "Diligence Brokerage" },
+    { src: "/images/broker/logo/broker-Direct Work Comp.svg", alt: "Direct Work Comp" },
+    { src: "/images/broker/logo/broker-IronPoint Insurance.svg", alt: "IronPoint Insurance" },
+    { src: "/images/broker/logo/broker-Paramount Exclusive.svg", alt: "Paramount Exclusive" },
+    { src: "/images/broker/logo/broker-PCFG Insurance.svg", alt: "PCFG Insurance" },
+    { src: "/images/broker/logo/broker-Skyscraper Insurance.svg", alt: "Skyscraper Insurance" },
+    { src: "/images/broker/logo/broker-WorkCompOne.svg", alt: "WorkCompOne" },
+    { src: "/images/broker/logo/network-Agentero.svg", alt: "Agentero" },
+    { src: "/images/broker/logo/network-ASNOA.svg", alt: "ASNOA" },
+    { src: "/images/broker/logo/network-First Connect.svg", alt: "First Connect" },
+    { src: "/images/broker/logo/network-ISU Steadfast.svg", alt: "ISU Steadfast" },
+    { src: "/images/broker/logo/network-SAN of Florida.svg", alt: "SAN of Florida" },
+    { src: "/images/broker/logo/network-Voldico.svg", alt: "Voldico" },
+    { src: "/images/broker/logo/partner-Justworks.svg", alt: "Justworks" },
+    { src: "/images/broker/logo/localedge.svg", alt: "Localedge" },
   ] as const;
   
 
