@@ -1,4 +1,5 @@
 import type { BlogCategory, BlogPost } from "@/data/blogPosts";
+import type { FaqEntry } from "@/data/faqs/types";
 import { env } from "@/config/env";
 
 const WEBFLOW_API = "https://api.webflow.com/v2";
@@ -28,6 +29,8 @@ type BlogFieldData = {
   tag?: string | null;
   "created-at-manual"?: string;
   "published-at-manual"?: string;
+  /** Rich text: repeating <h3> question + <p> answer pairs. */
+  faqs?: string | null;
 };
 
 type AuthorFieldData = {
@@ -99,6 +102,7 @@ export type BlogDetail = BlogPost & {
   authorHref?: string;
   tagName?: string;
   tagSlug?: string;
+  faqs: FaqEntry[];
 };
 
 
@@ -231,10 +235,50 @@ function stripHtml(html: string): string {
     .replace(/<[^>]*>/g, " ")
     .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
     .replace(/&ldquo;|&rdquo;|"/g, '"')
     .replace(/&lsquo;|&rsquo;|'/g, "'")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+/**
+ * Parse Webflow Rich Text FAQs: repeating <h3> question + following <p> answer(s).
+ */
+export function parseFaqsFromRichText(html?: string | null): FaqEntry[] {
+  if (!html?.trim()) return [];
+
+  const faqs: FaqEntry[] = [];
+  const sections = html.split(/<h3\b[^>]*>/i).slice(1);
+
+  for (const section of sections) {
+    const closeIdx = section.search(/<\/h3>/i);
+    if (closeIdx === -1) continue;
+
+    const question = stripHtml(section.slice(0, closeIdx));
+    if (!question) continue;
+
+    const afterHeading = section.slice(closeIdx).replace(/^<\/h3>/i, "");
+    const paragraphs: string[] = [];
+    const pRegex = /<p\b[^>]*>([\s\S]*?)<\/p>/gi;
+    let match: RegExpExecArray | null;
+    while ((match = pRegex.exec(afterHeading)) !== null) {
+      const text = stripHtml(match[1] ?? "");
+      if (text) paragraphs.push(text);
+    }
+
+    const answer = paragraphs.join("\n\n");
+    if (!answer) continue;
+
+    faqs.push({
+      id: `faq-${faqs.length + 1}`,
+      question,
+      answer,
+    });
+  }
+
+  return faqs;
 }
 
 function pickFirstString(
@@ -423,6 +467,7 @@ function mapBlogItem(
     authorHref: author?.href,
     tagName: tag?.name,
     tagSlug: tag?.slug,
+    faqs: parseFaqsFromRichText(fields.faqs),
   };
 }
 
@@ -464,17 +509,26 @@ export async function getBlogPostBySlug(
 ): Promise<BlogDetail | null> {
   const collectionId = env.webflow.blogCollectionId;
   const encoded = encodeURIComponent(slug);
-  const [page, authors, tags] = await Promise.all([
+  const [page, cmsPage, authors, tags] = await Promise.all([
     webflowFetch<{ items?: WebflowItem<BlogFieldData>[] }>(
       `/collections/${collectionId}/items/live?limit=1&slug=${encoded}`
     ),
+    // Live Items can omit some custom fields; CMS items include Rich Text `faqs`.
+    webflowFetch<{ items?: WebflowItem<BlogFieldData>[] }>(
+      `/collections/${collectionId}/items?limit=1&slug=${encoded}`
+    ).catch(() => ({ items: [] as WebflowItem<BlogFieldData>[] })),
     getAuthorsById(),
     getTagsById(),
   ]);
 
   const item = page.items?.[0];
   if (!item) return null;
-  return mapBlogItem(item, authors, tags);
+
+  const post = mapBlogItem(item, authors, tags);
+  const cmsFaqs = parseFaqsFromRichText(cmsPage.items?.[0]?.fieldData.faqs);
+  if (cmsFaqs.length) post.faqs = cmsFaqs;
+
+  return post;
 }
 
 export async function getBlogSlugs(): Promise<string[]> {

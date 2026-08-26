@@ -1,12 +1,14 @@
 import Hero from "@/components/blogDets/Hero";
 import Content from "@/components/blogDets/Content";
 import MoreBlogs from "@/components/blogDets/MoreBlogs";
+import StartupFaq from "@/components/solutions/startups/StartupFaq";
 import JsonLd from "@/components/common/JsonLd";
 import PageWrapper from "@/components/PageWrapper";
 import { createArticleMetadata } from "@/lib/seo";
 import {
   buildArticleJsonLd,
   buildBreadcrumbJsonLd,
+  buildFaqPageJsonLd,
   breadcrumbsForPath,
 } from "@/lib/jsonLd";
 import { getBlogPostBySlug, getBlogPosts } from "@/lib/webflow";
@@ -45,6 +47,9 @@ const BlogDetailPage = async ({ params }: BlogDetailPageProps) => {
 
   if (!post) notFound();
 
+  const faqs = post.faqs;
+  const hasFaqs = faqs.length > 0;
+
   const morePosts = allPosts
     .filter((item) => item.slug !== post.slug)
     .slice(0, 3)
@@ -64,7 +69,11 @@ const BlogDetailPage = async ({ params }: BlogDetailPageProps) => {
   return (
     <PageWrapper>
       <JsonLd
-        data={[buildArticleJsonLd(post), buildBreadcrumbJsonLd(breadcrumbs)]}
+        data={[
+          buildArticleJsonLd(post),
+          buildBreadcrumbJsonLd(breadcrumbs),
+          ...(hasFaqs ? [buildFaqPageJsonLd(faqs)] : []),
+        ]}
       />
       <Hero
         post={{
@@ -84,6 +93,7 @@ const BlogDetailPage = async ({ params }: BlogDetailPageProps) => {
         bodyHtml={post.bodyHtml}
         tags={post.tagName ? [post.tagName] : [post.category]}
       />
+      {hasFaqs ? <StartupFaq items={faqs} /> : null}
       <MoreBlogs posts={morePosts} />
     </PageWrapper>
   );
