@@ -9,7 +9,7 @@ import JsonLd from "@/components/common/JsonLd";
 import PageWrapper from "@/components/PageWrapper";
 import { createPageMetadata, getPageSeo } from "@/lib/seo";
 import CarrierMatch from "@/components/product/quote/CarrierMatch";
-import { STARTUP_FAQS } from "@/data/startupFaqs";
+import { INTELLIGENCE_FAQS } from "@/data/faqs";
 import {
   buildBreadcrumbJsonLd,
   buildFaqPageJsonLd,
@@ -33,7 +33,7 @@ const IntelligencePage = () => {
             description: seo.description,
           }),
           buildBreadcrumbJsonLd(breadcrumbsForPath(PATH)),
-          buildFaqPageJsonLd(STARTUP_FAQS),
+          buildFaqPageJsonLd(INTELLIGENCE_FAQS),
         ]}
       />
       <Hero />
@@ -42,7 +42,7 @@ const IntelligencePage = () => {
       <ExplorePlatform />
       <WhyCoverforce paddingTop={true} />
       <CommingSoon />
-      <StartupFaq />
+      <StartupFaq items={INTELLIGENCE_FAQS} />
     </PageWrapper>
   );
 };

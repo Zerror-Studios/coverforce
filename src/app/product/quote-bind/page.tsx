@@ -8,7 +8,7 @@ import StartupFaq from "@/components/solutions/startups/StartupFaq";
 import JsonLd from "@/components/common/JsonLd";
 import PageWrapper from "@/components/PageWrapper";
 import { createPageMetadata, getPageSeo } from "@/lib/seo";
-import { STARTUP_FAQS } from "@/data/startupFaqs";
+import { QUOTE_BIND_FAQS } from "@/data/faqs";
 import {
   buildBreadcrumbJsonLd,
   buildFaqPageJsonLd,
@@ -32,7 +32,7 @@ const QuoteBindPage = () => {
             description: seo.description,
           }),
           buildBreadcrumbJsonLd(breadcrumbsForPath(PATH)),
-          buildFaqPageJsonLd(STARTUP_FAQS),
+          buildFaqPageJsonLd(QUOTE_BIND_FAQS),
         ]}
       />
       <Hero />
@@ -40,7 +40,7 @@ const QuoteBindPage = () => {
       <QuoteWorkFlow />
       <WhyCoverforce paddingTop={true} />
       <Review />
-      <StartupFaq />
+      <StartupFaq items={QUOTE_BIND_FAQS} />
     </PageWrapper>
   );
 };

@@ -1,71 +1,33 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { RiAddLine, RiSubtractLine } from "@remixicon/react";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import { PRIMARY_BUTTON_GRADIENT } from "@/data/wayCardStyles";
+import type { FaqEntry } from "@/data/faqs";
 
 const FAQ_CONTENT_CLASS =
   "font-heading text-[0.9375rem] font-regular leading-[1.4] text-[#3D3D3D]";
-const FAQ_LINK_CLASS =
-  "font-heading text-[0.9375rem] font-regular leading-none text-[#3D3D3D] underline decoration-[#3D3D3D]/25 underline-offset-2 transition-colors hover:text-[#151F4D] hover:decoration-[#151F4D]/30";
 
 type FaqItem = {
   id: string;
   question: string;
-  content: ReactNode;
+  paragraphs: string[];
 };
 
-const FAQ_ITEMS: FaqItem[] = [
-  {
-    id: "bor",
-    question:
-      "Does CoverForce offer its own market access solution, or act as a broker of record?",
-    content: (
-      <>
-        <p>
-          Neither. CoverForce is neutral infrastructure - we are not a broker of record,
-          and we do not offer our own market access solution. We don&apos;t take positions
-          in the market or compete with the brokerages and MGAs we serve.
-        </p>
-        <p>
-          Instead, we partner with established market access providers who offer carrier
-          appointments to startups that aren&apos;t yet appointed directly. Those partners
-          set their own terms and pricing; CoverForce negotiates preferred rates on behalf
-          of Startup Program members. Our role is to connect the dots - not to own the
-          relationship between a startup and its carriers.
-        </p>
-      </>
-    ),
-  },
-  {
-    id: "partner",
-    question:
-      "What does it take to become a market access partner and join the CoverForce partner marketplace?",
-    content: (
-      <>
-        <p>
-          The primary requirement is a commitment to offering preferred pricing to
-          CoverForce customers. Our Startup Program members are early-stage brokerages that
-          are price-sensitive and volume-driven - partners who offer competitive,
-          transparent pricing get the most out of the relationship.
-        </p>
-        <p>
-          Beyond pricing, we look for partners with broad carrier appetite, clean onboarding
-          processes, and a genuine interest in supporting the next generation of insurtech
-          brokerages. If that describes your organization,{" "}
-          <Link href="/contact" className={FAQ_LINK_CLASS}>
-            apply to become a partner →
-          </Link>
-        </p>
-      </>
-    ),
-  },
-];
+function toFaqItems(entries: FaqEntry[]): FaqItem[] {
+  return entries.map((entry) => ({
+    id: entry.id,
+    question: entry.question,
+    paragraphs: entry.answer
+      .split(/\n\n+/)
+      .map((part) => part.trim())
+      .filter(Boolean),
+  }));
+}
 
 function FaqAccordionItem({
   item,
@@ -113,7 +75,9 @@ function FaqAccordionItem({
       >
         <div className="overflow-hidden">
           <div className={`max-w-3xl space-y-4 pb-6 md:pb-7 ${FAQ_CONTENT_CLASS}`}>
-            {item.content}
+            {item.paragraphs.map((paragraph) => (
+              <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+            ))}
           </div>
         </div>
       </div>
@@ -121,11 +85,12 @@ function FaqAccordionItem({
   );
 }
 
-export default function StartupFaq() {
+export default function StartupFaq({ items }: { items: FaqEntry[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const [openId, setOpenId] = useState<string | null>(FAQ_ITEMS[0]?.id ?? null);
+  const faqItems = toFaqItems(items);
+  const [openId, setOpenId] = useState<string | null>(faqItems[0]?.id ?? null);
 
   useSectionHeaderReveal({
     scopeRef: sectionRef,
@@ -133,6 +98,8 @@ export default function StartupFaq() {
     headingRef,
     theme: "light",
   });
+
+  if (faqItems.length === 0) return null;
 
   return (
     <section ref={sectionRef} className="bg-white text-[#0a143b]">
@@ -168,7 +135,7 @@ export default function StartupFaq() {
               </div>
 
               <div className="mt-12 max-w-4xl border-t border-dashed border-[#D1D5DB] md:mt-14">
-                {FAQ_ITEMS.map((item) => (
+                {faqItems.map((item) => (
                   <FaqAccordionItem
                     key={item.id}
                     item={item}

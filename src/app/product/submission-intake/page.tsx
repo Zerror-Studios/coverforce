@@ -9,7 +9,7 @@ import StartupFaq from "@/components/solutions/startups/StartupFaq";
 import JsonLd from "@/components/common/JsonLd";
 import PageWrapper from "@/components/PageWrapper";
 import { createPageMetadata, getPageSeo } from "@/lib/seo";
-import { STARTUP_FAQS } from "@/data/startupFaqs";
+import { SUBMISSION_INTAKE_FAQS } from "@/data/faqs";
 import {
   buildBreadcrumbJsonLd,
   buildFaqPageJsonLd,
@@ -33,7 +33,7 @@ const SubmissionIntakePage = () => {
             description: seo.description,
           }),
           buildBreadcrumbJsonLd(breadcrumbsForPath(PATH)),
-          buildFaqPageJsonLd(STARTUP_FAQS),
+          buildFaqPageJsonLd(SUBMISSION_INTAKE_FAQS),
         ]}
       />
       <Hero />
@@ -42,7 +42,7 @@ const SubmissionIntakePage = () => {
       <DemoSteps />
       <WhyCoverforce paddingTop={true} />
       <Review />
-      <StartupFaq />
+      <StartupFaq items={SUBMISSION_INTAKE_FAQS} />
     </PageWrapper>
   );
 };

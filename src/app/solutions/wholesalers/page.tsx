@@ -8,7 +8,7 @@ import Hero from '@/components/solutions/wholesalers/Hero'
 import StartupFaq from '@/components/solutions/startups/StartupFaq'
 import PageWrapper from '@/components/PageWrapper'
 import JsonLd from '@/components/common/JsonLd'
-import { STARTUP_FAQS } from '@/data/startupFaqs'
+import { WHOLESALERS_FAQS } from '@/data/faqs'
 import { createPageMetadata } from '@/lib/seo'
 import {
   buildFaqPageJsonLd,
@@ -24,7 +24,7 @@ const page = () => {
       <JsonLd
         data={[
           ...buildMarketingPageJsonLd(PATH),
-          buildFaqPageJsonLd(STARTUP_FAQS),
+          buildFaqPageJsonLd(WHOLESALERS_FAQS),
         ]}
       />
       <Hero />
@@ -33,7 +33,7 @@ const page = () => {
       <WhyCoverforce paddingTop={true} />
       <Review />
       <CarrierResults />
-      <StartupFaq />
+      <StartupFaq items={WHOLESALERS_FAQS} />
     </PageWrapper>
   )
 }

@@ -3,6 +3,8 @@
 import Sidebar from "@/components/calculator/Sidebar";
 import Tabs from "@/components/calculator/Tabs";
 import PageWrapper from "@/components/PageWrapper";
+import StartupFaq from "@/components/solutions/startups/StartupFaq";
+import { CALCULATION_FAQS } from "@/data/faqs";
 import { useCalculator } from "@/hooks/useCalculator";
 
 export default function CalculationPage() {
@@ -36,6 +38,7 @@ export default function CalculationPage() {
           </div>
         </div>
       </section>
+      <StartupFaq items={CALCULATION_FAQS} />
     </PageWrapper>
   );
 }

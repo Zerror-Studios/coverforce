@@ -11,7 +11,7 @@ import CarrierResults from "@/components/home/CarrierResults";
 import StartupFaq from "@/components/solutions/startups/StartupFaq";
 import PageJsonLd from "@/components/common/PageJsonLd";
 import JsonLd from "@/components/common/JsonLd";
-import { STARTUP_FAQS } from "@/data/startupFaqs";
+import { HOME_FAQS } from "@/data/faqs";
 import { buildFaqPageJsonLd } from "@/lib/jsonLd";
 import { createPageMetadata } from "@/lib/seo";
 import PageWrapper from "@/components/PageWrapper";
@@ -20,7 +20,7 @@ const HomePage = () => {
   return (
     <>
       <PageJsonLd path="/" />
-      <JsonLd data={buildFaqPageJsonLd(STARTUP_FAQS)} />
+      <JsonLd data={buildFaqPageJsonLd(HOME_FAQS)} />
       <PageWrapper>
         <Hero />
         <HomeSectionsAfterIntro>
@@ -34,7 +34,7 @@ const HomePage = () => {
           </div>
           <Review />
           <CarrierResults />
-          <StartupFaq />
+          <StartupFaq items={HOME_FAQS} />
         </HomeSectionsAfterIntro>
       </PageWrapper >
     </>

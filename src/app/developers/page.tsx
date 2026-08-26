@@ -9,7 +9,7 @@ import OperatingSystem from "@/components/solutions/developers/OperatingSystem";
 import StartupFaq from "@/components/solutions/startups/StartupFaq";
 import PageJsonLd from "@/components/common/PageJsonLd";
 import JsonLd from "@/components/common/JsonLd";
-import { STARTUP_FAQS } from "@/data/startupFaqs";
+import { DEVELOPERS_FAQS } from "@/data/faqs";
 import { buildFaqPageJsonLd } from "@/lib/jsonLd";
 import { createPageMetadata } from "@/lib/seo";
 
@@ -20,7 +20,7 @@ const DevelopersPage = () => {
   return (
     <>
       <PageJsonLd path="/developers" />
-      <JsonLd data={buildFaqPageJsonLd(STARTUP_FAQS)} />
+      <JsonLd data={buildFaqPageJsonLd(DEVELOPERS_FAQS)} />
       <PageWrapper>
         <Hero />
         <Endpoints />
@@ -28,7 +28,7 @@ const DevelopersPage = () => {
         <WhyCoverforce paddingTop={true} />
         <Review />
         <CarrierResults />
-        <StartupFaq />
+        <StartupFaq items={DEVELOPERS_FAQS} />
       </PageWrapper>
     </>
   );

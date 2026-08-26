@@ -7,7 +7,7 @@ import Stat from '@/components/solutions/carrier/Stat'
 import StartupFaq from '@/components/solutions/startups/StartupFaq'
 import PageWrapper from '@/components/PageWrapper'
 import JsonLd from '@/components/common/JsonLd'
-import { STARTUP_FAQS } from '@/data/startupFaqs'
+import { CARRIER_FAQS } from '@/data/faqs'
 import { createPageMetadata } from '@/lib/seo'
 import {
   buildFaqPageJsonLd,
@@ -23,7 +23,7 @@ const page = () => {
       <JsonLd
         data={[
           ...buildMarketingPageJsonLd(PATH),
-          buildFaqPageJsonLd(STARTUP_FAQS),
+          buildFaqPageJsonLd(CARRIER_FAQS),
         ]}
       />
       <Hero />
@@ -31,7 +31,7 @@ const page = () => {
       <Stat />
       <Review />
       <CarrierResults />
-      <StartupFaq />
+      <StartupFaq items={CARRIER_FAQS} />
     </PageWrapper>
   )
 }

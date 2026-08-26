@@ -5,7 +5,7 @@ import HowPricingWorks from "@/components/pricing/HowPricingWorks";
 import StartupFaq from "@/components/solutions/startups/StartupFaq";
 import PageJsonLd from "@/components/common/PageJsonLd";
 import JsonLd from "@/components/common/JsonLd";
-import { STARTUP_FAQS } from "@/data/startupFaqs";
+import { PRICING_FAQS } from "@/data/faqs";
 import { buildFaqPageJsonLd } from "@/lib/jsonLd";
 import { createPageMetadata } from "@/lib/seo";
 
@@ -15,12 +15,12 @@ const PricingPage = () => {
   return (
     <>
       <PageJsonLd path="/pricing" />
-      <JsonLd data={buildFaqPageJsonLd(STARTUP_FAQS)} />
+      <JsonLd data={buildFaqPageJsonLd(PRICING_FAQS)} />
       <PageWrapper>
         <Hero />
         <PricingPlans />
         <HowPricingWorks />
-        <StartupFaq />
+        <StartupFaq items={PRICING_FAQS} />
       </PageWrapper>
     </>
   );

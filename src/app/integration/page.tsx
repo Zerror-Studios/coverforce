@@ -7,7 +7,7 @@ import Integration from "@/components/integration/Integration";
 import StartupFaq from "@/components/solutions/startups/StartupFaq";
 import PageJsonLd from "@/components/common/PageJsonLd";
 import JsonLd from "@/components/common/JsonLd";
-import { STARTUP_FAQS } from "@/data/startupFaqs";
+import { INTEGRATION_FAQS } from "@/data/faqs";
 import { buildFaqPageJsonLd } from "@/lib/jsonLd";
 import { createPageMetadata } from "@/lib/seo";
 
@@ -18,12 +18,12 @@ const IntegrationPage = async () => {
   return (
     <PageWrapper>
       <PageJsonLd path="/integration" />
-      <JsonLd data={buildFaqPageJsonLd(STARTUP_FAQS)} />
+      <JsonLd data={buildFaqPageJsonLd(INTEGRATION_FAQS)} />
       <Hero />
       <CardSection />
       <IntegrationStats />
       <Integration/>
-      <StartupFaq />
+      <StartupFaq items={INTEGRATION_FAQS} />
     </PageWrapper>
   );
 };
