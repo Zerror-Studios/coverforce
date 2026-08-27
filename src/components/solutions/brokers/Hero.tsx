@@ -18,7 +18,7 @@ const BROKERS_HERO_LOGOS = [
     { src: "/images/broker/logo/network-First Connect.svg", alt: "First Connect" },
     { src: "/images/broker/logo/network-ISU Steadfast.svg", alt: "ISU Steadfast" },
     { src: "/images/broker/logo/network-SAN of Florida.svg", alt: "SAN of Florida" },
-    { src: "/images/broker/logo/network-Voldico.svg", alt: "Voldico" },
+    // { src: "/images/broker/logo/network-Voldico.svg", alt: "Voldico" },
     { src: "/images/broker/logo/partner-Justworks.svg", alt: "Justworks" },
     { src: "/images/broker/logo/localedge.svg", alt: "Localedge" },
   ] as const;
