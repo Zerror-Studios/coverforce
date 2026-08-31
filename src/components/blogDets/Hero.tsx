@@ -21,6 +21,35 @@ export type BlogDetailHeroPost = {
   date: string;
 };
 
+export type HeroMetaField = {
+  label: string;
+  value: string;
+};
+
+function HeroMetaBar({ fields }: { fields: HeroMetaField[] }) {
+  return (
+    <div className="flex w-full flex-wrap items-start justify-start gap-x-8 gap-y-6 lg:justify-between lg:gap-x-0">
+      {fields.map((field, index) => (
+        <div
+          key={field.label}
+          className={`w-fit shrink-0 ${
+            index > 0
+              ? "lg:border-l lg:border-[#D1D5DB] lg:pl-8 xl:pl-10"
+              : ""
+          }`}
+        >
+          <p className="font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[#6259ce] md:text-xs">
+            {field.label}
+          </p>
+          <p className="mt-2 font-heading text-base font-semibold leading-snug text-[#333333] md:text-lg lg:whitespace-nowrap">
+            {field.value}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function authorInitials(name: string) {
   return name
     .split(/[\s-]+/)
@@ -59,9 +88,10 @@ function ShareIcon({ className = "" }: { className?: string }) {
 
 type HeroProps = {
   post: BlogDetailHeroPost;
+  heroMeta?: HeroMetaField[];
 };
 
-const Hero = ({ post }: HeroProps) => {
+const Hero = ({ post, heroMeta }: HeroProps) => {
   const [authorOpen, setAuthorOpen] = useState(false);
   const authorRef = useRef<HTMLDivElement>(null);
 
@@ -130,126 +160,144 @@ const Hero = ({ post }: HeroProps) => {
             </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-between gap-4">
-            <EyebrowPill surface="light" className="!m-0">
-              {post.category}
-            </EyebrowPill>
-            <p className="font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[#6B7280]">
-              {post.date}
-            </p>
-          </div>
-
-          <h1 className="mt-4 max-w-3xl font-heading text-2xl font-medium leading-[1.15] tracking-tight text-[#0a143b] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
-            {post.title}
-          </h1>
-
-          <div className="relative z-30 mt-5 flex items-center justify-between gap-4">
-            <div ref={authorRef} className="group relative">
-              <button
-                type="button"
-                onClick={() => hasAuthorCard && setAuthorOpen((prev) => !prev)}
-                aria-expanded={hasAuthorCard ? authorOpen : undefined}
-                className={`flex items-center gap-3 text-left transition-opacity focus-visible:outline-none ${
-                  hasAuthorCard ? "hover:opacity-75" : "cursor-default"
-                }`}
-              >
-                {post.authorAvatar ? (
-                  <CmsImage
-                    src={post.authorAvatar}
-                    alt={post.author}
-                    width={48}
-                    height={48}
-                    className="size-11 shrink-0 rounded-full object-cover"
-                  />
-                ) : (
-                  <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-[#5D4DDB] to-[#2A2470] font-heading text-sm font-semibold text-white">
-                    {authorInitials(post.author)}
-                  </span>
-                )}
-                <span className="flex flex-col gap-1">
-                  <span className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-[#0a143b]">
-                    {post.author}
-                  </span>
-                  {post.authorRole ? (
-                    <span className="font-mono text-[0.625rem] font-medium uppercase tracking-[0.1em] text-[#6B7280]">
-                      {post.authorRole}
-                    </span>
-                  ) : null}
-                </span>
-              </button>
-
-              {hasAuthorCard ? (
-                <div
-                  className={`absolute left-0 top-full z-30 pt-3 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:opacity-100 ${
-                    authorOpen
-                      ? "pointer-events-auto opacity-100"
-                      : "pointer-events-none opacity-0"
-                  }`}
+          {heroMeta ? (
+            <div className="relative z-30 mt-6">
+              <HeroMetaBar fields={heroMeta} />
+              <div className="mt-6 flex justify-end">
+                <Button
+                  onClick={handleShare}
+                  variant="secondary"
+                  size="sm"
+                  icon={ShareIcon}
                 >
-                  <div
-                    className={`w-90 max-w-[calc(100vw-3rem)] rounded-md border border-[#EDEDED] bg-white p-4 shadow-[0_16px_40px_-18px_rgba(10,20,59,0.22)] transition-transform duration-200 ease-out group-hover:translate-y-0 ${
-                      authorOpen ? "translate-y-0" : "-translate-y-1"
+                  Share
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="mt-6 flex items-center justify-between gap-4">
+                <EyebrowPill surface="light" className="!m-0">
+                  {post.category}
+                </EyebrowPill>
+                <p className="font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[#6B7280]">
+                  {post.date}
+                </p>
+              </div>
+
+              <h1 className="mt-4 max-w-3xl font-heading text-2xl font-medium leading-[1.15] tracking-tight text-[#0a143b] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
+                {post.title}
+              </h1>
+
+              <div className="relative z-30 mt-5 flex items-center justify-between gap-4">
+                <div ref={authorRef} className="group relative">
+                  <button
+                    type="button"
+                    onClick={() => hasAuthorCard && setAuthorOpen((prev) => !prev)}
+                    aria-expanded={hasAuthorCard ? authorOpen : undefined}
+                    className={`flex items-center gap-3 text-left transition-opacity focus-visible:outline-none ${
+                      hasAuthorCard ? "hover:opacity-75" : "cursor-default"
                     }`}
                   >
-                    <div className="flex items-center gap-4">
-                      {post.authorAvatar ? (
-                        <CmsImage
-                          src={post.authorAvatar}
-                          alt={post.author}
-                          width={64}
-                          height={64}
-                          className="size-14 shrink-0 rounded-full object-cover"
-                        />
-                      ) : (
-                        <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-[#5D4DDB] to-[#2A2470] font-heading text-lg font-semibold text-white">
-                          {authorInitials(post.author)}
+                    {post.authorAvatar ? (
+                      <CmsImage
+                        src={post.authorAvatar}
+                        alt={post.author}
+                        width={48}
+                        height={48}
+                        className="size-11 shrink-0 rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-[#5D4DDB] to-[#2A2470] font-heading text-sm font-semibold text-white">
+                        {authorInitials(post.author)}
+                      </span>
+                    )}
+                    <span className="flex flex-col gap-1">
+                      <span className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-[#0a143b]">
+                        {post.author}
+                      </span>
+                      {post.authorRole ? (
+                        <span className="font-mono text-[0.625rem] font-medium uppercase tracking-[0.1em] text-[#6B7280]">
+                          {post.authorRole}
                         </span>
-                      )}
-                      <div>
-                        <p className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-[#0a143b]">
-                          {post.author}
-                        </p>
-                        {post.authorRole ? (
-                          <p className="mt-1 font-mono text-[0.625rem] font-medium uppercase tracking-[0.1em] text-[#6B7280]">
-                            {post.authorRole}
+                      ) : null}
+                    </span>
+                  </button>
+
+                  {hasAuthorCard ? (
+                    <div
+                      className={`absolute left-0 top-full z-30 pt-3 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:opacity-100 ${
+                        authorOpen
+                          ? "pointer-events-auto opacity-100"
+                          : "pointer-events-none opacity-0"
+                      }`}
+                    >
+                      <div
+                        className={`w-90 max-w-[calc(100vw-3rem)] rounded-md border border-[#EDEDED] bg-white p-4 shadow-[0_16px_40px_-18px_rgba(10,20,59,0.22)] transition-transform duration-200 ease-out group-hover:translate-y-0 ${
+                          authorOpen ? "translate-y-0" : "-translate-y-1"
+                        }`}
+                      >
+                        <div className="flex items-center gap-4">
+                          {post.authorAvatar ? (
+                            <CmsImage
+                              src={post.authorAvatar}
+                              alt={post.author}
+                              width={64}
+                              height={64}
+                              className="size-14 shrink-0 rounded-full object-cover"
+                            />
+                          ) : (
+                            <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-[#5D4DDB] to-[#2A2470] font-heading text-lg font-semibold text-white">
+                              {authorInitials(post.author)}
+                            </span>
+                          )}
+                          <div>
+                            <p className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-[#0a143b]">
+                              {post.author}
+                            </p>
+                            {post.authorRole ? (
+                              <p className="mt-1 font-mono text-[0.625rem] font-medium uppercase tracking-[0.1em] text-[#6B7280]">
+                                {post.authorRole}
+                              </p>
+                            ) : null}
+                          </div>
+                        </div>
+
+                        {authorBioPreview ? (
+                          <p className="mt-4 text-sm font-regular font-sans leading-[1.6] text-[#454545]">
+                            {authorBioPreview}
                           </p>
                         ) : null}
+
+                        {post.authorHref ? (
+                          <Link
+                            href={post.authorHref}
+                            className="mt-5 inline-flex items-center justify-center rounded-full border border-[#E6E6E6] bg-white px-4 py-1.5 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[#5D4DDB] transition-colors hover:border-[#413CC0] hover:text-[#413CC0]"
+                          >
+                            Read More
+                          </Link>
+                        ) : null}
                       </div>
+
+                      <span
+                        className="absolute left-8 top-[5px] size-3.5 rotate-45 border-l border-t border-[#EDEDED] bg-white"
+                        aria-hidden
+                      />
                     </div>
-
-                    {authorBioPreview ? (
-                      <p className="mt-4 text-sm font-regular font-sans leading-[1.6] text-[#454545]">
-                        {authorBioPreview}
-                      </p>
-                    ) : null}
-
-                    {post.authorHref ? (
-                      <Link
-                        href={post.authorHref}
-                        className="mt-5 inline-flex items-center justify-center rounded-full border border-[#E6E6E6] bg-white px-4 py-1.5 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[#5D4DDB] transition-colors hover:border-[#413CC0] hover:text-[#413CC0]"
-                      >
-                        Read More
-                      </Link>
-                    ) : null}
-                  </div>
-
-                  <span
-                    className="absolute left-8 top-[5px] size-3.5 rotate-45 border-l border-t border-[#EDEDED] bg-white"
-                    aria-hidden
-                  />
+                  ) : null}
                 </div>
-              ) : null}
-            </div>
 
-            <Button
-              onClick={handleShare}
-              variant="secondary"
-              size="sm"
-              icon={ShareIcon}
-            >
-              Share
-            </Button>
-          </div>
+                <Button
+                  onClick={handleShare}
+                  variant="secondary"
+                  size="sm"
+                  icon={ShareIcon}
+                >
+                  Share
+                </Button>
+              </div>
+            </>
+          )}
         </HeroReveal>
       </Container>
     </section>

@@ -2,9 +2,15 @@
 
 import { useRef } from "react";
 import Image from "next/image";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Navigation } from "swiper/modules";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
+import ArrowNavButton from "@/components/common/ArrowNavButton";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
+
+import "swiper/css";
+import "swiper/css/navigation";
 
 type Testimonial = {
   id: string;
@@ -26,7 +32,7 @@ const TESTIMONIALS: Testimonial[] = [
     role: "Founder, Delegance Brokerage",
     company: "Delegance Brokerage",
     avatar: "/images/testimonals/Alex Ledbetter.webp",
-    logo: "/images/testimonals/Diligence Brokerage.png",
+    logo: "/images/testimonals/delegance.svg",
   },
   {
     id: "2",
@@ -35,9 +41,19 @@ const TESTIMONIALS: Testimonial[] = [
     name: "Jatin Sandilya",
     role: "Founder, Latent Insurance",
     company: "Latent Insurance",
-    avatar: "/images/testimonals/Jatin Sandilya.webp",
-    logo: "/images/testimonals/Latent Insurance.png",
+    avatar: "/images/testimonals/Jatin Sandilya.png",
+    logo: "/images/testimonals/latent.svg",
     logoScale: 1.35,
+  },
+  {
+    id: "3",
+    quote:
+      "Building bindable, multi-carrier quoting ourselves would've meant a team we didn't have. With CoverForce, we went from idea to a live, bindable flow in about three weeks — without adding a single engineer.",
+    name: "Gary McCarthy",
+    role: "Founder, Snapbind",
+    company: "Snapbind",
+    avatar: "/images/testimonals/gary mccarthy.png",
+    logo: "/images/testimonals/snapbind.svg",
   },
 ];
 
@@ -64,11 +80,25 @@ function CompanyLogo({
   );
 }
 
-function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
+function TestimonialCard({
+  testimonial,
+  variant = "grid",
+}: {
+  testimonial: Testimonial;
+  variant?: "carousel" | "grid";
+}) {
+  const isCarousel = variant === "carousel";
+
   return (
-    <article className="relative flex min-h-80 flex-col overflow-hidden rounded-sm bg-white p-5 md:min-h-[360px] md:p-6 lg:min-h-[320px] xl:min-h-[380px] ">
+    <article
+      className={`relative flex flex-col overflow-hidden rounded-sm bg-white p-5 md:p-6 ${
+        isCarousel
+          ? "h-[340px] sm:h-[320px] md:h-[340px]"
+          : "min-h-80 lg:min-h-[320px] xl:min-h-[380px]"
+      }`}
+    >
       <div className="relative z-10 flex h-full flex-1 flex-col">
-        <div className="flex items-center gap-3 md:gap-4">
+        <div className="flex shrink-0 items-center gap-3 md:gap-4">
           <div className="size-12 shrink-0 overflow-hidden md:size-14">
             <Image
               src={testimonial.avatar}
@@ -89,13 +119,17 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
           </div>
         </div>
 
-        <div className="flex flex-1 items-center py-5 md:py-6">
-          <blockquote className="text-left text-lg font-heading font-regular leading-[1.38] tracking-tight text-[#1a1a2e] md:text-xl md:leading-[1.35] lg:text-[1.375rem] lg:leading-[1.32]">
+        <div className="flex min-h-0 flex-1 items-center py-5 md:py-6">
+          <blockquote
+            className={`w-full text-left text-lg font-heading font-regular leading-[1.38] tracking-tight text-[#1a1a2e] md:text-xl md:leading-[1.35] lg:text-[1.375rem] lg:leading-[1.32] ${
+              isCarousel ? "line-clamp-6" : ""
+            }`}
+          >
             &ldquo;{testimonial.quote}&rdquo;
           </blockquote>
         </div>
 
-        <div className="mt-auto flex justify-end pt-2">
+        <div className="mt-auto flex shrink-0 justify-end pt-2">
           <CompanyLogo
             src={testimonial.logo}
             alt={testimonial.company}
@@ -111,6 +145,8 @@ export default function StartupTestimonials() {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const prevRef = useRef<HTMLButtonElement>(null);
+  const nextRef = useRef<HTMLButtonElement>(null);
 
   useSectionHeaderReveal({
     scopeRef: sectionRef,
@@ -126,20 +162,75 @@ export default function StartupTestimonials() {
       className="bg-[#151f4d] text-white"
     >
       <Container borderColor="#FFFFFF33" className="border-t border-[#FFFFFF1A]">
-        <div className="py-16 md:py-20 lg:py-24">
-          <div ref={headerRef} className="mb-10 max-w-2xl md:mb-12">
-            <EyebrowPill surface="dark" className="mb-0">
-              What Founders Say
-            </EyebrowPill>
-            <h2
-              ref={headingRef}
-              className="mt-5 max-w-md text-2xl font-heading font-medium leading-[1.12] tracking-tight text-[#9AA8BC] sm:text-3xl md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
-            >
-              <span data-split>Built for builders like you.</span>
-            </h2>
+        <div className="relative overflow-hidden py-16 md:py-20 lg:py-24">
+          <div
+            ref={headerRef}
+            className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between md:mb-12"
+          >
+            <div className="max-w-2xl">
+              <EyebrowPill surface="dark" className="mb-0">
+                What Founders Say
+              </EyebrowPill>
+              <h2
+                ref={headingRef}
+                className="mt-5 max-w-md text-2xl font-heading font-medium leading-[1.12] tracking-tight text-[#9AA8BC] sm:text-3xl md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
+              >
+                <span data-split>Built for builders like you.</span>
+              </h2>
+            </div>
+
+            <div className="flex shrink-0 items-center gap-3 lg:hidden">
+              <ArrowNavButton
+                ref={prevRef}
+                direction="prev"
+                tone="dark"
+                aria-label="Previous testimonial"
+              />
+              <ArrowNavButton
+                ref={nextRef}
+                direction="next"
+                tone="dark"
+                aria-label="Next testimonial"
+              />
+            </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 md:gap-5 lg:gap-6">
+          <div className="lg:hidden">
+            <Swiper
+              modules={[Navigation, Autoplay]}
+              spaceBetween={16}
+              slidesPerView={1}
+              speed={600}
+              loop
+              autoplay={{
+                delay: 4000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }}
+              onBeforeInit={(swiper) => {
+                if (
+                  swiper.params.navigation &&
+                  typeof swiper.params.navigation !== "boolean"
+                ) {
+                  swiper.params.navigation.prevEl = prevRef.current;
+                  swiper.params.navigation.nextEl = nextRef.current;
+                }
+              }}
+              navigation={{
+                prevEl: prevRef.current,
+                nextEl: nextRef.current,
+              }}
+              className="startup-testimonials-swiper !overflow-visible"
+            >
+              {TESTIMONIALS.map((testimonial) => (
+                <SwiperSlide key={testimonial.id} className="h-auto">
+                  <TestimonialCard testimonial={testimonial} variant="carousel" />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+
+          <div className="hidden gap-6 lg:grid lg:grid-cols-3">
             {TESTIMONIALS.map((testimonial) => (
               <TestimonialCard key={testimonial.id} testimonial={testimonial} />
             ))}

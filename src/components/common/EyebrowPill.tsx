@@ -17,6 +17,8 @@ type EyebrowPillProps = {
   accent?: string;
   /** Use a white outer glow instead of the default dark drop shadow. */
   shadow?: "default" | "white";
+  /** Dark surface only: dot + label without pill background. */
+  bare?: boolean;
 };
 
 const DARK_SHADOW =
@@ -37,6 +39,7 @@ export default function EyebrowPill({
   background,
   accent,
   shadow = "default",
+  bare = false,
 }: EyebrowPillProps) {
   // Light-bg gray pills use the same primary CTA gradient as ProcessFlow.
   const resolvedBackground =
@@ -60,7 +63,10 @@ export default function EyebrowPill({
   let wrapperStyle: React.CSSProperties;
   let textClass = "";
 
-  if (useGradient) {
+  if (bare && surface === "dark") {
+    wrapperStyle = { boxShadow: "none" };
+    textClass = "text-white";
+  } else if (useGradient) {
     wrapperStyle = { background: resolvedBackground, boxShadow: resolvedShadow };
     textClass = "text-white";
   } else if (useAccent) {

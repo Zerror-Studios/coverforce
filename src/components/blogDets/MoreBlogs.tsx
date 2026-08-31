@@ -14,7 +14,7 @@ const MoreBlogs = ({
   if (!posts.length) return null;
 
   return (
-    <section className="bg-white text-[#0a143b]">
+    <section id="more-blogs" className="bg-white text-[#0a143b]">
       <Container borderColor="#53535380">
         <div className="pb-16 pt-6 md:pb-24 md:pt-10">
           <h2 className="max-w-sm font-heading text-2xl font-medium leading-[1.15] tracking-tight text-[#0a143b] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">

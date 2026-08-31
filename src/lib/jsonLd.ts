@@ -159,6 +159,41 @@ export function buildArticleJsonLd(post: BlogDetail): JsonLd {
   };
 }
 
+export function buildStaticArticleJsonLd(options: {
+  title: string;
+  description: string;
+  path: string;
+  image?: string;
+  author: string;
+  datePublished?: string;
+  articleSection?: string;
+}): JsonLd {
+  const url = absoluteUrl(options.path);
+  const image = absoluteImage(options.image);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": `${url}#article`,
+    headline: options.title,
+    description: options.description,
+    url,
+    mainEntityOfPage: url,
+    ...(image ? { image: [image] } : {}),
+    datePublished: options.datePublished || undefined,
+    dateModified: options.datePublished || undefined,
+    author: {
+      "@type": "Person",
+      name: options.author,
+    },
+    publisher: { "@id": ORG_ID },
+    ...(options.articleSection
+      ? { articleSection: options.articleSection }
+      : {}),
+    inLanguage: siteConfig.language,
+  };
+}
+
 export function buildProductJsonLd(options: {
   path: string;
   name: string;
