@@ -24,6 +24,16 @@ export type HeroMetaField = {
   value: string;
 };
 
+export type CaseStudyHeroData = {
+  label: string;
+  title: string;
+  tagline: string;
+  date: string;
+  readTime: string;
+  backgroundImage: string;
+  logo?: string;
+};
+
 type StaticBlogDetailBase = {
   path: string;
   slug: string;
@@ -40,6 +50,7 @@ type StaticBlogDetailBase = {
 
 export type CaseStudyStaticBlogDetail = StaticBlogDetailBase & {
   template: "case-study";
+  caseStudyHero: CaseStudyHeroData;
   tags: string[];
   heroMeta: HeroMetaField[];
   stickyStats: ContentStat[];
@@ -59,6 +70,7 @@ export type StaticBlogDetail =
   | ReportStaticBlogDetail;
 
 export const CASE_STUDY_THUMBNAIL = "/images/casestudy.png";
+export const CASE_STUDY_HERO_IMAGE = "/images/casestudy-bg.png";
 export const CASE_STUDY_RESULT_IMAGE = "/images/result.png";
 
 export const CASE_STUDY_STICKY_STATS: ContentStat[] = [
@@ -125,6 +137,16 @@ export const CASE_STUDY_DETAIL: CaseStudyStaticBlogDetail = {
   category: "Case Study",
   breadcrumb: "Case Study",
   image: CASE_STUDY_THUMBNAIL,
+  caseStudyHero: {
+    label: "Case Study",
+    title: "Simplifying commercial insurance, end to end",
+    tagline:
+      "Streamlining every step from submission to quote, bind, and beyond.",
+    date: "August 15, 2026",
+    readTime: "5 min read",
+    backgroundImage: CASE_STUDY_HERO_IMAGE,
+    logo: "/images/startups/center-logo.svg",
+  },
   title:
     "How a regional brokerage scaled multi-carrier quoting with CoverForce",
   summary:

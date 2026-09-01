@@ -1,4 +1,5 @@
 import Hero from "@/components/blogDets/Hero";
+import CaseStudyHero from "@/components/blogDets/CaseStudyHero";
 import ReportHero from "@/components/blogDets/ReportHero";
 import ReportContext from "@/components/blogDets/ReportContext";
 import ReportFindings from "@/components/blogDets/ReportFindings";
@@ -55,6 +56,11 @@ export default function StaticBlogDetail({
           />
           <ReportFindings cards={detail.findings} />
         </>
+      ) : detail.template === "case-study" ? (
+        <CaseStudyHero
+          hero={detail.caseStudyHero}
+          heroMeta={detail.heroMeta}
+        />
       ) : (
         <Hero
           heroMeta={detail.heroMeta}
