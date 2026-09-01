@@ -20,8 +20,14 @@ const STAT_BODY_CLASS =
 function StatBox({ value, label }: ContentStat) {
   return (
     <div className="border-l-2 border-[#413CC0] pl-4">
-      <p className={SECTION_TITLE_CLASS}>{value}</p>
-      <p className={`mt-2 ${STAT_BODY_CLASS}`}>{label}</p>
+      {value ? (
+        <>
+          <p className={SECTION_TITLE_CLASS}>{value}</p>
+          {label ? <p className={`mt-2 ${STAT_BODY_CLASS}`}>{label}</p> : null}
+        </>
+      ) : (
+        <p className={SECTION_TITLE_CLASS}>{label}</p>
+      )}
     </div>
   );
 }
@@ -31,15 +37,21 @@ export default function CaseStudyContent({
   stats,
   tags = [],
 }: CaseStudyContentProps) {
+  const hasStats = stats.length > 0;
+
   return (
     <section className="bg-white text-[#444444]">
       <Container borderColor="#53535380">
         <div className="mx-auto max-w-4xl border-b border-[#E8E8EE] pb-16 md:pb-20 lg:pb-24">
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,12.5rem)_minmax(0,1fr)] lg:items-start lg:gap-12">
-            {stats.length > 0 ? (
+          <div
+            className={`grid grid-cols-1 gap-12 lg:items-start lg:gap-12 ${
+              hasStats ? "lg:grid-cols-[minmax(0,12.5rem)_minmax(0,1fr)]" : ""
+            }`}
+          >
+            {hasStats ? (
               <aside className="flex flex-col gap-8 sm:flex-row sm:flex-wrap lg:sticky lg:top-24 lg:flex-col lg:gap-10">
-                {stats.map((stat) => (
-                  <StatBox key={stat.label} {...stat} />
+                {stats.map((stat, index) => (
+                  <StatBox key={`${stat.label}-${index}`} {...stat} />
                 ))}
               </aside>
             ) : null}

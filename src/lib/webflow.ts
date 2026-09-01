@@ -661,9 +661,14 @@ export function toListingPost(post: BlogDetail): BlogPost {
 function parseCaseStudyStat(value?: string | null): ContentStat | null {
   if (!value?.trim()) return null;
 
-  const [statValue, ...labelParts] = value.split(";");
+  const trimmed = value.trim();
+  if (!trimmed.includes(";")) {
+    return { value: "", label: trimmed };
+  }
+
+  const [statValue, ...labelParts] = trimmed.split(";");
   const label = labelParts.join(";").trim();
-  if (!statValue?.trim() || !label) return null;
+  if (!statValue?.trim()) return null;
 
   return {
     value: statValue.trim(),
