@@ -1,5 +1,7 @@
 import Hero from "@/components/blogDets/Hero";
 import Content from "@/components/blogDets/Content";
+import CaseStudyDetailView from "@/components/blogDets/CaseStudyDetailView";
+import ReportDetailView from "@/components/blogDets/ReportDetailView";
 import MoreBlogs from "@/components/blogDets/MoreBlogs";
 import StartupFaq from "@/components/solutions/startups/StartupFaq";
 import JsonLd from "@/components/common/JsonLd";
@@ -11,7 +13,10 @@ import {
   buildFaqPageJsonLd,
   breadcrumbsForPath,
 } from "@/lib/jsonLd";
-import { getBlogPostBySlug, getBlogPosts } from "@/lib/webflow";
+import {
+  getBlogListingPosts,
+  getBlogPageBySlug,
+} from "@/lib/webflow";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -25,33 +30,48 @@ export async function generateMetadata({
   params,
 }: BlogDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
-  if (!post) notFound();
+  const content = await getBlogPageBySlug(slug);
+  if (!content) notFound();
+
+  if (content.type === "case-study") {
+    return createArticleMetadata({
+      title: `${content.study.title} | CoverForce`,
+      description: content.study.summary,
+      path: `/blog/${slug}`,
+      image: content.study.image,
+    });
+  }
+
+  if (content.type === "report") {
+    return createArticleMetadata({
+      title: `${content.report.title} | CoverForce`,
+      description: content.report.summary,
+      path: `/blog/${slug}`,
+      image: content.report.image,
+    });
+  }
 
   return createArticleMetadata({
-    title: `${post.title} | CoverForce`,
+    title: `${content.post.title} | CoverForce`,
     description:
-      post.summary ||
+      content.post.summary ||
       "Read the latest commercial insurance insights from CoverForce.",
     path: `/blog/${slug}`,
-    image: post.image,
+    image: content.post.image,
   });
 }
 
 const BlogDetailPage = async ({ params }: BlogDetailPageProps) => {
   const { slug } = await params;
-  const [post, allPosts] = await Promise.all([
-    getBlogPostBySlug(slug),
-    getBlogPosts(),
+  const [content, listingPosts] = await Promise.all([
+    getBlogPageBySlug(slug),
+    getBlogListingPosts(),
   ]);
 
-  if (!post) notFound();
+  if (!content) notFound();
 
-  const faqs = post.faqs;
-  const hasFaqs = faqs.length > 0;
-
-  const morePosts = allPosts
-    .filter((item) => item.slug !== post.slug)
+  const morePosts = listingPosts
+    .filter((item) => item.slug !== slug)
     .slice(0, 3)
     .map((item) => ({
       slug: item.slug,
@@ -59,7 +79,24 @@ const BlogDetailPage = async ({ params }: BlogDetailPageProps) => {
       image: item.image,
       date: item.date,
       author: item.author,
+      href: item.href,
     }));
+
+  if (content.type === "case-study") {
+    return (
+      <CaseStudyDetailView study={content.study} morePosts={morePosts} />
+    );
+  }
+
+  if (content.type === "report") {
+    return (
+      <ReportDetailView report={content.report} morePosts={morePosts} />
+    );
+  }
+
+  const post = content.post;
+  const faqs = post.faqs;
+  const hasFaqs = faqs.length > 0;
 
   const breadcrumbs = [
     ...breadcrumbsForPath("/blog"),

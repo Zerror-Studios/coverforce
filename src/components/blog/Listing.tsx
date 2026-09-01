@@ -333,7 +333,11 @@ const Listing = ({
             <>
               <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:mt-12 lg:grid-cols-3">
                 {pagedPosts.map((post) => (
-                  <BlogCard key={post.slug} post={post} />
+                  <BlogCard
+                    key={post.href ?? post.slug}
+                    post={post}
+                    href={post.href}
+                  />
                 ))}
               </div>
 

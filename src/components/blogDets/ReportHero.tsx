@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { RiDownloadLine } from "@remixicon/react";
 import Container from "@/components/common/Container";
 import Button from "@/components/common/Button";
 import HeroReveal from "@/components/common/HeroReveal";
+import BlogBreadcrumbNav from "@/components/blogDets/BlogBreadcrumbNav";
 import ReportDownloadModal, {
   type ReportDownloadModalData,
 } from "@/components/blogDets/ReportDownloadModal";
@@ -29,60 +29,33 @@ export type ReportHeroData = {
 
 type ReportHeroProps = {
   hero: ReportHeroData;
+  blogSlug: string;
 };
 
-export default function ReportHero({ hero }: ReportHeroProps) {
+export default function ReportHero({ hero, blogSlug }: ReportHeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [showDownloadFab, setShowDownloadFab] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
-  const pastHeroRef = useRef(false);
-  const moreBlogsVisibleRef = useRef(false);
+  const hasPassedHeroRef = useRef(false);
 
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
 
-    const syncFabVisibility = () => {
-      setShowDownloadFab(
-        pastHeroRef.current && !moreBlogsVisibleRef.current,
-      );
-    };
-
     const heroObserver = new IntersectionObserver(
       ([entry]) => {
-        pastHeroRef.current = !entry.isIntersecting;
-        syncFabVisibility();
+        if (!entry.isIntersecting) {
+          hasPassedHeroRef.current = true;
+        }
+        setShowDownloadFab(hasPassedHeroRef.current);
       },
       { threshold: 0, rootMargin: "0px 0px -1px 0px" },
     );
 
     heroObserver.observe(section);
 
-    let moreBlogsObserver: IntersectionObserver | null = null;
-
-    const observeMoreBlogs = () => {
-      const moreBlogs = document.getElementById("more-blogs");
-      if (!moreBlogs || moreBlogsObserver) return;
-
-      moreBlogsObserver = new IntersectionObserver(
-        ([entry]) => {
-          moreBlogsVisibleRef.current = entry.isIntersecting;
-          syncFabVisibility();
-        },
-        { threshold: 0 },
-      );
-
-      moreBlogsObserver.observe(moreBlogs);
-    };
-
-    observeMoreBlogs();
-
-    const retryId = window.setTimeout(observeMoreBlogs, 0);
-
     return () => {
-      window.clearTimeout(retryId);
       heroObserver.disconnect();
-      moreBlogsObserver?.disconnect();
     };
   }, []);
 
@@ -90,34 +63,32 @@ export default function ReportHero({ hero }: ReportHeroProps) {
     <>
       <section ref={sectionRef} className="relative z-20 bg-white text-[#0a143b]">
         <Container borderColor="#53535380">
-          <HeroReveal className="pb-8 pt-28 md:pb-10 md:pt-20 lg:pb-12 lg:pt-24">
-            <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-start lg:gap-16 xl:gap-20">
-              <div className="flex flex-col items-start">
-                <nav className="font-mono text-xs font-medium uppercase tracking-[0.14em] text-[#9AA8BC]">
-                  <Link href="/" className="transition-colors hover:text-[#413CC0]">
-                    Home
-                  </Link>
-                  <span className="text-[#C4C4C4]"> / </span>
-                  <span className="text-[#50617a]">
-                    {hero.breadcrumbLabel} · {hero.year}
-                  </span>
-                </nav>
+          <HeroReveal
+            className="grid grid-cols-1 gap-10 border-b border-dashed border-[#E1E1E1] pb-8 pt-28 md:pb-10 md:pt-20 lg:grid-cols-2 lg:items-start lg:gap-16 lg:pb-12 lg:pt-24 xl:gap-20"
+            delay={0.45}
+            stagger={0.12}
+          >
+            <div className="flex flex-col items-start">
+              <BlogBreadcrumbNav label={hero.breadcrumbLabel} />
 
-                <h1 className="mt-4 max-w-md font-heading text-2xl font-medium leading-[1.15] tracking-tight text-[#0a143b] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
-                  {hero.title}
-                </h1>
+              <h1 className="mt-4 max-w-md font-heading text-2xl font-medium leading-[1.15] tracking-tight text-[#0a143b] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
+                {hero.title}
+              </h1>
 
-                <Button className="mt-8" onClick={() => setDownloadOpen(true)}>
-                  {hero.ctaLabel}
-                </Button>
-              </div>
-
-              <div className="w-full lg:pt-8">
-                <p className="w-full text-[0.9375rem] leading-[1.75] text-[#444444]">
+              {hero.summary ? (
+                <p className="mt-4 max-w-md text-[0.9375rem] leading-[1.75] text-[#444444]">
                   {hero.summary}
                 </p>
+              ) : null}
 
-                <dl className="mt-8 w-full">
+              <Button className="mt-8" onClick={() => setDownloadOpen(true)}>
+                {hero.ctaLabel}
+              </Button>
+            </div>
+
+            {hero.meta.length > 0 ? (
+              <div className="w-full lg:pt-8">
+                <dl className="w-full">
                   {hero.meta.map((field, index) => (
                     <div
                       key={field.label}
@@ -135,13 +106,13 @@ export default function ReportHero({ hero }: ReportHeroProps) {
                   ))}
                 </dl>
               </div>
-            </div>
+            ) : null}
           </HeroReveal>
         </Container>
       </section>
 
       <div
-        className={`fixed bottom-6 right-5 z-40 md:bottom-8 md:right-8 ${
+        className={`fixed bottom-6 right-5 z-50 md:bottom-8 md:right-8 ${
           showDownloadFab
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none translate-y-2 opacity-0"
@@ -172,6 +143,7 @@ export default function ReportHero({ hero }: ReportHeroProps) {
       <ReportDownloadModal
         open={downloadOpen}
         content={hero.downloadModal}
+        blogSlug={blogSlug}
         onClose={() => setDownloadOpen(false)}
       />
     </>

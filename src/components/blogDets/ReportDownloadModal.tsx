@@ -28,6 +28,7 @@ export type ReportDownloadModalData = {
 type ReportDownloadModalProps = {
   open: boolean;
   content: ReportDownloadModalData;
+  blogSlug: string;
   onClose: () => void;
 };
 
@@ -74,12 +75,15 @@ const formGlassClassName =
 export default function ReportDownloadModal({
   open,
   content,
+  blogSlug,
   onClose,
 }: ReportDownloadModalProps) {
   const [isClosing, setIsClosing] = useState(false);
   const [stored, setStored] = useState<ReportDownloadModalData | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const overlayRef = useRef<HTMLDivElement>(null);
   const formContentRef = useRef<HTMLDivElement>(null);
@@ -93,6 +97,8 @@ export default function ReportDownloadModal({
     setStored(contentRef.current);
     setIsClosing(false);
     setSubmitted(false);
+    setIsSubmitting(false);
+    setSubmitError(null);
     setForm(EMPTY_FORM);
     setFormContentMinHeight(undefined);
   }, [open]);
@@ -155,14 +161,60 @@ export default function ReportDownloadModal({
     };
   }, [visible, handleClose]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (formContentRef.current) {
       setFormContentMinHeight(formContentRef.current.offsetHeight);
     }
 
-    setSubmitted(true);
+    setSubmitError(null);
+    setIsSubmitting(true);
+
+    try {
+      const hutk =
+        typeof document !== "undefined"
+          ? document.cookie
+              .split("; ")
+              .find((row) => row.startsWith("hubspotutk="))
+              ?.split("=")[1]
+          : undefined;
+
+      const response = await fetch("/api/request-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: form.firstName,
+          lastName: form.lastName,
+          email: form.companyEmail,
+          companyName: form.companyName,
+          blogSlug,
+          pageUri: typeof window !== "undefined" ? window.location.href : undefined,
+          pageName: "Report Downloads",
+          hutk,
+        }),
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          typeof result.error === "string"
+            ? result.error
+            : "Something went wrong. Please try again.",
+        );
+      }
+
+      setSubmitted(true);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!visible || !stored || typeof document === "undefined") return null;
@@ -341,6 +393,25 @@ export default function ReportDownloadModal({
                           </div>
 
                           <div>
+                            <label className={labelClassName} htmlFor="report-company-email">
+                              Email*
+                            </label>
+                            <input
+                              id="report-company-email"
+                              name="companyEmail"
+                              type="email"
+                              inputMode="email"
+                              autoComplete="email"
+                              required
+                              value={form.companyEmail}
+                              onChange={(e) =>
+                                setForm((prev) => ({ ...prev, companyEmail: e.target.value }))
+                              }
+                              className={inputClassName}
+                            />
+                          </div>
+
+                          <div>
                             <label className={labelClassName} htmlFor="report-company-name">
                               Company name*
                             </label>
@@ -353,24 +424,6 @@ export default function ReportDownloadModal({
                               value={form.companyName}
                               onChange={(e) =>
                                 setForm((prev) => ({ ...prev, companyName: e.target.value }))
-                              }
-                              className={inputClassName}
-                            />
-                          </div>
-
-                          <div>
-                            <label className={labelClassName} htmlFor="report-company-email">
-                              Company Email*
-                            </label>
-                            <input
-                              id="report-company-email"
-                              name="companyEmail"
-                              type="email"
-                              required
-                              autoComplete="email"
-                              value={form.companyEmail}
-                              onChange={(e) =>
-                                setForm((prev) => ({ ...prev, companyEmail: e.target.value }))
                               }
                               className={inputClassName}
                             />
@@ -400,10 +453,17 @@ export default function ReportDownloadModal({
                             type="submit"
                             surface="on-dark"
                             balanced
+                            disabled={isSubmitting}
                             className="mt-2 !w-full max-w-none justify-center hover:bg-[#F5F7FA]"
                           >
-                            {stored.submitLabel}
+                            {isSubmitting ? "Submitting..." : stored.submitLabel}
                           </Button>
+
+                          {submitError ? (
+                            <p className={`${formMetaClassName} text-red-200`}>
+                              {submitError}
+                            </p>
+                          ) : null}
                           </form>
                         )}
                       </div>

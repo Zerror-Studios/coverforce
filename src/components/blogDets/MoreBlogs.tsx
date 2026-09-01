@@ -2,14 +2,19 @@ import BlogCard from "@/components/blog/BlogCard";
 import Container from "@/components/common/Container";
 import type { BlogPost } from "@/data/blogPosts";
 
-type MorePost = Pick<BlogPost, "slug" | "title" | "image" | "date" | "author">;
+type MorePost = Pick<
+  BlogPost,
+  "slug" | "title" | "image" | "date" | "author" | "href"
+>;
 
 const MoreBlogs = ({
   title = "More Insights on Shaping the Future of Insurance",
   posts = [],
+  getPostHref,
 }: {
   title?: string;
   posts?: MorePost[];
+  getPostHref?: (post: MorePost) => string;
 }) => {
   if (!posts.length) return null;
 
@@ -23,7 +28,11 @@ const MoreBlogs = ({
 
           <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:mt-10 lg:grid-cols-3">
             {posts.map((post) => (
-              <BlogCard key={post.slug} post={post} />
+              <BlogCard
+                key={post.slug}
+                post={post}
+                href={getPostHref?.(post)}
+              />
             ))}
           </div>
         </div>

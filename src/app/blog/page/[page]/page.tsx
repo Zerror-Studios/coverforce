@@ -11,7 +11,7 @@ import {
   buildWebPageJsonLd,
 } from "@/lib/jsonLd";
 import { createMetadata, getPageSeo } from "@/lib/seo";
-import { getBlogPosts, toListingPost } from "@/lib/webflow";
+import { getBlogListingPosts, getBlogPosts } from "@/lib/webflow";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
@@ -23,7 +23,7 @@ export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
   try {
-    const posts = await getBlogPosts();
+    const posts = await getBlogListingPosts();
     const pages = getBlogTotalPages(posts.length);
     return Array.from({ length: pages }, (_, i) => ({
       page: String(i + 1),
@@ -65,17 +65,33 @@ const BlogPagedPage = async ({ params }: BlogPagedPageProps) => {
   if (!Number.isFinite(pageNum) || pageNum < 1) notFound();
   if (pageNum === 1) redirect("/blog");
 
-  const posts = await getBlogPosts();
+  const [posts, blogDetails] = await Promise.all([
+    getBlogListingPosts(),
+    getBlogPosts(),
+  ]);
   const totalPages = getBlogTotalPages(posts.length);
   if (pageNum > totalPages) notFound();
 
+  const featuredDetail =
+    blogDetails.find((post) => post.featured) ?? blogDetails[0] ?? null;
   const featuredPost =
-    posts.find((post) => post.featured) ?? posts[0] ?? null;
+    (featuredDetail
+      ? posts.find(
+          (post) =>
+            post.href === `/blog/${featuredDetail.slug}` &&
+            post.category !== "Case Study",
+        )
+      : null) ??
+    posts[0] ??
+    null;
   const latest = posts
-    .filter((post) => post.slug !== featuredPost?.slug)
+    .filter(
+      (post) =>
+        post.href !== featuredPost?.href && post.slug !== featuredPost?.slug,
+    )
     .slice(0, 4)
     .map((post) => ({
-      href: `/blog/${post.slug}`,
+      href: post.href ?? `/blog/${post.slug}`,
       category: post.category,
       title: post.title,
       date: post.date,
@@ -104,7 +120,7 @@ const BlogPagedPage = async ({ params }: BlogPagedPageProps) => {
       {featuredPost ? (
         <Hero
           featured={{
-            href: `/blog/${featuredPost.slug}`,
+            href: featuredPost.href ?? `/blog/${featuredPost.slug}`,
             image: featuredPost.image,
             category: featuredPost.category,
             title: featuredPost.title,
@@ -113,11 +129,7 @@ const BlogPagedPage = async ({ params }: BlogPagedPageProps) => {
           latest={latest}
         />
       ) : null}
-      <Listing
-        posts={posts.map(toListingPost)}
-        currentPage={pageNum}
-        pageSize={BLOG_PAGE_SIZE}
-      />
+      <Listing posts={posts} currentPage={pageNum} pageSize={BLOG_PAGE_SIZE} />
     </PageWrapper>
   );
 };

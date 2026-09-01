@@ -27,7 +27,7 @@ function splitFullName(fullName: string): { firstname: string; lastname: string 
 function field(
   name: string,
   value: string,
-  objectTypeId: "0-1" | "0-2" = "0-1",
+  objectTypeId: "0-1" | "0-2" | "0-5" = "0-1",
 ): HubSpotField | null {
   const trimmed = value.trim();
   if (!trimmed) return null;
@@ -204,6 +204,24 @@ export async function submitHubSpotForm({
     error: responseText || `HubSpot submit failed (${response.status})`,
     body: responseText,
   };
+}
+
+export function buildReportHubSpotFields(payload: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  companyName: string;
+}): HubSpotField[] {
+  return [
+    field("firstname", payload.firstName),
+    field("lastname", payload.lastName),
+    field("email", payload.email),
+    field("company_name", payload.companyName, "0-5"),
+  ].filter((item): item is HubSpotField => Boolean(item));
+}
+
+export function getHubSpotReportFormId(): string {
+  return env.hubspot.reportFormId || "4b3cb105-8a52-4a14-be53-8f6695be06c3";
 }
 
 export function getHubSpotContactFormId(): string {

@@ -1,4 +1,3 @@
-import Hero from "@/components/blogDets/Hero";
 import CaseStudyHero from "@/components/blogDets/CaseStudyHero";
 import ReportHero from "@/components/blogDets/ReportHero";
 import ReportContext from "@/components/blogDets/ReportContext";
@@ -48,7 +47,7 @@ export default function StaticBlogDetail({
       />
       {detail.template === "report" ? (
         <>
-          <ReportHero hero={detail.reportHero} />
+          <ReportHero hero={detail.reportHero} blogSlug={detail.slug} />
           <ReportContext context={detail.context} />
           <Milestones
             variant="report"
@@ -61,20 +60,7 @@ export default function StaticBlogDetail({
           hero={detail.caseStudyHero}
           heroMeta={detail.heroMeta}
         />
-      ) : (
-        <Hero
-          heroMeta={detail.heroMeta}
-          post={{
-            category: detail.category,
-            breadcrumb: detail.breadcrumb,
-            image: detail.image,
-            title: detail.title,
-            author: detail.author,
-            authorRole: detail.authorRole,
-            date: detail.date,
-          }}
-        />
-      )}
+      ) : null}
       {detail.template === "case-study" ? (
         <StaticBlogContent
           stats={detail.stickyStats}

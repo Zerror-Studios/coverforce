@@ -4,6 +4,7 @@ import Image from "next/image";
 import Container from "@/components/common/Container";
 import Button from "@/components/common/Button";
 import HeroReveal from "@/components/common/HeroReveal";
+import BlogBreadcrumbNav from "@/components/blogDets/BlogBreadcrumbNav";
 import type { CaseStudyHeroData, HeroMetaField } from "@/data/staticBlogDetails";
 
 export type { CaseStudyHeroData };
@@ -83,7 +84,9 @@ export default function CaseStudyHero({ hero, heroMeta }: CaseStudyHeroProps) {
     <section className="relative z-20 bg-white text-[#0a143b]">
       <Container borderColor="#53535380">
         <HeroReveal className="mx-auto max-w-4xl pb-8 pt-28 md:pb-10 md:pt-20 lg:pb-12 lg:pt-24">
-          <div className="relative aspect-[16/10] min-h-[22rem] w-full overflow-hidden rounded-md sm:min-h-[24rem] md:aspect-[16/9] md:min-h-[26rem] lg:min-h-[28rem]">
+          <BlogBreadcrumbNav label="Case Study" />
+
+          <div className="relative mt-5 aspect-[16/10] min-h-[22rem] w-full overflow-hidden rounded-md sm:min-h-[24rem] md:aspect-[16/9] md:min-h-[26rem] lg:min-h-[28rem]">
             <Image
               src={hero.backgroundImage}
               alt=""

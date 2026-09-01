@@ -7,6 +7,7 @@ import Container from "@/components/common/Container";
 import Button from "@/components/common/Button";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import HeroReveal from "@/components/common/HeroReveal";
+import BlogBreadcrumbNav from "@/components/blogDets/BlogBreadcrumbNav";
 
 export type BlogDetailHeroPost = {
   category: string;
@@ -139,13 +140,7 @@ const Hero = ({ post, heroMeta }: HeroProps) => {
     <section className="relative z-20 bg-white text-[#0a143b]">
       <Container borderColor="#53535380">
         <HeroReveal className="mx-auto max-w-4xl pb-8 pt-28 md:pb-10 md:pt-20 lg:pb-12 lg:pt-24">
-          <nav className="flex items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.14em] text-[#9AA8BC]">
-            <Link href="/blog" className="transition-colors hover:text-[#413CC0]">
-              Blogs
-            </Link>
-            <span className="text-[#C4C4C4]">/</span>
-            <span className="text-[#50617a]">{post.breadcrumb}</span>
-          </nav>
+          <BlogBreadcrumbNav label={post.breadcrumb} />
 
           <div className="relative mt-5 w-full overflow-hidden rounded-md bg-[#F7F7FB]">
             <div className="relative aspect-video w-full">

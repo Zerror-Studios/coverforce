@@ -41,11 +41,9 @@ const SUBSECTION_TITLE_CLASS =
 
 function StatBox({ value, label }: ContentStat) {
   return (
-    <div>
-      <div className="border-l-2 border-[#413CC0] pl-4">
-        <p className={SECTION_TITLE_CLASS}>{value}</p>
-      </div>
-      <p className={`mt-2 pl-4 ${ARTICLE_PROSE_CLASS}`}>{label}</p>
+    <div className="border-l-2 border-[#413CC0] pl-4">
+      <p className={SECTION_TITLE_CLASS}>{value}</p>
+      <p className={`mt-2 ${ARTICLE_PROSE_CLASS}`}>{label}</p>
     </div>
   );
 }

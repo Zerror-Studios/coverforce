@@ -5,13 +5,16 @@ import type {
 } from "@/components/blogDets/StaticBlogContent";
 import type { ReportHeroData } from "@/components/blogDets/ReportHero";
 import type { ReportContextData } from "@/components/blogDets/ReportContext";
+import {
+  CARD_ACCENT_COLORS,
+  REPORT_BAR_THEMES,
+} from "@/data/wayCardStyles";
 import type { ReportFindingCard } from "@/components/blogDets/ReportFindings";
 
 export type ReportMilestoneSlide = {
-  tabLabel: string;
+  label: string;
+  title: string;
   description: string;
-  src: string;
-  alt: string;
 };
 
 export type ReportMilestonesData = {
@@ -215,52 +218,42 @@ export const REPORT_DETAIL: ReportStaticBlogDetail = {
       "The 2026 Commercial Insurance API Index explores how carrier connectivity is evolving, balancing real-time bindability with the long-term infrastructure distributors need to scale placement.",
       "By analyzing carrier API coverage, integration maturity, and distributor workflow trends, we identified the capabilities that distinguish high-performing commercial insurance teams from those still relying on fragmented portal workflows.",
     ],
-    stats: [
-      {
-        label: "Organizations 250+",
-        value: "68%",
-        barColor: "#5348E0",
-      },
-      {
-        label: "Industries 8",
-        value: "43%",
-        barColor: "#FC9B4D",
-      },
-      {
-        label: "Senior Leaders 75",
-        value: "75%",
-        barColor: "#46FAC7",
-      },
-      {
-        label: "Global Market 5",
-        value: "52%",
-        barColor: "#ECED79",
-      },
-    ],
+    stats: REPORT_BAR_THEMES.map((theme, index) => {
+      const demoStats = [
+        { label: "Organizations 250+", value: "68%" },
+        { label: "Industries 8", value: "43%" },
+        { label: "Senior Leaders 75", value: "75%" },
+        { label: "Global Market 5", value: "52%" },
+      ] as const;
+      const stat = demoStats[index]!;
+
+      return {
+        label: stat.label,
+        value: stat.value,
+        barColor: CARD_ACCENT_COLORS[theme],
+      };
+    }),
   },
   reportMilestones: {
     sectionTitle: "Why This Research Matters",
     slides: [
       {
-        tabLabel: "The Challenge",
+        label: "The Challenge",
+        title: "The Challenge",
         description:
           "Organizations today are navigating rapid technological change, evolving workforce expectations, and growing environmental pressures. As complexity increases, traditional leadership approaches are no longer enough to drive sustainable growth.",
-        src: "/images/about/mil1.webp",
-        alt: "Research challenge slide",
       },
       {
-        tabLabel: "The Shift",
+        label: "The Shift",
+        title: "The Shift",
         description:
           "Commercial distributors are moving from fragmented portal workflows toward unified API connectivity—prioritizing real-time bindability, producer enablement, and carrier integration maturity across admitted and E&S lines.",
-        src: "/images/about/mil2.webp",
-        alt: "Research shift slide",
       },
       {
-        tabLabel: "The Opportunity",
+        label: "The Opportunity",
+        title: "The Opportunity",
         description:
           "Teams that invest in connected quoting and binding infrastructure are placing faster, scaling producer capacity, and building durable advantages as carrier API coverage expands across the market.",
-        src: "/images/about/mil3.webp",
-        alt: "Research opportunity slide",
       },
     ],
   },

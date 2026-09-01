@@ -6,7 +6,7 @@ import {
   getBlogTotalPages,
 } from "@/lib/blogPagination";
 import { absoluteUrl } from "@/utils/url";
-import { getBlogAuthorSlugs, getBlogPosts } from "@/lib/webflow";
+import { getBlogAuthorSlugs, getBlogListingPosts } from "@/lib/webflow";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = siteRoutes.map((route) => ({
@@ -20,9 +20,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let authorRoutes: MetadataRoute.Sitemap = [];
 
   try {
-    const posts = await getBlogPosts();
+    const posts = await getBlogListingPosts();
     const postRoutes = posts.map((post) => ({
-      url: absoluteUrl(`/blog/${post.slug}`),
+      url: absoluteUrl(post.href ?? `/blog/${post.slug}`),
       lastModified: post.publishedAt
         ? new Date(post.publishedAt)
         : new Date(),
@@ -38,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: new Date(),
         changeFrequency: "weekly" as const,
         priority: 0.5,
-      })
+      }),
     );
 
     blogRoutes = [...postRoutes, ...paginationRoutes];

@@ -8,4 +8,6 @@ export type BlogPost = {
   date: string;
   author: string;
   wide?: boolean;
+  href?: string;
+  publishedAt?: string;
 };
