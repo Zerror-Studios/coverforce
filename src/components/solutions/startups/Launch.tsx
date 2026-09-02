@@ -6,7 +6,10 @@ import EyebrowPill from "@/components/common/EyebrowPill";
 import Button from "@/components/common/Button";
 import ButtonArrowIcon from "@/components/common/ButtonArrowIcon";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
-import { CARD_UI_GRADIENT_STYLES } from "@/data/wayCardStyles";
+import {
+  CARD_BACKGROUND_STYLES,
+  type CardBackground,
+} from "@/data/wayCardStyles";
 
 type LaunchStep = {
   id: string;
@@ -14,8 +17,7 @@ type LaunchStep = {
   title: string;
   description: string;
   body: string[];
-  /** Colored chip fill on the dark preview card */
-  pillBackground: string;
+  theme: CardBackground;
 };
 
 const launchSteps: LaunchStep[] = [
@@ -24,11 +26,11 @@ const launchSteps: LaunchStep[] = [
     label: "STEP 01",
     title: "Set Up Your Entity",
     description:
-      "Form your LLC or S-Corp and get the legal foundation in place before anything else.",
+      "Form your LLC or corporation and get the legal foundation in place before anything else.",
     body: [
-      "You'll need a registered business, an EIN, and a registered agent in each state you plan to operate in. Getting this right from day one matters - carriers and regulators will ask for documentation.",
+      "You'll need a registered business, an EIN, and a registered agent in each state you plan to operate in. Most venture-backed brokerages incorporate as a Delaware C-Corp — carriers and regulators will ask for the documentation, so get it right on day one.",
     ],
-    pillBackground: CARD_UI_GRADIENT_STYLES.wholesaler,
+    theme: "wholesaler",
   },
   {
     id: "license",
@@ -38,7 +40,7 @@ const launchSteps: LaunchStep[] = [
     body: [
       "Licensing requirements vary by state - each has its own exam, application, and renewal cadence. The two main portals used by regulators across the country are NIPR and Sircon.",
     ],
-    pillBackground: CARD_UI_GRADIENT_STYLES.broker,
+    theme: "broker",
   },
   {
     id: "market",
@@ -49,8 +51,7 @@ const launchSteps: LaunchStep[] = [
       "Carrier appointments take time to secure for a new brokerage. Our market access partners let you quote and bind through their existing appointments so you're generating revenue from day one.",
       "Startup Program members get preferred pricing from our market access partners. Start writing business on day one, not month six.",
     ],
-    pillBackground:
-      "linear-gradient(45deg, #0C7861 0%, #0D9E4F 50%, #2FE46E 100%)",
+    theme: "startup",
   },
   {
     id: "api",
@@ -60,7 +61,7 @@ const launchSteps: LaunchStep[] = [
     body: [
       "One integration gives you real-time quoting and binding across commercial lines - GL, BOP, Workers' Comp, Professional Liability, and more. Our sandbox is ready from day one.",
     ],
-    pillBackground: CARD_UI_GRADIENT_STYLES.developer,
+    theme: "developer",
   },
   {
     id: "quote",
@@ -71,16 +72,20 @@ const launchSteps: LaunchStep[] = [
     body: [
       "CoverForce handles appetite matching, form prefill, and comparative quoting across carriers. Your team stays focused on the client. Your first bound policy is closer than you think.",
     ],
-    pillBackground: CARD_UI_GRADIENT_STYLES.carrier,
+    theme: "carrier",
   },
 ];
 
-const CARD_BACKGROUND = "linear-gradient(135deg, #0a143b 0%, #1c2b63 100%)";
 const TAB_ACCENT = "#0a143b";
 /** Startup hero palette, darker green — completed checks + progress fill */
 const COMPLETE_GRADIENT =
   "linear-gradient(45deg, #0C7861 0%, #0D9E4F 50%, #2FE46E 100%)";
 const COMPLETE_ACCENT = "#0D9E4F";
+
+function getLaunchCardBackground(step: LaunchStep): string {
+  if (step.id === "market") return COMPLETE_GRADIENT;
+  return CARD_BACKGROUND_STYLES[step.theme];
+}
 
 type LaunchPreviewCardProps = {
   step: LaunchStep;
@@ -107,20 +112,16 @@ function LaunchPreviewCard({
     <article className="launch-preview-card way-card-shell relative flex w-full flex-col overflow-hidden rounded-md text-white">
       <div
         className="way-card-body absolute inset-0 overflow-hidden rounded-md"
-        style={{ background: CARD_BACKGROUND }}
+        style={{ background: getLaunchCardBackground(step) }}
         aria-hidden
       />
 
       <div className="relative z-10 flex flex-col p-6 sm:p-8 md:min-h-[28rem] md:p-10">
-        <EyebrowPill
-          surface="dark"
-          background={step.pillBackground}
-          className="mb-0"
-        >
+        <EyebrowPill surface="dark" className="mb-0">
           {step.title}
         </EyebrowPill>
 
-        <p className="mt-5 max-w-xl font-heading text-xl font-medium leading-[1.2] tracking-tight text-white sm:text-2xl md:text-[1.625rem] md:leading-[1.15]">
+        <p className="mt-5 max-w-xl font-heading text-xl font-medium leading-[1.2] tracking-tight sm:text-2xl md:text-[1.625rem] md:leading-[1.15]">
           {step.description}
         </p>
 
