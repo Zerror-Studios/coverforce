@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Container from "@/components/common/Container";
-import Button from "@/components/common/Button";
 import HeroReveal from "@/components/common/HeroReveal";
 import BlogBreadcrumbNav from "@/components/blogDets/BlogBreadcrumbNav";
 import type { CaseStudyHeroData, HeroMetaField } from "@/data/staticBlogDetails";
@@ -33,27 +32,6 @@ function HeroMetaBar({ fields }: { fields: HeroMetaField[] }) {
   );
 }
 
-function ShareIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden
-    >
-      <circle cx="18" cy="5" r="3" />
-      <circle cx="6" cy="12" r="3" />
-      <circle cx="18" cy="19" r="3" />
-      <path d="m8.6 10.5 6.8-4" />
-      <path d="m8.6 13.5 6.8 4" />
-    </svg>
-  );
-}
-
 type CaseStudyHeroProps = {
   hero: CaseStudyHeroData;
   heroMeta?: HeroMetaField[];
@@ -61,24 +39,6 @@ type CaseStudyHeroProps = {
 
 export default function CaseStudyHero({ hero, heroMeta }: CaseStudyHeroProps) {
   const logoSrc = hero.logo ?? "/images/startups/center-logo.svg";
-
-  const handleShare = async () => {
-    if (typeof window === "undefined") return;
-    const url = window.location.href;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: hero.title, url });
-      } catch {
-        /* user dismissed */
-      }
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(url);
-    } catch {
-      /* clipboard unavailable */
-    }
-  };
 
   return (
     <section className="relative z-20 bg-white text-[#0a143b]">
@@ -136,16 +96,6 @@ export default function CaseStudyHero({ hero, heroMeta }: CaseStudyHeroProps) {
           {heroMeta ? (
             <div className="relative z-30 mt-6">
               <HeroMetaBar fields={heroMeta} />
-              <div className="mt-6 flex justify-end">
-                <Button
-                  onClick={handleShare}
-                  variant="secondary"
-                  size="sm"
-                  icon={ShareIcon}
-                >
-                  Share
-                </Button>
-              </div>
             </div>
           ) : null}
         </HeroReveal>

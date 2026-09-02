@@ -26,7 +26,7 @@ function StatBox({ value, label }: ContentStat) {
           {label ? <p className={`mt-2 ${STAT_BODY_CLASS}`}>{label}</p> : null}
         </>
       ) : (
-        <p className={SECTION_TITLE_CLASS}>{label}</p>
+        <p className={STAT_BODY_CLASS}>{label}</p>
       )}
     </div>
   );
