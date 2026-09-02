@@ -73,13 +73,13 @@ export default function CaseStudyHero({ hero, heroMeta }: CaseStudyHeroProps) {
               </div>
 
               <div className="flex flex-1 items-center py-6 sm:py-8 md:py-10">
-                <h1 className="max-w-[48%] font-heading text-2xl font-semibold uppercase leading-[1.08] tracking-tight text-white sm:text-3xl md:text-4xl lg:text-[2.75rem] lg:leading-[1.06] xl:text-5xl">
+                <h1 className="w-full max-w-full font-heading text-2xl font-semibold uppercase leading-[1.08] tracking-tight text-white sm:text-3xl md:max-w-[48%] md:text-4xl lg:text-[2.75rem] lg:leading-[1.06] xl:text-5xl">
                   {hero.title}
                 </h1>
               </div>
 
               <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end sm:gap-6">
-                <p className="max-w-[40%] font-mono text-[0.625rem] font-medium uppercase leading-relaxed tracking-[0.12em] text-white/90 sm:text-[0.6875rem]">
+                <p className="w-full max-w-full font-mono text-[0.625rem] font-medium uppercase leading-relaxed tracking-[0.12em] text-white/90 sm:text-[0.6875rem] md:max-w-[40%]">
                   {hero.tagline}
                 </p>
                 <p className="shrink-0 font-mono text-[0.625rem] font-medium uppercase tracking-[0.12em] text-white/90 sm:text-[0.6875rem]">
