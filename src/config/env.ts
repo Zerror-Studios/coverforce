@@ -24,7 +24,7 @@ export const env = {
     authorCollectionId: process.env.NEXT_PUBLIC_WEBFLOW_AUTHOR_COLLECTION_ID ?? "",
   },
   mail: {
-    from: process.env.MAIL_FROM?.trim() ?? "",
-    pass: process.env.MAIL_PASS?.trim() ?? "",
+    from: process.env.NEXT_PUBLIC_MAIL_FROM?.trim() ?? "",
+    pass: process.env.NEXT_PUBLIC_MAIL_PASS?.trim() ?? "",
   },
 } as const;
