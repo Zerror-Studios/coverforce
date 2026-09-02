@@ -180,22 +180,32 @@ export default function ReportDownloadModal({
               ?.split("=")[1]
           : undefined;
 
+      const requestBody = {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        email: form.companyEmail,
+        companyName: form.companyName,
+        blogSlug,
+        pageUri: typeof window !== "undefined" ? window.location.href : undefined,
+        pageName: "Report Downloads",
+        hutk,
+      };
+
+      console.log("[Report Download] request payload", requestBody);
+
       const response = await fetch("/api/request-report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName: form.firstName,
-          lastName: form.lastName,
-          email: form.companyEmail,
-          companyName: form.companyName,
-          blogSlug,
-          pageUri: typeof window !== "undefined" ? window.location.href : undefined,
-          pageName: "Report Downloads",
-          hutk,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const result = await response.json().catch(() => ({}));
+
+      console.log("[Report Download] response", {
+        status: response.status,
+        ok: response.ok,
+        result,
+      });
 
       if (!response.ok) {
         throw new Error(

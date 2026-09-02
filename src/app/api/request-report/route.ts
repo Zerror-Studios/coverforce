@@ -20,8 +20,15 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => ({}));
     const payload = parseReportRequestBody(body);
 
+    console.log("[Request Report API] incoming body", body);
+    console.log("[Request Report API] parsed payload", payload);
+
     const validationError = validateReportRequestPayload(payload);
     if (validationError) {
+      console.warn("[Request Report API] validation failed", {
+        validationError,
+        payload,
+      });
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
@@ -32,6 +39,10 @@ export async function POST(request: Request) {
       isRateLimited(`request-report:ip:${clientIp}`, IP_RATE_LIMIT) ||
       isRateLimited(`request-report:email:${emailKey}`, EMAIL_RATE_LIMIT)
     ) {
+      console.warn("[Request Report API] rate limited", {
+        clientIp,
+        email: emailKey,
+      });
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },
         { status: 429 },
@@ -39,6 +50,11 @@ export async function POST(request: Request) {
     }
 
     const reportAsset = await getReportPdfBySlug(payload.blogSlug);
+    console.log("[Request Report API] report asset", {
+      blogSlug: payload.blogSlug,
+      reportAsset,
+    });
+
     if (!reportAsset) {
       return NextResponse.json(
         { error: "Report not found or PDF is unavailable." },
@@ -48,7 +64,7 @@ export async function POST(request: Request) {
 
     const formId = getHubSpotReportFormId();
     const fields = buildReportHubSpotFields(payload);
-    const hubspotResult = await submitHubSpotForm({
+    const hubspotPayload = {
       formId,
       fields,
       pageUri:
@@ -56,6 +72,17 @@ export async function POST(request: Request) {
         `https://www.coverforce.com/blog/${payload.blogSlug}`,
       pageName: String(body?.pageName ?? "").trim() || "Report Downloads",
       hutk: String(body?.hutk ?? "").trim() || undefined,
+    };
+
+    console.log("[Request Report API] HubSpot payload", hubspotPayload);
+
+    const hubspotResult = await submitHubSpotForm(hubspotPayload);
+
+    console.log("[Request Report API] HubSpot response", {
+      ok: hubspotResult.ok,
+      status: hubspotResult.status,
+      body: hubspotResult.body,
+      error: hubspotResult.ok ? undefined : hubspotResult.error,
     });
 
     if (!hubspotResult.ok) {
@@ -70,18 +97,34 @@ export async function POST(request: Request) {
       );
     }
 
-    const mailResult = await sendReportDownloadEmail({
+    const mailInput = {
       to: payload.email,
       firstName: payload.firstName,
       reportTitle: reportAsset.title,
       pdfUrl: reportAsset.pdfUrl,
-    });
+    };
+
+    console.log("[Request Report API] mail input", mailInput);
+
+    const mailResult = await sendReportDownloadEmail(mailInput);
+
+    console.log("[Request Report API] mail response", mailResult);
 
     if (!mailResult.sent) {
-      console.warn("[Request Report API] email not sent:", mailResult.error);
+      console.warn("[Request Report API] email not sent", {
+        error: mailResult.error,
+        mailInput,
+      });
     }
 
-    return NextResponse.json({ message: "Submitted" }, { status: 200 });
+    return NextResponse.json(
+      {
+        message: "Submitted",
+        emailSent: mailResult.sent,
+        ...(mailResult.sent ? {} : { emailError: mailResult.error }),
+      },
+      { status: 200 },
+    );
   } catch (error) {
     console.error("[Request Report API] unexpected error", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

@@ -79,25 +79,56 @@ export async function sendReportDownloadEmail({
   firstName: string;
   reportTitle: string;
   pdfUrl: string;
-}): Promise<{ sent: boolean; error?: string }> {
+}): Promise<{ sent: boolean; error?: string; messageId?: string }> {
   const transport = getMailTransport();
   const from = env.mail.from;
+  const mailConfigured = Boolean(from && env.mail.pass);
+
+  console.log("[Mail] report download config", {
+    configured: mailConfigured,
+    from: from || "(missing)",
+    hasPass: Boolean(env.mail.pass),
+  });
+
+  const mailPayload = {
+    from,
+    to,
+    subject: `Your CoverForce report: ${reportTitle.trim() || "Download"}`,
+    reportTitle,
+    pdfUrl,
+    firstName,
+  };
+
+  console.log("[Mail] report download payload", mailPayload);
 
   if (!transport || !from) {
-    return { sent: false, error: "Mail transport is not configured" };
+    const error = "Mail transport is not configured";
+    console.error("[Mail] report download skipped", { error, mailPayload });
+    return { sent: false, error };
   }
 
   try {
-    await transport.sendMail({
+    const info = await transport.sendMail({
       from,
       to: [to],
-      subject: `Your CoverForce report: ${reportTitle.trim() || "Download"}`,
+      subject: mailPayload.subject,
       html: buildReportDownloadEmailHtml({ firstName, reportTitle, pdfUrl }),
     });
 
-    return { sent: true };
+    console.log("[Mail] report download response", {
+      messageId: info.messageId,
+      accepted: info.accepted,
+      rejected: info.rejected,
+      response: info.response,
+    });
+
+    return { sent: true, messageId: info.messageId };
   } catch (error) {
-    console.error("[Mail] report download send failed", error);
+    console.error("[Mail] report download send failed", {
+      error,
+      mailPayload,
+      message: error instanceof Error ? error.message : String(error),
+    });
     return {
       sent: false,
       error: error instanceof Error ? error.message : "Failed to send email",
