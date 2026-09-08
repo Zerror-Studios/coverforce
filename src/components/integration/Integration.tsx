@@ -158,7 +158,12 @@ const CarrierCard = ({
                     aria-hidden
                   />
                   <span className="truncate">
-                    {product.market} | {product.name}
+                    {product.market} |{" "}
+                    {product.name === "Business Owner's Policy"
+                      ? product.market === "ES"
+                        ? "Package"
+                        : "Business Owner's Policy"
+                      : product.name}
                   </span>
                 </span>
               );
@@ -380,8 +385,14 @@ const Integration = () => {
     INTEGRATION_DATA.forEach((carrier) =>
       carrier.products.forEach((p) => names.add(p.name)),
     );
-    const sorted = Array.from(names).sort((a, b) => a.localeCompare(b));
-    return [{ value: "all", label: "All" }, ...sorted.map((n) => ({ value: n, label: n }))];
+    const lobLabel = (name: string) =>
+      name === "Business Owner's Policy"
+        ? "Package/Business Owners Policy"
+        : name;
+    const sorted = Array.from(names)
+      .map((n) => ({ value: n, label: lobLabel(n) }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+    return [{ value: "all", label: "All" }, ...sorted];
   }, []);
 
   const MARKET_OPTIONS = [
