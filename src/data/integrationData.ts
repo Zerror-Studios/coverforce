@@ -256,7 +256,7 @@ export const INTEGRATION_DATA: Carrier[] = [
     ],
   },
   {
-    name: "Coliation",
+    name: "Coalition",
     logoSrc: "/images/integration-logos/Coliation.svg",
     website: "https://www.coalitioninc.com/",
     status: "Live on CoverForce",
@@ -551,8 +551,8 @@ export const INTEGRATION_DATA: Carrier[] = [
       { market: "AD", name: "Umbrella", availability: "request" },
       { market: "AD", name: "Worker's Compensation", availability: "request" },
       { market: "ES", name: "Business Owner's Policy", availability: "request" },
-      { market: "ES", name: "General Liability", availability: "request" },
-      { market: "ES", name: "Property", availability: "request" },
+      { market: "ES", name: "General Liability", availability: "live" },
+      { market: "ES", name: "Property", availability: "live" },
     ],
   },
   {
