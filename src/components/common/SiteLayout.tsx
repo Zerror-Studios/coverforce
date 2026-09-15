@@ -2,6 +2,7 @@
 
 import Header from "@/components/common/Header";
 import Footer from "@/components/common/Footer";
+import AnnouncementBanner from "@/components/common/AnnouncementBanner";
 import LenisScroll from "@/components/common/LenisScroll";
 import HomePageLoader from "@/components/home/HomePageLoader";
 import {
@@ -59,6 +60,7 @@ function SiteLayoutInner({
 
       {!hideChrome ? (
         <header className="site-view-header fixed top-0 z-50 w-full">
+          <AnnouncementBanner />
           <Header megaMenuBlogData={megaMenuBlogData} />
         </header>
       ) : null}

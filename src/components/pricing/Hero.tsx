@@ -41,7 +41,7 @@ const Hero = () => {
           <EyebrowPill surface="dark">Pricing</EyebrowPill>
 
           <h1 className="text-3xl font-heading font-normal leading-[1.15] tracking-tight md:text-4xl lg:whitespace-nowrap lg:text-6xl xl:text-6xl">
-            Two plans.
+            Three plans.
             <br />
             One platform.
           </h1>

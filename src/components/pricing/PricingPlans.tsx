@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { RiCheckLine } from "@remixicon/react";
 import Container from "@/components/common/Container";
+import EyebrowPill from "@/components/common/EyebrowPill";
 import RequestDemoCta from "@/components/request-demo/RequestDemoCta";
 import {
   CARD_BACKGROUND_STYLES,
@@ -38,29 +39,85 @@ const STARTUP_CARD_BACKGROUND = `linear-gradient(135deg,
   rgb(${STARTUP_HERO_PRICING_FLOW.color2.r}, ${STARTUP_HERO_PRICING_FLOW.color2.g}, ${STARTUP_HERO_PRICING_FLOW.color2.b}) 52%,
   rgb(${STARTUP_HERO_PRICING_FLOW.color3.r}, ${STARTUP_HERO_PRICING_FLOW.color3.g}, ${STARTUP_HERO_PRICING_FLOW.color3.b}) 100%)`;
 
+const brokerFlow = SOLUTION_GRAD_FLOW.broker;
+const BROKER_PRICING_FLOW = {
+  color1: deepen(brokerFlow.color1, 0.22),
+  color2: deepen(brokerFlow.color2, 0.42),
+  color3: deepen(brokerFlow.color3, 0.48),
+};
+
+/** Broker Three Ways palette, darkened so white card copy stays readable. */
+const BROKER_CARD_BACKGROUND = `linear-gradient(135deg,
+  rgb(${BROKER_PRICING_FLOW.color1.r}, ${BROKER_PRICING_FLOW.color1.g}, ${BROKER_PRICING_FLOW.color1.b}) 0%,
+  rgb(${BROKER_PRICING_FLOW.color2.r}, ${BROKER_PRICING_FLOW.color2.g}, ${BROKER_PRICING_FLOW.color2.b}) 48%,
+  rgb(${BROKER_PRICING_FLOW.color3.r}, ${BROKER_PRICING_FLOW.color3.g}, ${BROKER_PRICING_FLOW.color3.b}) 100%)`;
+
+type PricingFeature =
+  | string
+  | {
+      parts: Array<{ text: string; bold?: boolean }>;
+    };
+
 type PricingPlan = {
   id: string;
   title: string;
   badge?: string;
   description: string;
-  features: string[];
+  price: string;
+  priceNote?: string;
+  features: PricingFeature[];
+  footnote?: string;
   cta: { label: string; href: string };
-  background: CardBackground | "startup-dark";
+  background: CardBackground | "startup-dark" | "broker-dark";
   tone: "light" | "dark";
 };
 
 const PLAN_BACKGROUNDS: Record<PricingPlan["background"], string> = {
   ...CARD_BACKGROUND_STYLES,
   "startup-dark": STARTUP_CARD_BACKGROUND,
+  "broker-dark": BROKER_CARD_BACKGROUND,
 };
 
 const PLANS: PricingPlan[] = [
+  {
+    id: "independent-agency",
+    title: "Independent Agency",
+    badge: "60 DAYS FREE - LIMITED TIME",
+    description:
+      "For independent retail agencies quoting on their own appointments. Full platform access from day one — unlimited users, month to month.",
+    price: "$99",
+    priceNote: "/MO after the first 60 days",
+    features: [
+      "Quote and bind across 20+ carriers on your own appointments",
+      {
+        parts: [
+          { text: "100 quote submissions", bold: true },
+          { text: " included per month" },
+        ],
+      },
+      "$1.50 per additional quote submission, capped at 250 a month",
+      "Unlimited users, no per-seat fees",
+      "One unified application, no re-keying between carriers",
+      "Pre-fill, auto-filled renewals, AI doc reading and email intake",
+      "Quote comparison PDFs, appetite guides and ACORD generation",
+      "Send to additional markets with dedicated underwriters",
+      "Month to month, cancel any time",
+    ],
+    cta: {
+      label: "Try quoting now",
+      href: "/contact",
+    },
+    background: "broker-dark",
+    tone: "dark",
+  },
   {
     id: "startup",
     title: "Startup",
     badge: "New",
     description:
-      "For insurtechs, new brokerages, and early-stage startups. Full platform access from day one. Start building in sandbox with no time limit, go live when you're ready, and scale with pricing that grows as you do.",
+      "For insurtechs, new brokerages, and early-stage startups. Full platform access from day one with pricing that scales as you grow.",
+    price: "Custom",
+    priceNote: "usage-based as you scale",
     features: [
       "Application and usage-based pricing that scales as you scale",
       "Unlimited seats",
@@ -80,8 +137,11 @@ const PLANS: PricingPlan[] = [
   {
     id: "enterprise",
     title: "Enterprise",
+    badge: "Enterprise",
     description:
-      "For brokers and organizations at scale. The full CoverForce platform with enterprise controls, dedicated support, and custom integrations built for organizations processing thousands of submissions per month.",
+      "For brokers and organizations at scale. Enterprise controls, dedicated support, and custom integrations for high-volume teams.",
+    price: "Custom",
+    priceNote: "tailored to your volume",
     features: [
       "Application and usage-based pricing that scales as you scale",
       "Unlimited seats",
@@ -101,31 +161,46 @@ const PLANS: PricingPlan[] = [
   },
 ];
 
+function featureKey(feature: PricingFeature): string {
+  if (typeof feature === "string") return feature;
+  return feature.parts.map((part) => part.text).join("");
+}
+
 function FeatureItem({
   children,
   tone,
 }: {
-  children: string;
+  children: PricingFeature;
   tone: "light" | "dark";
 }) {
   const isDark = tone === "dark";
 
   return (
     <li className="pricing-feature">
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-2.5">
         <span
-          className={`mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full ${
+          className={`mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full mt-1  ${
             isDark ? "bg-white text-[#0a143b]" : "bg-[#0a143b] text-white"
           }`}
         >
-          <RiCheckLine className="size-3" aria-hidden />
+          <RiCheckLine className="size-2.5" aria-hidden />
         </span>
         <span
           className={`font-sans text-[0.9375rem] font-regular leading-relaxed ${
             isDark ? "text-white" : "text-[#2E2E2E]"
           }`}
         >
-          {children}
+          {typeof children === "string"
+            ? children
+            : children.parts.map((part) =>
+                part.bold ? (
+                  <strong key={part.text} className="font-semibold">
+                    {part.text}
+                  </strong>
+                ) : (
+                  <span key={part.text}>{part.text}</span>
+                ),
+              )}
         </span>
       </div>
     </li>
@@ -153,30 +228,30 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
       </div>
 
       <div
-        className={`relative z-10 flex flex-1 flex-col p-5 sm:p-8 md:p-12 lg:p-10 ${
+        className={`relative z-10 flex flex-1 flex-col px-5 pb-6 pt-8 sm:px-7 sm:pb-7 sm:pt-10 md:px-7 md:pb-7 md:pt-10 lg:px-6 lg:pb-6 lg:pt-9 xl:px-7 xl:pb-7 xl:pt-10 ${
           isDark ? "text-white" : "text-[#0a143b]"
         }`}
       >
-        <div className="flex items-center gap-3">
-          <h2
-            className={`font-heading text-3xl font-medium sm:text-4xl md:text-5xl ${
-              isDark ? "text-white" : "text-[#0a143b]"
+        {plan.badge ? (
+          <EyebrowPill
+            surface={isDark ? "dark" : "light"}
+            className={`!mb-4 ${
+              plan.id === "enterprise"
+                ? "pointer-events-none hidden opacity-0 lg:flex"
+                : ""
             }`}
           >
-            {plan.title}
-          </h2>
-          {plan.badge ? (
-            <span
-              className={`rounded-full px-2.5 py-1 font-sans text-sm font-semibold ${
-                isDark
-                  ? "bg-white/20 text-white"
-                  : "bg-[#0a143b] text-white"
-              }`}
-            >
-              {plan.badge}
-            </span>
-          ) : null}
-        </div>
+            {plan.badge}
+          </EyebrowPill>
+        ) : null}
+
+        <h2
+          className={`font-heading text-3xl font-medium tracking-tight sm:text-4xl md:text-4xl xl:text-4xl ${
+            isDark ? "text-white" : "text-[#0a143b]"
+          }`}
+        >
+          {plan.title}
+        </h2>
 
         <p
           className={`mt-4 font-sans text-[0.9375rem] font-regular leading-relaxed sm:mt-5 ${
@@ -186,13 +261,26 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
           {plan.description}
         </p>
 
-        <ul className="mt-6 flex flex-1 flex-col gap-3 sm:mt-8 sm:gap-4">
-          {plan.features.map((feature) => (
-            <FeatureItem key={feature} tone={plan.tone}>
-              {feature}
-            </FeatureItem>
-          ))}
-        </ul>
+        <div className="mt-6 sm:mt-8">
+          <div className="flex flex-nowrap items-baseline gap-x-2">
+            <span
+              className={`shrink-0 font-heading text-4xl font-[600] leading-none tracking-tight sm:text-5xl ${
+                isDark ? "text-white" : "text-[#413CC0]"
+              }`}
+            >
+              {plan.price}
+            </span>
+            {plan.priceNote ? (
+              <span
+                className={`whitespace-nowrap font-sans text-sm font-regular ${
+                  isDark ? "text-white/70" : "text-[#8A8A8A]"
+                }`}
+              >
+                {plan.priceNote}
+              </span>
+            ) : null}
+          </div>
+        </div>
 
         <RequestDemoCta
           label={plan.cta.label}
@@ -201,8 +289,32 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
           size="md"
           surface={isDark ? "on-dark" : "default"}
           balanced
-          className="mt-8 w-full sm:mt-6 md:mt-0"
+          className="mt-5 w-full sm:mt-6"
         />
+
+        <ul
+          className={`mt-6 flex flex-1 flex-col gap-3 border-t pt-6 sm:mt-8 sm:gap-4 sm:pt-8 ${
+            isDark ? "border-white/20" : "border-[#535353]/20"
+          }`}
+        >
+          {plan.features.map((feature) => (
+            <FeatureItem key={featureKey(feature)} tone={plan.tone}>
+              {feature}
+            </FeatureItem>
+          ))}
+        </ul>
+
+        {plan.footnote ? (
+          <p
+            className={`mt-5 border-t pt-4 font-sans text-[0.6875rem] font-regular leading-relaxed sm:mt-6 ${
+              isDark
+                ? "border-white/20 text-white/70"
+                : "border-[#535353]/20 text-[#8A8A8A]"
+            }`}
+          >
+            {plan.footnote}
+          </p>
+        ) : null}
       </div>
     </article>
   );
@@ -290,7 +402,7 @@ const PricingPlans = () => {
         }
       `}</style>
       <Container borderColor="#53535380">
-        <div className="grid grid-cols-1 items-stretch gap-4 py-12 sm:gap-6 md:grid-cols-2 md:gap-8 md:px-26 md:py-16 lg:py-20">
+        <div className="grid grid-cols-1 items-stretch gap-3 py-12 sm:gap-4 md:grid-cols-2 md:gap-4 md:py-16 lg:grid-cols-3 lg:gap-3 lg:py-20 xl:gap-4">
           {PLANS.map((plan) => (
             <PricingCard key={plan.id} plan={plan} />
           ))}
