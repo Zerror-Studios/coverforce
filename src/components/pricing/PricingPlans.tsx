@@ -104,7 +104,7 @@ const PLANS: PricingPlan[] = [
       "Month to month, cancel any time",
     ],
     cta: {
-      label: "Try quoting now",
+      label: "Start quoting now",
       href: "/contact",
     },
     background: "broker-dark",
@@ -246,7 +246,7 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
         ) : null}
 
         <h2
-          className={`font-heading text-3xl font-medium tracking-tight sm:text-4xl md:text-4xl xl:text-4xl ${
+          className={`whitespace-nowrap font-heading text-3xl font-medium tracking-tight sm:text-4xl md:text-3xl xl:text-3xl ${
             isDark ? "text-white" : "text-[#0a143b]"
           }`}
         >
