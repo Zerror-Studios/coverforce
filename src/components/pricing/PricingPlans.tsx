@@ -107,7 +107,7 @@ const PLANS: PricingPlan[] = [
       label: "Start quoting now",
       href: "/contact",
     },
-    background: "broker-dark",
+    background: "carrier",
     tone: "dark",
   },
   {
