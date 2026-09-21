@@ -54,7 +54,7 @@ const NAV_PATH_PREFIXES: Record<string, string[]> = {
   Developers: ["/developers"],
   Integration: ["/integration"],
   Pricing: ["/pricing", "/calculation"],
-  Company: ["/about", "/careers", "/contact", "/blog", "/terms-of-service", "/privacy-policy", "/security"],
+  Company: ["/about", "/careers", "/contact", "/blog", "/terms-of-service", "/privacy-policy", "/ia-agreement", "/security"],
 };
 
 function isNavItemCurrentPage(label: string, pathname: string) {
@@ -76,6 +76,7 @@ function getHeaderTheme(pathname: string): HeaderTheme {
     pathname.startsWith("/calculation") ||
     pathname.startsWith("/terms-of-service") ||
     pathname.startsWith("/privacy-policy") ||
+    pathname.startsWith("/ia-agreement") ||
     pathname.startsWith("/security") ||
     pathname.startsWith("/blog") ||
     pathname.startsWith("/author")
