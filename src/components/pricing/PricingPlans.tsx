@@ -82,7 +82,7 @@ const PLANS: PricingPlan[] = [
   {
     id: "independent-agency",
     title: "Independent Agency",
-    badge: "60 DAYS FREE - LIMITED TIME",
+    badge: "60 Day Introductory Credit",
     description:
       "For independent retail agencies quoting on their own appointments. Full platform access from day one — unlimited users, month to month.",
     price: "$99",
@@ -95,7 +95,7 @@ const PLANS: PricingPlan[] = [
           { text: " included per month" },
         ],
       },
-      "$1.50 per additional quote submission, capped at 250 a month",
+      "$5 per additional quote submission, capped at 200 a month",
       "Unlimited users, no per-seat fees",
       "One unified application, no re-keying between carriers",
       "Pre-fill, auto-filled renewals, AI doc reading and email intake",
