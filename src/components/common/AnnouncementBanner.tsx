@@ -10,11 +10,10 @@ import {
 import { createPortal } from "react-dom";
 import { toCanvas } from "html-to-image";
 import { RiCloseLine } from "@remixicon/react";
+import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useHomeIntro } from "@/contexts/HomeIntroContext";
-import { PRIMARY_BUTTON_GRADIENT } from "@/data/wayCardStyles";
-import Button from "@/components/common/Button";
-import EyebrowPill from "@/components/common/EyebrowPill";
 import { lockPageScroll } from "@/lib/scrollLock";
 
 type Phase = "waiting" | "open" | "minimizing" | "strip" | "dismissed";
@@ -27,6 +26,28 @@ const GENIE_MS = 580;
 const EXPAND_MS = 360;
 const STRIP_EXIT_MS = 260;
 const STRIP_HEIGHT = 44;
+
+const STRIP_GRADIENT =
+  "linear-gradient(135deg, #E8894F 0%, #FFA36C 55%, #FFA36C 100%)";
+
+/** Temporary A/B preview — remove once a final banner is chosen. */
+type BannerVersion = 1 | 2;
+
+const BANNER_VERSIONS: Record<
+  BannerVersion,
+  { desktop: string; mobile: string; label: string }
+> = {
+  1: {
+    desktop: "/banner1-desktop.svg",
+    mobile: "/banner1-mobile.svg",
+    label: "Version 1",
+  },
+  2: {
+    desktop: "/banner2-desktop.svg",
+    mobile: "/banner2-mobile.svg",
+    label: "Version 2",
+  },
+};
 
 const ANNOUNCEMENT = {
   eyebrow: "Announcement",
@@ -76,9 +97,9 @@ function getFullStripRect(viewportW: number, topY: number, height: number): Rect
 
 function fillStripGradient(ctx: CanvasRenderingContext2D, rect: Rect) {
   const gradient = ctx.createLinearGradient(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h);
-  gradient.addColorStop(0, "#322696");
-  gradient.addColorStop(0.48, "#322696");
-  gradient.addColorStop(1, "#5E3FD0");
+  gradient.addColorStop(0, "#E8894F");
+  gradient.addColorStop(0.55, "#FFA36C");
+  gradient.addColorStop(1, "#FFA36C");
   ctx.fillStyle = gradient;
   ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
 }
@@ -222,6 +243,7 @@ export default function AnnouncementBanner() {
   const [stripContentReady, setStripContentReady] = useState(false);
   const [stripExiting, setStripExiting] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [bannerVersion, setBannerVersion] = useState<BannerVersion>(1);
 
   const bannerRef = useRef<HTMLDivElement>(null);
   const stripAnchorRef = useRef<HTMLDivElement>(null);
@@ -361,7 +383,7 @@ export default function AnnouncementBanner() {
       const snapshot = await toCanvas(banner, {
         pixelRatio: Math.min(2, window.devicePixelRatio || 1),
         cacheBust: true,
-        backgroundColor: "#ffffff",
+        backgroundColor: "#FFA36C",
       });
 
       const ctx = setupCanvas();
@@ -484,7 +506,7 @@ export default function AnnouncementBanner() {
             }`}
             style={{
               height: STRIP_HEIGHT,
-              background: PRIMARY_BUTTON_GRADIENT,
+              background: STRIP_GRADIENT,
             }}
             aria-hidden
           />
@@ -496,7 +518,7 @@ export default function AnnouncementBanner() {
             className={`flex min-h-[44px] w-full items-center gap-2 px-2 py-2.5 text-white sm:gap-3 sm:px-6 md:px-8 ${
               stripExiting ? "announcement-strip-full-exit" : "announcement-strip-full-enter"
             }`}
-            style={{ background: PRIMARY_BUTTON_GRADIENT }}
+            style={{ background: STRIP_GRADIENT }}
           >
             <div
               className={`min-w-0 flex-1 overflow-hidden sm:hidden ${
@@ -553,7 +575,7 @@ export default function AnnouncementBanner() {
               />
 
               <div
-                className={`fixed inset-0 bg-[rgb(255_255_255/0.45)] backdrop-blur-[6px] ${
+                className={`fixed inset-0 bg-black/55 backdrop-blur-[6px] ${
                   overlayFading
                     ? "announcement-overlay-exit"
                     : overlayOpen
@@ -565,85 +587,88 @@ export default function AnnouncementBanner() {
               />
 
               <div
-                className={`relative z-10 flex min-h-full items-center justify-center p-4 sm:p-6 sm:pb-8 md:p-10 ${
+                className={`relative z-10 flex min-h-full items-center justify-center p-3 sm:p-5 sm:pb-8 md:p-8 ${
                   cardVisible ? "" : "pointer-events-none invisible"
                 }`}
                 onClick={phase === "open" ? minimizeToStrip : undefined}
               >
-                <div
-                  ref={bannerRef}
-                  role="dialog"
-                  aria-modal="true"
-                  aria-labelledby="announcement-title"
-                  aria-describedby="announcement-body"
-                  aria-hidden={!cardVisible}
-                  className="way-modal-panel-enter way-modal-panel relative w-full max-w-3xl overflow-hidden border border-[#535353]/10 bg-white shadow-[0_24px_80px_rgba(10,20,59,0.14)]"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <button
-                    type="button"
-                    onClick={minimizeToStrip}
-                    className="absolute right-5 top-5 z-20 flex size-10 items-center justify-center rounded-sm border border-[#535353]/15 bg-white text-[#0a143b] transition-colors hover:bg-[#F5F7FA] sm:right-6 sm:top-6"
-                    aria-label="Minimize announcement"
+                <div className="relative w-full max-w-[min(100%,90rem)]">
+                  <div
+                    ref={bannerRef}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="announcement-title"
+                    aria-describedby="announcement-body"
+                    aria-hidden={!cardVisible}
+                    className="way-modal-panel-enter way-modal-panel relative w-full overflow-hidden rounded-[20px] shadow-[0_24px_80px_rgba(10,20,59,0.18)]"
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    <RiCloseLine size={20} />
-                  </button>
+                    <button
+                      type="button"
+                      onClick={minimizeToStrip}
+                      className="absolute right-3 top-3 z-20 flex size-10 items-center justify-center rounded-sm border border-black/10 bg-white/90 text-[#0a143b] backdrop-blur-sm transition-colors hover:bg-white sm:right-4 sm:top-4"
+                      aria-label="Minimize announcement"
+                    >
+                      <RiCloseLine size={20} />
+                    </button>
 
-                  <div className="px-6 pb-10 pt-14 sm:px-10 sm:pb-12 sm:pt-16 lg:px-12 lg:pb-14 lg:pt-16">
-                    <div className="flex flex-col gap-5 pr-8 sm:pr-10 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:items-start lg:gap-x-10 lg:gap-y-5">
-                      <div className="way-modal-reveal-slot order-1 lg:col-start-1 lg:row-start-1">
-                        <div
-                          className="way-modal-reveal"
-                          style={{ "--way-modal-stagger": "0ms" } as CSSProperties}
-                        >
-                          <EyebrowPill
-                            surface="light"
-                            background={PRIMARY_BUTTON_GRADIENT}
-                            className="mb-0"
-                          >
-                            {ANNOUNCEMENT.eyebrow}
-                          </EyebrowPill>
-                        </div>
-                      </div>
+                    <h2 id="announcement-title" className="sr-only">
+                      {ANNOUNCEMENT.title}
+                    </h2>
+                    <p id="announcement-body" className="sr-only">
+                      {ANNOUNCEMENT.body}
+                    </p>
 
-                      <div className="way-modal-reveal-slot order-2 lg:col-start-1 lg:row-start-2">
-                        <div
-                          className="way-modal-reveal"
-                          style={{ "--way-modal-stagger": "60ms" } as CSSProperties}
-                        >
-                          <h2
-                            id="announcement-title"
-                            className="max-w-xl font-heading text-2xl font-medium leading-[1.15] tracking-tight text-[#0a143b] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]"
-                          >
-                            {ANNOUNCEMENT.title}
-                          </h2>
-                        </div>
-                      </div>
-
-                      <div className="way-modal-reveal-slot order-3 max-w-md lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:mt-1 lg:justify-self-end">
-                        <div
-                          className="way-modal-reveal"
-                          style={{ "--way-modal-stagger": "90ms" } as CSSProperties}
-                        >
-                          <p
-                            id="announcement-body"
-                            className="font-sans text-sm font-regular leading-[1.4] text-[#50617a] md:text-[1.125rem]"
-                          >
-                            {ANNOUNCEMENT.body}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="way-modal-reveal-slot order-4 lg:col-start-1 lg:row-start-3">
-                        <div
-                          className="way-modal-reveal"
-                          style={{ "--way-modal-stagger": "120ms" } as CSSProperties}
-                        >
-                          <Button href={ANNOUNCEMENT.ctaHref}>{ANNOUNCEMENT.ctaLabel}</Button>
-                        </div>
-                      </div>
-                    </div>
+                    <Link
+                      href={ANNOUNCEMENT.ctaHref}
+                      className="block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#322696]"
+                      aria-label={ANNOUNCEMENT.ctaLabel}
+                    >
+                      <Image
+                        src={BANNER_VERSIONS[bannerVersion].mobile}
+                        alt={ANNOUNCEMENT.title}
+                        width={382}
+                        height={561}
+                        className="h-auto w-full md:hidden"
+                        priority
+                        unoptimized
+                      />
+                      <Image
+                        src={BANNER_VERSIONS[bannerVersion].desktop}
+                        alt=""
+                        width={1440}
+                        height={520}
+                        className="hidden h-auto w-full md:block"
+                        priority
+                        unoptimized
+                        aria-hidden
+                      />
+                    </Link>
                   </div>
+
+                  {/* Temporary banner version toggle — remove after final pick */}
+                  <fieldset
+                    className="absolute left-1/2 top-full mt-4 flex -translate-x-1/2 items-center gap-4 rounded-full border border-white/20 bg-black/40 px-4 py-2 text-white backdrop-blur-sm"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <legend className="sr-only">Banner version preview</legend>
+                    {([1, 2] as const).map((version) => (
+                      <label
+                        key={version}
+                        className="flex cursor-pointer items-center gap-2 whitespace-nowrap font-heading text-xs font-medium tracking-wide sm:text-sm"
+                      >
+                        <input
+                          type="radio"
+                          name="banner-version"
+                          value={version}
+                          checked={bannerVersion === version}
+                          onChange={() => setBannerVersion(version)}
+                          className="size-3.5 accent-[#FFA36C]"
+                        />
+                        {BANNER_VERSIONS[version].label}
+                      </label>
+                    ))}
+                  </fieldset>
                 </div>
               </div>
             </div>,
