@@ -105,7 +105,7 @@ const PLANS: PricingPlan[] = [
     ],
     cta: {
       label: "Start quoting now",
-      href: "/contact",
+      href: "https://webapp.coverforce.com/registration/cfia",
     },
     background: "carrier",
     tone: "dark",
