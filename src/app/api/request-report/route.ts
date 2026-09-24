@@ -115,13 +115,19 @@ export async function POST(request: Request) {
         error: mailResult.error,
         mailInput,
       });
+      return NextResponse.json(
+        {
+          error:
+            "Unable to send the report email right now. Please try again later.",
+        },
+        { status: 502 },
+      );
     }
 
     return NextResponse.json(
       {
         message: "Submitted",
-        emailSent: mailResult.sent,
-        ...(mailResult.sent ? {} : { emailError: mailResult.error }),
+        emailSent: true,
       },
       { status: 200 },
     );

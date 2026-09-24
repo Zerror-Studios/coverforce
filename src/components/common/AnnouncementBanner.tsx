@@ -30,24 +30,10 @@ const STRIP_HEIGHT = 44;
 const STRIP_GRADIENT =
   "linear-gradient(135deg, #E8894F 0%, #FFA36C 55%, #FFA36C 100%)";
 
-/** Temporary A/B preview — remove once a final banner is chosen. */
-type BannerVersion = 1 | 2;
-
-const BANNER_VERSIONS: Record<
-  BannerVersion,
-  { desktop: string; mobile: string; label: string }
-> = {
-  1: {
-    desktop: "/banner1-desktop.svg",
-    mobile: "/banner1-mobile.svg",
-    label: "Version 1",
-  },
-  2: {
-    desktop: "/banner2-desktop.svg",
-    mobile: "/banner2-mobile.svg",
-    label: "Version 2",
-  },
-};
+const BANNER_ASSETS = {
+  desktop: "/banner1-desktop.svg",
+  mobile: "/banner1-mobile.svg",
+} as const;
 
 const ANNOUNCEMENT = {
   eyebrow: "Announcement",
@@ -243,7 +229,6 @@ export default function AnnouncementBanner() {
   const [stripContentReady, setStripContentReady] = useState(false);
   const [stripExiting, setStripExiting] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [bannerVersion, setBannerVersion] = useState<BannerVersion>(1);
 
   const bannerRef = useRef<HTMLDivElement>(null);
   const stripAnchorRef = useRef<HTMLDivElement>(null);
@@ -625,7 +610,7 @@ export default function AnnouncementBanner() {
                       aria-label={ANNOUNCEMENT.ctaLabel}
                     >
                       <Image
-                        src={BANNER_VERSIONS[bannerVersion].mobile}
+                        src={BANNER_ASSETS.mobile}
                         alt={ANNOUNCEMENT.title}
                         width={382}
                         height={561}
@@ -634,7 +619,7 @@ export default function AnnouncementBanner() {
                         unoptimized
                       />
                       <Image
-                        src={BANNER_VERSIONS[bannerVersion].desktop}
+                        src={BANNER_ASSETS.desktop}
                         alt=""
                         width={1440}
                         height={520}
@@ -645,30 +630,6 @@ export default function AnnouncementBanner() {
                       />
                     </Link>
                   </div>
-
-                  {/* Temporary banner version toggle — remove after final pick */}
-                  <fieldset
-                    className="absolute left-1/2 top-full mt-4 flex -translate-x-1/2 items-center gap-4 rounded-full border border-white/20 bg-black/40 px-4 py-2 text-white backdrop-blur-sm"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <legend className="sr-only">Banner version preview</legend>
-                    {([1, 2] as const).map((version) => (
-                      <label
-                        key={version}
-                        className="flex cursor-pointer items-center gap-2 whitespace-nowrap font-heading text-xs font-medium tracking-wide sm:text-sm"
-                      >
-                        <input
-                          type="radio"
-                          name="banner-version"
-                          value={version}
-                          checked={bannerVersion === version}
-                          onChange={() => setBannerVersion(version)}
-                          className="size-3.5 accent-[#FFA36C]"
-                        />
-                        {BANNER_VERSIONS[version].label}
-                      </label>
-                    ))}
-                  </fieldset>
                 </div>
               </div>
             </div>,
