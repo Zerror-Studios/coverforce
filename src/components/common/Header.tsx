@@ -993,7 +993,7 @@ const Header = ({
                       >
                         <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-lg bg-[#F7F7FB]">
                           <CmsImage
-                            src={featuredCard.image ?? "/images/blog/blog3.png"}
+                            src={featuredCard.image ?? "/images/blog/blog3.webp"}
                             alt={featuredCard.imageAlt ?? featuredCard.title}
                             fill
                             sizes="(max-width: 639px) 100vw, 22rem"

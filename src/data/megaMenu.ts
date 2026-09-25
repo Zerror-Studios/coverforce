@@ -79,7 +79,7 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
     featured: {
       title: "CoverForce Named to the 2025 CB Insights",
       href: "/blog/coverforce-named-to-the-2025-cb-insights-list-of-the-50-most-innovative-insurtech-startups",
-      image: "/images/blog/blog3.png",
+      image: "/images/blog/blog3.webp",
       imageAlt: "CoverForce Insurtech 50 2025 recognition",
     },
     cta: {
@@ -146,7 +146,7 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
     featured: {
       title: "The Anatomy of a Carrier Integration, Part 5: The Integration Stack",
       href: "/blog/the-anatomy-of-a-carrier-integration-part-5-the-integration-stack",
-      image: "/images/blog/blog3.png",
+      image: "/images/blog/blog3.webp",
       imageAlt: "The Anatomy of a Carrier Integration, Part 5: The Integration Stack",
     },
     cta: {
@@ -218,7 +218,7 @@ export const MEGA_MENUS: Record<string, MegaMenuConfig> = {
     featured: {
       title: "CoverForce Named to the 2025 CB Insights",
       href: "/blog/coverforce-named-to-the-2025-cb-insights-list-of-the-50-most-innovative-insurtech-startups",
-      image: "/images/blog/blog3.png",
+      image: "/images/blog/blog3.webp",
       imageAlt: "CoverForce Insurtech 50 2025 recognition",
     },
     cta: {

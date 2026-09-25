@@ -17,9 +17,18 @@ import {
 import { animateLoaderWordsWave } from "@/lib/animateSplitTextReveal";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import { GdpCounter } from "./GdpCounter";
-import NetworkBand from "@/components/wheel/NetworkBand";
-import RequestGlobe2 from "./Globe/RequestGlobe2";
 import { CARD_VERTICAL_BACKGROUND_STYLES } from "@/data/wayCardStyles";
+import dynamic from "next/dynamic";
+
+const RequestGlobe2 = dynamic(() => import("./Globe/RequestGlobe2"), {
+  ssr: false,
+  loading: () => (
+    <div
+      className="mx-auto aspect-square w-full max-w-[min(100%,28rem)]"
+      aria-hidden
+    />
+  ),
+});
 
 const INTRO_TITLE_LINES = [
   ["AI-Native", "Insurance"],
@@ -69,6 +78,13 @@ const Hero = () => {
       introPhase === "loader-wave" ||
       introPhase === "hero-rise");
   const introUiLocked = introEnabled && introPhase !== "done";
+  // Defer WebGL until intro leaves the loader wave (or intro is off).
+  const loadGlobe =
+    !introEnabled ||
+    introPhase === "hero-rise" ||
+    introPhase === "nav" ||
+    introPhase === "done" ||
+    introSettled;
   const heroRiseStartedRef = useRef(false);
   const introFadeStartedRef = useRef(false);
   const waveCleanupRef = useRef<
@@ -619,7 +635,12 @@ const Hero = () => {
                 </div>
               </div>
             </div>
-            <RequestGlobe2 />
+            {loadGlobe ? <RequestGlobe2 /> : (
+              <div
+                className="mx-auto aspect-square w-full max-w-[min(100%,28rem)]"
+                aria-hidden
+              />
+            )}
           </div>
         </div>
 

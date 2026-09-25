@@ -567,7 +567,7 @@ function mapBlogItem(
     title: fields.name ?? "Untitled",
     image:
       normalizeWebflowAssetUrl(fields["thumbnail-image"]?.url) ||
-      "/images/blog/blog1.png",
+      "/images/blog/blog1.webp",
     date,
     author: author?.name ?? "CoverForce",
     category: mapCategory(tag?.name),

@@ -17,8 +17,6 @@ import WayCardModal from "./WayCardModal";
 import { WayCardHoverProvider } from "./WayCardHoverContext";
 import { WAY_CARD_MODALS } from "@/data/wayCardModals";
 import { CARD_BACKGROUND_STYLES, type CardBackground } from "@/data/wayCardStyles";
-import StartupRecentActivityCard from "@/components/solutions/startups/StartupRecentActivityCard";
-import AiAppetiteEngineMock from "@/components/solutions/wholesalers/AiAppetiteEngineMock";
 
 const WholesalerMock = dynamic(() => import("./WholesalerMock"), {
   loading: () => <MockPlaceholder />,
@@ -49,6 +47,14 @@ const GlobeScene = dynamic(() => import("@/components/home/GlobeScene"), {
   ssr: false,
   loading: () => null,
 });
+const AiAppetiteEngineMock = dynamic(
+  () => import("@/components/solutions/wholesalers/AiAppetiteEngineMock"),
+  { loading: () => <MockPlaceholder className="max-w-[min(100%,320px)]" /> },
+);
+const StartupRecentActivityCard = dynamic(
+  () => import("@/components/solutions/startups/StartupRecentActivityCard"),
+  { loading: () => <MockPlaceholder className="max-w-[min(100%,320px)]" /> },
+);
 
 function MockPlaceholder({ className = "max-w-[250px] sm:max-w-[220px] lg:max-w-[290px]" }: { className?: string }) {
   return (

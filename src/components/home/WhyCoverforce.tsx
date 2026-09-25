@@ -80,7 +80,7 @@ const whySlides: WhySlide[] = [
       "the world's most innovative and high-impact insurtech companies",
       "transforming insurance distribution.",
     ],
-    image: "/images/blog/blog3.png",
+    image: "/images/blog/blog3.webp",
     alt: "CoverForce Insurtech 50 2025 recognition",
     href: "/blog/coverforce-named-to-the-2025-cb-insights-list-of-the-50-most-innovative-insurtech-startups",
   },

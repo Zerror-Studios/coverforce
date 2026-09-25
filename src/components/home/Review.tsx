@@ -37,7 +37,7 @@ const testimonials: Testimonial[] = [
     role: "CEO, ISU Steadfast Agency Network",
     company: "ISU Steadfast Agency Network",
     avatar: "/images/testimonals/tj.webp",
-    logo: "/images/testimonals/isu.svg",
+    logo: "/images/testimonals/isu.webp",
   },
   {
     id: "2",
@@ -47,7 +47,7 @@ const testimonials: Testimonial[] = [
     role: "COO, International Underwriting Agency",
     company: "International Underwriting Agency",
     avatar: "/images/testimonals/Danny Lee.webp",
-    logo: "/images/testimonals/international.svg",
+    logo: "/images/testimonals/international.webp",
   },
   {
     id: "3",
@@ -57,7 +57,7 @@ const testimonials: Testimonial[] = [
     role: "CEO, Momentum Agency Management Systems",
     company: "Momentum Agency Management Systems",
     avatar: "/images/testimonals/Peter Germanov.webp",
-    logo: "/images/testimonals/momentum.svg",
+    logo: "/images/testimonals/momentum.webp",
   },
   {
     id: "4",
@@ -67,7 +67,7 @@ const testimonials: Testimonial[] = [
     role: "Founder, Delegance Brokerage",
     company: "Delegance Brokerage",
     avatar: "/images/testimonals/Alex Ledbetter.webp",
-    logo: "/images/testimonals/delegance.svg",
+    logo: "/images/testimonals/delegance.webp",
   },
   {
     id: "5",
@@ -76,8 +76,8 @@ const testimonials: Testimonial[] = [
     name: "Jatin Sandilya",
     role: "Founder, Latent Insurance",
     company: "Latent Insurance",
-    avatar: "/images/testimonals/Jatin Sandilya.png",
-    logo: "/images/testimonals/latent.svg",
+    avatar: "/images/testimonals/Jatin Sandilya.webp",
+    logo: "/images/testimonals/latent.webp",
     logoScale: 1.35,
   },
 ];
