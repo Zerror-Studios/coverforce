@@ -2,6 +2,7 @@ import Hero from "@/components/blog/Hero";
 import Listing from "@/components/blog/Listing";
 import JsonLd from "@/components/common/JsonLd";
 import PageWrapper from "@/components/PageWrapper";
+import { selectBlogHeroPost } from "@/lib/blogHero";
 import {
   BLOG_PAGE_SIZE,
   getBlogTotalPages,
@@ -72,18 +73,7 @@ const BlogPagedPage = async ({ params }: BlogPagedPageProps) => {
   const totalPages = getBlogTotalPages(posts.length);
   if (pageNum > totalPages) notFound();
 
-  const featuredDetail =
-    blogDetails.find((post) => post.featured) ?? blogDetails[0] ?? null;
-  const featuredPost =
-    (featuredDetail
-      ? posts.find(
-          (post) =>
-            post.href === `/blog/${featuredDetail.slug}` &&
-            post.category !== "Case Study",
-        )
-      : null) ??
-    posts[0] ??
-    null;
+  const featuredPost = selectBlogHeroPost(posts, blogDetails);
   const latest = posts
     .filter(
       (post) =>

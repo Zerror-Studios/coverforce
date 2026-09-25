@@ -2,6 +2,7 @@ import Hero from "@/components/blog/Hero";
 import Listing from "@/components/blog/Listing";
 import PageWrapper from "@/components/PageWrapper";
 import PageJsonLd from "@/components/common/PageJsonLd";
+import { selectBlogHeroPost } from "@/lib/blogHero";
 import { BLOG_PAGE_SIZE } from "@/lib/blogPagination";
 import { createPageMetadata } from "@/lib/seo";
 import { getBlogListingPosts, getBlogPosts } from "@/lib/webflow";
@@ -14,18 +15,7 @@ const BlogPage = async () => {
     getBlogListingPosts(),
     getBlogPosts(),
   ]);
-  const featuredDetail =
-    blogDetails.find((post) => post.featured) ?? blogDetails[0] ?? null;
-  const featuredPost =
-    (featuredDetail
-      ? posts.find(
-          (post) =>
-            post.href === `/blog/${featuredDetail.slug}` &&
-            post.category !== "Case Study",
-        )
-      : null) ??
-    posts[0] ??
-    null;
+  const featuredPost = selectBlogHeroPost(posts, blogDetails);
   const latest = posts
     .filter(
       (post) =>
