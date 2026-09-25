@@ -31,13 +31,27 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <ViewTransitions>
       <html lang="en-US" className={cn("font-sans", geist.variable)}>
-        <head>
+        <body suppressHydrationWarning>
+          <JsonLd data={[buildOrganizationJsonLd(), buildWebSiteJsonLd()]} />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(function(){try{if("scrollRestoration"in history)history.scrollRestoration="manual";if(!window.location.hash){window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;}}catch(e){}})();`,
+            }}
+          />
+          <SiteLayout megaMenuBlogData={megaMenuBlogData}>{children}</SiteLayout>
+
+          {/* Consent + analytics after the page is interactive (not beforeInteractive). */}
+          <Script
+            id="cookieyes"
+            src="https://cdn-cookieyes.com/client_data/e14d3cac29528160d6d1925ec7368161/script.js"
+            strategy="afterInteractive"
+          />
           <Script
             id="google-analytics-src"
             src="https://www.googletagmanager.com/gtag/js?id=G-VP5WVV7Z5W"
-            strategy="beforeInteractive"
+            strategy="afterInteractive"
           />
-          <Script id="google-analytics-init" strategy="beforeInteractive">
+          <Script id="google-analytics-init" strategy="afterInteractive">
             {`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
@@ -45,7 +59,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               gtag('config', 'G-VP5WVV7Z5W');
             `}
           </Script>
-          <Script id="rb2b-init" strategy="beforeInteractive">
+          <Script id="rb2b-init" strategy="lazyOnload">
             {`
               !function(key) {
                 if (window.reb2b) return;
@@ -57,20 +71,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               }("1N5W0H07J4O5");
             `}
           </Script>
-          <Script
-            id="cookieyes"
-            src="https://cdn-cookieyes.com/client_data/e14d3cac29528160d6d1925ec7368161/script.js"
-            strategy="beforeInteractive"
-          />
-        </head>
-        <body suppressHydrationWarning>
-          <JsonLd data={[buildOrganizationJsonLd(), buildWebSiteJsonLd()]} />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `(function(){try{if("scrollRestoration"in history)history.scrollRestoration="manual";if(!window.location.hash){window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;}}catch(e){}})();`,
-            }}
-          />
-          <SiteLayout megaMenuBlogData={megaMenuBlogData}>{children}</SiteLayout>
         </body>
       </html>
     </ViewTransitions>
