@@ -1,4 +1,5 @@
-import type { BlogDetail, BlogPost } from "@/lib/webflow";
+import type { BlogPost } from "@/data/blogPosts";
+import type { BlogDetail } from "@/lib/webflow";
 
 function publishedTime(post: { publishedAt?: string; date?: string }) {
   return Date.parse(post.publishedAt ?? post.date ?? "") || 0;
