@@ -5,6 +5,7 @@ import gsap from "gsap";
 import Container from "./Container";
 import { containerPadding } from "./containerStyles";
 import RequestDemoButton from "@/components/request-demo/RequestDemoButton";
+import Button from "@/components/common/Button";
 import MegaMenu, {
   CLIP_CLOSE_MS,
   CLIP_DURATION_MS,
@@ -470,21 +471,31 @@ const Header = ({
   }, [pathname, introEnabled]);
 
   useLayoutEffect(() => {
+    // Menu sheet must start below the *visible* nav row. When the
+    // announcement strip is open it pushes the nav down, so use the nav's
+    // viewport bottom — not just its own height.
+    const header = document.querySelector<HTMLElement>(".site-view-header");
     const navBar = navBarRef.current;
     if (!navBar) return;
 
-    const updateHeight = () => setNavBarHeight(navBar.offsetHeight);
+    const updateHeight = () => {
+      const bottom = Math.ceil(navBar.getBoundingClientRect().bottom);
+      setNavBarHeight(bottom > 0 ? bottom : navBar.offsetHeight);
+    };
     updateHeight();
 
     const observer = new ResizeObserver(updateHeight);
     observer.observe(navBar);
+    if (header) observer.observe(header);
     window.addEventListener("resize", updateHeight);
+    window.addEventListener("scroll", updateHeight, { passive: true });
 
     return () => {
       observer.disconnect();
       window.removeEventListener("resize", updateHeight);
+      window.removeEventListener("scroll", updateHeight);
     };
-  }, []);
+  }, [mobileMenuOpen]);
 
   const transparentUntilScroll = usesTransparentHeaderUntilScroll(displayPathname);
   const showGlass = transparentUntilScroll && headerScrolled;
@@ -787,7 +798,7 @@ const Header = ({
         <div
           ref={navBarRef}
           data-site-nav
-          className={`relative z-20 overflow-hidden will-change-[transform,backdrop-filter] ${navBarMotionClass} ${navBarClass}`}
+          className={`relative z-[120] overflow-hidden will-change-[transform,backdrop-filter] ${navBarMotionClass} ${navBarClass}`}
         >
           <Container>
             <div className="relative flex items-center justify-between py-4">
@@ -891,7 +902,16 @@ const Header = ({
                 </div>
               </div>
 
-              <div className="relative z-10 hidden items-center lg:flex">
+              <div className="relative z-10 hidden items-center gap-3 lg:flex">
+                <Button
+                  href="https://webapp.coverforce.com/login?clientApp=cfia"
+                  variant="secondary"
+                  surface={theme === "dark" ? "on-dark" : "default"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Login
+                </Button>
                 <RequestDemoButton surface={theme === "dark" ? "on-dark" : "default"}>
                   Contact us
                 </RequestDemoButton>
@@ -925,7 +945,7 @@ const Header = ({
           />
 
           <div
-            className="fixed inset-x-0 z-[119] overflow-hidden border-t border-[#E8ECF0] bg-white text-[#3D3D3D] shadow-[0_24px_48px_-12px_rgba(10,20,59,0.1)] will-change-[clip-path] motion-reduce:transition-none lg:hidden"
+            className="fixed inset-x-0 z-[119] overflow-y-auto overscroll-contain border-t border-[#E8ECF0] bg-white text-[#3D3D3D] shadow-[0_24px_48px_-12px_rgba(10,20,59,0.1)] will-change-[clip-path] motion-reduce:transition-none lg:hidden"
             style={{
               top: navBarHeight,
               bottom: 0,
@@ -938,7 +958,7 @@ const Header = ({
             }}
           >
             <div
-              className="flex h-full flex-col"
+              className="relative w-full"
               style={{
                 opacity: mobileClipOpen ? 1 : 0,
                 transition: mobileMenuOpen
@@ -946,116 +966,145 @@ const Header = ({
                   : "opacity 380ms cubic-bezier(0.33, 1, 0.68, 1)",
               }}
             >
-              <div className="relative min-h-0 flex-1 overflow-hidden">
-                <div
-                  className={`absolute inset-0 flex flex-col transition-transform motion-reduce:transition-none ${
-                    mobileActiveMenu ? "-translate-x-full" : "translate-x-0"
-                  } ${mobileContentEnter && !mobileActiveMenu ? "mega-menu-enter" : ""}`}
-                  style={{
-                    transitionDuration: `${MOBILE_PANEL_MS}ms`,
-                    transitionTimingFunction: MOBILE_PANEL_EASE,
-                  }}
-                >
-                  <div className="min-h-0 flex-1 overflow-y-auto">
-                    {navItems.map(({ label, href, hasDropdown }, index) => (
-                      <MobileMenuReveal
-                        key={label}
-                        enterKey={mobileEnterKey}
-                        delay={MOBILE_CONTENT_BASE_DELAY + MOBILE_CONTENT_STAG * index}
-                      >
-                        <MobileMenuLinkRow
-                          label={label}
-                          isCurrentPage={isNavItemCurrentPage(label, pathname)}
-                          onClick={() => {
-                            if (hasDropdown && megaMenus[label]) {
-                              openMobileSubMenu(label);
-                              return;
-                            }
-                            handleNavigate(href);
-                          }}
-                        />
-                      </MobileMenuReveal>
-                    ))}
-                  </div>
-
+              <div
+                className={`w-full transition-transform motion-reduce:transition-none ${
+                  mobileActiveMenu
+                    ? "pointer-events-none absolute inset-x-0 top-0 -translate-x-full"
+                    : "relative translate-x-0"
+                } ${mobileContentEnter && !mobileActiveMenu ? "mega-menu-enter" : ""}`}
+                style={{
+                  transitionDuration: `${MOBILE_PANEL_MS}ms`,
+                  transitionTimingFunction: MOBILE_PANEL_EASE,
+                }}
+                aria-hidden={Boolean(mobileActiveMenu)}
+              >
+                {navItems.map(({ label, href, hasDropdown }, index) => (
                   <MobileMenuReveal
+                    key={label}
                     enterKey={mobileEnterKey}
-                    delay={
-                      MOBILE_CONTENT_BASE_DELAY + MOBILE_CONTENT_STAG * navItems.length
-                    }
-                    className="shrink-0"
+                    delay={MOBILE_CONTENT_BASE_DELAY + MOBILE_CONTENT_STAG * index}
                   >
-                    <div className={`${containerPadding} pb-4 pt-6`}>
-                      <button
-                        type="button"
-                        onClick={() => handleNavigate(featuredCard.href)}
-                        className="group flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-3 text-left transition-colors duration-200 hover:bg-[#FAFAFA] sm:w-auto sm:max-w-[22rem]"
-                      >
-                        <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-lg bg-[#F7F7FB]">
-                          <CmsImage
-                            src={featuredCard.image ?? "/images/blog/blog3.webp"}
-                            alt={featuredCard.imageAlt ?? featuredCard.title}
-                            fill
-                            sizes="(max-width: 639px) 100vw, 22rem"
-                            className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.02]"
-                          />
-                        </div>
-                        <p className="mt-3 px-0.5 font-heading text-sm font-regular leading-snug text-[#3D3D3D]">
-                          {featuredCard.title}
-                        </p>
-                      </button>
-                    </div>
+                    <MobileMenuLinkRow
+                      label={label}
+                      isCurrentPage={isNavItemCurrentPage(label, pathname)}
+                      onClick={() => {
+                        if (hasDropdown && megaMenus[label]) {
+                          openMobileSubMenu(label);
+                          return;
+                        }
+                        handleNavigate(href);
+                      }}
+                    />
                   </MobileMenuReveal>
-                </div>
+                ))}
 
-                <div
-                  className={`absolute inset-0 overflow-y-auto transition-transform motion-reduce:transition-none ${
-                    mobileActiveMenu ? "translate-x-0" : "translate-x-full"
-                  }`}
-                  style={{
-                    transitionDuration: `${MOBILE_PANEL_MS}ms`,
-                    transitionTimingFunction: MOBILE_PANEL_EASE,
-                  }}
+                <MobileMenuReveal
+                  enterKey={mobileEnterKey}
+                  delay={
+                    MOBILE_CONTENT_BASE_DELAY + MOBILE_CONTENT_STAG * navItems.length
+                  }
                 >
-                  {activeMobileConfig ? (
-                    <div key={renderedMobileSubMenu} className={`mega-menu-enter ${containerPadding} pb-6 pt-4`}>
-                      <div className="space-y-8">
-                        {activeMobileConfig.columns.map((column, columnIndex) => {
-                          const columnDelay =
-                            MOBILE_CONTENT_BASE_DELAY +
-                            MOBILE_CONTENT_STAG * columnIndex;
-
-                          return (
-                            <div
-                              key={column.title}
-                              className="border-t border-[#E8ECF0] pt-4 first:border-t-0 first:pt-0"
-                            >
-                              <MobileMenuReveal enterKey={mobileEnterKey} delay={columnDelay}>
-                                <p className="mb-2 max-w-[12rem] font-mono text-[0.75rem] font-medium uppercase leading-snug tracking-[0.12em] text-[#3D3D3D] whitespace-normal">
-                                  {column.title}
-                                </p>
-                              </MobileMenuReveal>
-                              <div className="divide-y divide-[#E8ECF0]">
-                                {column.links.map((link, linkIndex) => (
-                                  <MobileMenuReveal
-                                    key={link.label}
-                                    enterKey={mobileEnterKey}
-                                    delay={columnDelay + MOBILE_CONTENT_STAG * (linkIndex + 1)}
-                                  >
-                                    <MobileMenuSubLink
-                                      link={link}
-                                      onNavigate={handleNavigate}
-                                    />
-                                  </MobileMenuReveal>
-                                ))}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
+                  <div className={`${containerPadding} space-y-3 pb-6 pt-6`}>
+                    <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
+                      <Button
+                        href="https://webapp.coverforce.com/login?clientApp=cfia"
+                        variant="secondary"
+                        surface="default"
+                        balanced
+                        className="w-full sm:w-auto"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={closeMobileMenu}
+                      >
+                        Login
+                      </Button>
+                      <RequestDemoButton
+                        surface="default"
+                        balanced
+                        className="w-full sm:w-auto"
+                        onClick={() => {
+                          closeMobileMenu();
+                        }}
+                      >
+                        Contact us
+                      </RequestDemoButton>
                     </div>
-                  ) : null}
-                </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate(featuredCard.href)}
+                      className="group flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-3 text-left transition-colors duration-200 hover:bg-[#FAFAFA] sm:w-auto sm:max-w-[22rem]"
+                    >
+                      <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-lg bg-[#F7F7FB]">
+                        <CmsImage
+                          src={featuredCard.image ?? "/images/blog/blog3.webp"}
+                          alt={featuredCard.imageAlt ?? featuredCard.title}
+                          fill
+                          sizes="(max-width: 639px) 100vw, 22rem"
+                          className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.02]"
+                        />
+                      </div>
+                      <p className="mt-3 px-0.5 font-heading text-sm font-regular leading-snug text-[#3D3D3D]">
+                        {featuredCard.title}
+                      </p>
+                    </button>
+                  </div>
+                </MobileMenuReveal>
+              </div>
+
+              <div
+                className={`w-full transition-transform motion-reduce:transition-none ${
+                  mobileActiveMenu
+                    ? "relative translate-x-0"
+                    : "pointer-events-none absolute inset-x-0 top-0 translate-x-full"
+                }`}
+                style={{
+                  transitionDuration: `${MOBILE_PANEL_MS}ms`,
+                  transitionTimingFunction: MOBILE_PANEL_EASE,
+                }}
+                aria-hidden={!mobileActiveMenu}
+              >
+                {activeMobileConfig ? (
+                  <div
+                    key={renderedMobileSubMenu}
+                    className={`mega-menu-enter ${containerPadding} pb-6 pt-4`}
+                  >
+                    <div className="space-y-8">
+                      {activeMobileConfig.columns.map((column, columnIndex) => {
+                        const columnDelay =
+                          MOBILE_CONTENT_BASE_DELAY +
+                          MOBILE_CONTENT_STAG * columnIndex;
+
+                        return (
+                          <div
+                            key={column.title}
+                            className="border-t border-[#E8ECF0] pt-4 first:border-t-0 first:pt-0"
+                          >
+                            <MobileMenuReveal enterKey={mobileEnterKey} delay={columnDelay}>
+                              <p className="mb-2 max-w-[12rem] font-mono text-[0.75rem] font-medium uppercase leading-snug tracking-[0.12em] text-[#3D3D3D] whitespace-normal">
+                                {column.title}
+                              </p>
+                            </MobileMenuReveal>
+                            <div className="divide-y divide-[#E8ECF0]">
+                              {column.links.map((link, linkIndex) => (
+                                <MobileMenuReveal
+                                  key={link.label}
+                                  enterKey={mobileEnterKey}
+                                  delay={columnDelay + MOBILE_CONTENT_STAG * (linkIndex + 1)}
+                                >
+                                  <MobileMenuSubLink
+                                    link={link}
+                                    onNavigate={handleNavigate}
+                                  />
+                                </MobileMenuReveal>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>
