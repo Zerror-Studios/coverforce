@@ -16,7 +16,7 @@ import { lockPageScroll } from "@/lib/scrollLock";
 
 type Phase = "waiting" | "open" | "strip" | "dismissed";
 
-const SHOW_DELAY_MS = 3500;
+const SHOW_DELAY_MS = 1200;
 const STRIP_EXIT_MS = 220;
 const STRIP_HEIGHT = 44;
 
