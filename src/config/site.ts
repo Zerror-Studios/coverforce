@@ -206,6 +206,14 @@ export const siteRoutes: SiteRoute[] = [
     priority: 0.3,
   },
   {
+    path: "/ia-agreement",
+    label: "IA Agreement",
+    title: "Independent Agency Customer Agreement | CoverForce",
+    description:
+      "Read the CoverForce Independent Agency Customer Agreement covering plans, pricing terms, service use, and legal responsibilities for independent agency customers.",
+    priority: 0.3,
+  },
+  {
     path: "/security",
     label: "Security",
     title: "Security at CoverForce | Enterprise Insurance Platform",

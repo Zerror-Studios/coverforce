@@ -168,6 +168,25 @@ const INTEGRATION_WHEEL_THEMES: SolutionTheme[] = [
 
 export { THREE_WAYS_WHEEL_THEMES, INTEGRATION_WHEEL_THEMES };
 
+/** Report context bar graph — four Three Ways card accents (no developer). */
+export const REPORT_BAR_THEMES = [
+  "wholesaler",
+  "broker",
+  "carrier",
+  "startup",
+] as const satisfies readonly SolutionTheme[];
+
+export const REPORT_BAR_COLORS = REPORT_BAR_THEMES.map(
+  (theme) => CARD_ACCENT_COLORS[theme],
+);
+
+/** Report sticky milestones — one gradient per slide (below graph section). */
+export const REPORT_MILESTONE_THEMES = [
+  "developer",
+  "carrier",
+  "broker",
+] as const satisfies readonly SolutionTheme[];
+
 export function getSolutionGradientStops(
   theme: SolutionTheme,
 ): readonly GradientStop[] {

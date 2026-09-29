@@ -1,21 +1,32 @@
+import dynamic from "next/dynamic";
 import Hero from "@/components/home/Hero";
 import HomeSectionsAfterIntro from "@/components/home/HomeSectionsAfterIntro";
-import ThreeWays from "@/components/home/ThreeWays";
 import DistributionFlow from "@/components/home/DistributionFlow";
-import ProcessFlow from "@/components/home/ProcessFlow";
 import WhyCoverforce from "@/components/home/WhyCoverforce";
 import DataAdvantage from "@/components/home/DataAdvantage";
 import Review from "@/components/home/Review";
 import SectionRadialGlow from "@/components/common/SectionRadialGlow";
 import CarrierResults from "@/components/home/CarrierResults";
+import StartupFaq from "@/components/solutions/startups/StartupFaq";
 import PageJsonLd from "@/components/common/PageJsonLd";
+import JsonLd from "@/components/common/JsonLd";
+import { HOME_FAQS } from "@/data/faqs";
+import { buildFaqPageJsonLd } from "@/lib/jsonLd";
 import { createPageMetadata } from "@/lib/seo";
 import PageWrapper from "@/components/PageWrapper";
+
+const ThreeWays = dynamic(() => import("@/components/home/ThreeWays"), {
+  loading: () => <div className="min-h-[40rem] w-full" aria-hidden />,
+});
+const ProcessFlow = dynamic(() => import("@/components/home/ProcessFlow"), {
+  loading: () => <div className="min-h-[50rem] w-full" aria-hidden />,
+});
 
 const HomePage = () => {
   return (
     <>
       <PageJsonLd path="/" />
+      <JsonLd data={buildFaqPageJsonLd(HOME_FAQS)} />
       <PageWrapper>
         <Hero />
         <HomeSectionsAfterIntro>
@@ -29,6 +40,7 @@ const HomePage = () => {
           </div>
           <Review />
           <CarrierResults />
+          <StartupFaq items={HOME_FAQS} />
         </HomeSectionsAfterIntro>
       </PageWrapper >
     </>

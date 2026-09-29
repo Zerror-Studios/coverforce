@@ -37,7 +37,7 @@ const testimonials: Testimonial[] = [
     role: "CEO, ISU Steadfast Agency Network",
     company: "ISU Steadfast Agency Network",
     avatar: "/images/testimonals/tj.webp",
-    logo: "/images/testimonals/ISU Steadfast.png",
+    logo: "/images/testimonals/isu.webp",
   },
   {
     id: "2",
@@ -47,7 +47,7 @@ const testimonials: Testimonial[] = [
     role: "COO, International Underwriting Agency",
     company: "International Underwriting Agency",
     avatar: "/images/testimonals/Danny Lee.webp",
-    logo: "/images/testimonals/International Underwriting Agency.png",
+    logo: "/images/testimonals/international.webp",
   },
   {
     id: "3",
@@ -57,7 +57,7 @@ const testimonials: Testimonial[] = [
     role: "CEO, Momentum Agency Management Systems",
     company: "Momentum Agency Management Systems",
     avatar: "/images/testimonals/Peter Germanov.webp",
-    logo: "/images/testimonals/momentum_nowcerts.png",
+    logo: "/images/testimonals/momentum.webp",
   },
   {
     id: "4",
@@ -67,7 +67,7 @@ const testimonials: Testimonial[] = [
     role: "Founder, Delegance Brokerage",
     company: "Delegance Brokerage",
     avatar: "/images/testimonals/Alex Ledbetter.webp",
-    logo: "/images/testimonals/Diligence Brokerage.png",
+    logo: "/images/testimonals/delegance.webp",
   },
   {
     id: "5",
@@ -77,7 +77,7 @@ const testimonials: Testimonial[] = [
     role: "Founder, Latent Insurance",
     company: "Latent Insurance",
     avatar: "/images/testimonals/Jatin Sandilya.webp",
-    logo: "/images/testimonals/Latent Insurance.png",
+    logo: "/images/testimonals/latent.webp",
     logoScale: 1.35,
   },
 ];
@@ -112,7 +112,7 @@ function CompanyLogo({
 
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
-    <article className="relative flex h-[420px] flex-col overflow-hidden rounded-sm bg-white p-5 sm:h-[340px] md:h-[380px] md:p-7 lg:h-[480px] lg:p-8">
+    <article className="relative flex h-[420px] flex-col overflow-hidden rounded-sm bg-white p-5 sm:h-[340px] md:h-[380px] md:p-7 lg:h-[330px] xl:h-[450px] lg:p-8">
       <div className="relative z-10 flex h-full flex-1 flex-col">
         {/* Author — top on mobile, bottom-left on desktop */}
         <div className="relative order-1 shrink-0 md:order-2 md:mt-7">

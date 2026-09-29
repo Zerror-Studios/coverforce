@@ -503,13 +503,22 @@ export default function GenieEffect() {
   // Render the interactive pieces client-side after mount.
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isLgOnly, setIsLgOnly] = useState(false);
   useEffect(() => {
     setMounted(true);
-    const mql = window.matchMedia("(max-width: 767px)");
-    const sync = () => setIsMobile(mql.matches);
+    const mobileMql = window.matchMedia("(max-width: 767px)");
+    const lgMql = window.matchMedia("(min-width: 1024px) and (max-width: 1279px)");
+    const sync = () => {
+      setIsMobile(mobileMql.matches);
+      setIsLgOnly(lgMql.matches);
+    };
     sync();
-    mql.addEventListener("change", sync);
-    return () => mql.removeEventListener("change", sync);
+    mobileMql.addEventListener("change", sync);
+    lgMql.addEventListener("change", sync);
+    return () => {
+      mobileMql.removeEventListener("change", sync);
+      lgMql.removeEventListener("change", sync);
+    };
   }, []);
 
   const [phase, setPhase] = useState<Phase>("idle");
@@ -566,6 +575,19 @@ export default function GenieEffect() {
         },
       };
     }
+    if (isLgOnly) {
+      const scale = 0.78;
+      const scaledW = WIN_W * scale;
+      const scaledH = WIN_H * scale;
+      const dockReserve = 96;
+      return {
+        scale,
+        pos: {
+          x: (w - scaledW) / 2,
+          y: Math.max(36, (h - scaledH - dockReserve) / 2 - 12),
+        },
+      };
+    }
     return {
       scale: 1,
       pos: {
@@ -573,7 +595,7 @@ export default function GenieEffect() {
         y: (h - WIN_H) / 2 - 20,
       },
     };
-  }, [getContainerSize, isMobile]);
+  }, [getContainerSize, isMobile, isLgOnly]);
 
   // Returns dock-button center in CONTAINER-LOCAL coords (not viewport coords).
   // The genie canvas draws in container-local coords too, so these match.

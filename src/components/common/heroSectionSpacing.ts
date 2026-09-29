@@ -18,3 +18,7 @@ export const HERO_COPY_FLOW =
 /** Full-viewport shell used by Integration (and similar) heroes. */
 export const HERO_SVH_SHELL =
   "relative flex h-svh items-center justify-center overflow-hidden pb-24 md:pb-32";
+
+/** Wider inset for product heroes with a sliding copy/stat carousel. */
+export const HERO_CAROUSEL_INSET =
+  "mx-auto flex w-full max-w-5xl -translate-y-6 flex-col items-center px-4 py-16 text-center sm:px-6 md:-translate-y-10 md:py-20 lg:max-w-6xl";

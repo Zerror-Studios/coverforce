@@ -23,15 +23,15 @@ const STARTUP_HERO_GRAD_FLOW = {
 };
 
 const STARTUP_MARQUEE_LOGOS = [
-  { src: "/images/startups/logos/broker - Diligence Brokerage.png", alt: "Diligence" },
-  { src: "/images/startups/logos/startup - Anzen.png", alt: "Anzen" },
-  { src: "/images/startups/logos/startup - Broker Buddha BuddhAI.png", alt: "Broker Buddha BuddhAI" },
-  { src: "/images/startups/logos/startup - Coverwatch.png", alt: "Coverwatch" },
-  { src: "/images/startups/logos/startup - Harper.png", alt: "Harper" },
-  { src: "/images/startups/logos/startup - Knack.png", alt: "Knack" },
-  { src: "/images/startups/logos/startup - Latent Insurance.png", alt: "Latent Insurance" },
-  { src: "/images/startups/logos/startup - Rosella.png", alt: "Rosella" },
-  { src: "/images/startups/logos/startup - Switchboard.png", alt: "Switchboard" }
+  { src: "/images/startups/logos/broker-Diligence Brokerage.svg", alt: "Diligence" },
+  { src: "/images/startups/logos/startup - Anzen.svg", alt: "Anzen" },
+  { src: "/images/startups/logos/startup - Broker Buddha BuddhAI.svg", alt: "Broker Buddha BuddhAI" },
+  { src: "/images/startups/logos/startup - Coverwatch.svg", alt: "Coverwatch" },
+  { src: "/images/startups/logos/startup - Harper.svg", alt: "Harper" },
+  { src: "/images/startups/logos/startup - Knack.svg", alt: "Knack" },
+  { src: "/images/startups/logos/startup - Latent Insurance.svg", alt: "Latent Insurance" },
+  { src: "/images/startups/logos/startup - Rosella.svg", alt: "Rosella" },
+  { src: "/images/startups/logos/startup - Switchboard.svg", alt: "Switchboard" }
 ] as const;
 
 const StartupHeroCard = () => (

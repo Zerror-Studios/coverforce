@@ -17,8 +17,6 @@ import WayCardModal from "./WayCardModal";
 import { WayCardHoverProvider } from "./WayCardHoverContext";
 import { WAY_CARD_MODALS } from "@/data/wayCardModals";
 import { CARD_BACKGROUND_STYLES, type CardBackground } from "@/data/wayCardStyles";
-import StartupRecentActivityCard from "@/components/solutions/startups/StartupRecentActivityCard";
-import AiAppetiteEngineMock from "@/components/solutions/wholesalers/AiAppetiteEngineMock";
 
 const WholesalerMock = dynamic(() => import("./WholesalerMock"), {
   loading: () => <MockPlaceholder />,
@@ -49,6 +47,14 @@ const GlobeScene = dynamic(() => import("@/components/home/GlobeScene"), {
   ssr: false,
   loading: () => null,
 });
+const AiAppetiteEngineMock = dynamic(
+  () => import("@/components/solutions/wholesalers/AiAppetiteEngineMock"),
+  { loading: () => <MockPlaceholder className="max-w-[min(100%,320px)]" /> },
+);
+const StartupRecentActivityCard = dynamic(
+  () => import("@/components/solutions/startups/StartupRecentActivityCard"),
+  { loading: () => <MockPlaceholder className="max-w-[min(100%,320px)]" /> },
+);
 
 function MockPlaceholder({ className = "max-w-[250px] sm:max-w-[220px] lg:max-w-[290px]" }: { className?: string }) {
   return (
@@ -90,6 +96,8 @@ type WayCardProps = {
   mobileMockScale?: number;
   /** Static inner mock for sm/md; live mock stays on lg+. */
   previewImage?: string;
+  /** Max width cap for the live mock at lg only (xl uses mock defaults). */
+  mockLgMaxW?: string;
   backgroundScene?: ReactNode;
   backgroundInteractive?: boolean;
   backgroundSceneBlendScreen?: boolean;
@@ -116,6 +124,7 @@ const WAY_CARDS: WayCardConfig[] = [
     mockShiftDown: true,
     mobileMockScale: 0.6,
     previewImage: "/images/home/wholesalers.png",
+    mockLgMaxW: "lg:max-w-[240px]",
     mock: <WholesalerMock />,
     modalPreview: <WholesalerMock />,
   },
@@ -129,6 +138,7 @@ const WAY_CARDS: WayCardConfig[] = [
     backgroundSceneBlendScreen: true,
     mobileMockScale: 0.64,
     previewImage: "/images/home/brokers.png",
+    mockLgMaxW: "lg:max-w-[220px]",
     mock: <BrokerMockWithCardHover />,
     modalPreview: <BrokerMock />,
   },
@@ -151,7 +161,7 @@ const WAY_CARDS: WayCardConfig[] = [
     mobileMockScale: 0.7,
     previewImage: "/images/home/developers.png",
     backgroundScene: <DeveloperTerminalBg />,
-    mock: <DeveloperMock />,
+    mock: <DeveloperMock lgCompact />,
     modalPreview: <DeveloperMock align="modal" />,
     modalPreviewAlign: "right",
   },
@@ -165,6 +175,7 @@ const WAY_CARDS: WayCardConfig[] = [
     mockShiftDown: true,
     mobileMockScale: 0.88,
     previewImage: "/images/home/startup.png",
+    mockLgMaxW: "lg:max-w-[320px]",
     mock: (
       <div className="w-full max-w-full max-sm:mt-6">
         <AiAppetiteEngineMock />
@@ -183,6 +194,7 @@ const WAY_CARDS: WayCardConfig[] = [
     mockShiftDown: true,
     mobileMockScale: 0.88,
     previewImage: "/images/home/carriers.png",
+    mockLgMaxW: "lg:max-w-[320px]",
     mock: (
       <div className="w-full max-w-full max-sm:mt-6">
         <StartupRecentActivityCard />
@@ -245,6 +257,7 @@ const WayCard = memo(function WayCard({
   hideMock = false,
   mobileMockScale,
   previewImage,
+  mockLgMaxW,
   backgroundScene,
   backgroundInteractive = false,
   backgroundSceneBlendScreen = false,
@@ -361,7 +374,17 @@ const WayCard = memo(function WayCard({
                 : undefined
             }
           >
-            {inView ? children : <MockPlaceholder />}
+            {inView ? (
+              mockLgMaxW ? (
+                <div className={`mx-auto w-full min-w-0 max-w-full ${mockLgMaxW} xl:max-w-none`}>
+                  {children}
+                </div>
+              ) : (
+                children
+              )
+            ) : (
+              <MockPlaceholder />
+            )}
           </div>
         </div>
         <div className="pointer-events-none absolute inset-x-0 top-0 z-30 max-sm:px-5 max-sm:pt-5 p-4 sm:p-4 lg:p-8">

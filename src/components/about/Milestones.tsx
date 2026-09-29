@@ -11,6 +11,11 @@ import {
   containerPadding,
   getBottomBorderStyle,
 } from "@/components/common/containerStyles";
+import type { ReportMilestonesData } from "@/data/staticBlogDetails";
+import {
+  CARD_BACKGROUND_STYLES,
+  REPORT_MILESTONE_THEMES,
+} from "@/data/wayCardStyles";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -100,7 +105,86 @@ function MilestoneContent({ milestone }: { milestone: Milestone }) {
   );
 }
 
-const Milestones = () => {
+function ReportMilestoneContent({
+  sectionTitle,
+  slides,
+  activeIndex,
+}: {
+  sectionTitle: string;
+  slides: ReportMilestonesData["slides"];
+  activeIndex: number;
+}) {
+  return (
+    <div className="relative flex h-full flex-col">
+      <div className="flex min-h-[34%] flex-col justify-end md:min-h-[38%]">
+        <div
+          className={`${containerPadding} relative z-10 flex w-full items-start justify-between gap-6 pb-4 md:pb-6`}
+        >
+          <h2 className="max-w-lg font-heading text-3xl font-medium leading-[1.08] tracking-tight text-white sm:text-4xl md:text-5xl lg:text-[2.75rem] lg:leading-[1.05]">
+            {slides[activeIndex]?.title ?? sectionTitle}
+          </h2>
+          <p className="shrink-0 font-heading text-3xl font-medium leading-[1.08] tracking-tight text-white sm:text-4xl md:text-5xl lg:text-[2.75rem] lg:leading-[1.05]">
+            {activeIndex + 1}/{slides.length}
+          </p>
+        </div>
+      </div>
+
+      <div
+        className={`pointer-events-none absolute inset-x-0 top-[58%] z-10 ${containerPadding}`}
+        aria-hidden
+      >
+        <span className="block h-0" style={getBottomBorderStyle("#FFFFFF")} />
+      </div>
+
+      <div
+        className={`relative z-10 flex flex-1 flex-col justify-end pb-6 md:pb-8 lg:pb-10 ${containerPadding}`}
+      >
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-end lg:gap-16 xl:gap-20">
+          <ul className="mb-0 flex flex-col gap-2.5 md:gap-3">
+            {slides.map((slide, index) => {
+              const isActive = index === activeIndex;
+
+              return (
+                <li key={`${slide.label}-${index}`}>
+                  <EyebrowPill
+                    surface="dark"
+                    bare={!isActive}
+                    className="mb-0!"
+                  >
+                    {slide.label}
+                  </EyebrowPill>
+                </li>
+              );
+            })}
+          </ul>
+
+          <p className="max-w-xl font-sans text-sm font-medium leading-[1.65] text-white md:text-base lg:justify-self-end lg:text-lg lg:leading-[1.7]">
+            {slides[activeIndex]?.description}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+type MilestonesProps = {
+  limit?: number;
+  variant?: "about" | "report";
+  reportMilestones?: ReportMilestonesData;
+};
+
+const Milestones = ({
+  limit,
+  variant = "about",
+  reportMilestones,
+}: MilestonesProps = {}) => {
+  const aboutItems =
+    limit != null ? milestones.slice(0, limit) : milestones;
+  const isReport = variant === "report" && reportMilestones != null;
+  const reportItems = reportMilestones?.slides ?? [];
+  const items = isReport ? reportItems : aboutItems;
+  const count = items.length;
+
   const sectionRef = useRef<HTMLElement>(null);
   const panelRefs = useRef<Array<HTMLDivElement | null>>([]);
   const imageWrapRefs = useRef<Array<HTMLDivElement | null>>([]);
@@ -113,7 +197,6 @@ const Milestones = () => {
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (reducedMotion) return;
 
-      const count = milestones.length;
       const ctx = gsap.context(() => {
         panelRefs.current.forEach((el, index) => {
           if (!el) return;
@@ -141,7 +224,7 @@ const Milestones = () => {
           },
         });
 
-        milestones.forEach((_, index) => {
+        items.forEach((_, index) => {
           if (index === 0) return;
 
           const pos = index - 1;
@@ -168,8 +251,10 @@ const Milestones = () => {
         ctx.revert();
       };
     },
-    { scope: sectionRef },
+    { scope: sectionRef, dependencies: [limit, variant, count] },
   );
+
+  if (count === 0) return null;
 
   return (
     <section
@@ -178,9 +263,17 @@ const Milestones = () => {
       className="relative w-full"
     >
       <div className="relative h-dvh min-h-dvh w-full overflow-hidden lg:h-svh lg:min-h-svh">
-        {milestones.map((milestone, index) => (
+        {items.map((item, index) => {
+          const reportSlide = isReport ? reportItems[index] : null;
+          const aboutMilestone = !isReport ? (item as Milestone) : null;
+          const panelKey = reportSlide?.title ?? aboutMilestone?.src ?? String(index);
+          const milestoneTheme =
+            REPORT_MILESTONE_THEMES[index % REPORT_MILESTONE_THEMES.length] ??
+            "developer";
+
+          return (
           <div
-            key={milestone.src}
+            key={panelKey}
             ref={(el) => {
               panelRefs.current[index] = el;
             }}
@@ -196,28 +289,47 @@ const Milestones = () => {
               }}
               className="absolute inset-0 will-change-transform"
             >
-              <Image
-                src={milestone.src}
-                alt={milestone.alt}
-                fill
-                priority={index === 0}
-                className="object-cover object-center"
-                sizes="100vw"
-              />
-              <div
-                className="absolute inset-0"
-                style={{ background: MILESTONE_OVERLAY_GRADIENT }}
-                aria-hidden
-              />
+              {isReport ? (
+                <div
+                  className="absolute inset-0"
+                  style={{ background: CARD_BACKGROUND_STYLES[milestoneTheme] }}
+                  aria-hidden
+                />
+              ) : (
+                <>
+                  <Image
+                    src={aboutMilestone!.src}
+                    alt={aboutMilestone!.alt}
+                    fill
+                    priority={index === 0}
+                    className="object-cover object-center"
+                    sizes="100vw"
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{ background: MILESTONE_OVERLAY_GRADIENT }}
+                    aria-hidden
+                  />
+                </>
+              )}
             </div>
 
             <div className="pointer-events-none absolute inset-0 z-10">
               <Container borderColor={BORDER_COLOR} className="h-full px-0!">
-                <MilestoneContent milestone={milestone} />
+                {isReport && reportMilestones ? (
+                  <ReportMilestoneContent
+                    sectionTitle={reportMilestones.sectionTitle}
+                    slides={reportMilestones.slides}
+                    activeIndex={index}
+                  />
+                ) : aboutMilestone ? (
+                  <MilestoneContent milestone={aboutMilestone} />
+                ) : null}
               </Container>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

@@ -143,7 +143,7 @@ function HeroSlideContent({
   }
 
   const titleClassName =
-    "max-w-4xl text-3xl font-heading font-normal leading-[1.15] tracking-tight md:text-4xl lg:whitespace-nowrap lg:text-6xl xl:text-6xl [&_br]:hidden md:[&_br]:inline";
+    "max-w-5xl text-3xl font-heading font-normal leading-[1.15] tracking-tight md:text-4xl lg:text-6xl xl:text-6xl [&_br]:hidden md:[&_br]:inline";
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center text-center">

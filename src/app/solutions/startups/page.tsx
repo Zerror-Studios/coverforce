@@ -9,7 +9,7 @@ import StartupTestimonials from "@/components/solutions/startups/StartupTestimon
 import Hero from "@/components/solutions/startups/Hero";
 import JsonLd from "@/components/common/JsonLd";
 import PageWrapper from "@/components/PageWrapper";
-import { STARTUP_FAQS } from "@/data/startupFaqs";
+import { STARTUPS_FAQS } from "@/data/faqs";
 import { createPageMetadata } from "@/lib/seo";
 import {
   buildFaqPageJsonLd,
@@ -31,14 +31,14 @@ const page = async () => {
       ? startupHighlights
       : allPosts;
 
-  const posts = selected.slice(0, 3).map(toListingPost);
+  const posts = selected.map(toListingPost);
 
   return (
     <PageWrapper>
       <JsonLd
         data={[
           ...buildMarketingPageJsonLd(PATH),
-          buildFaqPageJsonLd(STARTUP_FAQS),
+          buildFaqPageJsonLd(STARTUPS_FAQS),
         ]}
       />
       <Hero />
@@ -47,7 +47,7 @@ const page = async () => {
       <Launch />
       {/* <Enablement /> */}
       <EducationalResources posts={posts} />
-      <StartupFaq />
+      <StartupFaq items={STARTUPS_FAQS} />
       <StartupTestimonials />
       <CarrierResults />
     </PageWrapper>

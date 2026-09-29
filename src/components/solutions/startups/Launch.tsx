@@ -4,7 +4,12 @@ import { useRef, useState } from "react";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import Button from "@/components/common/Button";
+import ButtonArrowIcon from "@/components/common/ButtonArrowIcon";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
+import {
+  CARD_BACKGROUND_STYLES,
+  type CardBackground,
+} from "@/data/wayCardStyles";
 
 type LaunchStep = {
   id: string;
@@ -12,6 +17,7 @@ type LaunchStep = {
   title: string;
   description: string;
   body: string[];
+  theme: CardBackground;
 };
 
 const launchSteps: LaunchStep[] = [
@@ -20,10 +26,11 @@ const launchSteps: LaunchStep[] = [
     label: "STEP 01",
     title: "Set Up Your Entity",
     description:
-      "Form your LLC or S-Corp and get the legal foundation in place before anything else.",
+      "Form your LLC or corporation and get the legal foundation in place before anything else.",
     body: [
-      "You'll need a registered business, an EIN, and a registered agent in each state you plan to operate in. Getting this right from day one matters - carriers and regulators will ask for documentation.",
+      "You'll need a registered business, an EIN, and a registered agent in each state you plan to operate in. Most venture-backed brokerages incorporate as a Delaware C-Corp — carriers and regulators will ask for the documentation, so get it right on day one.",
     ],
+    theme: "wholesaler",
   },
   {
     id: "license",
@@ -33,6 +40,7 @@ const launchSteps: LaunchStep[] = [
     body: [
       "Licensing requirements vary by state - each has its own exam, application, and renewal cadence. The two main portals used by regulators across the country are NIPR and Sircon.",
     ],
+    theme: "broker",
   },
   {
     id: "market",
@@ -43,6 +51,7 @@ const launchSteps: LaunchStep[] = [
       "Carrier appointments take time to secure for a new brokerage. Our market access partners let you quote and bind through their existing appointments so you're generating revenue from day one.",
       "Startup Program members get preferred pricing from our market access partners. Start writing business on day one, not month six.",
     ],
+    theme: "startup",
   },
   {
     id: "api",
@@ -52,6 +61,7 @@ const launchSteps: LaunchStep[] = [
     body: [
       "One integration gives you real-time quoting and binding across commercial lines - GL, BOP, Workers' Comp, Professional Liability, and more. Our sandbox is ready from day one.",
     ],
+    theme: "developer",
   },
   {
     id: "quote",
@@ -62,36 +72,47 @@ const launchSteps: LaunchStep[] = [
     body: [
       "CoverForce handles appetite matching, form prefill, and comparative quoting across carriers. Your team stays focused on the client. Your first bound policy is closer than you think.",
     ],
+    theme: "carrier",
   },
 ];
 
-// Single, consistent color treatment for every step (no more per-step colors)
-const CARD_BACKGROUND = "linear-gradient(135deg, #0a143b 0%, #1c2b63 100%)";
 const TAB_ACCENT = "#0a143b";
-/** Startup hero palette, green-weighted — completed checks + progress fill */
+/** Startup hero palette, darker green — completed checks + progress fill */
 const COMPLETE_GRADIENT =
-  "linear-gradient(45deg, #30DF71 0%, #28DB8A 35%, #1ED5B3 70%, #12D8D0 100%)";
-const COMPLETE_ACCENT = "#30DF71";
+  "linear-gradient(45deg, #0C7861 0%, #0D9E4F 50%, #2FE46E 100%)";
+const COMPLETE_ACCENT = "#0D9E4F";
+
+function getLaunchCardBackground(step: LaunchStep): string {
+  if (step.id === "market") return COMPLETE_GRADIENT;
+  return CARD_BACKGROUND_STYLES[step.theme];
+}
 
 type LaunchPreviewCardProps = {
   step: LaunchStep;
   stepIndex: number;
+  stepCount: number;
   onPrevious: () => void;
-  /** Desktop keeps previous + apply; mobile only shows apply on the first card. */
+  onNext: () => void;
+  /** Desktop keeps previous/next + apply; mobile only shows apply on the first card. */
   footer?: "full" | "apply" | "none";
 };
 
 function LaunchPreviewCard({
   step,
   stepIndex,
+  stepCount,
   onPrevious,
+  onNext,
   footer = "full",
 }: LaunchPreviewCardProps) {
+  const canGoPrevious = stepIndex > 0;
+  const canGoNext = stepIndex < stepCount - 1;
+
   return (
     <article className="launch-preview-card way-card-shell relative flex w-full flex-col overflow-hidden rounded-md text-white">
       <div
         className="way-card-body absolute inset-0 overflow-hidden rounded-md"
-        style={{ background: CARD_BACKGROUND }}
+        style={{ background: getLaunchCardBackground(step) }}
         aria-hidden
       />
 
@@ -100,7 +121,7 @@ function LaunchPreviewCard({
           {step.title}
         </EyebrowPill>
 
-        <p className="mt-5 max-w-xl font-heading text-xl font-medium leading-[1.2] tracking-tight text-white sm:text-2xl md:text-[1.625rem] md:leading-[1.15]">
+        <p className="mt-5 max-w-xl font-heading text-xl font-medium leading-[1.2] tracking-tight sm:text-2xl md:text-[1.625rem] md:leading-[1.15]">
           {step.description}
         </p>
 
@@ -122,17 +143,32 @@ function LaunchPreviewCard({
             }`}
           >
             {footer === "full" ? (
-              stepIndex > 0 ? (
-                <button
-                  type="button"
-                  onClick={onPrevious}
-                  className="font-sans text-sm font-medium text-white/90 transition-colors hover:text-white"
-                >
-                  ← Previous
-                </button>
-              ) : (
-                <span aria-hidden />
-              )
+              <div className="flex items-center gap-3">
+                {canGoPrevious ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    surface="on-dark"
+                    onClick={onPrevious}
+                    icon={({ className = "" }) => (
+                      <ButtonArrowIcon className={`-scale-x-100 ${className}`} />
+                    )}
+                  >
+                    Previous
+                  </Button>
+                ) : null}
+                {canGoNext ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    surface="on-dark"
+                    onClick={onNext}
+                  >
+                    Next
+                  </Button>
+                ) : null}
+                {!canGoPrevious && !canGoNext ? <span aria-hidden /> : null}
+              </div>
             ) : null}
             <Button href="/contact" surface="on-dark">
               Apply now
@@ -163,7 +199,7 @@ function CheckIcon() {
   );
 }
 
-const LAUNCH_SECTION_TITLE = "Steps to Launch a Digital Brokerage";
+const LAUNCH_SECTION_TITLE = "How to Launch a Digital Brokerage";
 const LAUNCH_SECTION_DESCRIPTION =
   "From idea to first bind in five easy steps";
 
@@ -243,7 +279,9 @@ const Launch = () => {
               key={step.id}
               step={step}
               stepIndex={index}
+              stepCount={launchSteps.length}
               onPrevious={() => selectStep(index - 1)}
+              onNext={() => selectStep(index + 1)}
               footer="none"
             />
           ))}
@@ -331,7 +369,9 @@ const Launch = () => {
               key={active.id}
               step={active}
               stepIndex={activeStep}
+              stepCount={launchSteps.length}
               onPrevious={() => selectStep(activeStep - 1)}
+              onNext={() => selectStep(activeStep + 1)}
             />
           </div>
         </div>

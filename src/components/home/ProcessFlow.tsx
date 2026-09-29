@@ -10,7 +10,20 @@ import { processSteps } from "@/data/processSteps";
 import { RiArrowRightLine } from "@remixicon/react";
 import { applyWaveToChars, COLOR_THEMES } from "@/lib/animateSplitTextReveal";
 import { PRIMARY_BUTTON_GRADIENT } from "@/data/wayCardStyles";
-import ProcessStepVisual from "@/components/home/process/ProcessStepVisual";
+import dynamic from "next/dynamic";
+
+const ProcessStepVisual = dynamic(
+  () => import("@/components/home/process/ProcessStepVisual"),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="h-full w-full min-h-[16rem] animate-pulse rounded-xl bg-[#E8ECF0]/60"
+        aria-hidden
+      />
+    ),
+  },
+);
 
 gsap.registerPlugin(ScrollTrigger);
 

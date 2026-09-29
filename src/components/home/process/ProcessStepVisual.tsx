@@ -1,9 +1,37 @@
+"use client";
+
 import type { ProcessStep } from "@/data/processSteps";
-import AcordStepVisual from "./AcordStepVisual";
-import ApplicationStepVisual from "./ApplicationStepVisual";
-import NaicsStepVisual from "./NaicsStepVisual";
-import CompareQuotesStepVisual from "./CompareQuotesStepVisual";
-import BindStepVisual from "./BindStepVisual";
+import dynamic from "next/dynamic";
+
+const AcordStepVisual = dynamic(() => import("./AcordStepVisual"), {
+  ssr: false,
+  loading: () => <StepVisualPlaceholder />,
+});
+const ApplicationStepVisual = dynamic(() => import("./ApplicationStepVisual"), {
+  ssr: false,
+  loading: () => <StepVisualPlaceholder />,
+});
+const NaicsStepVisual = dynamic(() => import("./NaicsStepVisual"), {
+  ssr: false,
+  loading: () => <StepVisualPlaceholder />,
+});
+const CompareQuotesStepVisual = dynamic(() => import("./CompareQuotesStepVisual"), {
+  ssr: false,
+  loading: () => <StepVisualPlaceholder />,
+});
+const BindStepVisual = dynamic(() => import("./BindStepVisual"), {
+  ssr: false,
+  loading: () => <StepVisualPlaceholder />,
+});
+
+function StepVisualPlaceholder() {
+  return (
+    <div
+      className="h-full w-full animate-pulse rounded-xl bg-[#E8ECF0]/60"
+      aria-hidden
+    />
+  );
+}
 
 function ProcessStepVideo({
   src,

@@ -386,13 +386,13 @@ function EmailIntakeFooter({
 }) {
   return (
     <div className="flex items-center justify-between border-t border-dashed border-[#CCCCCC] px-3 py-3">
-      <div className="flex items-center gap-1 text-[10px] font-medium text-[#4683E5]">
+      <div className="flex items-center gap-1 text-[10px] font-medium text-[#4683E5] lg:text-[0.55rem] xl:text-[10px]">
         <RiAttachmentLine className="size-2 rotate-90 text-[#4683E5]" />
         <RollingText
           prev={String(prevAttachments)}
           next={String(nextAttachments)}
           animationKey={animationKey}
-          className="text-[10px] font-sans font-medium leading-[1.4] text-[#4683E5]"
+          className="text-[10px] font-sans font-medium leading-[1.4] text-[#4683E5] lg:text-[0.55rem] xl:text-[10px]"
         />
         <span>Attachments</span>
       </div>

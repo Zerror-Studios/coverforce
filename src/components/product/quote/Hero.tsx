@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Container from "@/components/common/Container";
+import { HERO_CAROUSEL_INSET } from "@/components/common/heroSectionSpacing";
 import {
   HeroCarouselNav,
   useHeroCarousel,
@@ -69,9 +70,7 @@ const Hero = () => {
       </div>
 
       <Container className="relative z-10">
-        <div className="mx-auto flex max-w-3xl -translate-y-6 flex-col items-center px-6 py-16 text-center md:-translate-y-10 md:py-20">
-          {track}
-        </div>
+        <div className={HERO_CAROUSEL_INSET}>{track}</div>
       </Container>
 
       <HeroCarouselNav

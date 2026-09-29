@@ -2,10 +2,10 @@
 
 import { type ReactNode } from "react";
 import Container from "./Container";
-import Button from "./Button";
 import RequestDemoButton from "@/components/request-demo/RequestDemoButton";
 import Link from "next/link";
 import Image from "next/image";
+import { PRIMARY_BUTTON_GRADIENT } from "@/data/wayCardStyles";
 
 type FooterLinkData = {
   label: string;
@@ -44,7 +44,7 @@ const footerColumns: FooterColumnData[] = [
     title: "Company",
     links: [
       { label: "About Us", href: "/about" },
-      { label: "Blogs and Insights", href: "/blog" },
+      { label: "Blogs", href: "/blog" },
       { label: "Careers", href: "/careers" },
       { label: "Contact", href: "/contact" },
     ],
@@ -64,14 +64,13 @@ const standaloneLinks: FooterLinkData[] = [
   { label: "Developers", href: "/developers" },
   { label: "Pricing", href: "/pricing" },
 ];
-
 const legalLinks: LegalLink[] = [
   { label: "Terms of Service", href: "/terms-of-service" },
   { label: "Privacy", href: "/privacy-policy" },
   { label: "Security", href: "/security" },
 ];
 
-const footerContactLinks = [
+const footerSocialLinks = [
   {
     label: "LinkedIn",
     href: "https://www.linkedin.com/company/coverforceinc",
@@ -116,15 +115,6 @@ function LinkedinIcon({ className }: { className?: string }) {
   );
 }
 
-function FooterBullet({ className = "" }: { className?: string }) {
-  return (
-    <span
-      className={`size-1.5 shrink-0 rounded-full bg-[#3D3D3D] ${className}`}
-      aria-hidden
-    />
-  );
-}
-
 function FooterHoverBullet() {
   return (
     <span
@@ -137,8 +127,8 @@ function FooterHoverBullet() {
 const footerLinkColor = "text-[#797979]";
 const footerLinkHoverColor = "hover:text-[#3D3D3D]";
 
-const footerLinkHover =
-  `transition-[padding-left,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:pl-3.5`;
+const footerLinkMotion =
+  "inline-block transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-3.5";
 
 type FooterLinkProps = {
   href: string;
@@ -150,29 +140,10 @@ function FooterSubLink({ href, children, className = "" }: FooterLinkProps) {
   return (
     <Link
       href={href}
-      className={`group relative inline-flex pl-0 font-heading text-sm font-medium leading-snug ${footerLinkColor} ${footerLinkHoverColor} ${footerLinkHover} ${className}`}
+      className={`group relative inline-flex font-heading text-sm font-medium leading-snug transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${footerLinkColor} ${footerLinkHoverColor} ${className}`}
     >
       <FooterHoverBullet />
-      {children}
-    </Link>
-  );
-}
-
-function FooterTopLink({
-  href,
-  children,
-  className = "",
-  showBullet = true,
-}: FooterLinkProps & { showBullet?: boolean }) {
-  return (
-    <Link
-      href={href}
-      className={`group inline-flex items-center font-heading text-[0.6875rem] font-semibold uppercase tracking-[0.12em] ${footerLinkColor} transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${footerLinkHoverColor} ${showBullet ? "gap-2" : ""} ${className}`}
-    >
-      {showBullet ? (
-        <FooterBullet className="transition-[transform,background-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-125 group-hover:bg-[#151F4D]" />
-      ) : null}
-      {children}
+      <span className={footerLinkMotion}>{children}</span>
     </Link>
   );
 }
@@ -181,10 +152,10 @@ function FooterLegalLink({ href, children, className = "" }: FooterLinkProps) {
   return (
     <Link
       href={href}
-      className={`group relative inline-flex pl-0 font-heading text-[0.6875rem] font-medium uppercase tracking-[0.12em] ${footerLinkColor} ${footerLinkHoverColor} ${footerLinkHover} ${className}`}
+      className={`group relative inline-flex font-heading text-[0.6875rem] font-medium uppercase tracking-[0.12em] transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${footerLinkColor} ${footerLinkHoverColor} ${className}`}
     >
       <FooterHoverBullet />
-      {children}
+      <span className={footerLinkMotion}>{children}</span>
     </Link>
   );
 }
@@ -193,11 +164,11 @@ type FooterColumnProps = FooterColumnData;
 
 function FooterColumn({ title, links }: FooterColumnProps) {
   return (
-    <div>
-      <h3 className="mb-4 flex items-center gap-2 font-heading text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-[#3D3D3D]">
+    <div className="shrink-0 overflow-visible">
+      <h3 className="mb-5 font-heading text-base font-semibold tracking-tight text-[#121212]">
         {title}
       </h3>
-      <ul className="space-y-2.5">
+      <ul className="space-y-3.5">
         {links.map(({ label, href }) => (
           <li key={label}>
             <FooterSubLink href={href}>{label}</FooterSubLink>
@@ -266,51 +237,68 @@ const Footer = () => {
           </div>
 
           {/* ── Nav columns + social icons ── */}
-          <div className="border-b border-neutral-200 pt-10 pb-8 md:pt-12 md:pb-10 lg:pt-14 lg:pb-12">
-            <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-5 lg:gap-x-10">
-              {footerColumns.map((column) => (
-                <FooterColumn key={column.title} {...column} />
-              ))}
-
-              <div>
-                <ul className="space-y-4">
-                  {standaloneLinks.map(({ label, href }) => (
-                    <li key={label}>
-                      <FooterTopLink href={href} showBullet={false}>
-                        {label}
-                      </FooterTopLink>
-                    </li>
+          <div className="border-b border-neutral-200 pt-10 pb-16 md:pt-12 md:pb-20 lg:pt-14 lg:pb-24">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:flex lg:items-start lg:gap-x-12 xl:gap-x-16">
+              <div className="col-span-2 sm:col-span-3 lg:max-w-[20rem] lg:shrink-0 lg:grow">
+                <Link href="/" className="inline-block">
+                  <span className="relative block h-5 w-[148px] xl:h-6 xl:w-[170px]">
+                    <Image
+                      src="/Coverforce_logo_blue.svg"
+                      alt="CoverForce"
+                      width={180}
+                      height={34}
+                      className="absolute left-0 top-1/2 h-7 w-auto -translate-y-1/2 grayscale brightness-0 xl:h-8"
+                    />
+                  </span>
+                </Link>
+                <p className="mt-5 max-w-[20rem] font-heading text-sm font-medium leading-relaxed text-[#797979]">
+                  CoverForce connects brokers, networks and wholesalers to leading carriers
+                  through one platform.
+                </p>
+                <div className="mt-6 flex items-center gap-2.5">
+                  {footerSocialLinks.map(({ label, href, icon: Icon, external }) => (
+                    <a
+                      key={label}
+                      href={href}
+                      {...(external
+                        ? { target: "_blank", rel: "noopener noreferrer" }
+                        : {})}
+                      aria-label={label}
+                      className="group inline-flex size-9 items-center justify-center rounded-[6px] text-white"
+                      style={{ background: PRIMARY_BUTTON_GRADIENT }}
+                    >
+                      <Icon className="size-3.5 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-125" />
+                    </a>
                   ))}
-                </ul>
+                </div>
               </div>
 
-              <div className="md:hidden">
-                <ul className="space-y-4">
-                  {legalLinks.map(({ label, href }) => (
-                    <li key={label}>
-                      <FooterTopLink href={href} showBullet={false}>
-                        {label}
-                      </FooterTopLink>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+              <div className="contents lg:flex lg:flex-1 lg:justify-between lg:gap-x-10 xl:gap-x-12">
+                {footerColumns.map((column) => (
+                  <FooterColumn key={column.title} {...column} />
+                ))}
 
-            <div className="mt-10 flex justify-end gap-5 md:mt-12">
-              {footerContactLinks.map(({ label, href, icon: Icon, external }) => (
-                <a
-                  key={label}
-                  href={href}
-                  {...(external
-                    ? { target: "_blank", rel: "noopener noreferrer" }
-                    : {})}
-                  aria-label={label}
-                  className={`${footerLinkColor} transition-colors ${footerLinkHoverColor}`}
-                >
-                  <Icon className="size-4" />
-                </a>
-              ))}
+                <div className="shrink-0">
+                  <h3 className="mb-5 font-heading text-base font-semibold tracking-tight text-[#121212]">
+                    Resources
+                  </h3>
+                  <ul className="space-y-3.5">
+                    {standaloneLinks.map(({ label, href }) => (
+                      <li key={label}>
+                        <FooterSubLink href={href}>{label}</FooterSubLink>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <ul className="mt-8 space-y-3.5 md:hidden">
+                    {legalLinks.map(({ label, href }) => (
+                      <li key={label}>
+                        <FooterSubLink href={href}>{label}</FooterSubLink>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -327,10 +315,10 @@ const Footer = () => {
             <button
               type="button"
               onClick={scrollToTop}
-              className={`group relative inline-flex pl-0 font-heading text-[0.6875rem] font-medium uppercase tracking-[0.12em] ${footerLinkColor} ${footerLinkHoverColor} ${footerLinkHover} md:absolute md:left-1/2 md:-translate-x-1/2`}
+              className={`group relative inline-flex font-heading text-[0.6875rem] font-medium uppercase tracking-[0.12em] transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${footerLinkColor} ${footerLinkHoverColor} md:absolute md:left-1/2 md:-translate-x-1/2`}
             >
               <FooterHoverBullet />
-              Back to Top
+              <span className={footerLinkMotion}>Back to Top</span>
             </button>
 
             <p className="text-center font-heading text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-[#3D3D3D] md:text-right">

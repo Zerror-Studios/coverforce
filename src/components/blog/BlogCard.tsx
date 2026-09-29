@@ -3,12 +3,15 @@ import Link from "next/link";
 import type { BlogPost } from "@/data/blogPosts";
 
 type BlogCardProps = {
-  post: Pick<BlogPost, "slug" | "title" | "image" | "date" | "author">;
+  post: Pick<BlogPost, "slug" | "title" | "image" | "date" | "author" | "href">;
+  href?: string;
 };
 
-export default function BlogCard({ post }: BlogCardProps) {
+export default function BlogCard({ post, href }: BlogCardProps) {
+  const postHref = href ?? post.href ?? `/blog/${post.slug}`;
+
   return (
-    <Link href={`/blog/${post.slug}`} className="group flex flex-col">
+    <Link href={postHref} className="group flex flex-col">
       <div className="relative w-full overflow-hidden rounded-md bg-[#F7F7FB]">
         <div className="relative aspect-video w-full">
           <CmsImage

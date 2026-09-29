@@ -72,13 +72,12 @@ export default function ShrimpLineAnimation({
           );
         }
 
-        // Draw each line as it enters the viewport so the second copy
-        // does not wait for the first and miss the screen.
+        // Longer scroll range + higher scrub lag so the draw feels slower.
         ScrollTrigger.create({
           trigger,
-          start: "top 70%",
-          end: "top 20%",
-          scrub: 1,
+          start: "top 85%",
+          end: "bottom top",
+          scrub: 2.5,
           animation: lineTl,
         });
       });
