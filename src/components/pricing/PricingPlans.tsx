@@ -88,6 +88,7 @@ const PLANS: PricingPlan[] = [
     price: "$99",
     priceNote: "/MO after the first 60 days",
     features: [
+      "CoverForce Portal access for independent agencies (non-API quoting)",
       "Quote and bind across 20+ carriers on your own appointments",
       {
         parts: [
@@ -95,13 +96,13 @@ const PLANS: PricingPlan[] = [
           { text: " included per month" },
         ],
       },
-      "$5 per additional quote submission, capped at 200 a month",
       "Unlimited users, no per-seat fees",
       "One unified application, no re-keying between carriers",
       "Pre-fill, auto-filled renewals, AI doc reading and email intake",
       "Quote comparison PDFs, appetite guides and ACORD generation",
       "Send to additional markets with dedicated underwriters",
       "Month to month, cancel any time",
+      "Customers using the Independent Agent product are ineligible for the Startup program",
     ],
     cta: {
       label: "Start quoting now",
@@ -119,13 +120,13 @@ const PLANS: PricingPlan[] = [
     price: "Custom",
     priceNote: "usage-based as you scale",
     features: [
+      "API-only",
       "Application and usage-based pricing that scales as you scale",
       "Unlimited seats",
       "Aligned incentives",
       "Free sandbox",
       "Standard API",
       "Slack + integration support",
-      "API-only",
     ],
     cta: {
       label: "Apply to our startup program",
