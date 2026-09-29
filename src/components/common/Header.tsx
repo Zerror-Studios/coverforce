@@ -1005,13 +1005,12 @@ const Header = ({
                   }
                 >
                   <div className={`${containerPadding} space-y-3 pb-6 pt-6`}>
-                    <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
+                    <div className="flex items-center gap-2.5">
                       <Button
                         href="https://webapp.coverforce.com/login?clientApp=cfia"
                         variant="secondary"
                         surface="default"
-                        balanced
-                        className="w-full sm:w-auto"
+                        className="!w-full min-w-0 flex-1 justify-center !px-3"
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={closeMobileMenu}
@@ -1020,8 +1019,7 @@ const Header = ({
                       </Button>
                       <RequestDemoButton
                         surface="default"
-                        balanced
-                        className="w-full sm:w-auto"
+                        className="!w-full min-w-0 flex-1 justify-center !px-3"
                         onClick={() => {
                           closeMobileMenu();
                         }}
