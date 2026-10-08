@@ -144,13 +144,13 @@ const Hero = ({ post, heroMeta }: HeroProps) => {
 
           <div className="relative mt-5 w-full overflow-hidden rounded-md bg-[#F7F7FB]">
             <div className="relative aspect-video w-full">
-              <CmsImage
+              {/* Native img — avoid Next/CMS resize blur on hero */}
+              <img
                 src={post.image}
                 alt={post.title}
-                fill
-                priority
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 48rem"
+                className="absolute inset-0 h-full w-full object-cover"
+                decoding="async"
+                fetchPriority="high"
               />
             </div>
           </div>

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import CmsImage from "@/components/common/CmsImage";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import HeroReveal from "@/components/common/HeroReveal";
@@ -45,13 +44,13 @@ const Hero = ({ featured, latest }: HeroProps) => {
             <Link href={featured.href} className="group block w-full min-w-0 max-lg:max-w-none">
               <div className="relative w-full overflow-hidden rounded-md bg-[#F7F7FB]">
                 <div className="relative aspect-video w-full">
-                  <CmsImage
+                  {/* Native img — avoid Next/CMS resize blur on hero */}
+                  <img
                     src={featured.image}
                     alt={featured.title}
-                    fill
-                    priority
-                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-                    sizes="(max-width: 1023px) 100vw, 65vw"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                    decoding="async"
+                    fetchPriority="high"
                   />
                 </div>
               </div>
