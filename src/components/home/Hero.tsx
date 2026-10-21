@@ -11,10 +11,8 @@ import {
   HOME_INTRO_EASE,
   HOME_INTRO_HERO_RISE_MS,
   HOME_INTRO_LOADER_FADE_MS,
-  HOME_INTRO_LOADER_WAVE_MS,
   useHomeIntro,
 } from "@/contexts/HomeIntroContext";
-import { animateLoaderWordsWave } from "@/lib/animateSplitTextReveal";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import { GdpCounter } from "./GdpCounter";
 import { CARD_VERTICAL_BACKGROUND_STYLES } from "@/data/wayCardStyles";
@@ -70,15 +68,15 @@ const Hero = () => {
     !introSettled &&
     (introPhase === "loader-in" ||
       introPhase === "loader-fade" ||
-      introPhase === "loader-wave");
+      introPhase === "loader-hold");
   const introTitleMuted =
     introEnabled &&
     (introPhase === "loader-in" ||
       introPhase === "loader-fade" ||
-      introPhase === "loader-wave" ||
+      introPhase === "loader-hold" ||
       introPhase === "hero-rise");
   const introUiLocked = introEnabled && introPhase !== "done";
-  // Defer WebGL until intro leaves the loader wave (or intro is off).
+  // Defer WebGL until intro leaves the loader (or intro is off).
   const loadGlobe =
     !introEnabled ||
     introPhase === "hero-rise" ||
@@ -87,9 +85,7 @@ const Hero = () => {
     introSettled;
   const heroRiseStartedRef = useRef(false);
   const introFadeStartedRef = useRef(false);
-  const waveCleanupRef = useRef<
-    (ReturnType<typeof animateLoaderWordsWave>) | null
-  >(null);
+  const titleCenteredRef = useRef(false);
   const riseTlRef = useRef<gsap.core.Timeline | null>(null);
   const revealTlRef = useRef<gsap.core.Timeline | null>(null);
   const moveTargetRef = useRef({ x: 0, y: 0 });
@@ -195,8 +191,6 @@ const Hero = () => {
 
   useEffect(() => {
     return () => {
-      waveCleanupRef.current?.();
-      waveCleanupRef.current = null;
       riseTlRef.current?.kill();
       riseTlRef.current = null;
       revealTlRef.current?.kill();
@@ -205,9 +199,6 @@ const Hero = () => {
   }, []);
 
   const clearTitleInlineColors = (title: HTMLElement) => {
-    gsap.set(title.querySelectorAll<HTMLElement>(".loader-wave-char, .loader-wave-word, [data-loader-word-inner]"), {
-      clearProps: "color",
-    });
     gsap.set(title, { clearProps: "color" });
   };
 
@@ -220,11 +211,31 @@ const Hero = () => {
 
     introFadeStartedRef.current = true;
     title.classList.remove("opacity-0");
+
+    // Park the title at viewport center before fade-in so rise only moves, no snap.
+    centerIntroTitle();
+    titleCenteredRef.current = true;
+    moveTargetRef.current = { x: 0, y: 0 };
+
+    // Recompute rise target while title is centered (fixed) for a smooth handoff.
+    requestAnimationFrame(() => {
+      const spacer = titleSpacerRef.current;
+      const liveTitle = titleLineRef.current;
+      if (!spacer || !liveTitle) return;
+      const spacerRect = spacer.getBoundingClientRect();
+      const titleRect = liveTitle.getBoundingClientRect();
+      moveTargetRef.current = {
+        x: spacerRect.left + spacerRect.width / 2 - window.innerWidth / 2,
+        y: spacerRect.top + titleRect.height / 2 - window.innerHeight / 2,
+      };
+    });
+
     gsap.fromTo(
       title,
-      { opacity: 0 },
+      { opacity: 0, color: "#3D3D3D" },
       {
         opacity: 1,
+        color: "#3D3D3D",
         duration: HOME_INTRO_LOADER_FADE_MS / 1000,
         ease: "power2.out",
         overwrite: "auto",
@@ -232,33 +243,27 @@ const Hero = () => {
     );
   }, [introEnabled, introPhase]);
 
-  useEffect(() => {
-    if (!introEnabled || introPhase !== "loader-wave") return;
-    const line = titleLineRef.current;
-    if (!line) return;
+  useLayoutEffect(() => {
+    if (!introEnabled || introPhase !== "loader-hold") return;
+    const title = titleLineRef.current;
+    if (!title) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Keep black, centered — no fill wave.
+    if (!titleCenteredRef.current) {
+      centerIntroTitle();
+      titleCenteredRef.current = true;
+    }
+    gsap.set(title, { opacity: 1, color: "#3D3D3D" });
 
-    waveCleanupRef.current?.();
-    waveCleanupRef.current = animateLoaderWordsWave(line, {
-      theme: "light",
-      // Finish slightly before the phase ends so rise never fights the wave painter
-      duration: Math.max(0.4, HOME_INTRO_LOADER_WAVE_MS / 1000 - 0.35),
-      delay: 0.05,
-      charsClass: "loader-wave-char",
-      wordsClass: "loader-wave-word",
-    });
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (!heroRiseStartedRef.current) centerIntroTitle();
-      });
-    });
-
-    return () => {
-      // Stop painting only — keep split chars so hero-rise can tween them to white
-      waveCleanupRef.current?.stopTween?.();
-    };
+    const spacer = titleSpacerRef.current;
+    if (spacer) {
+      const spacerRect = spacer.getBoundingClientRect();
+      const titleRect = title.getBoundingClientRect();
+      moveTargetRef.current = {
+        x: spacerRect.left + spacerRect.width / 2 - window.innerWidth / 2,
+        y: spacerRect.top + titleRect.height / 2 - window.innerHeight / 2,
+      };
+    }
   }, [introEnabled, introPhase]);
 
   useLayoutEffect(() => {
@@ -272,36 +277,42 @@ const Hero = () => {
       gsap.set(section, { backgroundColor: "#151f4d" });
       gsap.set(title, {
         clearProps:
-          "position,left,top,xPercent,yPercent,zIndex,margin,transform,opacity",
+          "position,left,top,xPercent,yPercent,zIndex,margin,transform,opacity,color",
       });
-      clearTitleInlineColors(title);
-      waveCleanupRef.current?.();
-      waveCleanupRef.current = null;
       setIntroSettled(true);
       return;
     }
 
     heroRiseStartedRef.current = true;
 
-    // Halt wave color writes but keep .loader-wave-char nodes for the white tween
-    waveCleanupRef.current?.stopTween?.();
+    if (!titleCenteredRef.current) {
+      centerIntroTitle();
+      titleCenteredRef.current = true;
+    }
 
-    centerIntroTitle();
-    const chars = Array.from(title.querySelectorAll<HTMLElement>(".loader-wave-char"));
+    // Refresh target from current centered position → spacer
+    const spacer = titleSpacerRef.current;
+    if (spacer) {
+      const spacerRect = spacer.getBoundingClientRect();
+      const titleRect = title.getBoundingClientRect();
+      moveTargetRef.current = {
+        x: spacerRect.left + spacerRect.width / 2 - window.innerWidth / 2,
+        y: spacerRect.top + titleRect.height / 2 - window.innerHeight / 2,
+      };
+    }
+
     const { x, y } = moveTargetRef.current;
     const riseDur = HOME_INTRO_HERO_RISE_MS / 1000;
 
     riseTlRef.current?.kill();
     const tl = gsap.timeline({
-      defaults: { ease: "power2.inOut" },
+      defaults: { ease: "power3.inOut" },
       onComplete: () => {
         gsap.set(title, {
           clearProps:
             "position,left,top,xPercent,yPercent,zIndex,margin,transform,opacity,color",
         });
         clearTitleInlineColors(title);
-        waveCleanupRef.current?.();
-        waveCleanupRef.current = null;
         gsap.set(section, { backgroundColor: "#151f4d" });
         setIntroSettled(true);
         riseTlRef.current = null;
@@ -309,23 +320,19 @@ const Hero = () => {
     });
     riseTlRef.current = tl;
 
+    gsap.set(title, { color: "#3D3D3D", opacity: 1 });
     tl.to(section, { backgroundColor: "#151f4d", duration: riseDur }, 0);
-    tl.to(title, { x, y, duration: riseDur }, 0);
-    if (chars.length) {
-      tl.fromTo(
-        chars,
-        { color: "#3D3D3D" },
-        { color: "#ffffff", duration: riseDur, ease: "power2.inOut", overwrite: true },
-        0,
-      );
-    } else {
-      tl.fromTo(
-        title,
-        { color: "#3D3D3D" },
-        { color: "#ffffff", duration: riseDur, ease: "power2.inOut", overwrite: true },
-        0,
-      );
-    }
+    tl.to(
+      title,
+      {
+        x,
+        y,
+        color: "#ffffff",
+        duration: riseDur,
+        force3D: true,
+      },
+      0,
+    );
   }, [introEnabled, introPhase]);
 
   useLayoutEffect(() => {
@@ -453,27 +460,20 @@ const Hero = () => {
                 ref={titleLineRef}
                 data-loader-line
                 className={`absolute left-1/2 top-0 z-10 max-w-5xl -translate-x-1/2 px-4 text-[2.2rem] font-heading font-normal leading-[1.05] tracking-tight will-change-[transform,opacity] sm:px-6 sm:text-5xl md:text-4xl lg:text-6xl xl:text-6xl ${introEnabled && introPhase === "loader-in" ? "opacity-0" : ""
-                  } ${introTitleMuted ? theme.titleMuted : theme.title}`}
+                  } ${
+                    introTitleMuted
+                      ? isIntroWhiteBg
+                        ? "text-[#3D3D3D]"
+                        : theme.titleMuted
+                      : theme.title
+                  }`}
               >
                 {INTRO_TITLE_LINES.map((line, lineIndex) => (
                   <span
                     key={lineIndex}
                     className={`block whitespace-nowrap ${lineIndex > 0 ? "mt-1" : ""}`}
                   >
-                    {line.map((word, wordIndex) => (
-                      <React.Fragment key={word}>
-                        <span className="inline-block overflow-hidden align-bottom pb-0.5">
-                          <span data-loader-word-inner className="inline-block">
-                            {word}
-                          </span>
-                        </span>
-                        {wordIndex < line.length - 1 ? (
-                          <span aria-hidden className="inline">
-                            {" "}
-                          </span>
-                        ) : null}
-                      </React.Fragment>
-                    ))}
+                    {line.join(" ")}
                   </span>
                 ))}
               </h1>

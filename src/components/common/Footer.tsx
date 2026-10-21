@@ -289,8 +289,13 @@ const Footer = () => {
                       </li>
                     ))}
                   </ul>
+                </div>
 
-                  <ul className="mt-8 space-y-3.5 md:hidden">
+                <div className="shrink-0 md:hidden">
+                  <h3 className="mb-5 font-heading text-base font-semibold tracking-tight text-[#121212]">
+                    Legal
+                  </h3>
+                  <ul className="space-y-3.5">
                     {legalLinks.map(({ label, href }) => (
                       <li key={label}>
                         <FooterSubLink href={href}>{label}</FooterSubLink>
