@@ -471,8 +471,7 @@ const Header = ({
   }, [pathname, introEnabled]);
 
   useLayoutEffect(() => {
-    // Menu sheet must start below the *visible* nav row. When the
-    // announcement strip is open it pushes the nav down, so use the nav's
+    // Menu sheet must start below the visible nav row. Use the nav's
     // viewport bottom — not just its own height.
     const header = document.querySelector<HTMLElement>(".site-view-header");
     const navBar = navBarRef.current;
