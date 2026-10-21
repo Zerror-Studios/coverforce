@@ -912,8 +912,11 @@ const Header = ({
                 >
                   Login
                 </Button>
-                <RequestDemoButton surface={theme === "dark" ? "on-dark" : "default"}>
-                  Contact us
+                <RequestDemoButton
+                  href="/pricing#plans"
+                  surface={theme === "dark" ? "on-dark" : "default"}
+                >
+                  Get Access
                 </RequestDemoButton>
               </div>
             </div>
@@ -1018,13 +1021,14 @@ const Header = ({
                         Login
                       </Button>
                       <RequestDemoButton
+                        href="/pricing#plans"
                         surface="default"
                         className="!w-full min-w-0 flex-1 justify-center !px-3"
                         onClick={() => {
                           closeMobileMenu();
                         }}
                       >
-                        Contact us
+                        Get Access
                       </RequestDemoButton>
                     </div>
 
