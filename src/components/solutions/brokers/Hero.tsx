@@ -1,7 +1,7 @@
 "use client";
 
 import SolutionScrollHero from "@/components/solutions/shared/SolutionScrollHero";
-import SolutionHeroCards from "@/components/solutions/shared/SolutionHeroCards";
+import Image from "next/image";
 import { SOLUTION_GRAD_FLOW } from "@/data/wayCardStyles";
 
 const BROKERS_HERO_LOGOS = [
@@ -35,20 +35,15 @@ const Hero = () => (
     secondaryButtonHref="#workflow"
     secondaryButtonLabel="How it works"
     rightCard={
-      <SolutionHeroCards
-        transferTargetId="brokers-step-1-card"
-        cardOne={{
-          src: "/images/broker/broker1.svg",
-          alt: "Broker quoting dashboard",
-          width: 444,
-          height: 269,
-        }}
-        cardTwo={{
-          src: "/images/broker/broker2.svg",
-          alt: "Broker workflow summary",
-          width: 371,
-          height: 179,
-        }}
+      <Image
+        src="/images/broker/broker-hero-main.png"
+        alt="Broker quoting dashboard"
+        width={2300}
+        height={1767}
+        sizes="(min-width: 1024px) 1040px, 100vw"
+        quality={90}
+        className="relative z-10 mx-auto h-auto w-full max-w-[550px] lg:max-w-[420px] xl:max-w-[550px]"
+        priority
       />
     }
     rightCardTransferTargetId="brokers-step-1-card"

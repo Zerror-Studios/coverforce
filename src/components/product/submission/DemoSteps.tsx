@@ -14,7 +14,7 @@ const DEMO_STEPS = [
   {
     id: "doc-reader",
     label: "AI Doc Reader",
-    image: "/images/product/demo1.svg",
+    image: "/images/product/submission1.png",
     headline: (
       <>
         Uploads any ACORD, loss run, or prior policy. Extracts{" "}
@@ -26,7 +26,7 @@ const DEMO_STEPS = [
   {
     id: "inbox",
     label: "AI Inbox",
-    image: "/images/product/demo2.svg",
+    image: "/images/product/submission2.png",
     headline: (
       <>
         Routes submissions from email automatically. Parses attachments and
@@ -38,7 +38,7 @@ const DEMO_STEPS = [
   {
     id: "uw-copilot",
     label: "AI UW Co-Pilot",
-    image: "/images/product/demo3.svg",
+    image: "/images/product/submission3.png",
     headline: (
       <>
         Flags appetite gaps and missing data before bind. Gives underwriters{" "}
@@ -50,7 +50,7 @@ const DEMO_STEPS = [
   {
     id: "codematch",
     label: "AI CodeMatch",
-    image: "/images/product/demo4.svg",
+    image: "/images/product/submission4.png",
     headline: (
       <>
         Maps NAICS and class codes across carriers instantly. Matches risk to{" "}
@@ -62,7 +62,7 @@ const DEMO_STEPS = [
   {
     id: "smartform",
     label: "AI SmartForm",
-    image: "/images/product/demo5.svg",
+    image: "/images/product/submission5.png",
     headline: (
       <>
         Pre-fills carrier-specific questions from prior submissions. Cuts
@@ -74,7 +74,7 @@ const DEMO_STEPS = [
   {
     id: "coi-generator",
     label: "AI COI Generator",
-    image: "/images/product/demo6.svg",
+    image: "/images/product/submission6.png",
     headline: (
       <>
         Issues certificates of insurance on demand. Delivers compliant COIs with{" "}

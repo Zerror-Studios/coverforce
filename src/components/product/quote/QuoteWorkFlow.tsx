@@ -15,7 +15,7 @@ const WORKFLOW_STEPS = [
   {
     id: "multi-carrier",
     label: "Enterprise Multi-Carrier Submission",
-    image: "/images/product/quote1.svg",
+    image: "/images/product/quote1.png",
     headline: (
       <>
         One application reaches{" "}
@@ -27,7 +27,7 @@ const WORKFLOW_STEPS = [
   {
     id: "quote-comparison",
     label: "Bindable Quote Comparison",
-    image: "/images/product/quote2.svg",
+    image: "/images/product/quote2.png",
     headline: (
       <>
         Compare bindable quotes side by side with{" "}
@@ -39,7 +39,7 @@ const WORKFLOW_STEPS = [
   {
     id: "bind-payment",
     label: "One-Click Bind & Payment",
-    image: "/images/product/quote3.svg",
+    image: "/images/product/quote3.png",
     headline: (
       <>
         Bind policies and collect payment in{" "}
@@ -51,7 +51,7 @@ const WORKFLOW_STEPS = [
   {
     id: "compliance",
     label: "E&S Compliance Built In",
-    image: "/images/product/quote4.svg",
+    image: "/images/product/quote4.png",
     headline: (
       <>
         E&S compliance checks are built into every submission{" "}
@@ -62,7 +62,7 @@ const WORKFLOW_STEPS = [
   {
     id: "ams-sync",
     label: "AMS Sync & Renewals",
-    image: "/images/product/quote5.svg",
+    image: "/images/product/quote5.png",
     headline: (
       <>
         Sync policies to your AMS and automate renewals{" "}
