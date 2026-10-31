@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
+import dynamic from "next/dynamic";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -15,9 +16,12 @@ import {
   IntegrationAutomationBg,
   IntegrationCodeTypingBg,
 } from "@/components/integration/IntegrationStatCardBackgrounds";
-import RequestGlobe2 from "../home/Globe/RequestGlobe2";
-
 gsap.registerPlugin(ScrollTrigger);
+
+const RequestGlobe2 = dynamic(() => import("../home/Globe/RequestGlobe2"), {
+  ssr: false,
+  loading: () => <div className="h-[25rem] w-full sm:h-[30rem] lg:h-[40rem]" aria-hidden />,
+});
 
 /** Stronger blue wash for integration stat cards - less pale/white at the end. */
 const INTEGRATION_STAT_CARD_BG =
