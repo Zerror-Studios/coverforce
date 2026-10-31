@@ -36,10 +36,10 @@ const STARTUP_MARQUEE_LOGOS = [
 
 const StartupHeroCard = () => (
   <Image
-    src="/images/startups/startup.svg"
+    src="/images/startups/startup-hero.png"
     alt="Startup program dashboard preview"
-    width={543}
-    height={569}
+    width={1184}
+    height={787}
     className="relative z-10 mx-auto h-auto w-full max-w-[550px] lg:max-w-[420px] xl:max-w-[550px]"
     priority
   />

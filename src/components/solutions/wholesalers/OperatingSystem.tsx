@@ -5,7 +5,7 @@ import { createSolutionStepMock } from "@/components/solutions/shared/SolutionSt
 import { PRIMARY_BUTTON_GRADIENT } from "@/data/wayCardStyles";
 
 export const wholesalersHeroCardMock = createSolutionStepMock(
-  "/images/solution/wholesaler1.svg",
+  "/images/wholesaler/wholesaler1.png",
   "AI Inbox and Document Reader",
 );
 
@@ -28,7 +28,7 @@ export const operatingRows = [
     stat: "40+",
     statLabelLines: ["Carriers In", "One Submission"] as [string, string],
     Mock: createSolutionStepMock(
-      "/images/solution/wholesaler2.svg",
+      "/images/wholesaler/wholesaler2.png",
       "AI Appetite Engine and Smart Routing",
     ),
   },
@@ -40,7 +40,7 @@ export const operatingRows = [
     stat: "200+",
     statLabelLines: ["Broker Codes", "Managed"] as [string, string],
     Mock: createSolutionStepMock(
-      "/images/solution/wholesaler3.svg",
+      "/images/wholesaler/wholesaler3.png",
       "Broker Code Delegation and Network Controls",
     ),
   },
@@ -53,7 +53,7 @@ export const operatingRows = [
     stat: "1",
     statLabelLines: ["Unified API", "For Programs"] as [string, string],
     Mock: createSolutionStepMock(
-      "/images/solution/wholesaler4.svg",
+      "/images/wholesaler/wholesaler4.png",
       "Product Digitization",
     ),
   },

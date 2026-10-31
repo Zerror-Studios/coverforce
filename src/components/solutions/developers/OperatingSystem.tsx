@@ -4,7 +4,7 @@ import OperatingSystemSection from "@/components/solutions/shared/OperatingSyste
 import { createSolutionStepMock } from "@/components/solutions/shared/SolutionStepIllustration";
 
 export const developersHeroCardMock = createSolutionStepMock(
-  "/images/developers/dev1.svg",
+  "/images/developers/dev1.png",
   "Developer-first infrastructure for quote-to-bind workflows",
 );
 
@@ -22,7 +22,7 @@ export const operatingRows = [
     description:
       "CoverForce built AI-native testing infrastructure that validates integrations on both the developer and carrier side - surfacing errors early so issues get resolved proactively and at scale across every partner.",
     Mock: createSolutionStepMock(
-      "/images/developers/dev2.svg",
+      "/images/developers/dev2.png",
       "AI-native insurance workflows",
     ),
   },
@@ -32,7 +32,7 @@ export const operatingRows = [
     description:
       "Access OpenAPI specs, endpoint references, code samples, and integration guides with sandbox access available on signup.",
     Mock: createSolutionStepMock(
-      "/images/developers/dev3.svg",
+      "/images/developers/dev3.png",
       "Docs your team can start with immediately",
     ),
   },
