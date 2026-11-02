@@ -8,7 +8,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/magnified-doc";
-import { toCanvas } from "html-to-image";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Phase = "idle" | "opening" | "open" | "closing";
@@ -377,36 +376,35 @@ function SnapshotStage({
 }: {
   onReady: (canvases: HTMLCanvasElement[]) => void;
 }) {
-  const refs = useRef<(HTMLDivElement | null)[]>([]);
-
   useEffect(() => {
     let cancelled = false;
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
 
-    // Capture work - runs after the page has painted.
+    // Each preview is a single SVG, so draw it straight onto a canvas at the
+    // same offset MacWindow uses. More reliable than DOM-to-image capture
+    // (which can return blank frames, notably in Safari) and much cheaper.
+    const snapshot = (app: App) =>
+      new Promise<HTMLCanvasElement>((resolve, reject) => {
+        const img = new window.Image();
+        img.decoding = "async";
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = WIN_W * ratio;
+          canvas.height = WIN_H * ratio;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return reject(new Error("2D context unavailable"));
+          ctx.scale(ratio, ratio);
+          ctx.drawImage(img, WIN_FRAME_X - app.previewFrameX, 0);
+          resolve(canvas);
+        };
+        img.onerror = () => reject(new Error(`Failed to load ${app.previewImage}`));
+        img.src = app.previewImage;
+      });
+
     const run = async () => {
       try {
-        // Wait one more frame so the offscreen MacWindows have laid out.
-        await new Promise((r) => requestAnimationFrame(() => r(null)));
-        if (cancelled) return;
-
-        // Parallel snapshots - html-to-image's bottleneck is the Image
-        // element rasterizing the SVG, which the browser does off the main
-        // thread, so capturing in parallel is faster than sequential without
-        // overwhelming anything.
-        const canvases = await Promise.all(
-          refs.current
-            .filter((n): n is HTMLDivElement => n !== null)
-            .map((node) =>
-              toCanvas(node, {
-                pixelRatio: 1,
-                width: WIN_W,
-                height: WIN_H,
-                cacheBust: false,
-              }),
-            ),
-        );
-        if (cancelled) return;
-        onReady(canvases);
+        const canvases = await Promise.all(APPS.map(snapshot));
+        if (!cancelled) onReady(canvases);
       } catch (err) {
         console.error("Genie snapshot failed:", err);
         if (!cancelled) onReady([]);
@@ -435,38 +433,7 @@ function SnapshotStage({
     };
   }, [onReady]);
 
-  return (
-    <div
-      aria-hidden
-      style={{
-        position: "fixed",
-        left: -10000,
-        top: 0,
-        pointerEvents: "none",
-      }}
-    >
-      {APPS.map((a, i) => (
-        <div
-          key={a.id}
-          style={{
-            position: "relative",
-            width: WIN_W,
-            height: WIN_H,
-            marginBottom: 20,
-          }}
-        >
-          <MacWindow
-            app={a}
-            winPos={{ x: 0, y: 0 }}
-            onClose={() => {}}
-            domRef={(el) => {
-              refs.current[i] = el;
-            }}
-          />
-        </div>
-      ))}
-    </div>
-  );
+  return null;
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
