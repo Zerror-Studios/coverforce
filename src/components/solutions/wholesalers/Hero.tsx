@@ -1,7 +1,7 @@
 "use client";
 
 import SolutionScrollHero from "@/components/solutions/shared/SolutionScrollHero";
-import SolutionHeroCards from "@/components/solutions/shared/SolutionHeroCards";
+import Image from "next/image";
 import { SOLUTION_GRAD_FLOW } from "@/data/wayCardStyles";
 
 const WHOLESALERS_HERO_LOGOS = [
@@ -28,23 +28,15 @@ const Hero = () => (
     secondaryButtonHref="#workflow"
     secondaryButtonLabel="How it works"
     rightCard={
-      <SolutionHeroCards
-        transferTargetId="wholesalers-step-1-card"
-        cardOne={{
-          src: "/images/wholesaler/wholesaler1.svg",
-          alt: "Wholesale distribution dashboard",
-          width: 444,
-          height: 269,
-        }}
-        cardTwo={{
-          src: "/images/wholesaler/wholesaler2.svg",
-          alt: "Wholesale program workflow",
-          width: 371,
-          height: 179,
-        }}
+      <Image
+        src="/images/wholesaler/wholesaler-hero.svg"
+        alt="Wholesale desk triaging and routing retail submissions"
+        width={588}
+        height={372}
+        className="relative z-10 mx-auto h-auto w-full max-w-[550px] lg:max-w-[420px] xl:max-w-[550px]"
+        priority
       />
     }
-    rightCardTransferTargetId="wholesalers-step-1-card"
     showMarquee
     marqueeVariant="pulsating"
     marqueeLogos={WHOLESALERS_HERO_LOGOS}

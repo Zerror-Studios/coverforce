@@ -18,7 +18,6 @@ export const operatingRows = [
     stat: "95%+",
     statLabelLines: ["Extraction", "Accuracy"] as [string, string],
     Mock: wholesalersHeroCardMock,
-    transferTargetId: "wholesalers-step-1-card",
   },
   {
     id: "appetite",

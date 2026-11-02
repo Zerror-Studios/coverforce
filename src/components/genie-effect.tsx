@@ -21,14 +21,20 @@ interface App {
   Icon: React.FC;
   label: string;
   accent: string;
-  tb: [string, string];
   previewImage: string;
+  /** x where the 717px-wide window frame starts inside the preview SVG. */
+  previewFrameX: number;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const WIN_W = 640;
-const WIN_H = 500;
-const WIN_TITLE_H = 42;
+// The preview SVGs differ in size, so each is shifted to put its window frame
+// at WIN_FRAME_X. The box fits the widest one (787×422).
+const WIN_W = 787;
+const WIN_H = 422;
+const WIN_FRAME_X = 68.8;
+// The frame spans x 68.8–785.8; the strip on its left only holds the floating
+// badge. Shift by half that strip so the frame looks centered.
+const WIN_VISUAL_OFFSET_X = 34;
 const DUR = 500;
 // DPR is read lazily inside setupCanvas - never at module scope, which would
 // run during SSR and either crash or hardcode a value.
@@ -71,28 +77,28 @@ function createDockIcon(src: string): React.FC {
 // ─── Apps ─────────────────────────────────────────────────────────────────────
 const APPS: App[] = [
   {
-    id: "loss-run",
-    Icon: createDockIcon("/images/app1.svg"),
-    label: "Loss Run",
-    accent: "#FF6B2A",
-    tb: ["#3a1810", "#280f08"],
-    previewImage: "/images/content2.svg",
-  },
-  {
     id: "acord-125",
     Icon: createDockIcon("/images/app2.svg"),
     label: "Acord 125",
     accent: "#FF536A",
-    tb: ["#3a1620", "#280f18"],
-    previewImage: "/images/content2.svg",
+    previewImage: "/images/product/submission-live1.svg",
+    previewFrameX: 68.8,
+  },
+  {
+    id: "loss-run",
+    Icon: createDockIcon("/images/app1.svg"),
+    label: "Loss Run",
+    accent: "#FF6B2A",
+    previewImage: "/images/product/submission-live2.svg",
+    previewFrameX: 19.5,
   },
   {
     id: "acord-126",
     Icon: createDockIcon("/images/app3.svg"),
     label: "Acord 126",
     accent: "#1F86F9",
-    tb: ["#0a1838", "#061026"],
-    previewImage: "/images/content2.svg",
+    previewImage: "/images/product/submission-live3.svg",
+    previewFrameX: 19.5,
   },
 ];
 
@@ -178,21 +184,9 @@ function renderGenie(
   }
 }
 
-function DocumentPreviewContent({ src }: { src: string }) {
-  return (
-    <div className="flex h-full w-full items-start justify-center overflow-hidden bg-[#F4F5F7]">
-      <img
-        src={src}
-        alt="document-preview"
-        draggable={false}
-        className="h-full w-full min-w-full object-cover object-top"
-      />
-    </div>
-  );
-}
-
-
-// ─── Mac window wrapper ───────────────────────────────────────────────────────
+// ─── Preview window ───────────────────────────────────────────────────────────
+// The preview SVG already draws its own window chrome, so this only places it
+// and overlays hit areas on the SVG's red/yellow traffic-light dots.
 const MacWindow = ({
   app,
   winPos,
@@ -210,58 +204,34 @@ const MacWindow = ({
   return (
     <div
       ref={domRef}
-      className="absolute flex flex-col overflow-hidden"
+      className="absolute"
       style={{
         width: WIN_W,
         height: WIN_H,
         left: winPos.x,
         top: winPos.y,
-        borderRadius: 13,
-        background: "#1e1e1e",
         zIndex: 40,
         transform: scale === 1 ? undefined : `scale(${scale})`,
         transformOrigin: "top left",
-        boxShadow:
-          "0 32px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.07)",
       }}
     >
-      <div
-        className="flex items-center px-4 shrink-0 relative"
-        style={{
-          height: WIN_TITLE_H,
-          background: `linear-gradient(180deg,${app.tb[0]},${app.tb[1]})`,
-          borderBottom: "1px solid rgba(0,0,0,.45)",
-        }}
-      >
-        <div className="flex items-center gap-2 z-10">
-          <button
-            onClick={onClose}
-            className="w-3.5 h-3.5 rounded-full border-none cursor-pointer hover:brightness-90 transition-all"
-            style={{ background: "#ff5f57", boxShadow: "0 0 0 0.5px #e0443e" }}
-          />
-          <button
-            onClick={onClose}
-            className="w-3.5 h-3.5 rounded-full border-none cursor-pointer hover:brightness-90 transition-all"
-            style={{ background: "#febc2e", boxShadow: "0 0 0 0.5px #d4a017" }}
-          />
-          <div
-            className="w-3.5 h-3.5 rounded-full"
-            style={{ background: "#28c840", boxShadow: "0 0 0 0.5px #1aab29" }}
-          />
-        </div>
-        <span
-          className="absolute inset-x-0 text-center text-xs font-medium pointer-events-none"
-          style={{ color: "rgba(255,255,255,.5)" }}
-        >
-          {app.label}
-        </span>
-      </div>
-      <div
-        className="flex-1 overflow-y-auto"
-        style={{ scrollbarWidth: "none" }}
-      >
-        <DocumentPreviewContent src={app.previewImage} />
-      </div>
+      <img
+        src={app.previewImage}
+        alt={app.label}
+        draggable={false}
+        className="absolute top-0 block max-w-none"
+        style={{ left: WIN_FRAME_X - app.previewFrameX }}
+      />
+      {[91.3, 102.3].map((cx) => (
+        <button
+          key={cx}
+          type="button"
+          aria-label="Close"
+          onClick={onClose}
+          className="absolute size-3 cursor-pointer rounded-full border-none bg-transparent"
+          style={{ left: cx - 6, top: 21.2 - 6 }}
+        />
+      ))}
     </div>
   );
 };
@@ -563,36 +533,37 @@ export default function GenieEffect() {
       // Fit with extra side padding so the display reads a bit smaller.
       const padX = 28;
       const fit = Math.min(1, (w - padX * 2) / WIN_W);
-      const scale = fit * 0.92;
+      const scale = fit * 0.9;
       const scaledW = WIN_W * scale;
       const scaledH = WIN_H * scale;
       const dockReserve = 68;
       return {
         scale,
         pos: {
-          x: (w - scaledW) / 2,
+          x: (w - scaledW) / 2 - WIN_VISUAL_OFFSET_X * scale,
           y: Math.max(24, (h - scaledH - dockReserve) / 2 - 8),
         },
       };
     }
     if (isLgOnly) {
-      const scale = 0.78;
+      const scale = 0.82;
       const scaledW = WIN_W * scale;
       const scaledH = WIN_H * scale;
       const dockReserve = 96;
       return {
         scale,
         pos: {
-          x: (w - scaledW) / 2,
+          x: (w - scaledW) / 2 - WIN_VISUAL_OFFSET_X * scale,
           y: Math.max(36, (h - scaledH - dockReserve) / 2 - 12),
         },
       };
     }
+    const scale = 1.05;
     return {
-      scale: 1,
+      scale,
       pos: {
-        x: (w - WIN_W) / 2,
-        y: (h - WIN_H) / 2 - 20,
+        x: (w - WIN_W * scale) / 2 - WIN_VISUAL_OFFSET_X * scale,
+        y: (h - WIN_H * scale) / 2 - 20,
       },
     };
   }, [getContainerSize, isMobile, isLgOnly]);
@@ -817,67 +788,13 @@ export default function GenieEffect() {
         }
       `}</style>
       <div className="absolute inset-0 overflow-hidden">
+      {/* Desktop image includes its own menubar */}
       <img
-        src="/macos.png"
+        src="/images/product/submission-mac-display.png"
         alt="macos-background"
         aria-hidden="true"
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover object-top"
       />
-
-      {/* Aurora blobs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div
-          className="absolute rounded-full blur-3xl opacity-25"
-          style={{
-            width: 440,
-            height: 440,
-            left: "8%",
-            top: "20%",
-            background: "radial-gradient(circle,#2670d2,transparent)",
-          }}
-        />
-        <div
-          className="absolute rounded-full blur-3xl opacity-20"
-          style={{
-            width: 360,
-            height: 360,
-            right: "10%",
-            top: "40%",
-            background: "radial-gradient(circle,#5a32c8,transparent)",
-          }}
-        />
-        <div
-          className="absolute rounded-full blur-3xl opacity-15"
-          style={{
-            width: 400,
-            height: 400,
-            left: "38%",
-            top: "3%",
-            background: "radial-gradient(circle,#14a0bd,transparent)",
-          }}
-        />
-      </div>
-
-      {/* Menubar - safe to SSR (no motion values, no client-only state) */}
-      <div
-        className="absolute top-0 left-0 right-0 flex items-center justify-between px-2 md:px-3"
-        style={{
-          height: 27,
-          zIndex: 50,
-          background: "rgba(0,0,0,.3)",
-          backdropFilter: "blur(16px)",
-          borderBottom: "1px solid rgba(255,255,255,.06)",
-        }}
-      >
-        <span className="text-white/70 flex max-w-[70%] items-center gap-1 truncate text-[10px] font-semibold tracking-tight md:max-w-none md:text-[11px]">
-         <img src="/macicon.png" alt="mac-icon" aria-hidden="true" className="w-4 h-4 shrink-0" />
-          <span className="truncate">{app?.label ?? "CoverForce"}</span>
-          <span className="hidden md:inline">&nbsp; File &nbsp; Edit &nbsp; View
-          &nbsp; Window &nbsp; Help</span>
-        </span>
-        <span className="text-white/60 text-[10px] font-medium md:text-[11px]">9:41 AM</span>
-      </div>
-
       </div>
 
       {/* Genie canvas - outside clipped scene so the warp isn't cut off */}

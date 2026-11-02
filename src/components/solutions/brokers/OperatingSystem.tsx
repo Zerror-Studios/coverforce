@@ -17,7 +17,6 @@ export const operatingRows = [
     stat: "60+",
     statLabelLines: ["Carrier", "Products"] as [string, string],
     Mock: brokersHeroCardMock,
-    transferTargetId: "brokers-step-1-card",
   },
   {
     id: "ai",

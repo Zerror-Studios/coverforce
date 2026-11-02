@@ -18,19 +18,6 @@ import { WayCardHoverProvider } from "./WayCardHoverContext";
 import { WAY_CARD_MODALS } from "@/data/wayCardModals";
 import { CARD_BACKGROUND_STYLES, type CardBackground } from "@/data/wayCardStyles";
 
-const WholesalerMock = dynamic(() => import("./WholesalerMock"), {
-  loading: () => <MockPlaceholder />,
-});
-const BrokerMockWithCardHover = dynamic(
-  () => import("./BrokerMock").then((m) => ({ default: m.BrokerMockWithCardHover })),
-  { loading: () => <MockPlaceholder /> },
-);
-const BrokerMock = dynamic(() => import("./BrokerMock"), {
-  loading: () => <MockPlaceholder />,
-});
-const DeveloperMock = dynamic(() => import("./DeveloperMock"), {
-  loading: () => <MockPlaceholder className="max-w-[min(100%,340px)] sm:max-w-[min(100%,360px)] lg:max-w-[420px]" />,
-});
 const DeveloperTerminalBg = dynamic(() => import("./DeveloperTerminalBg"), {
   ssr: false,
   loading: () => null,
@@ -47,14 +34,21 @@ const GlobeScene = dynamic(() => import("@/components/home/GlobeScene"), {
   ssr: false,
   loading: () => null,
 });
-const AiAppetiteEngineMock = dynamic(
-  () => import("@/components/solutions/wholesalers/AiAppetiteEngineMock"),
-  { loading: () => <MockPlaceholder className="max-w-[min(100%,320px)]" /> },
-);
-const StartupRecentActivityCard = dynamic(
-  () => import("@/components/solutions/startups/StartupRecentActivityCard"),
-  { loading: () => <MockPlaceholder className="max-w-[min(100%,320px)]" /> },
-);
+/** Card artwork exported as a full SVG, shown at its native size (shrinks to fit). */
+function WayCardSvg({ src, align = "center" }: { src: string; align?: "center" | "right" }) {
+  return (
+    <div
+      className={`flex size-full items-center ${align === "right" ? "justify-end" : "justify-center"}`}
+    >
+      <img
+        src={src}
+        alt=""
+        draggable={false}
+        className="block h-auto max-h-full w-auto max-w-full"
+      />
+    </div>
+  );
+}
 
 function MockPlaceholder({ className = "max-w-[250px] sm:max-w-[220px] lg:max-w-[290px]" }: { className?: string }) {
   return (
@@ -122,11 +116,9 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "wholesaler",
     dotGrid: true,
     mockShiftDown: true,
-    mobileMockScale: 0.6,
-    previewImage: "/images/home/wholesalers.png",
-    mockLgMaxW: "lg:max-w-[240px]",
-    mock: <WholesalerMock />,
-    modalPreview: <WholesalerMock />,
+    previewImage: "/images/home/way-wholesaler.svg",
+    mock: <WayCardSvg src="/images/home/way-wholesaler.svg" />,
+    modalPreview: <WayCardSvg src="/images/home/way-wholesaler.svg" />,
   },
   {
     label: "Brokers",
@@ -136,11 +128,9 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "broker",
     backgroundScene: <BrokersCardEarth />,
     backgroundSceneBlendScreen: true,
-    mobileMockScale: 0.64,
-    previewImage: "/images/home/brokers.png",
-    mockLgMaxW: "lg:max-w-[220px]",
-    mock: <BrokerMockWithCardHover />,
-    modalPreview: <BrokerMock />,
+    previewImage: "/images/home/way-broker.svg",
+    mock: <WayCardSvg src="/images/home/way-broker.svg" />,
+    modalPreview: <WayCardSvg src="/images/home/way-broker.svg" />,
   },
   {
     label: "Developers",
@@ -157,13 +147,10 @@ const WAY_CARDS: WayCardConfig[] = [
     wide: true,
     background: "developer",
     className: "lg:col-span-2",
-    mockAlign: "bottom",
-    mobileMockScale: 0.7,
-    previewImage: "/images/home/developers.png",
+    previewImage: "/images/home/way-developer.svg",
     backgroundScene: <DeveloperTerminalBg />,
-    mock: <DeveloperMock lgCompact />,
-    modalPreview: <DeveloperMock align="modal" />,
-    modalPreviewAlign: "right",
+    mock: <WayCardSvg src="/images/home/way-developer.svg" align="right" />,
+    modalPreview: <WayCardSvg src="/images/home/way-developer.svg" />,
   },
   {
     label: "Startups",
@@ -173,15 +160,9 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "startup",
     backgroundInteractive: true,
     mockShiftDown: true,
-    mobileMockScale: 0.88,
-    previewImage: "/images/home/startup.png",
-    mockLgMaxW: "lg:max-w-[320px]",
-    mock: (
-      <div className="w-full max-w-full max-sm:mt-6">
-        <AiAppetiteEngineMock />
-      </div>
-    ),
-    modalPreview: <AiAppetiteEngineMock />,
+    previewImage: "/images/home/way-startup.svg",
+    mock: <WayCardSvg src="/images/home/way-startup.svg" />,
+    modalPreview: <WayCardSvg src="/images/home/way-startup.svg" />,
     backgroundScene: <GlobeScene interactive transparent tone="white" />,
   },
   {
@@ -192,15 +173,9 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "carrier",
     dotGrid: true,
     mockShiftDown: true,
-    mobileMockScale: 0.88,
-    previewImage: "/images/home/carriers.png",
-    mockLgMaxW: "lg:max-w-[320px]",
-    mock: (
-      <div className="w-full max-w-full max-sm:mt-6">
-        <StartupRecentActivityCard />
-      </div>
-    ),
-    modalPreview: <StartupRecentActivityCard />,
+    previewImage: "/images/home/way-carrier.svg",
+    mock: <WayCardSvg src="/images/home/way-carrier.svg" />,
+    modalPreview: <WayCardSvg src="/images/home/way-carrier.svg" />,
   },
 ];
 

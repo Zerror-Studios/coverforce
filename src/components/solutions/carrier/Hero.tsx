@@ -1,7 +1,7 @@
 "use client";
 
 import SolutionScrollHero from "@/components/solutions/shared/SolutionScrollHero";
-import SolutionHeroCards from "@/components/solutions/shared/SolutionHeroCards";
+import Image from "next/image";
 import { SOLUTION_GRAD_FLOW } from "@/data/wayCardStyles";
 
 const Hero = () => (
@@ -12,23 +12,15 @@ const Hero = () => (
     secondaryButtonHref="#workflow"
     secondaryButtonLabel="How it works"
     rightCard={
-      <SolutionHeroCards
-        transferTargetId="carrier-step-1-card"
-        cardOne={{
-          src: "/images/solution/carriers12.svg",
-          alt: "Carrier integration dashboard",
-          width: 389,
-          height: 238,
-        }}
-        cardTwo={{
-          src: "/images/solution/carriers11.svg",
-          alt: "Carrier quote workflow",
-          width: 371,
-          height: 179,
-        }}
+      <Image
+        src="/images/carrier/carrier-hero.svg"
+        alt="Carrier quote requests and bindable quotes from agencies"
+        width={648}
+        height={544}
+        className="relative z-10 mx-auto h-auto w-full max-w-[550px] lg:max-w-[420px] xl:max-w-[550px]"
+        priority
       />
     }
-    rightCardTransferTargetId="carrier-step-1-card"
     showSecondSection={false}
     gradFlow={SOLUTION_GRAD_FLOW.carrier}
   />

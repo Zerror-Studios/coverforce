@@ -6,8 +6,8 @@ import Container from "@/components/common/Container";
 import Button from "@/components/common/Button";
 import RequestDemoButton from "@/components/request-demo/RequestDemoButton";
 import HeroReveal from "@/components/common/HeroReveal";
-import ApiCodeReveal from "@/components/developers/ApiCodeReveal";
 import EyebrowPill from "@/components/common/EyebrowPill";
+import HeroQuoteCode from "@/components/developers/HeroQuoteCode";
 import { HERO_COPY_STACK } from "@/components/common/heroSectionSpacing";
 
 // Lazy-load – R3F must never run on the server
@@ -76,35 +76,29 @@ const Hero = () => {
           >
             <div className="relative mx-auto h-[24rem] w-full sm:h-[30rem] md:h-[32rem] lg:h-[38rem]">
               <Image
-                src="/images/developers/display.svg"
-                alt="CoverForce API request example showing POST /v1/quote"
-                width={1200}
-                height={720}
+                src="/images/developers/hero-display.png"
+                alt=""
+                width={2156}
+                height={1280}
                 className="h-full w-full object-fill md:object-contain"
+                sizes="(min-width: 1280px) 1080px, 100vw"
                 priority
               />
 
-              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2.5 px-[6%] pt-[2%] translate-y-4 sm:translate-y-5 sm:gap-3.5 sm:px-[8%] md:translate-y-3 md:justify-end md:gap-4 md:px-[10%] md:pt-0">
-                <div className="hidden w-14 md:block md:w-16 lg:w-20">
+              {/* Display image carries the menubar; nudge content below it */}
+              {/* Box keeps the SVG's 953:501 ratio (≤88% wide, ≤72% tall) so the
+                  typed code overlay lines up with the quote.ts card. */}
+              <div className="absolute inset-0 z-10 flex items-center justify-center translate-y-[3%] [container-type:size]">
+                <div className="relative aspect-[953/501] w-[min(88cqw,137cqh)]">
                   <Image
-                    src="/images/developers/display-logo.svg"
-                    alt="CoverForce logo"
-                    width={1200}
-                    height={720}
-                    className="h-auto w-full object-contain"
+                    src="/images/developers/hero-content.svg"
+                    alt="CoverForce API returning bindable quotes to a web app, mobile app and AI assistant"
+                    width={953}
+                    height={501}
+                    className="absolute inset-0 size-full"
                     priority
                   />
-                </div>
-                <div className="relative w-full max-w-2xl sm:max-w-3xl md:max-w-xl lg:max-w-3xl">
-                  <Image
-                    src="/images/developers/display-editor.svg"
-                    alt="CoverForce API request editor"
-                    width={1200}
-                    height={720}
-                    className="h-auto w-full object-contain"
-                    priority
-                  />
-                  <ApiCodeReveal className="pointer-events-none absolute inset-0 flex flex-col justify-center pl-[9%] pr-[3%] pb-[8%] pt-[2%] sm:pl-[11%] sm:pb-[10%] md:pl-[11%] md:pb-[10%]" />
+                  <HeroQuoteCode className="pointer-events-none absolute inset-0 size-full" />
                 </div>
               </div>
             </div>
