@@ -36,17 +36,14 @@ const Hero = () => (
     secondaryButtonLabel="How it works"
     rightCard={
       <Image
-        src="/images/broker/broker-hero-main.png"
+        src="/images/broker/broker-hero.svg"
         alt="Broker quoting dashboard"
-        width={2300}
-        height={1767}
-        sizes="(min-width: 1024px) 1040px, 100vw"
-        quality={90}
+        width={531}
+        height={427}
         className="relative z-10 mx-auto h-auto w-full max-w-[550px] lg:max-w-[420px] xl:max-w-[550px]"
         priority
       />
     }
-    rightCardTransferTargetId="brokers-step-1-card"
     showMarquee
     marqueeLogos={BROKERS_HERO_LOGOS}
     marqueeSize="large"

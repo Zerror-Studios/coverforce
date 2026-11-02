@@ -15,7 +15,6 @@ export const operatingRows = [
     description:
       "One API connects your products to wholesalers, brokers, and high-growth startups nationwide - no separate partnerships required.",
     Mock: carrierHeroCardMock,
-    transferTargetId: "carrier-step-1-card",
   },
   {
     id: "ai-validated",
