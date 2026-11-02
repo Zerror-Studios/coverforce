@@ -139,6 +139,12 @@ type WayCardProps = {
   mobileMockScale?: number;
   /** Static inner mock for sm/md; live mock stays on lg+. */
   previewImage?: string;
+  /** Width class for previewImage (default w-[92%]) - evens out visual size across cards. */
+  previewWidthClass?: string;
+  /** Horizontal shift (% of image width) so previewImage centres on its visible content. */
+  previewShiftX?: number;
+  /** Real SVG size; with it the image box hugs the artwork so previewShiftX is exact. */
+  previewSize?: [number, number];
   /** Max width cap for the live mock at lg only (xl uses mock defaults). */
   mockLgMaxW?: string;
   backgroundScene?: ReactNode;
@@ -218,6 +224,8 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "developer",
     className: "lg:col-span-2",
     previewImage: "/images/home/way-developer.svg",
+    // No transparent margin in this export, so a smaller width matches the others visually.
+    previewWidthClass: "w-[72%]",
     backgroundScene: <DeveloperTerminalBg />,
     mock: (
       <WayCardSvg
@@ -242,6 +250,10 @@ const WAY_CARDS: WayCardConfig[] = [
     backgroundInteractive: true,
     mockShiftDown: true,
     previewImage: "/images/home/way-startup.svg",
+    // Centre the phone (left 150 of 229 units), not the whole export.
+    previewShiftX: 17.2,
+    previewSize: [229, 309],
+    previewWidthClass: "w-auto max-w-[92%]",
     // Focus is the phone (left 150px); the checklist card overhangs to its right.
     mock: (
       <WayCardSvg
@@ -263,6 +275,10 @@ const WAY_CARDS: WayCardConfig[] = [
     dotGrid: true,
     mockShiftDown: true,
     previewImage: "/images/home/way-carrier.svg",
+    // Visible content sits 30 units right of the export's centre.
+    previewShiftX: -6.6,
+    previewSize: [453, 346],
+    previewWidthClass: "w-auto max-w-[92%]",
     mock: (
       <WayCardSvg
         src="/images/home/way-carrier.svg"
@@ -328,6 +344,9 @@ const WayCard = memo(function WayCard({
   hideMock = false,
   mobileMockScale,
   previewImage,
+  previewWidthClass = "w-[92%]",
+  previewShiftX,
+  previewSize,
   mockLgMaxW,
   backgroundScene,
   backgroundInteractive = false,
@@ -421,9 +440,10 @@ const WayCard = memo(function WayCard({
                 <Image
                   src={previewImage}
                   alt=""
-                  width={800}
-                  height={800}
-                  className="h-auto w-[92%] max-h-[84%] object-contain object-center"
+                  width={previewSize?.[0] ?? 800}
+                  height={previewSize?.[1] ?? 800}
+                  className={`h-auto ${previewWidthClass} max-h-[84%] object-contain object-center`}
+                  style={previewShiftX ? { transform: `translateX(${previewShiftX}%)` } : undefined}
                   sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 0px"
                 />
               ) : (
