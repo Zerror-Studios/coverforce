@@ -6,8 +6,12 @@ import {
   scrollToTop,
 } from "@/lib/scrollToTop";
 import { getPageTransitionMs } from "@/lib/pageTransition";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import { usePathname } from "next/navigation";
+
+gsap.registerPlugin(ScrollTrigger);
 import { useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
 
 type LenisScrollProps = {
@@ -66,6 +70,10 @@ export default function LenisScroll({ children }: LenisScrollProps) {
 
     lenis.current = instance;
     window.lenis = instance;
+
+    // Single Lenis → ScrollTrigger sync for the whole site. Components must not
+    // add their own listeners; each extra one re-runs every trigger per frame.
+    instance.on("scroll", ScrollTrigger.update);
 
     if (!window.location.hash) {
       scrollToTop();

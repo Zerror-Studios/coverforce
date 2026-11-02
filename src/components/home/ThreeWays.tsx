@@ -454,20 +454,8 @@ export default function ThreeWays() {
 
           fadeTl.to(desc, { opacity: 1, duration: 0.8, ease: "power2.out" });
 
-          const lenis = window.lenis;
-          let scrollPending = false;
-          const onLenisScroll = () => {
-            if (scrollPending) return;
-            scrollPending = true;
-            requestAnimationFrame(() => {
-              ScrollTrigger.update();
-              scrollPending = false;
-            });
-          };
-          lenis?.on("scroll", onLenisScroll);
 
           cleanups.push(() => {
-            lenis?.off("scroll", onLenisScroll);
             fadeTl.scrollTrigger?.kill();
             fadeTl.kill();
           });

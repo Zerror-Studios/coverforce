@@ -6,6 +6,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Container from "@/components/common/Container";
+import LazyVideo from "@/components/common/LazyVideo";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -32,7 +33,7 @@ const CARDS: PricingWorkCard[] = [
     label: "Unlimited users",
     variant: "split-dark",
     headline: "Add your whole team without per-seat fees.",
-    bottomSrc: "/images/pricing/pricing2.gif",
+    bottomSrc: "/images/pricing/pricing2.mp4",
   },
   {
     id: "aligned-incentives",
@@ -109,7 +110,13 @@ function SplitDarkCard({ card }: { card: PricingWorkCard }) {
       </div>
 
       <div className={`relative ${CARD_BOTTOM_HEIGHT} bg-[linear-gradient(180deg,#1A1F5C_0%,#121C49_42%,#050816_100%)]`}>
-        {card.bottomSrc ? (
+        {card.bottomSrc?.endsWith(".mp4") ? (
+          <LazyVideo
+            src={card.bottomSrc}
+            className="absolute inset-0 h-full w-full object-cover object-center"
+            aria-hidden
+          />
+        ) : card.bottomSrc ? (
           <Image
             src={card.bottomSrc}
             alt="split-dark-card"
@@ -216,22 +223,10 @@ const HowPricingWorks = () => {
         clearProps: "transform",
       });
 
-      const lenis = window.lenis;
-      let scrollPending = false;
-      const onLenisScroll = () => {
-        if (scrollPending) return;
-        scrollPending = true;
-        requestAnimationFrame(() => {
-          ScrollTrigger.update();
-          scrollPending = false;
-        });
-      };
-      lenis?.on("scroll", onLenisScroll);
 
       ScrollTrigger.refresh();
 
       return () => {
-        lenis?.off("scroll", onLenisScroll);
         revealTl.scrollTrigger?.kill();
         revealTl.kill();
       };

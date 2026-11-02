@@ -1,17 +1,14 @@
 "use client";
 
+import LazyVideo from "@/components/common/LazyVideo";
+
 export default function BrokersCardEarth() {
   return (
     <div className="relative h-full w-full"
     >
-      <video
+      <LazyVideo
         className="h-full w-full object-cover"
         src="/videos/globee.mp4"
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
         aria-hidden
       />
     </div>
