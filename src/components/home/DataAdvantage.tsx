@@ -4,6 +4,7 @@ import { useRef } from "react";
 import AnimatedCarrierBars from "@/components/common/AnimatedCarrierBar";
 import { AnimatedEightyFivePercent } from "@/components/common/AnimatedPercent";
 import Button from "@/components/common/Button";
+import LazyVideo from "@/components/common/LazyVideo";
 import Container from "../common/Container";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import { CARD_BACKGROUND_STYLES } from "@/data/wayCardStyles";
@@ -80,12 +81,8 @@ const DataAdvantage = () => {
 
             {/* Placement / decline intelligence - keep RHS video */}
             <article className="relative flex min-h-[24rem] w-full flex-col justify-between overflow-hidden rounded-sm p-6 md:min-h-[30rem] md:p-8 lg:min-h-[32rem] lg:p-10">
-              <video
+              <LazyVideo
                 src="/carrier.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
                 className="absolute inset-0 h-full w-full object-cover object-center"
                 aria-hidden
               />

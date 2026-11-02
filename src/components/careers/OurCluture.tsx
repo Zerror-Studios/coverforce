@@ -231,13 +231,9 @@ const OurCluture = () => {
         });
       });
 
-      const lenis = window.lenis;
-      const onLenisScroll = () => ScrollTrigger.update();
-      lenis?.on("scroll", onLenisScroll);
       ScrollTrigger.refresh();
 
       return () => {
-        lenis?.off("scroll", onLenisScroll);
         cleanups.forEach((cleanup) => cleanup());
       };
     },

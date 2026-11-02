@@ -97,13 +97,6 @@ const Hero = () => {
         0,
       );
 
-      const lenis = window.lenis;
-      const onLenisScroll = () => ScrollTrigger.update();
-      lenis?.on("scroll", onLenisScroll);
-
-      return () => {
-        lenis?.off("scroll", onLenisScroll);
-      };
     },
     { dependencies: [isDesktop] },
   );

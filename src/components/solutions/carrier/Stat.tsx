@@ -118,12 +118,8 @@ const Stat = () => {
         onEnter: reveal,
       });
 
-      const lenis = window.lenis;
-      const onLenisScroll = () => ScrollTrigger.update();
-      lenis?.on("scroll", onLenisScroll);
 
       return () => {
-        lenis?.off("scroll", onLenisScroll);
         st.kill();
         splitsRef.current.forEach((split) => split.revert());
         splitsRef.current = [];
@@ -190,22 +186,10 @@ const Stat = () => {
         ease: "none",
       });
 
-      const lenis = window.lenis;
-      let scrollPending = false;
-      const onLenisScroll = () => {
-        if (scrollPending) return;
-        scrollPending = true;
-        requestAnimationFrame(() => {
-          ScrollTrigger.update();
-          scrollPending = false;
-        });
-      };
-      lenis?.on("scroll", onLenisScroll);
 
       ScrollTrigger.refresh();
 
       return () => {
-        lenis?.off("scroll", onLenisScroll);
         parallaxTl.scrollTrigger?.kill();
         parallaxTl.kill();
         overlayTl.scrollTrigger?.kill();

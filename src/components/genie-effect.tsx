@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useEffect, useCallback, useState, type MutableRefObject } from "react";
 import { flushSync } from "react-dom";
+import Image from "next/image";
 import {
   Tooltip,
   TooltipContent,
@@ -789,11 +790,14 @@ export default function GenieEffect() {
       `}</style>
       <div className="absolute inset-0 overflow-hidden">
       {/* Desktop image includes its own menubar */}
-      <img
+      <Image
         src="/images/product/submission-mac-display.png"
         alt="macos-background"
         aria-hidden="true"
-        className="absolute inset-0 w-full h-full object-cover object-top"
+        fill
+        sizes="(min-width: 1280px) 1216px, 100vw"
+        quality={90}
+        className="object-cover object-top"
       />
       </div>
 

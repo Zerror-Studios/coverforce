@@ -164,23 +164,8 @@ const Endpoints = () => {
                 },
             });
 
-            const lenis = window.lenis;
-            let scrollPending = false;
-            const onLenisScroll = () => {
-                if (scrollPending) return;
-                scrollPending = true;
-                requestAnimationFrame(() => {
-                    ScrollTrigger.update();
-                    scrollPending = false;
-                });
-            };
-            lenis?.on("scroll", onLenisScroll);
 
             ScrollTrigger.refresh();
-
-            return () => {
-                lenis?.off("scroll", onLenisScroll);
-            };
         },
         { scope: sectionRef },
     );
