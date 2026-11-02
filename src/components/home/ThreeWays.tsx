@@ -34,17 +34,66 @@ const GlobeScene = dynamic(() => import("@/components/home/GlobeScene"), {
   ssr: false,
   loading: () => null,
 });
-/** Card artwork exported as a full SVG, shown at its native size (shrinks to fit). */
-function WayCardSvg({ src, align = "center" }: { src: string; align?: "center" | "right" }) {
+/** Visible area of an SVG export, in its own units (exports carry transparent shadow margins). */
+type SvgFocus = { x: number; y: number; w: number; h: number };
+
+/**
+ * Card artwork exported as a full SVG, shown at its native size (shrinks to fit).
+ * Alignment uses `focus` - the visible content - rather than the file's edges,
+ * shifted by a percentage of the image so it holds at every card size.
+ */
+function WayCardSvg({
+  src,
+  width,
+  height,
+  focus = { x: 0, y: 0, w: width, h: height },
+  align = "center",
+  valign = "center",
+  scale = 1,
+  maxWidth,
+  maxHeight,
+  lift = 0,
+}: {
+  src: string;
+  width: number;
+  height: number;
+  focus?: SvgFocus;
+  align?: "center" | "right";
+  valign?: "center" | "bottom";
+  scale?: number;
+  /** CSS caps that override the default max-w/h-full, e.g. to clear card chrome. */
+  maxWidth?: string;
+  maxHeight?: string;
+  /** Extra upward shift in px (moves without shrinking, unlike padding). */
+  lift?: number;
+}) {
+  const dx =
+    align === "right"
+      ? ((width - (focus.x + focus.w)) / width) * 100
+      : ((width / 2 - (focus.x + focus.w / 2)) / width) * 100;
+  const dy =
+    valign === "bottom"
+      ? ((height - (focus.y + focus.h)) / height) * 100
+      : ((height / 2 - (focus.y + focus.h / 2)) / height) * 100;
+
   return (
     <div
-      className={`flex size-full items-center ${align === "right" ? "justify-end" : "justify-center"}`}
+      className={`flex size-full ${valign === "bottom" ? "items-end lg:pb-2" : "items-center"} ${align === "right" ? "justify-end" : "justify-center"}`}
     >
       <img
         src={src}
         alt=""
+        width={width}
+        height={height}
         draggable={false}
-        className="block h-auto max-h-full w-auto max-w-full"
+        className="block h-auto max-h-full w-auto max-w-full object-contain"
+        style={{
+          width: scale !== 1 ? width * scale : undefined,
+          maxWidth,
+          maxHeight,
+          objectPosition: align === "right" ? "right center" : undefined,
+          transform: dx || dy || lift ? `translate(${dx}%, calc(${dy}% - ${lift}px))` : undefined,
+        }}
       />
     </div>
   );
@@ -117,8 +166,18 @@ const WAY_CARDS: WayCardConfig[] = [
     dotGrid: true,
     mockShiftDown: true,
     previewImage: "/images/home/way-wholesaler.svg",
-    mock: <WayCardSvg src="/images/home/way-wholesaler.svg" />,
-    modalPreview: <WayCardSvg src="/images/home/way-wholesaler.svg" />,
+    mock: (
+      <WayCardSvg
+        src="/images/home/way-wholesaler.svg"
+        width={472}
+        height={352}
+        // Aligned on the main card; the floating card overhangs.
+        focus={{ x: 54.4, y: 54.4, w: 361, h: 243 }}
+        valign="bottom"
+        lift={72}
+      />
+    ),
+    modalPreview: <WayCardSvg src="/images/home/way-wholesaler.svg" width={472} height={352} />,
   },
   {
     label: "Brokers",
@@ -129,8 +188,19 @@ const WAY_CARDS: WayCardConfig[] = [
     backgroundScene: <BrokersCardEarth />,
     backgroundSceneBlendScreen: true,
     previewImage: "/images/home/way-broker.svg",
-    mock: <WayCardSvg src="/images/home/way-broker.svg" />,
-    modalPreview: <WayCardSvg src="/images/home/way-broker.svg" />,
+    mock: (
+      <WayCardSvg
+        src="/images/home/way-broker.svg"
+        width={498}
+        height={325}
+        // Aligned on the main card; the floating card overhangs.
+        focus={{ x: 54.4, y: 54.4, w: 389, h: 216 }}
+        valign="bottom"
+        // +24 vs wholesaler: its main card is shorter, so this lines up their tops.
+        lift={96}
+      />
+    ),
+    modalPreview: <WayCardSvg src="/images/home/way-broker.svg" width={498} height={325} />,
   },
   {
     label: "Developers",
@@ -149,8 +219,19 @@ const WAY_CARDS: WayCardConfig[] = [
     className: "lg:col-span-2",
     previewImage: "/images/home/way-developer.svg",
     backgroundScene: <DeveloperTerminalBg />,
-    mock: <WayCardSvg src="/images/home/way-developer.svg" align="right" />,
-    modalPreview: <WayCardSvg src="/images/home/way-developer.svg" />,
+    mock: (
+      <WayCardSvg
+        src="/images/home/way-developer.svg"
+        width={412}
+        height={272}
+        align="right"
+        scale={1.2}
+        // Keeps clear of the terminal text and the expand button on narrower laptops.
+        maxWidth="56%"
+        maxHeight="calc(100% - 88px)"
+      />
+    ),
+    modalPreview: <WayCardSvg src="/images/home/way-developer.svg" width={412} height={272} />,
   },
   {
     label: "Startups",
@@ -161,8 +242,16 @@ const WAY_CARDS: WayCardConfig[] = [
     backgroundInteractive: true,
     mockShiftDown: true,
     previewImage: "/images/home/way-startup.svg",
-    mock: <WayCardSvg src="/images/home/way-startup.svg" />,
-    modalPreview: <WayCardSvg src="/images/home/way-startup.svg" />,
+    // Focus is the phone (left 150px); the checklist card overhangs to its right.
+    mock: (
+      <WayCardSvg
+        src="/images/home/way-startup.svg"
+        width={229}
+        height={309}
+        focus={{ x: 0, y: 0, w: 150, h: 309 }}
+      />
+    ),
+    modalPreview: <WayCardSvg src="/images/home/way-startup.svg" width={229} height={309} />,
     backgroundScene: <GlobeScene interactive transparent tone="white" />,
   },
   {
@@ -174,8 +263,15 @@ const WAY_CARDS: WayCardConfig[] = [
     dotGrid: true,
     mockShiftDown: true,
     previewImage: "/images/home/way-carrier.svg",
-    mock: <WayCardSvg src="/images/home/way-carrier.svg" />,
-    modalPreview: <WayCardSvg src="/images/home/way-carrier.svg" />,
+    mock: (
+      <WayCardSvg
+        src="/images/home/way-carrier.svg"
+        width={453}
+        height={346}
+        focus={{ x: 60, y: 60, w: 393, h: 254 }}
+      />
+    ),
+    modalPreview: <WayCardSvg src="/images/home/way-carrier.svg" width={453} height={346} />,
   },
 ];
 
