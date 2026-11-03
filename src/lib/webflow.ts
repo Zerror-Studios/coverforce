@@ -718,7 +718,7 @@ function mapCaseStudyItem(item: WebflowItem<CaseStudyFieldData>): CaseStudyDetai
     bodyHtml,
     image:
       normalizeWebflowAssetUrl(fields["grid-thumbnail"]?.url) ||
-      "/images/casestudy.png",
+      "/images/blog/case-study.png",
     date,
     publishedAt,
     author: "CoverForce",
@@ -731,8 +731,8 @@ function mapCaseStudyItem(item: WebflowItem<CaseStudyFieldData>): CaseStudyDetai
       readTime,
       backgroundImage:
         normalizeWebflowAssetUrl(fields["hero-banner-background"]?.url) ||
-        "/images/casestudy-bg.png",
-      logo: "/images/startups/center-logo.svg",
+        "/images/blog/case-study-bg.png",
+      logo: "/images/brand/coverforce-mark.svg",
     },
     heroMeta,
     stickyStats,
@@ -842,7 +842,7 @@ function mapReportFinding(
   return {
     badge: badge.trim(),
     title: title.trim(),
-    image: normalizeWebflowAssetUrl(image?.url) ?? "/images/tech.png",
+    image: normalizeWebflowAssetUrl(image?.url) ?? "/images/blog/tech.png",
     imageAlt: image?.alt?.trim() || fallbackAlt,
   };
 }
@@ -921,7 +921,7 @@ function mapReportItem(item: WebflowItem<ReportFieldData>): ReportDetail {
   const listingImage =
     normalizeWebflowAssetUrl(fields["grid-thumbnail"]?.url) ??
     normalizeWebflowAssetUrl(fields["image-1"]?.url) ??
-    "/images/casestudy.png";
+    "/images/blog/case-study.png";
 
   return {
     id: item.id,

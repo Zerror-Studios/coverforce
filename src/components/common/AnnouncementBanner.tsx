@@ -24,14 +24,14 @@ const STRIP_GRADIENT =
   "linear-gradient(135deg, #E8894F 0%, #FFA36C 55%, #FFA36C 100%)";
 
 const BANNER_ASSETS = {
-  desktop: "/banner-desktop.webp",
-  mobile: "/banner-mobile.webp",
+  desktop: "/images/announcement/banner-desktop.webp",
+  mobile: "/images/announcement/banner-mobile.webp",
 } as const;
 
 const ANNOUNCEMENT = {
-  title: "CoverForce Startup Program is open",
-  body: "Apply for preferred pricing, carrier access, and the infrastructure to launch your brokerage faster.",
-  ctaLabel: "Apply now",
+  title: "Stop filling forms. Start prompting.",
+  body: "Quote commercial insurance right from Claude or ChatGPT - ask for a quote and get bindable carrier prices back in the chat.",
+  ctaLabel: "Start free trial",
   ctaHref: "/contact",
   stripSegments: [
     { text: "First MCP Connector for Commercial Insurance", bold: false },
@@ -226,7 +226,7 @@ export default function AnnouncementBanner() {
                   aria-modal="true"
                   aria-labelledby="announcement-title"
                   aria-describedby="announcement-body"
-                  className="way-modal-panel-enter way-modal-panel relative w-full max-w-[min(100%,90rem)] overflow-hidden rounded-[20px] shadow-[0_24px_80px_rgba(10,20,59,0.18)]"
+                  className="way-modal-panel-enter way-modal-panel relative w-full max-w-[min(100%,90rem)] md:max-w-[min(100%,75rem)] overflow-hidden rounded-[20px] shadow-[0_24px_80px_rgba(10,20,59,0.18)]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <button
@@ -265,7 +265,7 @@ export default function AnnouncementBanner() {
                       width={1440}
                       height={520}
                       className="hidden h-auto w-full md:block"
-                      sizes="(min-width: 768px) min(100vw, 90rem), 100vw"
+                      sizes="(min-width: 768px) min(100vw, 75rem), 100vw"
                       priority
                       aria-hidden
                     />

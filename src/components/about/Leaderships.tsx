@@ -32,7 +32,7 @@ const foundersRow: Leader[] = [
     name: "Behram Dinshaw",
     role: "Chairman & Co-Founder",
     bio: "Former Travelers executive with 25+ years in insurance leadership.",
-    image: "/images/about/behram.png",
+    image: "/images/about/team/behram.png",
     linkedin: "https://www.linkedin.com/in/behram-m-dinshaw-77760b6/",
   },
   {
@@ -40,7 +40,7 @@ const foundersRow: Leader[] = [
     name: "Cyrus Karai",
     role: "CEO & Co-Founder",
     bio: "Former Credit Suisse and PwC leader with a Wharton MBA.",
-    image: "/images/about/cyrus.png",
+    image: "/images/about/team/cyrus.png",
     linkedin: "https://www.linkedin.com/in/cyrus-karai/",
   },
   {
@@ -48,7 +48,7 @@ const foundersRow: Leader[] = [
     name: "Kaivan Wadia",
     role: "CTO & Co-Founder",
     bio: "Former Amazon engineering leader experienced in scaling platforms.",
-    image: "/images/about/kaivan.png",
+    image: "/images/about/team/kaivan.png",
     linkedin: "https://www.linkedin.com/in/kaivanwadia/",
   },
 ];
@@ -59,7 +59,7 @@ const advisoryRow: Leader[] = [
     name: "Bill Bloom",
     role: "Advisory Board",
     bio: "Former technology executive at The Hartford and Travelers.",
-    image: "/images/about/bill.webp",
+    image: "/images/about/team/bill.webp",
     linkedin: "https://www.linkedin.com/in/bill-bloom-ab141aa/",
   },
   {
@@ -67,7 +67,7 @@ const advisoryRow: Leader[] = [
     name: "Patrick Kinney",
     role: "Advisory Board",
     bio: "Former Travelers executive and Keystone CEO.",
-    image: "/images/about/patrick.webp",
+    image: "/images/about/team/patrick.webp",
     linkedin: "https://www.linkedin.com/in/p-kinney/",
   },
   {
@@ -75,7 +75,7 @@ const advisoryRow: Leader[] = [
     name: "TJ Ryan",
     role: "Advisory Board",
     bio: "Insurance advisor modernizing commercial distribution.",
-    image: "/images/about/tj.webp",
+    image: "/images/about/team/tj.webp",
     imageClassName: "scale-[1.3] origin-bottom object-bottom",
   },
   {
@@ -83,7 +83,7 @@ const advisoryRow: Leader[] = [
     name: "Brad Brown",
     role: "Advisory Board",
     bio: "McKinsey Senior Partner Emeritus and former FinTech leader.",
-    image: "/images/about/brad.webp",
+    image: "/images/about/team/brad.webp",
     linkedin: "https://www.linkedin.com/in/bradfordtbrown/",
   },
 ];

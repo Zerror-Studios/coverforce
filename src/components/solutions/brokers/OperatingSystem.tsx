@@ -4,7 +4,7 @@ import OperatingSystemSection from "@/components/solutions/shared/OperatingSyste
 import { createSolutionStepMock } from "@/components/solutions/shared/SolutionStepIllustration";
 
 export const brokersHeroCardMock = createSolutionStepMock(
-  "/images/broker/broker1.png",
+  "/images/solutions/brokers/operating-step-1.png",
   "One Platform for Every Carrier, Every Office",
 );
 
@@ -26,7 +26,7 @@ export const operatingRows = [
     stat: "95%",
     statLabelLines: ["Extraction", "Accuracy"] as [string, string],
     Mock: createSolutionStepMock(
-      "/images/broker/broker2.png",
+      "/images/solutions/brokers/operating-step-2.png",
       "AI That Raises the Floor for Every Producer",
     ),
   },
@@ -38,7 +38,7 @@ export const operatingRows = [
     stat: "100%",
     statLabelLines: ["Pipeline", "Visibility"] as [string, string],
     Mock: createSolutionStepMock(
-      "/images/broker/broker3.png",
+      "/images/solutions/brokers/operating-step-3.png",
       "See Everything Across the Firm",
     ),
   },

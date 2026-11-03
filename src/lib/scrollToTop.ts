@@ -31,6 +31,8 @@ export function prepareScrollLayout() {
   if (typeof window === "undefined") return;
 
   window.lenis?.resize();
+  // Page order, so pins created late (async chunks) are measured first.
+  ScrollTrigger.sort();
   ScrollTrigger.refresh();
 }
 

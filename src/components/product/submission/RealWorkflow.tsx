@@ -376,7 +376,7 @@ const RealWorkflow = () => {
                           </p>
                           <div className="relative flex h-10 w-44 shrink-0">
                             <Image
-                              src="/Coverforce_logo_blue.svg"
+                              src="/images/brand/coverforce-logo-blue.svg"
                               alt="CoverForce Logo"
                               fill
                               className="object-contain"

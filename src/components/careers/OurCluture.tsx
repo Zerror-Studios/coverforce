@@ -39,7 +39,7 @@ const IMAGE_HEIGHTS = {
 
 const cultureItems: CultureItem[] = [
   {
-    src: "/images/careers/image1.webp",
+    src: "/images/careers/culture-1.webp",
     alt: "CoverForce team celebrating together at an ISU Steadfast event",
     caption:
       "We show up for partners and each other - nights like this are part of how we build lasting industry relationships.",
@@ -47,7 +47,7 @@ const cultureItems: CultureItem[] = [
     imageHeight: "large",
   },
   {
-    src: "/images/careers/image2.webp",
+    src: "/images/careers/culture-2.webp",
     alt: "CoverForce booth showcasing AI-powered distribution at a trade show",
     caption:
       "From submission intake to quote, bind, and data intelligence - our platform story, live on the show floor.",
@@ -56,7 +56,7 @@ const cultureItems: CultureItem[] = [
     objectPosition: "left",
   },
   {
-    src: "/images/careers/image3.webp",
+    src: "/images/careers/culture-3.webp",
     alt: "CoverForce on stage at Insurtech Insights USA conference",
     caption:
       "Sharing what we are building with the industry - stages like Insurtech Insights keep us close to the market.",
@@ -64,7 +64,7 @@ const cultureItems: CultureItem[] = [
     imageHeight: "medium",
   },
   {
-    src: "/images/careers/image4.webp",
+    src: "/images/careers/culture-4.webp",
     alt: "Team lunch outdoors on a rooftop terrace",
     caption:
       "The work is serious. The people are not - shared meals and time off-screen keep the team grounded.",
@@ -75,7 +75,7 @@ const cultureItems: CultureItem[] = [
 
 const bottomCulturePair = {
   left: {
-    src: "/images/careers/image5.webp",
+    src: "/images/careers/culture-5.webp",
     alt: "CoverForce team group photo at a conference gathering",
     caption:
       "Every conversation is a chance to learn from brokers, carriers, and partners - helping shape what we build next.",
@@ -83,7 +83,7 @@ const bottomCulturePair = {
     imageHeight: "large" as const,
   },
   right: {
-    src: "/images/careers/image6.webp",
+    src: "/images/careers/culture-6.webp",
     alt: "CoverForce teammates at the company insurtech booth",
     caption:
       "Our 2% attrition rate reflects the culture we've built - people stay because they enjoy solving hard problems together.",

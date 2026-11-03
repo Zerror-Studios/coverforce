@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Container from "@/components/common/Container";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import Button from "@/components/common/Button";
@@ -18,6 +18,8 @@ type LaunchStep = {
   description: string;
   body: string[];
   theme: CardBackground;
+  /** Step illustration shown at the top of the preview card. */
+  graphic: { src: string; width: number; height: number; alt: string };
 };
 
 const launchSteps: LaunchStep[] = [
@@ -31,6 +33,12 @@ const launchSteps: LaunchStep[] = [
       "You'll need a registered business, an EIN, and a registered agent in each state you plan to operate in. Most venture-backed brokerages incorporate as a Delaware C-Corp — carriers and regulators will ask for the documentation, so get it right on day one.",
     ],
     theme: "wholesaler",
+    graphic: {
+      src: "/images/solutions/startups/launch-step-1.svg",
+      width: 668,
+      height: 376,
+      alt: "Entity setup checklist: LLC formed, EIN issued, registered agent - ready for licensing",
+    },
   },
   {
     id: "license",
@@ -41,6 +49,12 @@ const launchSteps: LaunchStep[] = [
       "Licensing requirements vary by state - each has its own exam, application, and renewal cadence. The two main portals used by regulators across the country are NIPR and Sircon.",
     ],
     theme: "broker",
+    graphic: {
+      src: "/images/solutions/startups/launch-step-2.svg",
+      width: 668,
+      height: 376,
+      alt: "Producer and agency licenses: P&C producer license active in Texas, agency license in TX and AZ with CO pending, filed via NIPR",
+    },
   },
   {
     id: "market",
@@ -49,9 +63,14 @@ const launchSteps: LaunchStep[] = [
     description: "Accelerate carrier appointments through our partner network.",
     body: [
       "Carrier appointments take time to secure for a new brokerage. Our market access partners let you quote and bind through their existing appointments so you're generating revenue from day one.",
-      "Startup Program members get preferred pricing from our market access partners. Start writing business on day one, not month six.",
     ],
     theme: "startup",
+    graphic: {
+      src: "/images/solutions/startups/launch-step-3.svg",
+      width: 668,
+      height: 376,
+      alt: "Market access partner appointments with Coterie, Hiscox and Pie Insurance available and Coalition pending - writing business on day 1",
+    },
   },
   {
     id: "api",
@@ -62,6 +81,12 @@ const launchSteps: LaunchStep[] = [
       "One integration gives you real-time quoting and binding across commercial lines - GL, BOP, Workers' Comp, Professional Liability, and more. Our sandbox is ready from day one.",
     ],
     theme: "developer",
+    graphic: {
+      src: "/images/solutions/startups/launch-step-4.svg",
+      width: 668,
+      height: 376,
+      alt: "Sandbox API call to POST /v1/quotes returning 200 OK with three bindable quotes - sandbox ready on day 1",
+    },
   },
   {
     id: "quote",
@@ -73,6 +98,12 @@ const launchSteps: LaunchStep[] = [
       "CoverForce handles appetite matching, form prefill, and comparative quoting across carriers. Your team stays focused on the client. Your first bound policy is closer than you think.",
     ],
     theme: "carrier",
+    graphic: {
+      src: "/images/solutions/startups/launch-step-5.svg",
+      width: 668,
+      height: 376,
+      alt: "Desert Bloom Cleaning Co. general liability policy bound with Coterie at $1,480, with binder, policy and COI issued",
+    },
   },
 ];
 
@@ -95,6 +126,8 @@ type LaunchPreviewCardProps = {
   onNext: () => void;
   /** Desktop keeps previous/next + apply; mobile only shows apply on the first card. */
   footer?: "full" | "apply" | "none";
+  /** Load the illustration immediately (desktop tab panel) instead of lazily. */
+  eagerGraphic?: boolean;
 };
 
 function LaunchPreviewCard({
@@ -104,6 +137,7 @@ function LaunchPreviewCard({
   onPrevious,
   onNext,
   footer = "full",
+  eagerGraphic = false,
 }: LaunchPreviewCardProps) {
   const canGoPrevious = stepIndex > 0;
   const canGoNext = stepIndex < stepCount - 1;
@@ -116,16 +150,33 @@ function LaunchPreviewCard({
         aria-hidden
       />
 
-      <div className="relative z-10 flex flex-col p-6 sm:p-8 md:min-h-[28rem] md:p-10">
+      <div className="relative z-10 flex flex-col p-5 sm:p-6 md:p-7">
+        {/* Step illustration - the SVG carries its own transparent padding and
+            shadows, so on md+ it's drawn larger and pulled into that empty
+            space with negative margins: bigger artwork, same card height. */}
+        <div className="-mx-2 -mt-2 mb-2 flex justify-center sm:mb-3 md:-mx-4 md:-mt-7 md:-mb-6">
+          {/* eslint-disable-next-line @next/next/no-img-element -- static SVG, nothing for next/image to optimise */}
+          <img
+            src={step.graphic.src}
+            alt={step.graphic.alt}
+            width={step.graphic.width}
+            height={step.graphic.height}
+            loading={eagerGraphic ? "eager" : "lazy"}
+            decoding="async"
+            draggable={false}
+            className="h-auto w-full max-w-110 select-none md:max-w-136"
+          />
+        </div>
+
         <EyebrowPill surface="dark" className="mb-0">
           {step.title}
         </EyebrowPill>
 
-        <p className="mt-5 max-w-xl font-heading text-xl font-medium leading-[1.2] tracking-tight sm:text-2xl md:text-[1.625rem] md:leading-[1.15]">
+        <p className="mt-4 max-w-xl font-heading text-xl font-medium leading-[1.2] tracking-tight sm:text-[1.375rem] md:leading-[1.2]">
           {step.description}
         </p>
 
-        <div className="mt-5 space-y-4 sm:mt-6">
+        <div className="mt-3 space-y-3">
           {step.body.map((paragraph) => (
             <p
               key={paragraph}
@@ -138,7 +189,7 @@ function LaunchPreviewCard({
 
         {footer !== "none" ? (
           <div
-            className={`mt-auto flex items-center gap-4 border-t border-white/30 pt-6 sm:pt-8 ${
+            className={`mt-6 flex items-center gap-4 border-t border-white/30 pt-5 ${
               footer === "full" ? "justify-between" : "justify-end"
             }`}
           >
@@ -222,6 +273,25 @@ const Launch = () => {
   // Auto-cycling removed intentionally - steps only advance on click,
   // since users need time to read each tile.
 
+  // The desktop panel remounts its card per step, so warm the cache for every
+  // step graphic once the section is on screen - tab switches then swap the
+  // illustration instantly instead of popping in.
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      if (!window.matchMedia("(min-width: 1024px)").matches) return;
+      launchSteps.forEach(({ graphic }) => {
+        const img = new window.Image();
+        img.src = graphic.src;
+      });
+    }, { rootMargin: "400px 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   const selectStep = (index: number) => {
     setActiveStep(index);
   };
@@ -273,25 +343,8 @@ const Launch = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-8 pb-10 lg:hidden">
-          {launchSteps.map((step, index) => (
-            <LaunchPreviewCard
-              key={step.id}
-              step={step}
-              stepIndex={index}
-              stepCount={launchSteps.length}
-              onPrevious={() => selectStep(index - 1)}
-              onNext={() => selectStep(index + 1)}
-              footer="none"
-            />
-          ))}
-          <div className="flex justify-start">
-            <Button href="/contact">Apply now</Button>
-          </div>
-        </div>
-
-        <div className="hidden grid-cols-7 items-stretch gap-16 pb-24 xl:gap-23 lg:grid">
-          <div className="flex h-full min-h-0 flex-col justify-center lg:col-span-3">
+        <div className="pb-10 lg:grid lg:grid-cols-12 lg:items-start lg:gap-10 lg:pb-24 xl:gap-14">
+          <div className="hidden lg:col-span-4 lg:block">
             <div
               role="tablist"
               aria-label="Launch steps"
@@ -359,11 +412,28 @@ const Launch = () => {
             </div>
           </div>
 
+        <div className="flex flex-col gap-8 lg:hidden">
+          {launchSteps.map((step, index) => (
+            <LaunchPreviewCard
+              key={step.id}
+              step={step}
+              stepIndex={index}
+              stepCount={launchSteps.length}
+              onPrevious={() => selectStep(index - 1)}
+              onNext={() => selectStep(index + 1)}
+              footer="none"
+            />
+          ))}
+          <div className="flex justify-start">
+            <Button href="/contact">Apply now</Button>
+          </div>
+        </div>
+
           <div
             role="tabpanel"
             id="launch-panel"
             aria-labelledby={`launch-tab-${active.id}`}
-            className="flex h-full min-h-0 w-full flex-col lg:col-span-4"
+            className="hidden w-full flex-col lg:col-span-8 lg:flex"
           >
             <LaunchPreviewCard
               key={active.id}
@@ -372,6 +442,7 @@ const Launch = () => {
               stepCount={launchSteps.length}
               onPrevious={() => selectStep(activeStep - 1)}
               onNext={() => selectStep(activeStep + 1)}
+              eagerGraphic
             />
           </div>
         </div>

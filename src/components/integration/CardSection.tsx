@@ -12,10 +12,6 @@ import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import {
   CARD_VERTICAL_BACKGROUND_STYLES,
 } from "@/data/wayCardStyles";
-import {
-  IntegrationAutomationBg,
-  IntegrationCodeTypingBg,
-} from "@/components/integration/IntegrationStatCardBackgrounds";
 gsap.registerPlugin(ScrollTrigger);
 
 const RequestGlobe2 = dynamic(() => import("../home/Globe/RequestGlobe2"), {
@@ -26,6 +22,31 @@ const RequestGlobe2 = dynamic(() => import("../home/Globe/RequestGlobe2"), {
 /** Stronger blue wash for integration stat cards - less pale/white at the end. */
 const INTEGRATION_STAT_CARD_BG =
   "linear-gradient(45deg, #0038E0 0%, #0045FF 22%, #008EFF 55%, #008EFF 78%, #4AAFFF 100%)";
+
+const STAT_CARDS = [
+  {
+    title: ["Direct carrier API", "connections"],
+    graphic: "/images/integration/api-card.svg",
+    graphicAlt:
+      "API code sample and direct carrier connections to Travelers, Chubb, Liberty Mutual, CNA, Hiscox, Coalition, Westchester and Nationwide",
+    graphicWidth: 400,
+    graphicHeight: 263,
+    graphicClass: "max-w-[400px]",
+    stat: "200+ API integrations",
+    body: "Real-time quoting, binding and policy issuance - no portals, no rekeying. AMS, premium finance and compliance partners stay in sync automatically.",
+  },
+  {
+    title: ["AI workflow", "automation"],
+    graphic: "/images/integration/ai-card.svg",
+    graphicAlt:
+      "AI agent reading a submission, then matching appetite, quoting and binding, and syncing to the AMS",
+    graphicWidth: 475,
+    graphicHeight: 149,
+    graphicClass: "max-w-[475px]",
+    stat: "AI Agent workflow",
+    body: "Purpose-built AI agents read submissions, match appetite and orchestrate the entire workflow - from intake to policy delivery - so your team focuses on relationships.",
+  },
+];
 
 const CardSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -147,55 +168,44 @@ const CardSection = () => {
             className="mt-10 grid gap-4 md:mt-12 md:grid-cols-2 md:gap-5 lg:mt-14 lg:gap-6"
             style={{ perspective: "1200px" }}
           >
-            <div
-              data-stat-card
-              className="relative flex min-h-88 flex-col overflow-hidden rounded-md p-6 text-white transform-3d will-change-transform md:min-h-96 md:p-8 lg:min-h-112 lg:p-10"
-              style={{ background: INTEGRATION_STAT_CARD_BG }}
-            >
-              <IntegrationCodeTypingBg />
-              <div className="relative z-10 flex h-full flex-1 flex-col">
+            {STAT_CARDS.map((card) => (
+              <div
+                key={card.stat}
+                data-stat-card
+                className="relative flex min-h-88 flex-col overflow-hidden rounded-md p-6 text-white transform-3d will-change-transform md:min-h-96 md:p-8 lg:min-h-112 lg:p-10"
+                style={{ background: INTEGRATION_STAT_CARD_BG }}
+              >
                 <h3 className="font-heading text-2xl font-regular leading-[1.15] tracking-tight text-white md:text-3xl lg:text-4xl lg:leading-[1.1]">
-                  Direct carrier API
+                  {card.title[0]}
                   <br />
-                  connections
+                  {card.title[1]}
                 </h3>
-                <div className="mt-auto pt-8">
-                  <p className="font-heading text-lg font-medium leading-snug text-white/90 md:text-xl lg:text-2xl">
-                    200+ API integrations
-                  </p>
-                  <p className="mt-2 text-sm leading-relaxed text-white/80 md:text-base">
-                    Real-time quoting, binding and policy issuance - no portals,
-                    no rekeying. AMS, premium finance and compliance partners stay
-                    in sync automatically.
-                  </p>
-                </div>
-              </div>
-            </div>
 
-            <div
-              data-stat-card
-              className="relative flex min-h-88 flex-col overflow-hidden rounded-md p-6 text-white transform-3d will-change-transform md:min-h-96 md:p-8 lg:min-h-112 lg:p-10"
-              style={{ background: INTEGRATION_STAT_CARD_BG }}
-            >
-              <IntegrationAutomationBg />
-              <div className="relative z-10 flex h-full flex-1 flex-col">
-                <h3 className="font-heading text-2xl font-regular leading-[1.15] tracking-tight text-white md:text-3xl lg:text-4xl lg:leading-[1.1]">
-                  AI workflow
-                  <br />
-                  automation
-                </h3>
-                <div className="mt-auto pt-8">
+                {/* Graphic sits centered between the title and the stat copy. */}
+                <div className="flex flex-1 items-center justify-center py-8 md:py-10">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- static SVG, nothing for next/image to optimise */}
+                  <img
+                    src={card.graphic}
+                    alt={card.graphicAlt}
+                    width={card.graphicWidth}
+                    height={card.graphicHeight}
+                    loading="lazy"
+                    decoding="async"
+                    draggable={false}
+                    className={`h-auto w-full select-none ${card.graphicClass}`}
+                  />
+                </div>
+
+                <div>
                   <p className="font-heading text-lg font-medium leading-snug text-white/90 md:text-xl lg:text-2xl">
-                    AI Agent workflow
+                    {card.stat}
                   </p>
                   <p className="mt-2 text-sm leading-relaxed text-white/80 md:text-base">
-                    Purpose-built AI agents read submissions, match appetite and
-                    orchestrate the entire workflow - from intake to policy
-                    delivery - so your team focuses on relationships.
+                    {card.body}
                   </p>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </Container>

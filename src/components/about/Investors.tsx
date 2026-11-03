@@ -8,21 +8,21 @@ import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 
 const investors = [
   {
-    src: "/images/about/Insight.png",
+    src: "/images/about/investors/insight.png",
     alt: "Insight Partners",
     href: "https://www.insightpartners.com/",
     width: 286,
     height: 80,
   },
   {
-    src: "/images/about/QED.png",
+    src: "/images/about/investors/qed.png",
     alt: "QED Investors",
     href: "https://www.qedinvestors.com/",
     width: 287,
     height: 80,
   },
   {
-    src: "/images/about/NYCA.png",
+    src: "/images/about/investors/nyca.png",
     alt: "Nyca Partners",
     href: "https://www.nyca.com/",
     width: 260,

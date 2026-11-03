@@ -1,6 +1,7 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scheduleScrollTriggerRefresh } from "@/lib/scheduleScrollTriggerRefresh";
 import type { RefObject } from "react";
 
 import { animateSplitTextReveal, type SplitTextColorTheme } from "@/lib/animateSplitTextReveal";
@@ -70,7 +71,7 @@ export function useSectionHeaderReveal({
         }
       }
 
-      ScrollTrigger.refresh();
+      scheduleScrollTriggerRefresh();
 
 
       return () => cleanups.forEach((cleanup) => cleanup());

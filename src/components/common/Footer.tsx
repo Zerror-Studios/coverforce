@@ -197,14 +197,14 @@ const Footer = () => {
           {/* ── Top: CTA banner ── */}
           <div className="relative min-h-[26rem] overflow-hidden border-b border-neutral-200 md:min-h-[26rem] lg:min-h-[30rem]">
             <Image
-              src="/images/footer_banner-mobile.webp"
+              src="/images/footer/footer-banner-mobile.webp"
               alt="CoverForce"
               fill
               className="object-cover object-top sm:object-center md:hidden"
               sizes="100vw"
             />
             <Image
-              src="/images/footer_banner.webp"
+              src="/images/footer/footer-banner.webp"
               alt="CoverForce"
               fill
               className="hidden object-cover object-right md:block"
@@ -243,7 +243,7 @@ const Footer = () => {
                 <Link href="/" className="inline-block">
                   <span className="relative block h-5 w-[148px] xl:h-6 xl:w-[170px]">
                     <Image
-                      src="/Coverforce_logo_blue.svg"
+                      src="/images/brand/coverforce-logo-blue.svg"
                       alt="CoverForce"
                       width={180}
                       height={34}

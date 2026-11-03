@@ -544,13 +544,23 @@ button {
   min-height: 0;
   opacity: 1;
   pointer-events: none;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / 0.35) 22%, #000 40%);
-  mask-image: linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / 0.35) 22%, #000 40%);
+  overflow: hidden;
+  /* Includes the top fade the shader used to apply, so it stays fixed while
+     the canvas drifts underneath it. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / 0.12) 11%, rgb(0 0 0 / 0.27) 22%, rgb(0 0 0 / 0.71) 32%, #000 40%);
+  mask-image: linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / 0.12) 11%, rgb(0 0 0 / 0.27) 22%, rgb(0 0 0 / 0.71) 32%, #000 40%);
 }
 
+/* One grid row (22px = SPACING in WayCardDotGridScene) taller than the box and
+   starting one row above it: the CSS drift animation slides it down exactly
+   one row per loop, so the loop is seamless. */
 .way-card-dot-grid-three canvas {
+  position: absolute;
+  top: -22px;
+  left: 0;
   width: 100% !important;
-  height: 100% !important;
+  height: calc(100% + 22px) !important;
+  will-change: transform;
 }
 
 @media (prefers-reduced-motion: no-preference) {

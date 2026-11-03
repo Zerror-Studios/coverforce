@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
@@ -36,8 +36,8 @@ const testimonials: Testimonial[] = [
     name: "T.J. Ryan",
     role: "CEO, ISU Steadfast Agency Network",
     company: "ISU Steadfast Agency Network",
-    avatar: "/images/testimonals/tj.webp",
-    logo: "/images/testimonals/isu.webp",
+    avatar: "/images/testimonials/tj.webp",
+    logo: "/images/testimonials/isu.webp",
   },
   {
     id: "2",
@@ -46,8 +46,8 @@ const testimonials: Testimonial[] = [
     name: "Danny Lee",
     role: "COO, International Underwriting Agency",
     company: "International Underwriting Agency",
-    avatar: "/images/testimonals/Danny Lee.webp",
-    logo: "/images/testimonals/international.webp",
+    avatar: "/images/testimonials/danny-lee.webp",
+    logo: "/images/testimonials/international.webp",
   },
   {
     id: "3",
@@ -56,8 +56,8 @@ const testimonials: Testimonial[] = [
     name: "Peter Germanov",
     role: "CEO, Momentum Agency Management Systems",
     company: "Momentum Agency Management Systems",
-    avatar: "/images/testimonals/Peter Germanov.webp",
-    logo: "/images/testimonals/momentum.webp",
+    avatar: "/images/testimonials/peter-germanov.webp",
+    logo: "/images/testimonials/momentum.webp",
   },
   {
     id: "4",
@@ -66,8 +66,8 @@ const testimonials: Testimonial[] = [
     name: "Alex Ledbetter",
     role: "Founder, Delegance Brokerage",
     company: "Delegance Brokerage",
-    avatar: "/images/testimonals/Alex Ledbetter.webp",
-    logo: "/images/testimonals/delegance.webp",
+    avatar: "/images/testimonials/alex-ledbetter.webp",
+    logo: "/images/testimonials/delegance.webp",
   },
   {
     id: "5",
@@ -76,8 +76,8 @@ const testimonials: Testimonial[] = [
     name: "Jatin Sandilya",
     role: "Founder, Latent Insurance",
     company: "Latent Insurance",
-    avatar: "/images/testimonals/Jatin Sandilya.webp",
-    logo: "/images/testimonals/latent.webp",
+    avatar: "/images/testimonials/jatin-sandilya.webp",
+    logo: "/images/testimonials/latent.webp",
     logoScale: 1.35,
   },
 ];
@@ -178,6 +178,21 @@ const Review = () => {
   const swiperRef = useRef<SwiperType | null>(null);
 
   useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef, theme: "dark" });
+
+  // Autoplay slides forever by default - only run it while the section is
+  // on screen.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(([entry]) => {
+      const autoplay = swiperRef.current?.autoplay;
+      if (!autoplay) return;
+      if (entry.isIntersecting) autoplay.start();
+      else autoplay.stop();
+    });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
 
   useGSAP(
     () => {
