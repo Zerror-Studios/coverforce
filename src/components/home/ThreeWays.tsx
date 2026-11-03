@@ -239,7 +239,8 @@ const WAY_CARDS: WayCardConfig[] = [
     variant: "dark",
     wide: true,
     background: "developer",
-    className: "lg:col-span-2",
+    // Full row on tablet (2-col grid) and desktop.
+    className: "sm:col-span-2 sm:max-lg:aspect-[2/1]!",
     previewImage: "/images/home/three-ways/developer.svg",
     // No transparent margin in this export, so a smaller width matches the others visually.
     previewWidthClass: "w-[72%]",
@@ -382,8 +383,10 @@ const WayCard = memo(function WayCard({
   const isMobile = useIsMobile();
   const isCompactMock = useIsMobile("(max-width: 1023px)");
   const isDark = variant === "dark";
-  const enableScene = !isMobile;
-  const enableInteractive = backgroundInteractive && !isMobile;
+  // Animated backgrounds (dot grid, globe video, particle globe, terminal)
+  // only on desktop; phones and tablets get the static card background.
+  const enableScene = !isCompactMock;
+  const enableInteractive = backgroundInteractive && enableScene;
   const resolvedMobileScale =
     mobileMockScale ??
     (mockAlign === "bottom" || mockShiftDown ? 0.72 : 0.82);

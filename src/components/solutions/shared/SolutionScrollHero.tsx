@@ -264,7 +264,7 @@ export default function SolutionScrollHero({
       <Container borderColor="#53535380" className="relative z-10">
         <div className="relative grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="flex flex-col">
-            <div className="relative flex h-svh flex-col">
+            <div className="relative flex h-svh flex-col md:max-lg:h-auto md:max-lg:min-h-svh md:max-lg:pt-28 md:max-lg:pb-6">
               <div ref={heroContentRef} className="flex min-h-0 flex-1 flex-col justify-center">
                 <HeroReveal className="flex flex-col justify-center space-y-8">
                   <EyebrowPill surface="dark">{eyebrow}</EyebrowPill>
@@ -289,6 +289,13 @@ export default function SolutionScrollHero({
                       {secondaryButtonLabel}
                     </Button>
                   </div>
+                  {/* Tablet only: the desktop graphic column (lg+) doesn't
+                      exist here, so show the graphic under the copy. */}
+                  {rightCard ? (
+                    <div className="hidden md:max-lg:mx-auto md:max-lg:block md:max-lg:w-full md:max-lg:max-w-[560px] md:max-lg:pt-4">
+                      {rightCard}
+                    </div>
+                  ) : null}
                 </HeroReveal>
               </div>
 

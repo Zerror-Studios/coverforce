@@ -66,11 +66,11 @@ export default function WayCardModal({
 }: WayCardModalProps) {
   const [isClosing, setIsClosing] = useState(false);
   const [stored, setStored] = useState<StoredModal | null>(null);
-  // Matches the cards: below 640px they render no animated backgrounds (dot
+  // Matches the cards: below 1024px they render no animated backgrounds (dot
   // grid / globe video / particle globe), so the popup doesn't either.
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   useEffect(() => {
-    const mql = window.matchMedia("(max-width: 639px)");
+    const mql = window.matchMedia("(max-width: 1023px)");
     const sync = () => setIsSmallScreen(mql.matches);
     sync();
     mql.addEventListener("change", sync);

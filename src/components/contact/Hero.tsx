@@ -16,7 +16,7 @@ import ContactForm from "./ContactForm";
 import SectionRadialGlow from "@/components/common/SectionRadialGlow";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import ScrollTrigger from "gsap/dist/ScrollTrigger";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
