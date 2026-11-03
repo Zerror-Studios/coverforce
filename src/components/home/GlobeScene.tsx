@@ -347,6 +347,25 @@ function Particles({
   return <points ref={meshRef} geometry={geometry} material={material} />;
 }
 
+/** Base zoom = ring size on a full desktop card; smaller containers scale down. */
+const BASE_ZOOM = 185;
+/** Ring diameter as a share of the container's shorter side (~1.8 world units). */
+const ZOOM_PER_PX = 0.42;
+
+function ResponsiveZoom() {
+  const camera = useThree((st) => st.camera);
+  const size = useThree((st) => st.size);
+  const invalidate = useThree((st) => st.invalidate);
+  useEffect(() => {
+    const zoom = Math.min(BASE_ZOOM, Math.min(size.width, size.height) * ZOOM_PER_PX);
+    if (Math.abs(camera.zoom - zoom) < 0.5) return;
+    camera.zoom = zoom;
+    camera.updateProjectionMatrix();
+    invalidate();
+  }, [camera, size.width, size.height, invalidate]);
+  return null;
+}
+
 type GlobeSceneProps = {
   className?: string;
   interactive?: boolean;
@@ -397,12 +416,13 @@ export default function GlobeScene({
         orthographic
         // Frames are requested by Particles' own pacer (30fps idle).
         frameloop={visible ? "demand" : "never"}
-        camera={{ position: [0, 0, 10], zoom: 185, near: 0.1, far: 100 }}
+        camera={{ position: [0, 0, 10], zoom: BASE_ZOOM, near: 0.1, far: 100 }}
         className={`relative z-[1] ${interactive ? "pointer-events-auto" : "pointer-events-none"}`}
         style={{ width: "100%", height: "100%", pointerEvents: interactive ? "auto" : "none" }}
         gl={{ antialias: !lite, alpha: true, powerPreference: lite ? "low-power" : "high-performance" }}
         dpr={lite ? 1 : [1, 1.5]}
       >
+        <ResponsiveZoom />
         <Particles count={count} tone={tone} soft={ambient} running={visible} />
       </Canvas>
     </div>

@@ -106,14 +106,17 @@ export default function StartupFaq({ items }: { items: FaqEntry[] }) {
       <Container borderColor="#53535380">
         <div className="py-16 md:py-20 lg:py-24">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,0.86fr)_minmax(0,1.14fr)] lg:items-start lg:gap-14">
-            <div className="relative order-2 hidden overflow-hidden rounded-md bg-[#EFF3FF] lg:sticky lg:top-28 lg:order-1 lg:block lg:self-start">
+            {/* Sticky image, vertically centred in the viewport area below the
+                fixed header (88px): height H = min(36rem, 100svh - 8rem) and
+                top = (100svh - H) / 2 + 44px (half the header). Adds no extra row height. */}
+            <div className="relative order-2 hidden overflow-hidden rounded-md bg-[#EFF3FF] lg:sticky lg:top-[calc((100svh_-_min(36rem,100svh_-_8rem))/2_+_44px)] lg:order-1 lg:block lg:self-start">
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(21,31,77,0.04),rgba(21,31,77,0.12))]" />
               <Image
                 src="/images/careers/culture-3.webp"
                 alt="CoverForce team culture"
                 width={900}
                 height={1100}
-                className="relative h-full min-h-80 w-full object-cover object-left md:object-[72%_50%] lg:min-h-144 lg:max-h-144"
+                className="relative h-full min-h-80 w-full object-cover object-left md:object-[72%_50%] lg:h-[min(36rem,100svh_-_8rem)] lg:min-h-0"
                 sizes="(min-width: 1024px) 34vw, 100vw"
               />
             </div>

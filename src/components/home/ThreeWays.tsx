@@ -55,6 +55,7 @@ function WayCardSvg({
   lift = 0,
   shiftX = 0,
   boost = 1,
+  smallLaptopClassName = "",
 }: {
   src: string;
   width: number;
@@ -72,6 +73,11 @@ function WayCardSvg({
   shiftX?: number;
   /** Visual enlargement around the image's own centre (doesn't move it). */
   boost?: number;
+  /**
+   * Overrides for small laptops (1024-1279px), where cards are much shorter:
+   * set `--way-lift` (px) / `--way-boost` with `lg:max-xl:[--way-lift:24px]`.
+   */
+  smallLaptopClassName?: string;
 }) {
   const dx =
     align === "right"
@@ -84,7 +90,7 @@ function WayCardSvg({
 
   return (
     <div
-      className={`flex size-full ${valign === "bottom" ? "items-end lg:pb-2" : "items-center"} ${align === "right" ? "justify-end" : "justify-center"}`}
+      className={`flex size-full ${valign === "bottom" ? "items-end lg:pb-2" : "items-center"} ${align === "right" ? "justify-end" : "justify-center"} ${smallLaptopClassName}`}
     >
       <img
         src={src}
@@ -98,10 +104,9 @@ function WayCardSvg({
           maxWidth,
           maxHeight,
           objectPosition: align === "right" ? "right center" : undefined,
-          transform:
-            dx || dy || lift || shiftX || boost !== 1
-              ? `translate(calc(${dx}% + ${shiftX}px), calc(${dy}% - ${lift}px)) scale(${boost})`
-              : undefined,
+          // Lift/boost read CSS vars (default = props) so a breakpoint class
+          // on the wrapper can override them without touching other sizes.
+          transform: `translate(calc(${dx}% + ${shiftX}px), calc(${dy}% - var(--way-lift, ${lift}px))) scale(var(--way-boost, ${boost}))`,
         }}
       />
     </div>
@@ -197,6 +202,8 @@ const WAY_CARDS: WayCardConfig[] = [
         focus={{ x: 54.4, y: 54.4, w: 361, h: 243 }}
         valign="bottom"
         lift={72}
+        // Short cards at 1024-1279: sit lower, clear of the tagline.
+        smallLaptopClassName="lg:max-xl:[--way-lift:24px] lg:max-xl:[--way-boost:1]"
       />
     ),
     modalPreview: <WayCardSvg src="/images/home/three-ways/wholesaler.svg" width={472} height={352} />,
@@ -221,6 +228,7 @@ const WAY_CARDS: WayCardConfig[] = [
         valign="bottom"
         // +24 vs wholesaler: its main card is shorter, so this lines up their tops.
         lift={96}
+        smallLaptopClassName="lg:max-xl:[--way-lift:40px] lg:max-xl:[--way-boost:1]"
       />
     ),
     modalPreview: <WayCardSvg src="/images/home/three-ways/broker.svg" width={498} height={325} />,
@@ -258,9 +266,16 @@ const WAY_CARDS: WayCardConfig[] = [
         maxHeight="calc(100% - 88px)"
         // Nudged in from the card's right edge.
         shiftX={-88}
+        smallLaptopClassName="lg:max-xl:[--way-boost:0.9]"
       />
     ),
-    modalPreview: <WayCardSvg src="/images/home/three-ways/developer.svg" width={412} height={272} />,
+    // Popup preview fills its slot height; the developer artwork reads too
+    // large at that size, so cap it at 76% of the slot from 1024px up.
+    modalPreview: (
+      <div className="flex size-full items-center justify-center lg:h-[76%]">
+        <WayCardSvg src="/images/home/three-ways/developer.svg" width={412} height={272} />
+      </div>
+    ),
   },
   {
     label: "Startups",
@@ -283,6 +298,7 @@ const WAY_CARDS: WayCardConfig[] = [
         width={229}
         height={309}
         focus={{ x: 0, y: 0, w: 150, h: 309 }}
+        smallLaptopClassName="lg:max-xl:[--way-boost:1]"
       />
     ),
     modalPreview: <WayCardSvg src="/images/home/three-ways/startup.svg" width={229} height={309} />,
