@@ -121,7 +121,9 @@ export default function HeroQuoteCode({ className = "" }: { className?: string }
         observer.disconnect();
         timeoutId = setTimeout(tick, START_DELAY_MS);
       },
-      { threshold: 0.35 },
+      // Low threshold: this full-canvas overlay is scaled up on mobile and
+      // mostly clipped by the display, so a high visible-ratio never fires.
+      { threshold: 0.05 },
     );
 
     observer.observe(el);

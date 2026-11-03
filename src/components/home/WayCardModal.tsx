@@ -301,7 +301,7 @@ export default function WayCardModal({
           </div>
 
           <div
-            className={`relative overflow-hidden border-t border-[#535353]/10 pt-14 pb-12 sm:py-14 ${
+            className={`relative overflow-hidden border-t border-[#535353]/10 pt-8 pb-8 sm:py-14 ${
               stored.previewAlign === "right"
                 ? "pl-6 pr-0 sm:pl-10"
                 : "px-6 sm:px-10"
@@ -329,7 +329,7 @@ export default function WayCardModal({
               </div>
             ) : null}
             <div
-              className={`way-modal-preview-slot pointer-events-none relative z-10 h-[340px] w-full sm:h-[420px] lg:h-[480px] [&_img]:h-full [&_img]:max-h-full [&_img]:w-auto [&_img]:max-w-full ${
+              className={`way-modal-preview-slot pointer-events-none relative z-10 w-full sm:h-[420px] lg:h-[480px] max-sm:[&_img]:h-auto max-sm:[&_img]:max-h-[320px] max-sm:[&_img]:w-full sm:[&_img]:h-full sm:[&_img]:max-h-full sm:[&_img]:w-auto [&_img]:max-w-full ${
                 stored.previewAlign === "right"
                   ? ""
                   : "mx-auto flex max-w-[960px] items-center justify-center [&>*]:!relative [&>*]:!inset-auto [&>*]:!top-auto [&>*]:!right-auto [&>*]:!bottom-auto [&>*]:!left-auto [&>*]:!translate-x-0 [&>*]:!translate-y-0"
