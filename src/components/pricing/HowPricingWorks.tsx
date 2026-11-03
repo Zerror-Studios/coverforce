@@ -45,7 +45,7 @@ const CARDS: PricingWorkCard[] = [
 ];
 
 const CARD_HEIGHT = "min-h-[28rem] md:min-h-[29rem]";
-const CARD_PADDING = "p-6 md:p-8";
+const CARD_PADDING = "p-6 md:p-5 lg:p-8";
 const CARD_BOTTOM_HEIGHT = "min-h-[13rem] md:min-h-[18rem]";
 
 function CardLabel({
@@ -89,7 +89,7 @@ function UsageCard({ card }: { card: PricingWorkCard }) {
       ) : null}
 
       {card.footerText ? (
-        <p className="relative z-10 mt-auto font-heading text-sm font-medium leading-snug text-white md:text-2xl">
+        <p className="relative z-10 mt-auto font-heading text-sm font-medium leading-snug text-white md:text-lg lg:text-2xl">
           {card.footerText}
         </p>
       ) : null}
@@ -103,7 +103,7 @@ function SplitDarkCard({ card }: { card: PricingWorkCard }) {
       <div className={`flex min-h-0 flex-1 flex-col bg-white ${CARD_PADDING}`}>
         <CardLabel tone="dark">{card.label}</CardLabel>
         {card.headline ? (
-          <h3 className="mt-auto font-heading text-xl font-medium leading-[1.15] tracking-tight text-[#372DA3] md:text-2xl">
+          <h3 className="mt-auto font-heading text-xl font-medium leading-[1.15] tracking-tight text-[#372DA3] md:text-lg lg:text-2xl">
             {card.headline}
           </h3>
         ) : null}
@@ -136,7 +136,7 @@ function SplitLightCard({ card }: { card: PricingWorkCard }) {
       <div className={`flex min-h-0 flex-1 flex-col bg-white ${CARD_PADDING}`}>
         <CardLabel tone="neutral">{card.label}</CardLabel>
         {card.headline ? (
-          <h3 className="mt-auto max-w-[12rem] font-heading text-xl font-medium leading-[1.15] tracking-tight text-[#2A2A2A] md:text-2xl">
+          <h3 className="mt-auto max-w-[12rem] font-heading text-xl font-medium leading-[1.15] tracking-tight text-[#2A2A2A] md:text-lg lg:text-2xl">
             {card.headline}
           </h3>
         ) : null}
@@ -267,7 +267,7 @@ const HowPricingWorks = () => {
 
           <div
             ref={cardsGridRef}
-            className="grid gap-4 md:grid-cols-3 md:gap-12"
+            className="grid gap-4 md:grid-cols-3 md:gap-4 lg:gap-12"
           >
             {CARDS.map((card) => (
               <PricingWorkCardShell key={card.id} card={card} />

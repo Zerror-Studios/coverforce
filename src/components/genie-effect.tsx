@@ -464,20 +464,25 @@ export default function GenieEffect() {
   // Render the interactive pieces client-side after mount.
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
   const [isLgOnly, setIsLgOnly] = useState(false);
   useEffect(() => {
     setMounted(true);
     const mobileMql = window.matchMedia("(max-width: 767px)");
+    const tabletMql = window.matchMedia("(min-width: 768px) and (max-width: 1023px)");
     const lgMql = window.matchMedia("(min-width: 1024px) and (max-width: 1279px)");
     const sync = () => {
       setIsMobile(mobileMql.matches);
+      setIsTablet(tabletMql.matches);
       setIsLgOnly(lgMql.matches);
     };
     sync();
     mobileMql.addEventListener("change", sync);
+    tabletMql.addEventListener("change", sync);
     lgMql.addEventListener("change", sync);
     return () => {
       mobileMql.removeEventListener("change", sync);
+      tabletMql.removeEventListener("change", sync);
       lgMql.removeEventListener("change", sync);
     };
   }, []);
@@ -520,16 +525,17 @@ export default function GenieEffect() {
 
   const getWinLayout = useCallback((): { pos: Pt; scale: number } => {
     const { w, h } = getContainerSize();
-    if (isMobile) {
+    if (isMobile || isTablet) {
       // As large as fits: the window's real artwork (badge's left edge to the
       // frame's right edge = MOBILE_CONTENT_LEFT..MOBILE_CONTENT_RIGHT in box
       // units, measured from the preview SVGs) fills the width minus a small
       // gutter - the badge stays fully visible.
-      const gutter = 6;
+      const gutter = isTablet ? 24 : 6;
       const contentW = MOBILE_CONTENT_RIGHT - MOBILE_CONTENT_LEFT;
       const scale = Math.min(1, (w - gutter * 2) / contentW);
       const scaledH = WIN_H * scale;
-      const dockReserve = 68;
+      // Compact dock on phones, full-size dock on tablets.
+      const dockReserve = isTablet ? 104 : 68;
       return {
         scale,
         pos: {
@@ -560,7 +566,7 @@ export default function GenieEffect() {
         y: (h - WIN_H * scale) / 2 - 20,
       },
     };
-  }, [getContainerSize, isMobile, isLgOnly]);
+  }, [getContainerSize, isMobile, isTablet, isLgOnly]);
 
   // Returns dock-button center in CONTAINER-LOCAL coords (not viewport coords).
   // The genie canvas draws in container-local coords too, so these match.
@@ -789,7 +795,7 @@ export default function GenieEffect() {
   return (
     <div
       ref={containerRef}
-      className="relative h-[min(46vh,340px)] min-h-[19rem] w-full select-none overflow-hidden md:h-[min(85vh,860px)] md:min-h-162.5"
+      className="relative h-[min(46vh,340px)] min-h-[19rem] w-full select-none overflow-hidden md:h-[min(62vh,600px)] md:min-h-[30rem] lg:h-[min(85vh,860px)] lg:min-h-162.5"
     >
       <style>{`
         @keyframes blink { 0%,49% { opacity: 1 } 50%,100% { opacity: 0 } }
@@ -804,7 +810,7 @@ export default function GenieEffect() {
             unreadable and gets cut off at the sides, so the image is drawn
             6.3% taller and shifted up (its bar is 5.9% of its height) to crop
             it, and a real-size menubar is drawn on top instead. */}
-        <div className="absolute inset-x-0 bottom-0 top-0 max-md:-top-[6.3%]">
+        <div className="absolute inset-x-0 bottom-0 top-0 max-lg:-top-[6.3%]">
           <Image
             src="/images/product/submission-intake/mac-display.png"
             alt="macos-background"
@@ -818,7 +824,7 @@ export default function GenieEffect() {
       </div>
 
       <div
-        className="absolute inset-x-0 top-0 z-[45] flex items-center justify-between bg-[#4b3f8f]/55 px-3 font-sans text-[11px] leading-none text-white md:hidden"
+        className="absolute inset-x-0 top-0 z-[45] flex items-center justify-between bg-[#4b3f8f]/55 px-3 font-sans text-[11px] leading-none text-white md:text-xs lg:hidden"
         style={{ height: MOBILE_MENUBAR_H }}
         aria-hidden
       >

@@ -112,7 +112,7 @@ function AudienceCardItem({
 
       <div className="pointer-events-none relative z-10 flex flex-col p-6 md:p-8">
         <div className="flex items-start justify-between gap-4">
-          <h3 className="max-w-[15rem] text-2xl font-heading font-regular leading-[1.15] tracking-tight text-white sm:max-w-[18rem] sm:text-3xl md:text-4xl lg:text-3xl lg:leading-[1.15]">
+          <h3 className="max-w-[15rem] text-2xl font-heading font-regular leading-[1.15] tracking-tight text-white sm:max-w-[18rem] sm:text-3xl md:text-2xl lg:text-3xl lg:leading-[1.15]">
             {title[0]}
             <br />
             {title[1]}
@@ -129,7 +129,7 @@ function AudienceCardItem({
             {number}
           </span>
           <div className="mt-3 border-t border-white/35 pt-4">
-            <p className="max-w-md font-sans text-sm font-regular leading-[1.4] text-white/85 md:text-[1.125rem]">
+            <p className="max-w-md font-sans text-sm font-regular leading-[1.4] text-white/85 md:text-[1.125rem] md:max-lg:text-sm">
               {description}
             </p>
           </div>

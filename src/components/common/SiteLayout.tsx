@@ -22,7 +22,7 @@ import {
 import { usePathname } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import gsap from "gsap";
-import ScrollTrigger from "gsap/dist/ScrollTrigger";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 

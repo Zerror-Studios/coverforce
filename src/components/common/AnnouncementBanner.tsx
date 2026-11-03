@@ -226,7 +226,7 @@ export default function AnnouncementBanner() {
                   aria-modal="true"
                   aria-labelledby="announcement-title"
                   aria-describedby="announcement-body"
-                  className="way-modal-panel-enter way-modal-panel relative w-full max-w-[min(100%,90rem)] md:max-w-[min(100%,75rem)] overflow-hidden rounded-[20px] shadow-[0_24px_80px_rgba(10,20,59,0.18)]"
+                  className="way-modal-panel-enter way-modal-panel relative w-full max-w-[min(100%,90rem)] md:max-lg:max-w-[min(100%,30rem)] lg:max-w-[min(100%,75rem)] overflow-hidden rounded-[20px] shadow-[0_24px_80px_rgba(10,20,59,0.18)]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <button
@@ -255,8 +255,8 @@ export default function AnnouncementBanner() {
                       alt={ANNOUNCEMENT.title}
                       width={382}
                       height={561}
-                      className="h-auto w-full md:hidden"
-                      sizes="100vw"
+                      className="h-auto w-full lg:hidden"
+                      sizes="(min-width: 768px) 30rem, 100vw"
                       priority
                     />
                     <Image
@@ -264,8 +264,8 @@ export default function AnnouncementBanner() {
                       alt=""
                       width={1440}
                       height={520}
-                      className="hidden h-auto w-full md:block"
-                      sizes="(min-width: 768px) min(100vw, 75rem), 100vw"
+                      className="hidden h-auto w-full lg:block"
+                      sizes="min(100vw, 75rem)"
                       priority
                       aria-hidden
                     />
