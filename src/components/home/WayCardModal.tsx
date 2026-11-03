@@ -66,6 +66,17 @@ export default function WayCardModal({
 }: WayCardModalProps) {
   const [isClosing, setIsClosing] = useState(false);
   const [stored, setStored] = useState<StoredModal | null>(null);
+  // Matches the cards: below 640px they render no animated backgrounds (dot
+  // grid / globe video / particle globe), so the popup doesn't either.
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 639px)");
+    const sync = () => setIsSmallScreen(mql.matches);
+    sync();
+    mql.addEventListener("change", sync);
+    return () => mql.removeEventListener("change", sync);
+  }, []);
+  const showAnimatedBackground = !isSmallScreen;
 
   const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef(content);
@@ -301,10 +312,10 @@ export default function WayCardModal({
                 : "#F5F7FA",
             }}
           >
-            {stored.dotGrid ? (
+            {showAnimatedBackground && stored.dotGrid ? (
               <WayCardDotGridScene variant={stored.variant} active track="window" />
             ) : null}
-            {stored.backgroundScene ? (
+            {showAnimatedBackground && stored.backgroundScene ? (
               <div
                 className="pointer-events-none absolute inset-0 z-[1] overflow-hidden"
                 style={
@@ -318,10 +329,10 @@ export default function WayCardModal({
               </div>
             ) : null}
             <div
-              className={`way-modal-preview-slot pointer-events-none relative z-10 h-[300px] w-full sm:h-[360px] ${
+              className={`way-modal-preview-slot pointer-events-none relative z-10 h-[340px] w-full sm:h-[420px] lg:h-[480px] [&_img]:h-full [&_img]:max-h-full [&_img]:w-auto [&_img]:max-w-full ${
                 stored.previewAlign === "right"
                   ? ""
-                  : "mx-auto flex max-w-[820px] items-center justify-center max-md:[&>*]:scale-[0.82] md:[&>*]:scale-100 [&>*]:!relative [&>*]:!inset-auto [&>*]:!top-auto [&>*]:!right-auto [&>*]:!bottom-auto [&>*]:!left-auto [&>*]:!translate-x-0 [&>*]:!translate-y-0"
+                  : "mx-auto flex max-w-[960px] items-center justify-center [&>*]:!relative [&>*]:!inset-auto [&>*]:!top-auto [&>*]:!right-auto [&>*]:!bottom-auto [&>*]:!left-auto [&>*]:!translate-x-0 [&>*]:!translate-y-0"
               }`}
             >
               {stored.previewImage ? (
@@ -331,7 +342,7 @@ export default function WayCardModal({
                     alt=""
                     width={800}
                     height={800}
-                    className="h-auto w-[92%] max-h-[84%] object-contain object-center"
+                    className="object-contain object-center"
                     sizes="(max-width: 1023px) 90vw, 0px"
                   />
                 </div>

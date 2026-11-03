@@ -103,13 +103,15 @@ const Hero = () => {
             className="relative z-10 mx-auto w-full max-w-6xl px-2 pb-10 max-md:-mt-48 sm:-mt-60 sm:px-4 md:-mt-28 md:px-4 md:pb-20 lg:-mt-36 lg:max-w-7xl lg:pb-24"
             delay={0.75}
           >
-            <div className="relative mx-auto h-[24rem] w-full sm:h-[30rem] md:h-[32rem] lg:h-[38rem]">
+            {/* Phones: full-width display at its natural ratio (no stretching);
+                md+: fixed-height stage with the display contained. */}
+            <div className="relative mx-auto w-full max-md:overflow-hidden md:h-[32rem] lg:h-[38rem]">
               <Image
                 src="/images/developers/hero-display.png"
                 alt=""
                 width={2156}
                 height={1280}
-                className="h-full w-full object-fill md:object-contain"
+                className="h-auto w-full md:h-full md:object-contain"
                 sizes="(min-width: 1280px) 1080px, 100vw"
                 priority
               />
@@ -137,9 +139,10 @@ const Hero = () => {
                     </div>
                   ))}
 
-                  {/* quote.ts terminal - larger on desktop; the only layer on
-                      mobile, where it's centred and enlarged. */}
-                  <div className="absolute inset-0 origin-[53.3%_52.1%] -translate-x-[3.3%] -translate-y-[2.1%] scale-200 md:translate-x-0 md:translate-y-0 md:scale-115">
+                  {/* quote.ts terminal - larger on desktop. On mobile it's the
+                      only layer: centred and scaled so the dark window spans
+                      ~80% of the display (its glow is clipped by the display). */}
+                  <div className="absolute inset-0 origin-[53.3%_52.1%] -translate-x-[3.3%] -translate-y-[2.1%] scale-[3.2] md:translate-x-0 md:translate-y-0 md:scale-115">
                     <Image
                       src="/images/developers/hero-terminal.svg"
                       alt="CoverForce API call returning three bindable quotes"
