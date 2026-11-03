@@ -2,6 +2,7 @@
 import { useRef, useEffect, useCallback, useState, type MutableRefObject } from "react";
 import { flushSync } from "react-dom";
 import Image from "next/image";
+import { RiAppleFill, RiBattery2Fill, RiSearchLine, RiWifiFill } from "@remixicon/react";
 import {
   Tooltip,
   TooltipContent,
@@ -39,6 +40,8 @@ const WIN_VISUAL_OFFSET_X = 36.6;
 const TRAFFIC_LIGHTS_X = [99.297, 112.297];
 const TRAFFIC_LIGHTS_Y = 21;
 const DUR = 500;
+/** Height of the custom menubar drawn on phones (the image's own is cropped). */
+const MOBILE_MENUBAR_H = 28;
 // DPR is read lazily inside setupCanvas - never at module scope, which would
 // run during SSR and either crash or hardcode a value.
 
@@ -98,7 +101,7 @@ const APPS: App[] = [
   {
     id: "acord-126",
     Icon: createDockIcon("/images/product/submission-intake/dock-acord-126.svg"),
-    label: "Acord 126",
+    label: "Prior Policy",
     accent: "#1F86F9",
     previewImage: "/images/product/submission-intake/live-demo-3.svg",
     previewFrameX: 26,
@@ -515,10 +518,11 @@ export default function GenieEffect() {
   const getWinLayout = useCallback((): { pos: Pt; scale: number } => {
     const { w, h } = getContainerSize();
     if (isMobile) {
-      // Fit with extra side padding so the display reads a bit smaller.
-      const padX = 28;
-      const fit = Math.min(1, (w - padX * 2) / WIN_W);
-      const scale = fit * 0.9;
+      // As large as fits: the frame plus its left badge strip (centred via
+      // WIN_VISUAL_OFFSET_X on both sides) fills the width minus a small gutter,
+      // so the badge never runs off the left edge.
+      const gutter = 6;
+      const scale = Math.min(1, (w - gutter * 2) / (WIN_W + WIN_VISUAL_OFFSET_X * 2));
       const scaledW = WIN_W * scale;
       const scaledH = WIN_H * scale;
       const dockReserve = 68;
@@ -526,7 +530,8 @@ export default function GenieEffect() {
         scale,
         pos: {
           x: (w - scaledW) / 2 - WIN_VISUAL_OFFSET_X * scale,
-          y: Math.max(24, (h - scaledH - dockReserve) / 2 - 8),
+          // Below the custom mobile menubar.
+          y: Math.max(MOBILE_MENUBAR_H + 12, (h - scaledH - dockReserve) / 2 + MOBILE_MENUBAR_H / 2),
         },
       };
     }
@@ -791,16 +796,41 @@ export default function GenieEffect() {
         }
       `}</style>
       <div className="absolute inset-0 overflow-hidden">
-      {/* Desktop image includes its own menubar */}
-      <Image
-        src="/images/product/submission-intake/mac-display.png"
-        alt="macos-background"
-        aria-hidden="true"
-        fill
-        sizes="(min-width: 1280px) 1216px, 100vw"
-        quality={90}
-        className="object-cover object-top"
-      />
+        {/* The image includes its own menubar. On phones that bar shrinks to
+            unreadable and gets cut off at the sides, so the image is drawn
+            6.3% taller and shifted up (its bar is 5.9% of its height) to crop
+            it, and a real-size menubar is drawn on top instead. */}
+        <div className="absolute inset-x-0 bottom-0 top-0 max-md:-top-[6.3%]">
+          <Image
+            src="/images/product/submission-intake/mac-display.png"
+            alt="macos-background"
+            aria-hidden="true"
+            fill
+            sizes="(min-width: 1280px) 1216px, 100vw"
+            quality={90}
+            className="object-cover object-top"
+          />
+        </div>
+      </div>
+
+      <div
+        className="absolute inset-x-0 top-0 z-[45] flex items-center justify-between bg-[#4b3f8f]/55 px-3 font-sans text-[11px] leading-none text-white md:hidden"
+        style={{ height: MOBILE_MENUBAR_H }}
+        aria-hidden
+      >
+        <div className="flex items-center gap-3">
+          <RiAppleFill className="size-3.5" />
+          <span className="font-semibold">CoverForce</span>
+          <span className="text-white/85">File</span>
+          <span className="text-white/85">Edit</span>
+          <span className="text-white/85">View</span>
+        </div>
+        <div className="flex items-center gap-2.5">
+          <RiBattery2Fill className="size-3.5" />
+          <RiWifiFill className="size-3.5" />
+          <RiSearchLine className="size-3" />
+          <span>12:24 PM</span>
+        </div>
       </div>
 
       {/* Genie canvas - outside clipped scene so the warp isn't cut off */}
