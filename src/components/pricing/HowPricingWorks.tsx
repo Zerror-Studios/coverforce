@@ -33,14 +33,14 @@ const CARDS: PricingWorkCard[] = [
     label: "Unlimited users",
     variant: "split-dark",
     headline: "Add your whole team without per-seat fees.",
-    bottomSrc: "/images/pricing/pricing2.mp4",
+    bottomSrc: "/videos/pricing-2.mp4",
   },
   {
     id: "aligned-incentives",
     label: "Aligned incentives",
     variant: "split-light",
     headline: "We grow when you grow.",
-    bottomSrc: "/images/pricing/pricing3.jpeg",
+    bottomSrc: "/images/pricing/pricing-3.jpg",
   },
 ];
 

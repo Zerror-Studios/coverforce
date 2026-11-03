@@ -167,14 +167,14 @@ function usesTransparentHeaderUntilScroll(pathname: string): boolean {
 const headerThemes = {
   dark: {
     bar: "border-b border-[#FFFFFF1A] bg-[#151f4d]",
-    logo: "/Coverforce_logo_white.svg",
+    logo: "/images/brand/coverforce-logo-white.svg",
     linkActive: "text-white",
     linkIdle: "text-white/80 hover:text-white",
     login: "text-white/95 hover:text-white",
   },
   light: {
     bar: "border-b border-[#E8ECF0] bg-white",
-    logo: "/Coverforce_logo_blue.svg",
+    logo: "/images/brand/coverforce-logo-blue.svg",
     linkActive: "text-[#3D3D3D]",
     linkIdle: "text-[#3D3D3D] hover:text-[#151F4D]",
     login: "text-[#3D3D3D] hover:text-[#151F4D]",
@@ -484,16 +484,27 @@ const Header = ({
     };
     updateHeight();
 
+    // Scroll fires many times per frame; measure at most once per frame.
+    let raf = 0;
+    const scheduleHeight = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        updateHeight();
+      });
+    };
+
     const observer = new ResizeObserver(updateHeight);
     observer.observe(navBar);
     if (header) observer.observe(header);
-    window.addEventListener("resize", updateHeight);
-    window.addEventListener("scroll", updateHeight, { passive: true });
+    window.addEventListener("resize", scheduleHeight);
+    window.addEventListener("scroll", scheduleHeight, { passive: true });
 
     return () => {
+      cancelAnimationFrame(raf);
       observer.disconnect();
-      window.removeEventListener("resize", updateHeight);
-      window.removeEventListener("scroll", updateHeight);
+      window.removeEventListener("resize", scheduleHeight);
+      window.removeEventListener("scroll", scheduleHeight);
     };
   }, [mobileMenuOpen]);
 
@@ -531,12 +542,26 @@ const Header = ({
       return;
     }
 
-    const updateSurface = () => {
+    // isDarkSurfaceUnderHeader forces layout + a hit-test, so run it at most
+    // every SURFACE_CHECK_MS while scrolling, plus once after scrolling stops
+    // so the final colour is always right.
+    const SURFACE_CHECK_MS = 120;
+    let lastSurfaceCheck = 0;
+    let trailingSurface: ReturnType<typeof setTimeout> | undefined;
+
+    const checkSurface = () => {
+      lastSurfaceCheck = performance.now();
       const height = navBarRef.current?.offsetHeight || navBarHeight || 72;
       const overDark = isDarkSurfaceUnderHeader(height);
       if (overDark === glassOverDarkRef.current) return;
       glassOverDarkRef.current = overDark;
       setGlassOverDark(overDark);
+    };
+
+    const updateSurface = () => {
+      clearTimeout(trailingSurface);
+      if (performance.now() - lastSurfaceCheck >= SURFACE_CHECK_MS) checkSurface();
+      trailingSurface = setTimeout(checkSurface, SURFACE_CHECK_MS);
     };
 
     const update = () => {
@@ -559,15 +584,28 @@ const Header = ({
 
     update();
 
+    // Lenis and the native scroll event both fire for the same scroll -
+    // coalesce them into a single update per frame.
+    let raf = 0;
+    const scheduleUpdate = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        update();
+      });
+    };
+
     const lenis = window.lenis;
-    lenis?.on("scroll", update);
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
+    lenis?.on("scroll", scheduleUpdate);
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
 
     return () => {
-      lenis?.off("scroll", update);
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+      cancelAnimationFrame(raf);
+      clearTimeout(trailingSurface);
+      lenis?.off("scroll", scheduleUpdate);
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
     };
   }, [transparentUntilScroll, navBarHeight]);
 

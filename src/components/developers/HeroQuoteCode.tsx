@@ -10,7 +10,7 @@ const STRING = "#FBD38D";
 const MUTED = "#C9D1E0";
 const COMMENT = "#6B7A99";
 
-// Mirrors the code that was drawn inside the quote.ts card of hero-content.svg.
+// Mirrors the code that was drawn inside the quote.ts card of hero-terminal.svg.
 const CODE_LINES: Token[][] = [
   [
     { text: "const", fill: KEYWORD },
@@ -52,7 +52,7 @@ const LINE_LENGTHS = CODE_LINES.map((line) =>
 );
 const TOTAL_CHARS = LINE_LENGTHS.reduce((sum, n) => sum + n, 0);
 
-// Positions in hero-content.svg's 953×501 viewBox.
+// Positions in hero-terminal.svg's 953×501 viewBox.
 const CODE_X = 380;
 const FIRST_BASELINE = 201.3;
 const LINE_HEIGHT = 15.1;
@@ -77,7 +77,7 @@ function sliceLine(line: Token[], count: number): Token[] {
   return out;
 }
 
-/** Typewriter overlay for the quote.ts card; sized to sit exactly on hero-content.svg. */
+/** Typewriter overlay for the quote.ts card; sized to sit exactly on hero-terminal.svg. */
 export default function HeroQuoteCode({ className = "" }: { className?: string }) {
   const rootRef = useRef<SVGSVGElement>(null);
   const [typed, setTyped] = useState(0);

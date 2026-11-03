@@ -23,22 +23,8 @@ const TANGENT_SPREAD = 0.14;      // less scatter along ring
 const JITTER_SPREAD = 0.06;     // tighter random scatter
 const DRIFT_AMP = 0.012;
 
-// ─── tiny fast simplex-like hash noise (no external dep) ─────────────────────
-function hash(n: number): number {
-  const x = Math.sin(n) * 43758.5453123;
-  return x - Math.floor(x);
-}
-function noise2(x: number, y: number): number {
-  const ix = Math.floor(x), iy = Math.floor(y);
-  const fx = x - ix, fy = y - iy;
-  const ux = fx * fx * (3 - 2 * fx);
-  const uy = fy * fy * (3 - 2 * fy);
-  const a = hash(ix + iy * 57.0);
-  const b = hash(ix + 1 + iy * 57.0);
-  const c = hash(ix + (iy + 1) * 57.0);
-  const d = hash(ix + 1 + (iy + 1) * 57.0);
-  return a + (b - a) * ux + (c - a) * uy + (d - b + a - c) * ux * uy;
-}
+/** Idle frame rate; full rate while the cursor is interacting. */
+const IDLE_FPS = 30;
 
 // ─── vertex shader ────────────────────────────────────────────────────────────
 const vertexShader = /* glsl */ `
@@ -77,10 +63,13 @@ function Particles({
   count,
   tone = "warm",
   soft = false,
+  running,
 }: {
   count: number;
   tone?: "warm" | "blue" | "white";
   soft?: boolean;
+  /** Drive frames only while on screen. */
+  running: boolean;
 }) {
   const meshRef = useRef<THREE.Points>(null!);
   const mouse = useRef({ x: 0, y: 0, active: false });
@@ -105,6 +94,15 @@ function Particles({
     const haloBaseX = new Float32Array(count);
     const haloBaseY = new Float32Array(count);
     const wavePhase = new Float32Array(count);
+    // Per-particle constants, precomputed once instead of every frame.
+    const cosA = new Float32Array(count);
+    const sinA = new Float32Array(count);
+    const restX = new Float32Array(count);   // ring: point on ring; halo: base
+    const restY = new Float32Array(count);
+    const normX = new Float32Array(count);   // halo: unit offset from ring anchor
+    const normY = new Float32Array(count);
+    const driftFx = new Float32Array(count); // halo: drift frequencies
+    const driftFy = new Float32Array(count);
     const ringCount = Math.floor(count * RING_CORE);
 
     for (let i = 0; i < count; i++) {
@@ -139,6 +137,23 @@ function Particles({
       angles[i] = angle;
       baseRadii[i] = r;
       noiseOffset[i] = Math.random() * 100;
+      cosA[i] = Math.cos(angle);
+      sinA[i] = Math.sin(angle);
+      if (onRing) {
+        restX[i] = r * cosA[i];
+        restY[i] = r * sinA[i];
+      } else {
+        restX[i] = haloBaseX[i];
+        restY[i] = haloBaseY[i];
+        const nx = haloBaseX[i] - RING_R * cosA[i];
+        const ny = haloBaseY[i] - RING_R * sinA[i];
+        const nlen = Math.hypot(nx, ny) || 1;
+        normX[i] = nx / nlen;
+        normY[i] = ny / nlen;
+        // Derived from the particle seed (already random) - no extra RNG.
+        driftFx[i] = 0.35 + (noiseOffset[i] % 1) * 0.4;
+        driftFy[i] = 0.35 + ((noiseOffset[i] * 7.31) % 1) * 0.4;
+      }
 
       const x = onRing ? r * Math.cos(angle) : haloBaseX[i];
       const y = onRing ? r * Math.sin(angle) : haloBaseY[i];
@@ -169,7 +184,7 @@ function Particles({
       colors[i * 3 + 2] = bottom[2] + (top[2] - bottom[2]) * gradT;
     }
 
-    return { angles, baseRadii, noiseOffset, positions, velocities, sizes, alphas, colors, ringCore, haloSide, haloBaseX, haloBaseY, wavePhase };
+    return { angles, baseRadii, noiseOffset, positions, velocities, sizes, alphas, colors, ringCore, haloSide, haloBaseX, haloBaseY, wavePhase, cosA, sinA, restX, restY, normX, normY, driftFx, driftFy };
   }, [count, soft, tone]);
 
   // ── build geometry ─────────────────────────────────────────────────────────
@@ -220,8 +235,25 @@ function Particles({
     };
   }, [gl]);
 
+  // ── frame pacing: 30fps idle, full rate while the cursor interacts ───────
+  const invalidate = useThree((st) => st.invalidate);
+  useEffect(() => {
+    if (!running) return;
+    let raf = 0;
+    let last = 0;
+    const tick = (now: number) => {
+      raf = requestAnimationFrame(tick);
+      const minGap = mouse.current.active ? 0 : 1000 / IDLE_FPS - 2;
+      if (now - last < minGap) return;
+      last = now;
+      invalidate();
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [running, invalidate]);
+
   // ── per-frame update ───────────────────────────────────────────────────────
-  useFrame((state) => {
+  useFrame((state, delta) => {
     const t = state.clock.elapsedTime;
     const pos = meshRef.current.geometry.attributes.position as THREE.BufferAttribute;
     const arr = pos.array as Float32Array;
@@ -237,40 +269,35 @@ function Particles({
       cursorY = cursorWorld.y;
     }
 
-    const { angles, noiseOffset, velocities, ringCore, haloSide, haloBaseX, haloBaseY, wavePhase, baseRadii } = data;
+    // The spring was tuned per 60fps frame; at 30fps run two steps so the
+    // motion keeps the same speed and feel.
+    const steps = Math.min(3, Math.max(1, Math.round(delta * 60)));
+
+    const { velocities, ringCore, wavePhase, noiseOffset, cosA, sinA, restX, restY, normX, normY, driftFx, driftFy } = data;
+    const wobbleTime = t * PULSE_SPEED;
+    const driftTime = t * 0.55;
 
     for (let i = 0; i < count; i++) {
       const i3 = i * 3;
-      const angle = angles[i];
       const onRing = ringCore[i] === 1;
 
-      let tx: number;
-      let ty: number;
+      let tx = restX[i];
+      let ty = restY[i];
       let springK = SPRING_K;
       let damp = DAMPING;
 
-      if (onRing) {
-        const r = baseRadii[i];
-        tx = r * Math.cos(angle);
-        ty = r * Math.sin(angle);
-      } else {
-        const anchorX = RING_R * Math.cos(angle);
-        const anchorY = RING_R * Math.sin(angle);
-        let nx = haloBaseX[i] - anchorX;
-        let ny = haloBaseY[i] - anchorY;
-        const nlen = Math.hypot(nx, ny) || 1;
-        nx /= nlen;
-        ny /= nlen;
-        const tangX = -ny;
-        const tangY = nx;
+      if (!onRing) {
+        const nx = normX[i];
+        const ny = normY[i];
+        const phase = wavePhase[i];
+        const wobbleR = Math.sin(wobbleTime + phase) * PULSE_AMP;
+        const wobbleT = Math.sin(wobbleTime * 0.82 + phase * 1.6) * PULSE_AMP * 0.5;
+        const seed = noiseOffset[i];
+        const driftX = Math.sin(driftTime * driftFx[i] + seed) * DRIFT_AMP;
+        const driftY = Math.sin(driftTime * driftFy[i] + seed * 1.7) * DRIFT_AMP;
 
-        const wobbleR = Math.sin(t * PULSE_SPEED + wavePhase[i]) * PULSE_AMP;
-        const wobbleT = Math.sin(t * PULSE_SPEED * 0.82 + wavePhase[i] * 1.6) * PULSE_AMP * 0.5;
-        const driftX = (noise2(noiseOffset[i] + t * 0.55, i * 0.02) - 0.5) * DRIFT_AMP * 2;
-        const driftY = (noise2(i * 0.02, noiseOffset[i] + t * 0.55) - 0.5) * DRIFT_AMP * 2;
-
-        tx = haloBaseX[i] + nx * wobbleR + tangX * wobbleT + driftX;
-        ty = haloBaseY[i] + ny * wobbleR + tangY * wobbleT + driftY;
+        tx += nx * wobbleR - ny * wobbleT + driftX;
+        ty += ny * wobbleR + nx * wobbleT + driftY;
         springK = SPRING_K * 1.2;
         damp = 0.76;
       }
@@ -283,29 +310,35 @@ function Particles({
         const d2 = dx * dx + dy * dy;
 
         if (d2 < ATTRACT_DIST_SQ) {
-          const d = Math.sqrt(d2);
-          const strength = Math.pow(1 - d / 0.88, 2);
+          const k = 1 - Math.sqrt(d2) / 0.88;
+          const strength = k * k;
           if (onRing) {
             const currentR = Math.sqrt(cx * cx + cy * cy);
             const pullR = currentR + (RING_R - currentR) * strength * 1.6;
-            tx = pullR * Math.cos(angle);
-            ty = pullR * Math.sin(angle);
+            tx = pullR * cosA[i];
+            ty = pullR * sinA[i];
           } else {
-            const ringX = RING_R * Math.cos(angle);
-            const ringY = RING_R * Math.sin(angle);
             const pull = Math.min(1, strength * 1.45);
-            tx += (ringX - tx) * pull;
-            ty += (ringY - ty) * pull;
+            tx += (RING_R * cosA[i] - tx) * pull;
+            ty += (RING_R * sinA[i] - ty) * pull;
           }
         }
       }
 
-      velocities[i3] = (velocities[i3] + (tx - arr[i3]) * springK) * damp;
-      velocities[i3 + 1] = (velocities[i3 + 1] + (ty - arr[i3 + 1]) * springK) * damp;
-      velocities[i3 + 2] = 0;
-
-      arr[i3] += velocities[i3];
-      arr[i3 + 1] += velocities[i3 + 1];
+      let vx = velocities[i3];
+      let vy = velocities[i3 + 1];
+      let px = arr[i3];
+      let py = arr[i3 + 1];
+      for (let step = 0; step < steps; step++) {
+        vx = (vx + (tx - px) * springK) * damp;
+        vy = (vy + (ty - py) * springK) * damp;
+        px += vx;
+        py += vy;
+      }
+      velocities[i3] = vx;
+      velocities[i3 + 1] = vy;
+      arr[i3] = px;
+      arr[i3 + 1] = py;
     }
 
     pos.needsUpdate = true;
@@ -362,14 +395,15 @@ export default function GlobeScene({
       ) : null}
       <Canvas
         orthographic
-        frameloop={visible ? "always" : "never"}
+        // Frames are requested by Particles' own pacer (30fps idle).
+        frameloop={visible ? "demand" : "never"}
         camera={{ position: [0, 0, 10], zoom: 185, near: 0.1, far: 100 }}
         className={`relative z-[1] ${interactive ? "pointer-events-auto" : "pointer-events-none"}`}
         style={{ width: "100%", height: "100%", pointerEvents: interactive ? "auto" : "none" }}
         gl={{ antialias: !lite, alpha: true, powerPreference: lite ? "low-power" : "high-performance" }}
-        dpr={lite ? [1, 1.25] : [1, 1.5]}
+        dpr={lite ? 1 : [1, 1.5]}
       >
-        <Particles count={count} tone={tone} soft={ambient} />
+        <Particles count={count} tone={tone} soft={ambient} running={visible} />
       </Canvas>
     </div>
   );

@@ -12,6 +12,7 @@ import {
 } from "@/contexts/HomeIntroContext";
 import type { MegaMenuBlogData } from "@/data/megaMenu";
 import { scrollToTop } from "@/lib/scrollToTop";
+import { refreshScrollTriggersInPageOrder } from "@/lib/scheduleScrollTriggerRefresh";
 import {
   getPageTransitionBg,
   installPageTransitionBgSync,
@@ -46,7 +47,7 @@ function SiteLayoutInner({
     if (!introEnabled || phase !== "done") return;
 
     const id = window.requestAnimationFrame(() => {
-      ScrollTrigger.refresh();
+      refreshScrollTriggersInPageOrder();
       window.lenis?.resize();
       scrollToTop();
     });
@@ -98,7 +99,7 @@ export default function SiteLayout({
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
-      ScrollTrigger.refresh();
+      refreshScrollTriggersInPageOrder();
       window.lenis?.resize();
       // Hash scrolling is owned by LenisScroll so we don't interrupt a smooth tween.
       if (!window.location.hash) {

@@ -13,11 +13,11 @@ const Hero = () => (
     secondaryButtonLabel="How it works"
     rightCard={
       <Image
-        src="/images/carrier/carrier-hero.svg"
+        src="/images/solutions/carriers/hero.svg"
         alt="Carrier quote requests and bindable quotes from agencies"
         width={648}
         height={544}
-        className="relative z-10 mx-auto h-auto w-full max-w-[550px] lg:max-w-[420px] xl:max-w-[550px]"
+        className="relative z-10 mx-auto h-auto w-full max-w-[550px] lg:-mx-[5%] lg:w-[110%] lg:max-w-none lg:shrink-0"
         priority
       />
     }

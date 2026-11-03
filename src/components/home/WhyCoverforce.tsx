@@ -4,6 +4,7 @@ import { useCallback, useRef, useState, useEffect, useLayoutEffect, useMemo } fr
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scheduleScrollTriggerRefresh } from "@/lib/scheduleScrollTriggerRefresh";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import Container from "../common/Container";
@@ -33,7 +34,7 @@ const whySlides: WhySlide[] = [
       "that keeps improving for you.",
     ],
     image:
-      "/images/why/ai.avif",
+      "/images/why-coverforce/ai.avif",
     alt: "Abstract blue and purple fluid gradient waves",
   },
   {
@@ -45,7 +46,7 @@ const whySlides: WhySlide[] = [
       "carrier relationships alone.",
     ],
     image:
-      "/images/why/market.avif",
+      "/images/why-coverforce/market.avif",
     alt: "Abstract deep purple liquid waves",
   },
   {
@@ -57,7 +58,7 @@ const whySlides: WhySlide[] = [
       "and battle-tested.",
     ],
     image:
-      "/images/why/carrier.avif",
+      "/images/why-coverforce/carrier.avif",
     alt: "Abstract cyan light geometric glow",
   },
   {
@@ -69,7 +70,7 @@ const whySlides: WhySlide[] = [
       "for FI-grade volume from day one.",
     ],
     image:
-      "/images/why/security.avif",
+      "/images/why-coverforce/security.avif",
     alt: "Abstract violet silk waves on black",
   },
   {
@@ -347,7 +348,7 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
     });
 
 
-    ScrollTrigger.refresh();
+    scheduleScrollTriggerRefresh();
 
     return () => {
       parallaxTl.scrollTrigger?.kill();
@@ -611,7 +612,6 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                         src={slide.image}
                         alt={slide.alt}
                         draggable={false}
-                        priority={visualIndex === 0}
                       />
                       <div
                         className={`pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-linear-to-t from-black/70 via-black/20 to-transparent px-5 pb-5 pt-14 transition-opacity duration-300 ${

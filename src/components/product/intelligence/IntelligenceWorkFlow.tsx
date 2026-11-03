@@ -15,7 +15,7 @@ const WORKFLOW_STEPS = [
   {
     id: "submission-intelligence",
     label: "Submission Intelligence",
-    image: "/images/product/intelligence1.png",
+    image: "/images/product/intelligence/intelligence-1.png",
     headline: (
       <>
         Every field extracted from ACORDs and loss runs with{" "}
@@ -27,7 +27,7 @@ const WORKFLOW_STEPS = [
   {
     id: "appetite-intelligence",
     label: "Appetite Intelligence",
-    image: "/images/product/intelligence2.png",
+    image: "/images/product/intelligence/intelligence-2.png",
     headline: (
       <>
         Match risk to carrier appetite instantly with{" "}
@@ -39,7 +39,7 @@ const WORKFLOW_STEPS = [
   {
     id: "underwriter-intelligence",
     label: "Underwriter Intelligence",
-    image: "/images/product/intelligence3.png",
+    image: "/images/product/intelligence/intelligence-3.png",
     headline: (
       <>
         Rich underwriting questions and answers{" "}
@@ -50,7 +50,7 @@ const WORKFLOW_STEPS = [
   {
     id: "carrier-performance",
     label: "Outcome Analytics",
-    image: "/images/product/intelligence4.png",
+    image: "/images/product/intelligence/intelligence-4.png",
     headline: (
       <>
         Named outcome analytics that power{" "}
@@ -61,7 +61,7 @@ const WORKFLOW_STEPS = [
   {
     id: "opportunity-visibility",
     label: "Opportunity Visibility",
-    image: "/images/product/intelligence5.png",
+    image: "/images/product/intelligence/intelligence-5.png",
     headline: (
       <>
         Find new opportunities for expansion -{" "}
@@ -75,7 +75,7 @@ const WORKFLOW_STEPS = [
   {
     id: "pipeline-visibility",
     label: "Pipeline Visibility",
-    image: "/images/product/intelligence6.png",
+    image: "/images/product/intelligence/intelligence-6.png",
     headline: (
       <>
         Track every submission across producers with{" "}

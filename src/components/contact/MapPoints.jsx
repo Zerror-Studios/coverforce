@@ -72,7 +72,7 @@ const IconMail = () => (
 
 const OFFICES = {
   'new-york': {
-    imageClass: 'bg-[url(/images/contact/thumbnail_cv.jpg)] bg-cover bg-center',
+    imageClass: 'bg-[url(/images/contact/thumbnail-cv.jpg)] bg-cover bg-center',
     address: (
       <a
         href="https://maps.app.goo.gl/vEtrvY2mQdCTLye38"
@@ -86,7 +86,7 @@ const OFFICES = {
     ),
   },
   denver: {
-    imageClass: 'bg-[url(/images/denver.avif)] bg-cover bg-top',
+    imageClass: 'bg-[url(/images/contact/denver.avif)] bg-cover bg-top',
     address: (
       <div className="flex items-start gap-2">
         <IconPin />

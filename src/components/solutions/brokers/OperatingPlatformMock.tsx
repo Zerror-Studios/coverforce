@@ -9,12 +9,12 @@ import {
 } from "@remixicon/react";
 
 const CARRIER_LOGOS = [
-  { src: "/images/process/logo1.svg", alt: "AmTrust" },
-  { src: "/images/process/logo2.svg", alt: "AccidentFund" },
-  { src: "/images/process/logo3.svg", alt: "CompWest" },
-  { src: "/images/process/logo4.svg", alt: "Chubb" },
-  { src: "/images/process/logo5.svg", alt: "Coalition" },
-  { src: "/images/process/logo6.svg", alt: "Cowbell" },
+  { src: "/images/solutions/brokers/platform-logo-1.svg", alt: "AmTrust" },
+  { src: "/images/solutions/brokers/platform-logo-2.svg", alt: "AccidentFund" },
+  { src: "/images/solutions/brokers/platform-logo-3.svg", alt: "CompWest" },
+  { src: "/images/solutions/brokers/platform-logo-4.svg", alt: "Chubb" },
+  { src: "/images/solutions/brokers/platform-logo-5.svg", alt: "Coalition" },
+  { src: "/images/solutions/brokers/platform-logo-6.svg", alt: "Cowbell" },
 ] as const;
 
 const GROWTH_BARS = [

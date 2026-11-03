@@ -109,7 +109,7 @@ export default function StartupFaq({ items }: { items: FaqEntry[] }) {
             <div className="relative order-2 hidden overflow-hidden rounded-md bg-[#EFF3FF] lg:sticky lg:top-28 lg:order-1 lg:block lg:self-start">
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(21,31,77,0.04),rgba(21,31,77,0.12))]" />
               <Image
-                src="/images/careers/image3.webp"
+                src="/images/careers/culture-3.webp"
                 alt="CoverForce team culture"
                 width={900}
                 height={1100}

@@ -82,7 +82,8 @@ const DataAdvantage = () => {
             {/* Placement / decline intelligence - keep RHS video */}
             <article className="relative flex min-h-[24rem] w-full flex-col justify-between overflow-hidden rounded-sm p-6 md:min-h-[30rem] md:p-8 lg:min-h-[32rem] lg:p-10">
               <LazyVideo
-                src="/carrier.mp4"
+                src="/videos/carrier.mp4"
+                poster="/images/home/data-advantage/carrier-poster.webp"
                 className="absolute inset-0 h-full w-full object-cover object-center"
                 aria-hidden
               />

@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scheduleScrollTriggerRefresh } from "@/lib/scheduleScrollTriggerRefresh";
 import Container from "../common/Container";
 import EyebrowPill from "../common/EyebrowPill";
 import { processSteps } from "@/data/processSteps";
@@ -363,11 +364,12 @@ const ProcessFlow = () => {
       hi(5, 3, t);
 
       stepStartTimesRef.current = [...stepStarts];
-      ScrollTrigger.refresh();
-      // Re-bind after refresh so start/end are current for jumpToStep.
+      // The pin length is derived from the finished timeline's duration, so
+      // re-measure THIS trigger right away (cheap) - otherwise it briefly pins
+      // with a placeholder length. The page-wide refresh is coalesced.
+      tl.scrollTrigger?.refresh();
       scrollTriggerRef.current = tl.scrollTrigger ?? null;
-
-      ScrollTrigger.refresh();
+      scheduleScrollTriggerRefresh();
 
       return () => {
         scrollTriggerRef.current = null;

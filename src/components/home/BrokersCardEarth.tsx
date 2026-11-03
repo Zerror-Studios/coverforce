@@ -8,7 +8,7 @@ export default function BrokersCardEarth() {
     >
       <LazyVideo
         className="h-full w-full object-cover"
-        src="/videos/globee.mp4"
+        src="/videos/globe.mp4"
         aria-hidden
       />
     </div>

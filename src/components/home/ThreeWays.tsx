@@ -53,6 +53,8 @@ function WayCardSvg({
   maxWidth,
   maxHeight,
   lift = 0,
+  shiftX = 0,
+  boost = 1,
 }: {
   src: string;
   width: number;
@@ -66,6 +68,10 @@ function WayCardSvg({
   maxHeight?: string;
   /** Extra upward shift in px (moves without shrinking, unlike padding). */
   lift?: number;
+  /** Extra horizontal shift in px; negative moves left. */
+  shiftX?: number;
+  /** Visual enlargement around the image's own centre (doesn't move it). */
+  boost?: number;
 }) {
   const dx =
     align === "right"
@@ -92,7 +98,10 @@ function WayCardSvg({
           maxWidth,
           maxHeight,
           objectPosition: align === "right" ? "right center" : undefined,
-          transform: dx || dy || lift ? `translate(${dx}%, calc(${dy}% - ${lift}px))` : undefined,
+          transform:
+            dx || dy || lift || shiftX || boost !== 1
+              ? `translate(calc(${dx}% + ${shiftX}px), calc(${dy}% - ${lift}px)) scale(${boost})`
+              : undefined,
         }}
       />
     </div>
@@ -162,6 +171,12 @@ type WayCardConfig = Omit<WayCardProps, "children" | "onOpen"> & {
   modalPreviewAlign?: "center" | "right";
 };
 
+/** Card graphics are drawn this much larger than their fitted box so they
+ *  read clearly - live mock on lg+, static preview below lg (tighter there:
+ *  the tagline sits just above it). */
+const MOCK_BOOST = 1.1;
+const PREVIEW_BOOST = 1.08;
+
 // Updated WAY_CARDS - remove lightStrip entries
 const WAY_CARDS: WayCardConfig[] = [
   {
@@ -171,10 +186,11 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "wholesaler",
     dotGrid: true,
     mockShiftDown: true,
-    previewImage: "/images/home/way-wholesaler.svg",
+    previewImage: "/images/home/three-ways/wholesaler.svg",
     mock: (
       <WayCardSvg
-        src="/images/home/way-wholesaler.svg"
+        boost={MOCK_BOOST}
+        src="/images/home/three-ways/wholesaler.svg"
         width={472}
         height={352}
         // Aligned on the main card; the floating card overhangs.
@@ -183,7 +199,7 @@ const WAY_CARDS: WayCardConfig[] = [
         lift={72}
       />
     ),
-    modalPreview: <WayCardSvg src="/images/home/way-wholesaler.svg" width={472} height={352} />,
+    modalPreview: <WayCardSvg src="/images/home/three-ways/wholesaler.svg" width={472} height={352} />,
   },
   {
     label: "Brokers",
@@ -193,10 +209,11 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "broker",
     backgroundScene: <BrokersCardEarth />,
     backgroundSceneBlendScreen: true,
-    previewImage: "/images/home/way-broker.svg",
+    previewImage: "/images/home/three-ways/broker.svg",
     mock: (
       <WayCardSvg
-        src="/images/home/way-broker.svg"
+        boost={MOCK_BOOST}
+        src="/images/home/three-ways/broker.svg"
         width={498}
         height={325}
         // Aligned on the main card; the floating card overhangs.
@@ -206,7 +223,7 @@ const WAY_CARDS: WayCardConfig[] = [
         lift={96}
       />
     ),
-    modalPreview: <WayCardSvg src="/images/home/way-broker.svg" width={498} height={325} />,
+    modalPreview: <WayCardSvg src="/images/home/three-ways/broker.svg" width={498} height={325} />,
   },
   {
     label: "Developers",
@@ -223,13 +240,14 @@ const WAY_CARDS: WayCardConfig[] = [
     wide: true,
     background: "developer",
     className: "lg:col-span-2",
-    previewImage: "/images/home/way-developer.svg",
+    previewImage: "/images/home/three-ways/developer.svg",
     // No transparent margin in this export, so a smaller width matches the others visually.
     previewWidthClass: "w-[72%]",
     backgroundScene: <DeveloperTerminalBg />,
     mock: (
       <WayCardSvg
-        src="/images/home/way-developer.svg"
+        boost={MOCK_BOOST}
+        src="/images/home/three-ways/developer.svg"
         width={412}
         height={272}
         align="right"
@@ -237,9 +255,11 @@ const WAY_CARDS: WayCardConfig[] = [
         // Keeps clear of the terminal text and the expand button on narrower laptops.
         maxWidth="56%"
         maxHeight="calc(100% - 88px)"
+        // Nudged in from the card's right edge.
+        shiftX={-88}
       />
     ),
-    modalPreview: <WayCardSvg src="/images/home/way-developer.svg" width={412} height={272} />,
+    modalPreview: <WayCardSvg src="/images/home/three-ways/developer.svg" width={412} height={272} />,
   },
   {
     label: "Startups",
@@ -249,7 +269,7 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "startup",
     backgroundInteractive: true,
     mockShiftDown: true,
-    previewImage: "/images/home/way-startup.svg",
+    previewImage: "/images/home/three-ways/startup.svg",
     // Centre the phone (left 150 of 229 units), not the whole export.
     previewShiftX: 17.2,
     previewSize: [229, 309],
@@ -257,13 +277,14 @@ const WAY_CARDS: WayCardConfig[] = [
     // Focus is the phone (left 150px); the checklist card overhangs to its right.
     mock: (
       <WayCardSvg
-        src="/images/home/way-startup.svg"
+        boost={MOCK_BOOST}
+        src="/images/home/three-ways/startup.svg"
         width={229}
         height={309}
         focus={{ x: 0, y: 0, w: 150, h: 309 }}
       />
     ),
-    modalPreview: <WayCardSvg src="/images/home/way-startup.svg" width={229} height={309} />,
+    modalPreview: <WayCardSvg src="/images/home/three-ways/startup.svg" width={229} height={309} />,
     backgroundScene: <GlobeScene interactive transparent tone="white" />,
   },
   {
@@ -274,20 +295,21 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "carrier",
     dotGrid: true,
     mockShiftDown: true,
-    previewImage: "/images/home/way-carrier.svg",
+    previewImage: "/images/home/three-ways/carrier.svg",
     // Visible content sits 30 units right of the export's centre.
     previewShiftX: -6.6,
     previewSize: [453, 346],
     previewWidthClass: "w-auto max-w-[92%]",
     mock: (
       <WayCardSvg
-        src="/images/home/way-carrier.svg"
+        boost={MOCK_BOOST}
+        src="/images/home/three-ways/carrier.svg"
         width={453}
         height={346}
         focus={{ x: 60, y: 60, w: 393, h: 254 }}
       />
     ),
-    modalPreview: <WayCardSvg src="/images/home/way-carrier.svg" width={453} height={346} />,
+    modalPreview: <WayCardSvg src="/images/home/three-ways/carrier.svg" width={453} height={346} />,
   },
 ];
 
@@ -443,7 +465,9 @@ const WayCard = memo(function WayCard({
                   width={previewSize?.[0] ?? 800}
                   height={previewSize?.[1] ?? 800}
                   className={`h-auto ${previewWidthClass} max-h-[84%] object-contain object-center`}
-                  style={previewShiftX ? { transform: `translateX(${previewShiftX}%)` } : undefined}
+                  style={{
+                    transform: `translateX(${previewShiftX ?? 0}%) scale(${PREVIEW_BOOST})`,
+                  }}
                   sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 0px"
                 />
               ) : (

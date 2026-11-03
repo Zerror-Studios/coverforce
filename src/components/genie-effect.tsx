@@ -22,19 +22,22 @@ interface App {
   label: string;
   accent: string;
   previewImage: string;
-  /** x where the 717px-wide window frame starts inside the preview SVG. */
+  /** x where the 705px-wide window frame starts inside the preview SVG. */
   previewFrameX: number;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 // The preview SVGs differ in size, so each is shifted to put its window frame
-// at WIN_FRAME_X. The box fits the widest one (787×422).
-const WIN_W = 787;
-const WIN_H = 422;
-const WIN_FRAME_X = 68.8;
-// The frame spans x 68.8–785.8; the strip on its left only holds the floating
-// badge. Shift by half that strip so the frame looks centered.
-const WIN_VISUAL_OFFSET_X = 34;
+// at WIN_FRAME_X. The box fits the largest one (779×405).
+const WIN_W = 779;
+const WIN_H = 405;
+const WIN_FRAME_X = 73.297;
+// The 705px frame spans x 73.3–778.3; the strip on its left only holds the
+// floating badge. Shift by half that strip so the frame looks centered.
+const WIN_VISUAL_OFFSET_X = 36.6;
+// Traffic-light dots (close / minimize) in box coords.
+const TRAFFIC_LIGHTS_X = [99.297, 112.297];
+const TRAFFIC_LIGHTS_Y = 21;
 const DUR = 500;
 // DPR is read lazily inside setupCanvas - never at module scope, which would
 // run during SSR and either crash or hardcode a value.
@@ -78,27 +81,27 @@ function createDockIcon(src: string): React.FC {
 const APPS: App[] = [
   {
     id: "acord-125",
-    Icon: createDockIcon("/images/app2.svg"),
+    Icon: createDockIcon("/images/product/submission-intake/dock-acord-125.svg"),
     label: "Acord 125",
     accent: "#FF536A",
-    previewImage: "/images/product/submission-live1.svg",
-    previewFrameX: 68.8,
+    previewImage: "/images/product/submission-intake/live-demo-1.svg",
+    previewFrameX: 73.297,
   },
   {
     id: "loss-run",
-    Icon: createDockIcon("/images/app1.svg"),
+    Icon: createDockIcon("/images/product/submission-intake/dock-loss-run.svg"),
     label: "Loss Run",
     accent: "#FF6B2A",
-    previewImage: "/images/product/submission-live2.svg",
-    previewFrameX: 19.5,
+    previewImage: "/images/product/submission-intake/live-demo-2.svg",
+    previewFrameX: 26,
   },
   {
     id: "acord-126",
-    Icon: createDockIcon("/images/app3.svg"),
+    Icon: createDockIcon("/images/product/submission-intake/dock-acord-126.svg"),
     label: "Acord 126",
     accent: "#1F86F9",
-    previewImage: "/images/product/submission-live3.svg",
-    previewFrameX: 19.5,
+    previewImage: "/images/product/submission-intake/live-demo-3.svg",
+    previewFrameX: 26,
   },
 ];
 
@@ -158,16 +161,30 @@ function renderGenie(
   const srcW = off.width || WIN_W;
   const srcH = off.height || WIN_H;
 
+  // The preview window is translucent glass, so any vertical overlap between
+  // slices stacks alpha and darkens the whole window mid-animation. Snap every
+  // slice to whole device pixels and never paint a device row twice - that
+  // keeps the warp seamless without double-compositing.
+  const dpr = ctx.getTransform().a || 1;
+  const snap = (v: number) => Math.round(v * dpr) / dpr;
+  const px = 1 / dpr;
+  let lastBottom = -Infinity;
+
   for (let y = 0; y < WIN_H; y++) {
     const { left, right, destY } = rows[y];
     const rowW = right - left;
     if (rowW < 0.05) continue;
 
     const nextDestY = y < WIN_H - 1 ? rows[y + 1].destY : destY + Math.max(1, scale);
-    const destH = Math.max(1.5, nextDestY - destY + 1.25);
+    let top = snap(Math.min(destY, nextDestY));
+    let bottom = snap(Math.max(destY, nextDestY));
+    if (bottom - top < px) bottom = top + px;
+    if (top < lastBottom) top = lastBottom;
+    if (bottom <= top) continue;
+    lastBottom = bottom;
 
     const srcY = Math.min(srcH - 1, Math.floor((y / WIN_H) * srcH));
-    ctx.drawImage(off, 0, srcY, srcW, 1, left, destY, rowW, destH);
+    ctx.drawImage(off, 0, srcY, srcW, 1, left, top, rowW, bottom - top);
   }
 
   const glowRaw = dir === "minimize" ? rawT : 1 - rawT;
@@ -222,14 +239,14 @@ const MacWindow = ({
         className="absolute top-0 block max-w-none"
         style={{ left: WIN_FRAME_X - app.previewFrameX }}
       />
-      {[91.3, 102.3].map((cx) => (
+      {TRAFFIC_LIGHTS_X.map((cx) => (
         <button
           key={cx}
           type="button"
           aria-label="Close"
           onClick={onClose}
           className="absolute size-3 cursor-pointer rounded-full border-none bg-transparent"
-          style={{ left: cx - 6, top: 21.2 - 6 }}
+          style={{ left: cx - 6, top: TRAFFIC_LIGHTS_Y - 6 }}
         />
       ))}
     </div>
@@ -619,17 +636,35 @@ export default function GenieEffect() {
       setActiveApp(idx);
       startAnim("open", idx, () => {
         stateRef.current.phase = "open";
-        // flushSync forces React to commit the MacWindow into the DOM
-        // synchronously, before clearCanvas runs. Without this, setPhase
-        // batches and the canvas would clear one frame BEFORE the MacWindow
-        // mounts - the page background shows through that gap, producing
-        // the white-shutter flash. With flushSync, by the time clearCanvas
-        // runs the MacWindow (z-40) is already on top of the canvas (z-30),
-        // so the clear is visually invisible.
+        // Commit the MacWindow synchronously so it's in the DOM (z-40, above
+        // the canvas at z-30). Its freshly mounted <img> is NOT painted yet
+        // though - it still has to decode. Clearing the canvas now would show
+        // the bare desktop for a frame or two (the flicker). So the canvas
+        // keeps holding the final genie frame until the image has decoded and
+        // been painted, then it's cleared invisibly underneath the window.
         flushSync(() => {
           setPhase("open");
         });
-        clearCanvas();
+        // The window is translucent glass: if it is visible on top of the
+        // canvas's final frame, the two stack and darken, then lighten again
+        // when the canvas clears (a blink). So keep the window hidden until
+        // its image is decoded, then reveal it and clear the canvas in the
+        // SAME frame - a single clean swap.
+        const win = windowRef.current;
+        if (win) win.style.opacity = "0";
+        const img = win?.querySelector("img");
+        const decoded =
+          img && typeof img.decode === "function"
+            ? img.decode().catch(() => undefined)
+            : Promise.resolve();
+        decoded.then(() => {
+          requestAnimationFrame(() => {
+            // Skip if a minimize already started and owns the canvas.
+            if (stateRef.current.phase !== "open") return;
+            if (windowRef.current) windowRef.current.style.opacity = "";
+            clearCanvas();
+          });
+        });
       });
     },
     [getWinLayout, setupCanvas, startAnim, clearCanvas],
@@ -758,7 +793,7 @@ export default function GenieEffect() {
       <div className="absolute inset-0 overflow-hidden">
       {/* Desktop image includes its own menubar */}
       <Image
-        src="/images/product/submission-mac-display.png"
+        src="/images/product/submission-intake/mac-display.png"
         alt="macos-background"
         aria-hidden="true"
         fill

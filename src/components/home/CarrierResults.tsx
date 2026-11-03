@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scheduleScrollTriggerRefresh } from "@/lib/scheduleScrollTriggerRefresh";
 import Button from "@/components/common/Button";
 import Container from "@/components/common/Container";
 import SectionRadialGlow from "@/components/common/SectionRadialGlow";
@@ -23,7 +24,7 @@ type CarrierResult = {
 const carrierResults: CarrierResult[] = [
   {
     id: "employers",
-    logo: "/images/home/Employers.svg",
+    logo: "/images/home/carrier-results/employers.svg",
     logoAlt: "Employers",
     title: "0% Error Rate",
     description:
@@ -31,7 +32,7 @@ const carrierResults: CarrierResult[] = [
   },
   {
     id: "nationwide",
-    logo: "/images/home/Nationwide.svg",
+    logo: "/images/home/carrier-results/nationwide.svg",
     logoAlt: "Nationwide",
     title: "Live in 12 Weeks",
     description:
@@ -39,7 +40,7 @@ const carrierResults: CarrierResult[] = [
   },
   {
     id: "chubb",
-    logo: "/images/home/Chubbs.svg",
+    logo: "/images/home/carrier-results/chubb.svg",
     logoAlt: "Chubb",
     title: "Trust & Quality",
     description:
@@ -47,7 +48,7 @@ const carrierResults: CarrierResult[] = [
   },
   {
     id: "liberty",
-    logo: "/images/home/Liberty Mutual.svg",
+    logo: "/images/home/carrier-results/liberty-mutual.svg",
     logoAlt: "Liberty Mutual",
     title: "5-Point Bind Advantage",
     description:
@@ -89,8 +90,26 @@ const CarrierResults = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const flowSvgRef = useRef<SVGSVGElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
+
+  // The flow dots are 30 infinite SMIL animations, which repaint on the main
+  // thread every frame even when scrolled away - pause them while offscreen.
+  useEffect(() => {
+    const svg = flowSvgRef.current;
+    if (!svg || typeof IntersectionObserver === "undefined") return;
+    svg.pauseAnimations();
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) svg.unpauseAnimations();
+        else svg.pauseAnimations();
+      },
+      { rootMargin: "100px 0px" },
+    );
+    observer.observe(svg);
+    return () => observer.disconnect();
+  }, []);
 
   useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef, theme: "dark" });
 
@@ -153,7 +172,7 @@ const CarrierResults = () => {
       });
 
 
-      ScrollTrigger.refresh();
+      scheduleScrollTriggerRefresh();
 
       return () => {
         parallaxTl.scrollTrigger?.kill();
@@ -183,6 +202,7 @@ const CarrierResults = () => {
               both shrink+fade at the midpoint.
             */}
             <svg
+              ref={flowSvgRef}
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 1440 500"
               width="1440"

@@ -23,24 +23,24 @@ const STARTUP_HERO_GRAD_FLOW = {
 };
 
 const STARTUP_MARQUEE_LOGOS = [
-  { src: "/images/startups/logos/broker-Diligence Brokerage.svg", alt: "Diligence" },
-  { src: "/images/startups/logos/startup - Anzen.svg", alt: "Anzen" },
-  { src: "/images/startups/logos/startup - Broker Buddha BuddhAI.svg", alt: "Broker Buddha BuddhAI" },
-  { src: "/images/startups/logos/startup - Coverwatch.svg", alt: "Coverwatch" },
-  { src: "/images/startups/logos/startup - Harper.svg", alt: "Harper" },
-  { src: "/images/startups/logos/startup - Knack.svg", alt: "Knack" },
-  { src: "/images/startups/logos/startup - Latent Insurance.svg", alt: "Latent Insurance" },
-  { src: "/images/startups/logos/startup - Rosella.svg", alt: "Rosella" },
-  { src: "/images/startups/logos/startup - Switchboard.svg", alt: "Switchboard" }
+  { src: "/images/solutions/startups/logos/broker-diligence-brokerage.svg", alt: "Diligence" },
+  { src: "/images/solutions/startups/logos/anzen.svg", alt: "Anzen" },
+  { src: "/images/solutions/startups/logos/broker-buddha-buddhai.svg", alt: "Broker Buddha BuddhAI" },
+  { src: "/images/solutions/startups/logos/coverwatch.svg", alt: "Coverwatch" },
+  { src: "/images/solutions/startups/logos/harper.svg", alt: "Harper" },
+  { src: "/images/solutions/startups/logos/knack.svg", alt: "Knack" },
+  { src: "/images/solutions/startups/logos/latent-insurance.svg", alt: "Latent Insurance" },
+  { src: "/images/solutions/startups/logos/rosella.svg", alt: "Rosella" },
+  { src: "/images/solutions/startups/logos/switchboard.svg", alt: "Switchboard" }
 ] as const;
 
 const StartupHeroCard = () => (
   <Image
-    src="/images/startups/startup-hero.png"
+    src="/images/solutions/startups/hero.png"
     alt="Startup program dashboard preview"
     width={1184}
     height={787}
-    className="relative z-10 mx-auto h-auto w-full max-w-[550px] lg:max-w-[420px] xl:max-w-[550px]"
+    className="relative z-10 mx-auto h-auto w-full max-w-[550px] lg:-mx-[5%] lg:w-[110%] lg:max-w-none lg:shrink-0"
     priority
   />
 );

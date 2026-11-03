@@ -5,22 +5,21 @@ import Image from "next/image";
 import { SOLUTION_GRAD_FLOW } from "@/data/wayCardStyles";
 
 const BROKERS_HERO_LOGOS = [
-    { src: "/images/broker/logo/broker-Brooks.svg", alt: "Brooks" },
-    { src: "/images/broker/logo/broker-Diligence Brokerage.svg", alt: "Diligence Brokerage" },
-    { src: "/images/broker/logo/broker-Direct Work Comp.svg", alt: "Direct Work Comp" },
-    { src: "/images/broker/logo/broker-IronPoint Insurance.svg", alt: "IronPoint Insurance" },
-    { src: "/images/broker/logo/broker-Paramount Exclusive.svg", alt: "Paramount Exclusive" },
-    { src: "/images/broker/logo/broker-PCFG Insurance.svg", alt: "PCFG Insurance" },
-    { src: "/images/broker/logo/broker-Skyscraper Insurance.svg", alt: "Skyscraper Insurance" },
-    { src: "/images/broker/logo/broker-WorkCompOne.svg", alt: "WorkCompOne" },
-    { src: "/images/broker/logo/network-Agentero.svg", alt: "Agentero" },
-    { src: "/images/broker/logo/network-ASNOA.svg", alt: "ASNOA" },
-    { src: "/images/broker/logo/network-First Connect.svg", alt: "First Connect" },
-    { src: "/images/broker/logo/network-ISU Steadfast.svg", alt: "ISU Steadfast" },
-    { src: "/images/broker/logo/network-SAN of Florida.svg", alt: "SAN of Florida" },
-    // { src: "/images/broker/logo/network-Voldico.svg", alt: "Voldico" },
-    { src: "/images/broker/logo/partner-Justworks.svg", alt: "Justworks" },
-    { src: "/images/broker/logo/localedge.svg", alt: "Localedge" },
+    { src: "/images/solutions/brokers/logos/broker-brooks.svg", alt: "Brooks" },
+    { src: "/images/solutions/brokers/logos/broker-diligence-brokerage.svg", alt: "Diligence Brokerage" },
+    { src: "/images/solutions/brokers/logos/broker-direct-work-comp.svg", alt: "Direct Work Comp" },
+    { src: "/images/solutions/brokers/logos/broker-ironpoint-insurance.svg", alt: "IronPoint Insurance" },
+    { src: "/images/solutions/brokers/logos/broker-paramount-exclusive.svg", alt: "Paramount Exclusive" },
+    { src: "/images/solutions/brokers/logos/broker-pcfg-insurance.svg", alt: "PCFG Insurance" },
+    { src: "/images/solutions/brokers/logos/broker-skyscraper-insurance.svg", alt: "Skyscraper Insurance" },
+    { src: "/images/solutions/brokers/logos/broker-workcompone.svg", alt: "WorkCompOne" },
+    { src: "/images/solutions/brokers/logos/network-agentero.svg", alt: "Agentero" },
+    { src: "/images/solutions/brokers/logos/network-asnoa.svg", alt: "ASNOA" },
+    { src: "/images/solutions/brokers/logos/network-first-connect.svg", alt: "First Connect" },
+    { src: "/images/solutions/brokers/logos/network-isu-steadfast.svg", alt: "ISU Steadfast" },
+    { src: "/images/solutions/brokers/logos/network-san-of-florida.svg", alt: "SAN of Florida" },
+    { src: "/images/solutions/brokers/logos/partner-justworks.svg", alt: "Justworks" },
+    { src: "/images/solutions/brokers/logos/localedge.svg", alt: "Localedge" },
   ] as const;
   
 
@@ -36,11 +35,11 @@ const Hero = () => (
     secondaryButtonLabel="How it works"
     rightCard={
       <Image
-        src="/images/broker/broker-hero.svg"
+        src="/images/solutions/brokers/hero.svg"
         alt="Broker quoting dashboard"
         width={531}
         height={427}
-        className="relative z-10 mx-auto h-auto w-full max-w-[550px] lg:max-w-[420px] xl:max-w-[550px]"
+        className="relative z-10 mx-auto h-auto w-full max-w-[550px] lg:max-w-none"
         priority
       />
     }

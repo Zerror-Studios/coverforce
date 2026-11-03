@@ -31,7 +31,7 @@ type Milestone = {
 
 const milestones: Milestone[] = [
   {
-    src: "/images/about/mil1.webp",
+    src: "/images/about/milestones/milestone-1.webp",
     alt: "CoverForce milestone 2022",
     year: "2022",
     title: "Partnered with ISU",
@@ -39,7 +39,7 @@ const milestones: Milestone[] = [
       "Our first customer - partnered with ISU Steadfast to build CoverForce from the ground up.",
   },
   {
-    src: "/images/about/mil2.webp",
+    src: "/images/about/milestones/milestone-2.webp",
     alt: "CoverForce milestone 2023",
     year: "2023",
     title: "Nationwide launch",
@@ -47,7 +47,7 @@ const milestones: Milestone[] = [
       "Scaled carrier connectivity and launched admitted with 8 carriers across the country.",
   },
   {
-    src: "/images/about/mil3.webp",
+    src: "/images/about/milestones/milestone-3.webp",
     alt: "CoverForce milestone 2025",
     year: "2025",
     title: "Launched E&S",
@@ -55,7 +55,7 @@ const milestones: Milestone[] = [
       "Introduced CoverForce to a broader audience - now powering 4 of the top 10 U.S. wholesalers.",
   },
   {
-    src: "/images/about/mil4.webp",
+    src: "/images/about/milestones/milestone-4.webp",
     alt: "CoverForce milestone 2026",
     year: "2026",
     title: "First-in-market AI agents",

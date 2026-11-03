@@ -38,7 +38,7 @@ type CaseStudyHeroProps = {
 };
 
 export default function CaseStudyHero({ hero, heroMeta }: CaseStudyHeroProps) {
-  const logoSrc = hero.logo ?? "/images/startups/center-logo.svg";
+  const logoSrc = hero.logo ?? "/images/brand/coverforce-mark.svg";
 
   return (
     <section className="relative z-20 bg-white text-[#0a143b]">

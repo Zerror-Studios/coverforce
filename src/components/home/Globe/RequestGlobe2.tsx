@@ -3,7 +3,8 @@
 import React, { useRef, Suspense, useEffect, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { useTexture, Decal, Line } from "@react-three/drei";
+import { useTexture } from "@react-three/drei";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
 const hitState = { lastHitTime: 0 };
 function triggerCenterHit(time: number) {
@@ -51,165 +52,231 @@ function LogoMaterial({ texture, tintColor = '#ffffff' }: { texture: THREE.Textu
     );
 }
 
-function AnimatedLine({ start, end, color, isNorthern, curveOffset = 0 }: { start: THREE.Vector3, end: THREE.Vector3, color: string, isNorthern: boolean, curveOffset?: number }) {
-    const numDots = 40;
-    const meshRef = useRef<THREE.InstancedMesh>(null!);
-    const colorObj = React.useMemo(() => new THREE.Color(color), [color]);
+// ─── Logo ⇄ hub connection lines ─────────────────────────────────────────────
+// Previously each of the 42 lines was its own component: an InstancedMesh of
+// 40 dots repositioned in JS every frame (~1,700 Bézier evaluations + matrix
+// uploads per frame) plus its own TubeGeometry mesh (~84 draw calls total).
+//
+// Now every line of one hemisphere shares:
+//   - ONE instanced dot mesh, positioned entirely in the vertex shader from a
+//     time uniform (no per-frame JS, no buffer uploads), and
+//   - ONE merged track mesh.
+// The motion, trail, fade and front/back opacity match the old version.
 
-    const dummy = React.useMemo(() => new THREE.Object3D(), []);
+const DOTS_PER_LINE = 40;
+const DOT_SPEED = 0.4;
+const DOT_TRAIL = 0.25;
+const DOT_RADIUS = 0.015;
+const HUB_HIT_T = 0.8;
 
-    const curve = React.useMemo(() => {
-        const mid = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.6);
-        const nonOrigin = start.lengthSq() > 0.1 ? start : end;
-        let up = new THREE.Vector3(0, 1, 0);
-        if (Math.abs(nonOrigin.clone().normalize().y) > 0.99) {
-            up = new THREE.Vector3(1, 0, 0);
+type LineSpec = {
+    start: THREE.Vector3;
+    ctrl: THREE.Vector3;
+    end: THREE.Vector3;
+    timeOffset: number;
+};
+
+/** Deterministic 0..1 hash - keeps render pure (no Math.random). */
+function hash01(n: number) {
+    const x = Math.sin(n * 12.9898 + 78.233) * 43758.5453;
+    return x - Math.floor(x);
+}
+
+function makeLineSpec(start: THREE.Vector3, end: THREE.Vector3, curveOffset: number, timeOffset: number): LineSpec {
+    const mid = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.6);
+    const nonOrigin = start.lengthSq() > 0.1 ? start : end;
+    let up = new THREE.Vector3(0, 1, 0);
+    if (Math.abs(nonOrigin.clone().normalize().y) > 0.99) {
+        up = new THREE.Vector3(1, 0, 0);
+    }
+    const axis = new THREE.Vector3().crossVectors(nonOrigin, up).normalize();
+    mid.add(axis.multiplyScalar(curveOffset));
+    return { start, ctrl: mid, end, timeOffset };
+}
+
+const FRONT_FADE_GLSL = /* glsl */ `
+    float frontFactor = smoothstep(-0.5, 0.5, vWorldZ);
+    alpha *= mix(0.2, 1.0, frontFactor);
+`;
+
+const dotVertexShader = /* glsl */ `
+    attribute vec3 aStart;
+    attribute vec3 aCtrl;
+    attribute vec3 aEnd;
+    attribute float aTimeOffset;
+    attribute float aDot;        // i / DOTS_PER_LINE
+    uniform float uTime;
+    varying float vWorldZ;
+
+    void main() {
+        float t = mod(uTime * ${DOT_SPEED.toFixed(2)} + aTimeOffset, 2.0);
+        float progress = t - aDot * ${DOT_TRAIL.toFixed(2)};
+        float scale = 0.0;
+        if (progress >= 0.0 && progress <= 1.0) {
+            scale = pow(1.0 - aDot, 1.5);
+            if (progress < 0.05) scale *= progress / 0.05;
+            if (progress > 0.95) scale *= (1.0 - progress) / 0.05;
+        } else {
+            progress = 0.0;
         }
-        const axis = new THREE.Vector3().crossVectors(nonOrigin, up).normalize();
-        mid.add(axis.multiplyScalar(curveOffset));
-        return new THREE.QuadraticBezierCurve3(start, mid, end);
-    }, [start, end, curveOffset]);
+        float u = 1.0 - progress;
+        vec3 p = u * u * aStart + 2.0 * u * progress * aCtrl + progress * progress * aEnd;
+        vec4 world = modelMatrix * vec4(position * scale + p, 1.0);
+        vWorldZ = world.z;
+        gl_Position = projectionMatrix * viewMatrix * world;
+    }
+`;
 
-    const timeOffset = React.useMemo(() => Math.random() * 2, []);
-    const prevT = useRef(0);
-    const tempVec = React.useMemo(() => new THREE.Vector3(), []);
+const solidFragmentShader = /* glsl */ `
+    uniform vec3 uColor;
+    uniform float uOpacity;
+    varying float vWorldZ;
+    void main() {
+        float alpha = uOpacity;
+        ${FRONT_FADE_GLSL}
+        gl_FragColor = vec4(uColor, alpha);
+    }
+`;
+
+const trackVertexShader = /* glsl */ `
+    varying float vWorldZ;
+    void main() {
+        vec4 world = modelMatrix * vec4(position, 1.0);
+        vWorldZ = world.z;
+        gl_Position = projectionMatrix * viewMatrix * world;
+    }
+`;
+
+function ConnectionLines({ lines, color, hubHitLines }: { lines: LineSpec[]; color: string; hubHitLines: LineSpec[] }) {
+    const groupRef = useRef<THREE.Group>(null!);
+    const dotMeshRef = useRef<THREE.Mesh<THREE.InstancedBufferGeometry, THREE.ShaderMaterial>>(null!);
+
+    const dotGeometry = React.useMemo(() => {
+        const base = new THREE.SphereGeometry(DOT_RADIUS, 8, 6);
+        const geo = new THREE.InstancedBufferGeometry();
+        geo.index = base.index;
+        geo.setAttribute("position", base.getAttribute("position"));
+
+        const count = lines.length * DOTS_PER_LINE;
+        const aStart = new Float32Array(count * 3);
+        const aCtrl = new Float32Array(count * 3);
+        const aEnd = new Float32Array(count * 3);
+        const aTimeOffset = new Float32Array(count);
+        const aDot = new Float32Array(count);
+        let k = 0;
+        for (const line of lines) {
+            for (let i = 0; i < DOTS_PER_LINE; i++, k++) {
+                line.start.toArray(aStart, k * 3);
+                line.ctrl.toArray(aCtrl, k * 3);
+                line.end.toArray(aEnd, k * 3);
+                aTimeOffset[k] = line.timeOffset;
+                aDot[k] = i / DOTS_PER_LINE;
+            }
+        }
+        geo.setAttribute("aStart", new THREE.InstancedBufferAttribute(aStart, 3));
+        geo.setAttribute("aCtrl", new THREE.InstancedBufferAttribute(aCtrl, 3));
+        geo.setAttribute("aEnd", new THREE.InstancedBufferAttribute(aEnd, 3));
+        geo.setAttribute("aTimeOffset", new THREE.InstancedBufferAttribute(aTimeOffset, 1));
+        geo.setAttribute("aDot", new THREE.InstancedBufferAttribute(aDot, 1));
+        geo.instanceCount = count;
+        return geo;
+    }, [lines]);
+
+    const dotMaterial = React.useMemo(() => new THREE.ShaderMaterial({
+        uniforms: {
+            uTime: { value: 0 },
+            uColor: { value: new THREE.Color(color) },
+            uOpacity: { value: 1 },
+        },
+        vertexShader: dotVertexShader,
+        fragmentShader: solidFragmentShader,
+        transparent: true,
+        depthTest: false,
+    }), [color]);
+
+    const trackGeometry = React.useMemo(() => {
+        const tubes = lines.map((l) =>
+            new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(l.start, l.ctrl, l.end), 50, 0.004, 8, false),
+        );
+        const merged = mergeGeometries(tubes);
+        tubes.forEach((t) => t.dispose());
+        return merged;
+    }, [lines]);
+
+    const trackMaterial = React.useMemo(() => new THREE.ShaderMaterial({
+        uniforms: {
+            uColor: { value: new THREE.Color(color) },
+            uOpacity: { value: 0.35 },
+        },
+        vertexShader: trackVertexShader,
+        fragmentShader: solidFragmentShader,
+        transparent: true,
+        depthTest: false,
+    }), [color]);
+
+    useEffect(() => () => {
+        dotGeometry.dispose();
+        dotMaterial.dispose();
+        trackGeometry?.dispose();
+        trackMaterial.dispose();
+    }, [dotGeometry, dotMaterial, trackGeometry, trackMaterial]);
+
+    // Hub "hit": when a logo→hub dot stream reaches t = 0.8 on a front-facing
+    // logo, pulse the centre ripple. Only a handful of scalars per frame.
+    const prevT = useRef<number[]>([]);
+    const tmp = React.useMemo(() => new THREE.Vector3(), []);
 
     useFrame((state) => {
-        if (!meshRef.current) return;
+        const time = state.clock.elapsedTime;
+        const dots = dotMeshRef.current;
+        if (dots) dots.material.uniforms.uTime.value = time;
 
-        const speed = 0.4;
-        const t = ((state.clock.elapsedTime * speed) + timeOffset) % 2.0;
-
-        if (isNorthern) {
-            if (prevT.current < 0.8 && t >= 0.8) {
-                tempVec.copy(start).applyMatrix4(meshRef.current.matrixWorld);
-                if (tempVec.z > 0) {
-                    triggerCenterHit(state.clock.elapsedTime);
-                }
+        if (!hubHitLines.length || !groupRef.current) return;
+        const world = groupRef.current.matrixWorld;
+        hubHitLines.forEach((line, idx) => {
+            const t = (time * DOT_SPEED + line.timeOffset) % 2.0;
+            const prev = prevT.current[idx] ?? t;
+            if (prev < HUB_HIT_T && t >= HUB_HIT_T) {
+                tmp.copy(line.start).applyMatrix4(world);
+                if (tmp.z > 0) triggerCenterHit(time);
             }
-        }
-        prevT.current = t;
-
-        for (let i = 0; i < numDots; i++) {
-            const trailLength = 0.25;
-            const offset = (i / numDots) * trailLength;
-            let progress = t - offset;
-
-            let scale = 0;
-            if (progress >= 0 && progress <= 1) {
-                scale = Math.pow(1 - (i / numDots), 1.5);
-                if (progress < 0.05) scale *= progress / 0.05;
-                if (progress > 0.95) scale *= (1 - progress) / 0.05;
-            } else {
-                progress = 0;
-            }
-
-            curve.getPoint(progress, tempVec);
-            dummy.position.copy(tempVec);
-            dummy.scale.setScalar(scale);
-
-            dummy.updateMatrix();
-            meshRef.current.setMatrixAt(i, dummy.matrix);
-        }
-        meshRef.current.instanceMatrix.needsUpdate = true;
+            prevT.current[idx] = t;
+        });
     });
 
-    const customMaterial = React.useMemo(() => {
-        const mat = new THREE.MeshBasicMaterial({
-            color: colorObj,
-            transparent: true,
-            opacity: 1,
-            depthTest: false
-        });
-        mat.onBeforeCompile = (shader) => {
-            shader.vertexShader = shader.vertexShader.replace(
-                '#include <common>',
-                `#include <common>\nvarying vec3 vWorldPosition;`
-            ).replace(
-                '#include <project_vertex>',
-                `#include <project_vertex>\n#ifdef USE_INSTANCING\nvWorldPosition = (modelMatrix * instanceMatrix * vec4(transformed, 1.0)).xyz;\n#else\nvWorldPosition = (modelMatrix * vec4(transformed, 1.0)).xyz;\n#endif`
-            );
-            shader.fragmentShader = shader.fragmentShader.replace(
-                '#include <common>',
-                `#include <common>\nvarying vec3 vWorldPosition;`
-            ).replace(
-                '#include <dithering_fragment>',
-                `#include <dithering_fragment>\nfloat frontFactor = smoothstep(-0.5, 0.5, vWorldPosition.z);\ngl_FragColor.a *= mix(0.2, 1.0, frontFactor);`
-            );
-        };
-        return mat;
-    }, [colorObj]);
-
-    const trackMaterial = React.useMemo(() => {
-        const mat = new THREE.MeshBasicMaterial({
-            color: colorObj,
-            transparent: true,
-            opacity: 0.35,
-            depthTest: false
-        });
-        mat.onBeforeCompile = (shader) => {
-            shader.vertexShader = shader.vertexShader.replace(
-                '#include <common>',
-                `#include <common>\nvarying vec3 vWorldPosition;`
-            ).replace(
-                '#include <project_vertex>',
-                `#include <project_vertex>\n#ifdef USE_INSTANCING\nvWorldPosition = (modelMatrix * instanceMatrix * vec4(transformed, 1.0)).xyz;\n#else\nvWorldPosition = (modelMatrix * vec4(transformed, 1.0)).xyz;\n#endif`
-            );
-            shader.fragmentShader = shader.fragmentShader.replace(
-                '#include <common>',
-                `#include <common>\nvarying vec3 vWorldPosition;`
-            ).replace(
-                '#include <dithering_fragment>',
-                `#include <dithering_fragment>\nfloat frontFactor = smoothstep(-0.5, 0.5, vWorldPosition.z);\ngl_FragColor.a *= mix(0.2, 1.0, frontFactor);`
-            );
-        };
-        return mat;
-    }, [colorObj]);
-
-    const trackTubeGeo = React.useMemo(() => {
-        return new THREE.TubeGeometry(curve, 50, 0.004, 8, false);
-    }, [curve]);
-
-    const trackMesh = React.useMemo(() => {
-        return new THREE.Mesh(trackTubeGeo, trackMaterial);
-    }, [trackTubeGeo, trackMaterial]);
-
     return (
-        <group>
-            <primitive object={trackMesh} />
-            <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, numDots]}>
-                <sphereGeometry args={[0.015, 12, 12]} />
-                <primitive object={customMaterial} attach="material" />
-            </instancedMesh>
+        <group ref={groupRef}>
+            {trackGeometry ? <mesh geometry={trackGeometry} material={trackMaterial} /> : null}
+            <mesh ref={dotMeshRef} geometry={dotGeometry} material={dotMaterial} frustumCulled={false} />
         </group>
     );
 }
 
 const CARRIER_LOGO_POOL = [
-    "/images/home/carrier/carrier-berkshire-hathaway.png",
-    "/images/home/carrier/carrier-chubb.png",
-    "/images/home/carrier/carrier-coalition.png",
-    "/images/home/carrier/carrier-cowbell.png",
-    "/images/home/carrier/carrier-employers.png",
-    "/images/home/carrier/carrier-markel.png",
-    "/images/home/carrier/carrier-Travelers.png",
-    "/images/home/carrier/carrier-liberty-mutual.png",
-    "/images/home/carrier/carrier-nationwide.png",
+    "/images/home/globe-logos/berkshire-hathaway.png",
+    "/images/home/globe-logos/chubb.png",
+    "/images/home/globe-logos/coalition.png",
+    "/images/home/globe-logos/cowbell.png",
+    "/images/home/globe-logos/employers.png",
+    "/images/home/globe-logos/markel.png",
+    "/images/home/globe-logos/travelers.png",
+    "/images/home/globe-logos/liberty-mutual.png",
+    "/images/home/globe-logos/nationwide.png",
 ];
 
 const BROKER_LOGO_POOL = [
-    "/images/home/distributors/broker-diligence-brokerage.png",
-    "/images/home/distributors/network-isu-steadfast.png",
-    "/images/home/distributors/wholesaler-amwins.png",
-    "/images/home/distributors/startup-broker-buddha-buddhAI.png",
-    "/images/home/distributors/startup-coverwatch.png",
-    "/images/home/distributors/startup-harper.png",
-    "/images/home/distributors/startup-latent-insurance.png",
-    "/images/home/distributors/startup-rosella.png",
-    "/images/home/distributors/wholesaler-jencap.png",
-    "/images/home/distributors/wholesaler-one80.png",
-    "/images/home/distributors/wholesaler-international-underwriting-agency.png",
-    "/images/home/distributors/brown-brown-white.png",
+    "/images/home/globe-logos/broker-diligence-brokerage.png",
+    "/images/home/globe-logos/network-isu-steadfast.png",
+    "/images/home/globe-logos/wholesaler-amwins.png",
+    "/images/home/globe-logos/startup-broker-buddha-buddhai.png",
+    "/images/home/globe-logos/startup-coverwatch.png",
+    "/images/home/globe-logos/startup-harper.png",
+    "/images/home/globe-logos/startup-latent-insurance.png",
+    "/images/home/globe-logos/startup-rosella.png",
+    "/images/home/globe-logos/wholesaler-jencap.png",
+    "/images/home/globe-logos/wholesaler-one80.png",
+    "/images/home/globe-logos/wholesaler-international-underwriting-agency.png",
+    "/images/home/globe-logos/brown-brown-white.png",
 ];
 
 function getLogoPosition(index: number, total: number, isNorthern: boolean, radius: number) {
@@ -224,40 +291,56 @@ function getLogoPosition(index: number, total: number, isNorthern: boolean, radi
 
 function LogoPlacer({ urls, isNorthern, radius, color, tintColor = '#ffffff' }: { urls: string[], isNorthern: boolean, radius: number, color: string, tintColor?: string }) {
     const textures = useTexture(urls) as THREE.Texture[];
+
+    // Static layout - computed once, not on every render.
+    const layout = React.useMemo(() => {
+        const origin = new THREE.Vector3(0, 0, 0);
+        const logos = textures.map((texture, i) => {
+            const image = texture.image as { width: number; height: number };
+            const height = 0.175;
+            const width = height * (image.width / image.height);
+            const position = getLogoPosition(i, urls.length, isNorthern, radius);
+            const dummy = new THREE.Object3D();
+            dummy.position.copy(position);
+            dummy.lookAt(position.clone().multiplyScalar(2));
+            // Sit a hair above the surface (the Decal used to project onto it;
+            // over a 0.175-unit logo on a 1.95 sphere the curvature is negligible).
+            const lifted = position.clone().multiplyScalar(1.002);
+            return { key: urls[i], texture, width, height, position: lifted, rotation: dummy.rotation.clone() };
+        });
+
+        const lines: LineSpec[] = [];
+        const hubHitLines: LineSpec[] = [];
+        textures.forEach((_, i) => {
+            const position = getLogoPosition(i, urls.length, isNorthern, radius);
+            // Stable pseudo-random stagger per line (0..2).
+            const seed = (isNorthern ? 0 : 100) + i * 2;
+            const toHub = makeLineSpec(position, origin, 0.2, hash01(seed) * 2);
+            const fromHub = makeLineSpec(origin, position, -0.2, hash01(seed + 1) * 2);
+            lines.push(toHub, fromHub);
+            // Only logo→hub streams on the northern side can trigger the hub
+            // ripple (hub→logo streams start at the origin, which is never z > 0).
+            if (isNorthern) hubHitLines.push(toHub);
+        });
+
+        return { logos, lines, hubHitLines };
+    }, [textures, urls, isNorthern, radius]);
+
     return (
         <>
-            {textures.map((texture, i) => {
-                const aspect = (texture.image as any).width / (texture.image as any).height;
-                const height = 0.175;
-                const width = height * aspect;
-                const position = getLogoPosition(i, urls.length, isNorthern, radius);
-
-                const dummy = new THREE.Object3D();
-                dummy.position.copy(position);
-                dummy.lookAt(position.clone().multiplyScalar(2));
-
-                const origin = new THREE.Vector3(0, 0, 0);
-
-                return (
-                    <React.Fragment key={urls[i]}>
-                        <AnimatedLine start={position} end={origin} color={color} isNorthern={isNorthern} curveOffset={0.2} />
-                        <AnimatedLine start={origin} end={position} color={color} isNorthern={isNorthern} curveOffset={-0.2} />
-                        <Decal
-                            position={position}
-                            rotation={dummy.rotation}
-                            scale={[width, height, 0.5]}
-                        >
-                            <LogoMaterial texture={texture} tintColor={tintColor} />
-                        </Decal>
-                    </React.Fragment>
-                );
-            })}
+            <ConnectionLines lines={layout.lines} color={color} hubHitLines={layout.hubHitLines} />
+            {layout.logos.map((logo) => (
+                <mesh key={logo.key} position={logo.position} rotation={logo.rotation}>
+                    <planeGeometry args={[logo.width, logo.height]} />
+                    <LogoMaterial texture={logo.texture} tintColor={tintColor} />
+                </mesh>
+            ))}
         </>
     );
 }
 
 function CenterLogo() {
-    const texture = useTexture("/images/startups/center-logo.svg") as THREE.Texture;
+    const texture = useTexture("/images/brand/coverforce-mark.svg") as THREE.Texture;
     const aspect = texture.image ? (texture.image as any).width / (texture.image as any).height : 1;
     const height = 0.25;
     const width = height * aspect;
@@ -468,7 +551,7 @@ export default function RequestGlobe2({ logoColor = 'light' }: { logoColor?: 'li
 
     return (
         <div ref={containerRef} className="w-full h-[25rem] sm:h-[30rem] lg:h-[40rem] flex items-center justify-center pointer-events-none">
-            <Canvas camera={{ position: [0, 0, 5], fov: 50 }} frameloop={visible ? "always" : "never"}>
+            <Canvas camera={{ position: [0, 0, 5], fov: 50 }} dpr={[1, 1.5]} frameloop={visible ? "always" : "never"}>
                 <ambientLight intensity={0.5} />
                 <directionalLight position={[10, 10, 10]} intensity={1} />
                 <ResponsiveScene>

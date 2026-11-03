@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 const CODE_LINES = [
   { text: "$ npx @coverforce/sdk init", className: "text-[#7DD3FC]" },
@@ -35,94 +35,111 @@ const CODE_LINES = [
 const CHAR_MS = 20;
 const LINE_PAUSE_MS = 100;
 const EMPTY_LINE_MS = 60;
+const DEFAULT_LINE_CLASS = "text-[#E2E8F0]";
+const CURSOR_CLASS =
+  "ml-px inline-block h-[1em] w-[6px] animate-pulse bg-[#A483FE]/90 align-middle";
+const DONE_CURSOR_CLASS =
+  "inline-block h-[1em] w-[6px] animate-pulse bg-[#A483FE]/70 align-middle";
 
+/**
+ * Typing writes straight to the DOM: one text node per line whose `data` is
+ * updated per character. The previous version re-rendered React state ~50x/s
+ * and re-measured the scroll height every character; this touches one text
+ * node per tick and only scrolls when a new line is added.
+ */
 export default function DeveloperTerminalBg() {
   const rootRef = useRef<HTMLDivElement>(null);
   const preRef = useRef<HTMLPreElement>(null);
-  const startedRef = useRef(false);
-  const typingStartedRef = useRef(false);
-  const [completedLines, setCompletedLines] = useState<(typeof CODE_LINES)[number][]>([]);
-  const [activeLine, setActiveLine] = useState("");
-  const [activeMeta, setActiveMeta] = useState<(typeof CODE_LINES)[number] | null>(null);
-  const [showCursor, setShowCursor] = useState(false);
-  const [finished, setFinished] = useState(false);
 
   useEffect(() => {
-    const el = rootRef.current;
-    if (!el) return;
+    const root = rootRef.current;
+    const pre = preRef.current;
+    if (!root || !pre) return;
+
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    let started = false;
+
+    const cursor = document.createElement("span");
+    cursor.className = CURSOR_CLASS;
+
+    const startTyping = () => {
+      let lineIdx = 0;
+      let charIdx = 0;
+      let textNode: Text | null = null;
+
+      const newLine = (className: string) => {
+        const div = document.createElement("div");
+        div.className = className || DEFAULT_LINE_CLASS;
+        textNode = document.createTextNode("");
+        div.append(textNode, cursor);
+        pre.appendChild(div);
+        pre.scrollTop = pre.scrollHeight;
+      };
+
+      const finish = () => {
+        cursor.remove();
+        const div = document.createElement("div");
+        div.className = "text-[#94A3B8]";
+        const done = document.createElement("span");
+        done.className = DONE_CURSOR_CLASS;
+        div.appendChild(done);
+        pre.appendChild(div);
+        pre.scrollTop = pre.scrollHeight;
+      };
+
+      const tick = () => {
+        const line = CODE_LINES[lineIdx];
+        if (!line) {
+          finish();
+          return;
+        }
+
+        if (line.text === "") {
+          if (textNode) textNode.data = " ";
+          lineIdx += 1;
+          charIdx = 0;
+          if (lineIdx >= CODE_LINES.length) return finish();
+          newLine(CODE_LINES[lineIdx].className);
+          timeoutId = setTimeout(tick, EMPTY_LINE_MS);
+          return;
+        }
+
+        if (charIdx < line.text.length) {
+          charIdx += 1;
+          if (textNode) textNode.data = line.text.slice(0, charIdx);
+          timeoutId = setTimeout(tick, CHAR_MS);
+          return;
+        }
+
+        lineIdx += 1;
+        charIdx = 0;
+        if (lineIdx >= CODE_LINES.length) return finish();
+        newLine(CODE_LINES[lineIdx].className);
+        timeoutId = setTimeout(tick, LINE_PAUSE_MS);
+      };
+
+      newLine(CODE_LINES[0].className);
+      timeoutId = setTimeout(tick, 280);
+    };
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !startedRef.current) {
-          startedRef.current = true;
-          setShowCursor(true);
+        if (entry.isIntersecting && !started) {
+          started = true;
+          observer.disconnect();
+          startTyping();
         }
       },
       { threshold: 0.3, rootMargin: "0px 0px -8% 0px" },
     );
+    observer.observe(root);
 
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!showCursor || typingStartedRef.current) return;
-    typingStartedRef.current = true;
-
-    let lineIdx = 0;
-    let charIdx = 0;
-    let timeoutId: ReturnType<typeof setTimeout>;
-
-    const tick = () => {
-      const line = CODE_LINES[lineIdx];
-      if (!line) {
-        setFinished(true);
-        return;
-      }
-
-      if (line.text === "") {
-        setCompletedLines((prev) => [...prev, line]);
-        lineIdx += 1;
-        charIdx = 0;
-        setActiveLine("");
-        setActiveMeta(CODE_LINES[lineIdx] ?? null);
-        timeoutId = setTimeout(tick, EMPTY_LINE_MS);
-        return;
-      }
-
-      if (charIdx < line.text.length) {
-        charIdx += 1;
-        setActiveMeta(line);
-        setActiveLine(line.text.slice(0, charIdx));
-        timeoutId = setTimeout(tick, CHAR_MS);
-        return;
-      }
-
-      setCompletedLines((prev) => [...prev, line]);
-      lineIdx += 1;
-      charIdx = 0;
-      setActiveLine("");
-      setActiveMeta(CODE_LINES[lineIdx] ?? null);
-
-      if (lineIdx >= CODE_LINES.length) {
-        setFinished(true);
-        return;
-      }
-
-      timeoutId = setTimeout(tick, LINE_PAUSE_MS);
+    return () => {
+      observer.disconnect();
+      clearTimeout(timeoutId);
+      pre.replaceChildren();
     };
-
-    setActiveMeta(CODE_LINES[0]);
-    timeoutId = setTimeout(tick, 280);
-
-    return () => clearTimeout(timeoutId);
-  }, [showCursor]);
-
-  useEffect(() => {
-    const pre = preRef.current;
-    if (!pre) return;
-    pre.scrollTop = pre.scrollHeight;
-  }, [completedLines, activeLine]);
+  }, []);
 
   return (
     <div ref={rootRef} className="absolute inset-0 overflow-hidden" aria-hidden>
@@ -139,27 +156,8 @@ export default function DeveloperTerminalBg() {
         <pre
           ref={preRef}
           className="min-h-0 flex-1 overflow-y-auto font-mono text-[9px] leading-relaxed [scrollbar-width:none] md:text-[10px] lg:text-[11px] [&::-webkit-scrollbar]:hidden"
-        >
-          {completedLines.map((line, i) => (
-            <div key={`${line.text}-${i}`} className={line.className || "text-[#E2E8F0]"}>
-              {line.text || "\u00A0"}
-            </div>
-          ))}
-          {activeMeta && !finished ? (
-            <div className={activeMeta.className || "text-[#E2E8F0]"}>
-              {activeLine}
-              <span className="ml-px inline-block h-[1em] w-[6px] animate-pulse bg-[#A483FE]/90 align-middle" />
-            </div>
-          ) : null}
-          {finished ? (
-            <div className="text-[#94A3B8]">
-              <span className="inline-block h-[1em] w-[6px] animate-pulse bg-[#A483FE]/70 align-middle" />
-            </div>
-          ) : null}
-        </pre>
+        />
       </div>
-
-    
     </div>
   );
 }

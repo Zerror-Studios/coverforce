@@ -172,105 +172,105 @@ const NODES: ToolNode[] = [
   {
     name: "Claude Code",
     category: "AI agent builder",
-    iconSrc: "/images/icons/google_antigravity_icon.png",
+    iconSrc: "/images/tool-wheel/icons/google-antigravity.png",
     ramp: "broker",
   },
   {
     name: "n8n",
     category: "Workflow automation",
-    iconSrc: "/images/icons/n8n_icon.png",
+    iconSrc: "/images/tool-wheel/icons/n8n.png",
     ramp: "broker",
   },
   {
     name: "Send",
     category: "Decks",
-    iconSrc: "/images/icons/send_icon.png",
+    iconSrc: "/images/tool-wheel/icons/send.png",
     ramp: "broker",
   },
   {
     name: "Clay",
     category: "Data orchestration",
-    iconSrc: "/images/icons/automation_icon.png",
+    iconSrc: "/images/tool-wheel/icons/automation.png",
     ramp: "wholesaler",
   },
   {
     name: "Prospeo",
     category: "Enrichment",
-    iconSrc: "/images/icons/prospeo_icon.png",
+    iconSrc: "/images/tool-wheel/icons/prospeo.png",
     ramp: "wholesaler",
   },
   {
     name: "AI Ark",
     category: "Lookalike lists",
-    iconSrc: "/images/icons/rainbow_hand_icon.png",
+    iconSrc: "/images/tool-wheel/icons/rainbow-hand.png",
     ramp: "wholesaler",
   },
   {
     name: "Hunter",
     category: "Cold email infra",
-    iconSrc: "/images/icons/lightning_icon.png",
+    iconSrc: "/images/tool-wheel/icons/lightning.png",
     ramp: "developer",
   },
   {
     name: "Instantly",
     category: "Cold email sending",
-    iconSrc: "/images/icons/send_icon.png",
+    iconSrc: "/images/tool-wheel/icons/send.png",
     ramp: "carrier",
   },
   {
     name: "LinkedIn",
     category: "LinkedIn ads",
-    iconSrc: "/images/icons/linkedin_icon.png",
+    iconSrc: "/images/tool-wheel/icons/linkedin.png",
     ramp: "carrier",
   },
   {
     name: "HeyReach",
     category: "LinkedIn outreach",
-    iconSrc: "/images/icons/linkedin_icon.png",
+    iconSrc: "/images/tool-wheel/icons/linkedin.png",
     ramp: "carrier",
   },
   {
     name: "Trellus",
     category: "Cold call dialer",
-    iconSrc: "/images/icons/lightning_icon.png",
+    iconSrc: "/images/tool-wheel/icons/lightning.png",
     ramp: "startup",
   },
   {
     name: "WhiteWhale",
     category: "Signal tracking",
-    iconSrc: "/images/icons/hypertide_icon.png",
+    iconSrc: "/images/tool-wheel/icons/hypertide.png",
     ramp: "startup",
   },
   {
     name: "RB2B",
     category: "Web visitor ID",
-    iconSrc: "/images/icons/rainbow_hand_icon.png",
+    iconSrc: "/images/tool-wheel/icons/rainbow-hand.png",
     ramp: "startup",
   },
   {
     name: "Attio",
     category: "Notetaking",
-    iconSrc: "/images/icons/attio_icon.png",
+    iconSrc: "/images/tool-wheel/icons/attio.png",
     ramp: "developer",
   },
   {
     name: "Attio",
     category: "CRM",
-    iconSrc: "/images/icons/attio_icon.png",
+    iconSrc: "/images/tool-wheel/icons/attio.png",
     ramp: "developer",
   },
 ];
 
 /** Carrier marks for upper-half / Carriers slots on the home wheel. */
 const CARRIER_LOGO_SRCS = [
-  "/images/home/carrier/carrier-berkshire-hathaway.png",
-  "/images/home/carrier/carrier-chubb.png",
-  "/images/home/carrier/carrier-coalition.png",
-  "/images/home/carrier/carrier-cowbell.png",
-  "/images/home/carrier/carrier-employers.png",
-  "/images/home/carrier/carrier-markel.png",
-  "/images/home/carrier/carrier-merchants-insurance-group.png",
-  "/images/home/carrier/carrier-nationwide.png",
+  "/images/tool-wheel/carriers/berkshire-hathaway.png",
+  "/images/tool-wheel/carriers/chubb.png",
+  "/images/tool-wheel/carriers/coalition.png",
+  "/images/tool-wheel/carriers/cowbell.png",
+  "/images/tool-wheel/carriers/employers.png",
+  "/images/tool-wheel/carriers/markel.png",
+  "/images/tool-wheel/carriers/merchants-insurance-group.png",
+  "/images/tool-wheel/carriers/nationwide.png",
 ] as const;
 
 function carrierLogoSrc(index: number) {
@@ -278,18 +278,18 @@ function carrierLogoSrc(index: number) {
 }
 
 const STARTUP_LOGO_SRCS = [
-  "/images/home/distributors/broker-diligence-brokerage.png",
-  "/images/home/distributors/network-isu-steadfast.png",
-  "/images/home/distributors/startup-anzen.png",
-  "/images/home/distributors/startup-broker-buddha-buddhAI.png",
-  "/images/home/distributors/startup-coverwatch.png",
-  "/images/home/distributors/startup-harper.png",
-  "/images/home/distributors/startup-latent-insurance.png",
-  "/images/home/distributors/startup-rosella.png",
-  "/images/home/distributors/wholesaler-jencap.png",
-  "/images/home/distributors/wholesaler-one80.png",
-  "/images/home/distributors/wholesaler-international-underwriting-agency.png",
-  "/images/home/distributors/brown-brown-white.png",
+  "/images/tool-wheel/distributors/broker-diligence-brokerage.png",
+  "/images/tool-wheel/distributors/network-isu-steadfast.png",
+  "/images/tool-wheel/distributors/startup-anzen.png",
+  "/images/tool-wheel/distributors/startup-broker-buddha-buddhai.png",
+  "/images/tool-wheel/distributors/startup-coverwatch.png",
+  "/images/tool-wheel/distributors/startup-harper.png",
+  "/images/tool-wheel/distributors/startup-latent-insurance.png",
+  "/images/tool-wheel/distributors/startup-rosella.png",
+  "/images/tool-wheel/distributors/wholesaler-jencap.png",
+  "/images/tool-wheel/distributors/wholesaler-one80.png",
+  "/images/tool-wheel/distributors/wholesaler-international-underwriting-agency.png",
+  "/images/tool-wheel/distributors/brown-brown-white.png",
 ] as const;
 
 function startupLogoSrc(index: number) {
@@ -298,14 +298,14 @@ function startupLogoSrc(index: number) {
 
 /** Agency Management logos for the integration wheel (broker wedge). */
 const AMS_LOGO_SRCS = [
-  "/images/integration/6908d813b05d9afef82c8174_Pathpoint.png",
-  "/images/integration/6908d99d1b574322357c44ca_Berley Management.png",
-  "/images/integration/6908d7241a971fabc9426e2b_Berley Net.png",
-  "/images/integration/69099cbda97fb126ea005603_pie-logo 1.png",
-  "/images/integration/6908d87bdd15a178cf40b9c0_Music.png",
-  "/images/integration/6908d98e5a55d49b356ea110_Blitz.png",
-  "/images/integration/6908d8945638e8bda39aa30e_Main Street.png",
-  "/images/integration/6902494cbfbe5140228c9e2e_id4DBhSanf_logos.png",
+  "/images/tool-wheel/integrations/pathpoint.png",
+  "/images/tool-wheel/integrations/berkley-management.png",
+  "/images/tool-wheel/integrations/berkley-net.png",
+  "/images/tool-wheel/integrations/pie.png",
+  "/images/tool-wheel/integrations/music.png",
+  "/images/tool-wheel/integrations/blitz.png",
+  "/images/tool-wheel/integrations/main-street.png",
+  "/images/tool-wheel/integrations/btis.png",
 ] as const;
 
 function amsLogoSrc(index: number) {
@@ -317,14 +317,14 @@ function amsLogoSrc(index: number) {
 
 /** Finance & Compliance logos for the integration wheel (developer wedge). */
 const FINANCE_LOGO_SRCS = [
-  "/images/integration/6908d93f3fa6d22abc9e2cb4_Counterpart.png",
-  "/images/integration/6908d96ae1dd29eb1e8e2b61_CFC.png",
-  "/images/integration/6908da6aad8d8eaa56f41b59_First.png",
-  "/images/integration/6908da4150c7b5be003f9986_Merchants.png",
-  "/images/integration/6908da5285fe10fae78777a4_Guard.png",
-  "/images/integration/6908da7b931ed077a7209020_BiBerk.png",
-  "/images/integration/6908d8aa7e0ec88da82d68ec_IAT.png",
-  "/images/integration/6908d8290ffddd62a5e0f3a0_Northfield.png",
+  "/images/tool-wheel/integrations/counterpart.png",
+  "/images/tool-wheel/integrations/cfc.png",
+  "/images/tool-wheel/integrations/first.png",
+  "/images/tool-wheel/integrations/merchants.png",
+  "/images/tool-wheel/integrations/guard.png",
+  "/images/tool-wheel/integrations/biberk.png",
+  "/images/tool-wheel/integrations/iat.png",
+  "/images/tool-wheel/integrations/northfield.png",
 ] as const;
 
 function financeLogoSrc(index: number) {
@@ -923,7 +923,7 @@ export default function ToolWheel({
       >
         <div className="flex aspect-square w-[72%] items-center justify-center rounded-full bg-[#ECE7FF]">
           <Image
-            src="/images/startups/center-logo.svg"
+            src="/images/brand/coverforce-mark.svg"
             alt="CoverForce logo"
             width={36}
             height={36}

@@ -19,6 +19,35 @@ const WavePlaneCanvas = dynamic(
 // Purple → deep navy palette
 const DEVELOPER_COLOURS = ["#100B3C", "#154BC1", "#5100FF", "#5100FF69"];
 
+/**
+ * Desktop-only layers around the terminal, drawn under it. Each is scaled to
+ * 90% around its own centre. They're display:none below md, so (lazy-loaded)
+ * they never download on mobile (~520 KB saved there).
+ */
+const HERO_SIDE_LAYERS = [
+  {
+    // Dashed web → terminal connector; both ends tuck under the cards.
+    src: "/images/developers/hero-connector.svg",
+    alt: "",
+    className: "",
+  },
+  {
+    src: "/images/developers/hero-web.svg",
+    alt: "Web app showing a Hiscox quote ready to bind",
+    className: "origin-[17.1%_29.1%] scale-90",
+  },
+  {
+    src: "/images/developers/hero-ai.svg",
+    alt: "AI assistant returning three bindable quotes over CoverForce MCP",
+    className: "origin-[23.1%_79.4%] scale-90",
+  },
+  {
+    src: "/images/developers/hero-phone.svg",
+    alt: "Mobile app listing quotes from Hiscox, Travelers and Chubb",
+    className: "origin-[89.3%_54.4%] scale-90",
+  },
+] as const;
+
 const Hero = () => {
   return (
     <section className="relative overflow-hidden bg-[#151f4d] text-white">
@@ -86,19 +115,41 @@ const Hero = () => {
               />
 
               {/* Display image carries the menubar; nudge content below it */}
-              {/* Box keeps the SVG's 953:501 ratio (≤88% wide, ≤72% tall) so the
-                  typed code overlay lines up with the quote.ts card. */}
+              {/* Box keeps the artwork's 953:501 ratio (≤88% wide, ≤72% tall).
+                  The artwork is split into layers that each keep the full
+                  953×501 canvas, so they stay aligned with each other and with
+                  the typed-code overlay, and each can be scaled around its own
+                  centre (transform origins = each part's measured centre). */}
               <div className="absolute inset-0 z-10 flex items-center justify-center translate-y-[3%] [container-type:size]">
                 <div className="relative aspect-[953/501] w-[min(88cqw,137cqh)]">
-                  <Image
-                    src="/images/developers/hero-content.svg"
-                    alt="CoverForce API returning bindable quotes to a web app, mobile app and AI assistant"
-                    width={953}
-                    height={501}
-                    className="absolute inset-0 size-full"
-                    priority
-                  />
-                  <HeroQuoteCode className="pointer-events-none absolute inset-0 size-full" />
+                  {HERO_SIDE_LAYERS.map((layer) => (
+                    <div
+                      key={layer.src}
+                      className={`absolute inset-0 hidden md:block ${layer.className}`}
+                    >
+                      <Image
+                        src={layer.src}
+                        alt={layer.alt}
+                        width={953}
+                        height={501}
+                        className="size-full"
+                      />
+                    </div>
+                  ))}
+
+                  {/* quote.ts terminal - larger on desktop; the only layer on
+                      mobile, where it's centred and enlarged. */}
+                  <div className="absolute inset-0 origin-[53.3%_52.1%] -translate-x-[3.3%] -translate-y-[2.1%] scale-200 md:translate-x-0 md:translate-y-0 md:scale-115">
+                    <Image
+                      src="/images/developers/hero-terminal.svg"
+                      alt="CoverForce API call returning three bindable quotes"
+                      width={953}
+                      height={501}
+                      className="absolute inset-0 size-full"
+                      priority
+                    />
+                    <HeroQuoteCode className="pointer-events-none absolute inset-0 size-full" />
+                  </div>
                 </div>
               </div>
             </div>

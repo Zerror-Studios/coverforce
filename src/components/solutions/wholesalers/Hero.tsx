@@ -5,16 +5,16 @@ import Image from "next/image";
 import { SOLUTION_GRAD_FLOW } from "@/data/wayCardStyles";
 
 const WHOLESALERS_HERO_LOGOS = [
-  { src: "/images/wholesaler/logo/network - Agentero (white).svg", alt: "Agentero" },
-  { src: "/images/wholesaler/logo/wholesaler - Amwins (white).svg", alt: "Amwins" },
-  { src: "/images/wholesaler/logo/wholesaler - Bridge Specialty Group (white).svg", alt: "Bridge Specialty Group" },
-  { src: "/images/wholesaler/logo/wholesaler - International Underwriting Agency (official brand asset, supplied) (white).svg", alt: "International Underwriting Agency" },
-  { src: "/images/wholesaler/logo/wholesaler - Jencap (white).svg", alt: "Jencap" },
-  { src: "/images/wholesaler/logo/wholesaler - Johnson & Johnson Insurance (official jjins.com, upscaled) (white).svg", alt: "Johnson & Johnson Insurance" },
-  { src: "/images/wholesaler/logo/wholesaler - One80 Intermediaries (white).svg", alt: "One80 Intermediaries" },
-  { src: "/images/wholesaler/logo/wholesaler - Pathpoint (official pathpoint.com SVG) (white).svg", alt: "Pathpoint" },
-  { src: "/images/wholesaler/logo/wholesaler - RT Specialty (white).svg", alt: "RT Specialty" },
-  { src: "/images/wholesaler/logo/wholesaler - XS Brokers (official brand asset, supplied) (white).svg", alt: "XS Brokers" },
+  { src: "/images/solutions/wholesalers/logos/agentero-white.svg", alt: "Agentero" },
+  { src: "/images/solutions/wholesalers/logos/amwins-white.svg", alt: "Amwins" },
+  { src: "/images/solutions/wholesalers/logos/bridge-specialty-group-white.svg", alt: "Bridge Specialty Group" },
+  { src: "/images/solutions/wholesalers/logos/international-underwriting-agency-white.svg", alt: "International Underwriting Agency" },
+  { src: "/images/solutions/wholesalers/logos/jencap-white.svg", alt: "Jencap" },
+  { src: "/images/solutions/wholesalers/logos/johnson-and-johnson-insurance-white.svg", alt: "Johnson & Johnson Insurance" },
+  { src: "/images/solutions/wholesalers/logos/one80-intermediaries-white.svg", alt: "One80 Intermediaries" },
+  { src: "/images/solutions/wholesalers/logos/pathpoint-white.svg", alt: "Pathpoint" },
+  { src: "/images/solutions/wholesalers/logos/rt-specialty-white.svg", alt: "RT Specialty" },
+  { src: "/images/solutions/wholesalers/logos/xs-brokers-white.svg", alt: "XS Brokers" },
 ] as const;
 
 
@@ -29,11 +29,15 @@ const Hero = () => (
     secondaryButtonLabel="How it works"
     rightCard={
       <Image
-        src="/images/wholesaler/wholesaler-hero.svg"
+        src="/images/solutions/wholesalers/hero.svg"
         alt="Wholesale desk triaging and routing retail submissions"
         width={588}
         height={372}
-        className="relative z-10 mx-auto h-auto w-full max-w-[550px] lg:max-w-[420px] xl:max-w-[550px]"
+        // The SVG has ~64px of transparent shadow padding on every side (the
+        // artwork is only 460 of its 588px). Draw it at 116% of the column and
+        // pull the extra out with -8% margins so the visible artwork fills
+        // ~90% of the column.
+        className="relative z-10 -mx-[8%] h-auto w-[116%] max-w-none shrink-0"
         priority
       />
     }
