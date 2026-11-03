@@ -158,7 +158,7 @@ export default function AnnouncementBanner() {
         >
           <div
             role="status"
-            className={`flex min-h-11 w-full items-center gap-2 px-2 py-2.5 text-white sm:gap-3 sm:px-6 md:px-8 ${
+            className={`flex h-full min-h-11 w-full items-center gap-2 px-2 py-2.5 text-white sm:gap-3 sm:px-6 md:px-8 ${
               stripExiting
                 ? "announcement-strip-full-exit"
                 : "announcement-strip-full-enter"
