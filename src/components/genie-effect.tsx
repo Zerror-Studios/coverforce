@@ -42,6 +42,9 @@ const TRAFFIC_LIGHTS_Y = 21;
 const DUR = 500;
 /** Height of the custom menubar drawn on phones (the image's own is cropped). */
 const MOBILE_MENUBAR_H = 28;
+/** Visible artwork extent inside the 779-wide box (badge left → frame right). */
+const MOBILE_CONTENT_LEFT = 44;
+const MOBILE_CONTENT_RIGHT = 778;
 // DPR is read lazily inside setupCanvas - never at module scope, which would
 // run during SSR and either crash or hardcode a value.
 
@@ -518,18 +521,19 @@ export default function GenieEffect() {
   const getWinLayout = useCallback((): { pos: Pt; scale: number } => {
     const { w, h } = getContainerSize();
     if (isMobile) {
-      // As large as fits: the frame plus its left badge strip (centred via
-      // WIN_VISUAL_OFFSET_X on both sides) fills the width minus a small gutter,
-      // so the badge never runs off the left edge.
+      // As large as fits: the window's real artwork (badge's left edge to the
+      // frame's right edge = MOBILE_CONTENT_LEFT..MOBILE_CONTENT_RIGHT in box
+      // units, measured from the preview SVGs) fills the width minus a small
+      // gutter - the badge stays fully visible.
       const gutter = 6;
-      const scale = Math.min(1, (w - gutter * 2) / (WIN_W + WIN_VISUAL_OFFSET_X * 2));
-      const scaledW = WIN_W * scale;
+      const contentW = MOBILE_CONTENT_RIGHT - MOBILE_CONTENT_LEFT;
+      const scale = Math.min(1, (w - gutter * 2) / contentW);
       const scaledH = WIN_H * scale;
       const dockReserve = 68;
       return {
         scale,
         pos: {
-          x: (w - scaledW) / 2 - WIN_VISUAL_OFFSET_X * scale,
+          x: (w - contentW * scale) / 2 - MOBILE_CONTENT_LEFT * scale,
           // Below the custom mobile menubar.
           y: Math.max(MOBILE_MENUBAR_H + 12, (h - scaledH - dockReserve) / 2 + MOBILE_MENUBAR_H / 2),
         },
@@ -785,7 +789,7 @@ export default function GenieEffect() {
   return (
     <div
       ref={containerRef}
-      className="relative h-[min(52vh,420px)] min-h-[18rem] w-full select-none overflow-hidden md:h-[min(85vh,860px)] md:min-h-162.5"
+      className="relative h-[min(46vh,340px)] min-h-[19rem] w-full select-none overflow-hidden md:h-[min(85vh,860px)] md:min-h-162.5"
     >
       <style>{`
         @keyframes blink { 0%,49% { opacity: 1 } 50%,100% { opacity: 0 } }

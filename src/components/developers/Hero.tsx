@@ -140,9 +140,9 @@ const Hero = () => {
                   ))}
 
                   {/* quote.ts terminal - larger on desktop. On mobile it's the
-                      only layer: centred and scaled so the dark window spans
-                      ~80% of the display (its glow is clipped by the display). */}
-                  <div className="absolute inset-0 origin-[53.3%_52.1%] -translate-x-[3.3%] -translate-y-[2.1%] scale-[3.2] md:translate-x-0 md:translate-y-0 md:scale-115">
+                      only layer: centred and enlarged so it sits inside the
+                      display (dark window ~half the display width). */}
+                  <div className="absolute inset-0 origin-[53.3%_52.1%] -translate-x-[3.3%] -translate-y-[2.1%] scale-[2.2] md:translate-x-0 md:translate-y-0 md:scale-115">
                     <Image
                       src="/images/developers/hero-terminal.svg"
                       alt="CoverForce API call returning three bindable quotes"
