@@ -112,11 +112,11 @@ export default function StartupFaq({ items }: { items: FaqEntry[] }) {
             <div className="relative order-2 hidden overflow-hidden rounded-md bg-[#EFF3FF] lg:sticky lg:top-[calc((100svh_-_min(36rem,100svh_-_8rem))/2_+_44px)] lg:order-1 lg:block lg:self-start">
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(21,31,77,0.04),rgba(21,31,77,0.12))]" />
               <Image
-                src="/images/careers/culture-3.webp"
-                alt="CoverForce team culture"
-                width={900}
-                height={1100}
-                className="relative h-full min-h-80 w-full object-cover object-left md:object-[72%_50%] lg:h-[min(36rem,100svh_-_8rem)] lg:min-h-0"
+                src="/images/faq/faq.webp"
+                alt="Panel discussion on stage at the Insurtech Insights USA conference"
+                width={2883}
+                height={1922}
+                className="relative h-full min-h-80 w-full object-cover object-[55%_50%] lg:h-[min(36rem,100svh_-_8rem)] lg:min-h-0"
                 sizes="(min-width: 1024px) 34vw, 100vw"
               />
             </div>

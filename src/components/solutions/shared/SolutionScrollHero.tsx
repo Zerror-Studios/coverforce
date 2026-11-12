@@ -427,7 +427,7 @@ export default function SolutionScrollHero({
               <div className="sticky top-0 flex h-svh items-center justify-center">
                 <div
                   ref={cardRef}
-                  className="relative z-40 flex w-full items-center justify-center will-change-transform"
+                  className="relative z-40 flex w-full items-center justify-center"
                 >
                   {rightCard}
                 </div>
@@ -435,7 +435,7 @@ export default function SolutionScrollHero({
               ) : (
                 <div
                   ref={cardRef}
-                  className="relative flex w-full items-center justify-center will-change-transform"
+                  className="relative flex w-full items-center justify-center"
                 >
                   {rightCard}
                 </div>
