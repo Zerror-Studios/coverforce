@@ -12,6 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useHomeIntro } from "@/contexts/HomeIntroContext";
+import { useIsClient } from "@/hooks/useIsClient";
 import { lockPageScroll } from "@/lib/scrollLock";
 
 type Phase = "waiting" | "open" | "strip" | "dismissed";
@@ -78,13 +79,9 @@ export default function AnnouncementBanner() {
   const introReady = !introEnabled || introPhase === "done";
 
   const [phase, setPhase] = useState<Phase>("waiting");
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const [stripContentReady, setStripContentReady] = useState(false);
   const [stripExiting, setStripExiting] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (!mounted) return;
@@ -96,14 +93,15 @@ export default function AnnouncementBanner() {
     return () => window.clearTimeout(timer);
   }, [mounted, isHome, introReady, phase]);
 
+  // Fade the strip content in one frame after the strip appears; reset on leave.
   useEffect(() => {
-    if (phase !== "strip") {
-      setStripContentReady(false);
-      return;
-    }
+    if (phase !== "strip") return;
 
     const frame = requestAnimationFrame(() => setStripContentReady(true));
-    return () => cancelAnimationFrame(frame);
+    return () => {
+      cancelAnimationFrame(frame);
+      setStripContentReady(false);
+    };
   }, [phase]);
 
   const closeToStrip = useCallback(() => {

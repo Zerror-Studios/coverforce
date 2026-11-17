@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useLayoutEffect, useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { RiCheckLine, RiCloseLine } from "@remixicon/react";
 import Image from "next/image";
@@ -90,16 +90,19 @@ export default function WayCardModal({
   const previewAlignRef = useRef(previewAlign);
   const previewImageRef = useRef(previewImage);
 
-  contentRef.current = content;
-  previewNodeRef.current = preview;
-  labelRef.current = label;
-  backgroundRef.current = background;
-  variantRef.current = variant;
-  dotGridRef.current = dotGrid;
-  backgroundSceneRef.current = backgroundScene;
-  backgroundSceneBlendScreenRef.current = backgroundSceneBlendScreen;
-  previewAlignRef.current = previewAlign;
-  previewImageRef.current = previewImage;
+  // Keep refs pointing at the latest values for callbacks and effects.
+  useLayoutEffect(() => {
+    contentRef.current = content;
+    previewNodeRef.current = preview;
+    labelRef.current = label;
+    backgroundRef.current = background;
+    variantRef.current = variant;
+    dotGridRef.current = dotGrid;
+    backgroundSceneRef.current = backgroundScene;
+    backgroundSceneBlendScreenRef.current = backgroundSceneBlendScreen;
+    previewAlignRef.current = previewAlign;
+    previewImageRef.current = previewImage;
+  });
 
   useEffect(() => {
     if (!open || !contentRef.current) return;
@@ -129,13 +132,18 @@ export default function WayCardModal({
 
   const handleClose = useCallback(() => {
     if (isClosing || !stored) return;
+    // Reduced motion has no close animation, so close straight away.
+    if (prefersReducedMotion()) {
+      finishClose();
+      return;
+    }
     setIsClosing(true);
-  }, [isClosing, stored]);
+  }, [isClosing, stored, finishClose]);
 
   useEffect(() => {
     if (!isClosing) return;
 
-    const duration = prefersReducedMotion() ? 0 : WAY_MODAL_CLOSE_TOTAL_MS;
+    const duration = WAY_MODAL_CLOSE_TOTAL_MS;
 
     const onEnd = (e: AnimationEvent) => {
       if (e.target !== overlayRef.current) return;
@@ -143,11 +151,6 @@ export default function WayCardModal({
     };
 
     const overlay = overlayRef.current;
-    if (duration === 0) {
-      finishClose();
-      return;
-    }
-
     const fallback = window.setTimeout(finishClose, duration + 80);
     overlay?.addEventListener("animationend", onEnd);
 

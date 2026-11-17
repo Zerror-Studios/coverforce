@@ -3,6 +3,7 @@
 import { scrollToTop } from "@/lib/scrollToTop";
 import gsap from "gsap";
 import { createContext, useContext, useEffect, useLayoutEffect, useState, type ReactNode } from "react";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 export type HomeIntroPhase =
   | "loader-in"
@@ -54,7 +55,17 @@ export function HomeIntroProvider({
   enabled: boolean;
   children: ReactNode;
 }) {
-  const [phase, setPhase] = useState<HomeIntroPhase>(enabled ? "loader-in" : "done");
+  const [timelinePhase, setPhase] = useState<HomeIntroPhase>(enabled ? "loader-in" : "done");
+  const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+  // No intro when disabled or for reduced motion.
+  const phase: HomeIntroPhase = !enabled || reducedMotion ? "done" : timelinePhase;
+
+  // Restart from the loader whenever the intro is (re-)enabled.
+  const [prevEnabled, setPrevEnabled] = useState(enabled);
+  if (prevEnabled !== enabled) {
+    setPrevEnabled(enabled);
+    setPhase(enabled ? "loader-in" : "done");
+  }
 
   useLayoutEffect(() => {
     if (!enabled) return;
@@ -62,17 +73,7 @@ export function HomeIntroProvider({
   }, [enabled]);
 
   useEffect(() => {
-    if (!enabled) {
-      setPhase("done");
-      return;
-    }
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setPhase("done");
-      return;
-    }
-
-    setPhase("loader-in");
+    if (!enabled || reducedMotion) return;
 
     // One GSAP timeline keeps phase changes in sync (setTimeout drifts when the tab
     // is backgrounded / throttled).
@@ -93,7 +94,7 @@ export function HomeIntroProvider({
     return () => {
       tl.kill();
     };
-  }, [enabled]);
+  }, [enabled, reducedMotion]);
 
   useEffect(() => {
     if (!enabled || phase === "done") return;

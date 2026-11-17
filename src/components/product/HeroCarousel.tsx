@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useLayoutEffect,
   useCallback,
   useEffect,
   useRef,
@@ -228,8 +229,11 @@ export function useHeroCarousel(slides: HeroSlide[]) {
   const activeIndexRef = useRef(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  phaseRef.current = phase;
-  activeIndexRef.current = activeIndex;
+  // Keep refs pointing at the latest values for callbacks and effects.
+  useLayoutEffect(() => {
+    phaseRef.current = phase;
+    activeIndexRef.current = activeIndex;
+  });
 
   useEffect(() => {
     const wrapper = wrapperRef.current;

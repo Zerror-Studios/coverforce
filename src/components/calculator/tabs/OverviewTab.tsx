@@ -5,6 +5,27 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } fro
 import { CalculatorBadge, CalculatorKpiCard, CalculatorKpiRow, CalculatorPanel, CalculatorSection, CalculatorStatCard } from '../CalculatorKpiCard';
 import { calcPara } from '../calculatorUi';
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="rounded-lg border border-[#535353]/10 bg-white p-3 font-sans text-sm">
+        <p className="mb-2 font-heading font-medium text-[#444444]">{label}</p>
+        {payload.map((entry: any, index: number) => (
+          <div key={index} className="mb-1 flex justify-between gap-4">
+            <span className="font-sans" style={{ color: entry.color }}>{entry.name}</span>
+            <span className="font-heading font-medium text-[#444444]">{fmtM(entry.value)}</span>
+          </div>
+        ))}
+        <div className="mt-2 flex justify-between gap-4 border-t border-[#535353]/10 pt-2 font-heading font-medium text-[#444444]">
+          <span>Total Value</span>
+          <span>{fmtM(payload[0].payload.totalValue)}</span>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
 export default function OverviewTab({ results }: { results: CalculationResult }) {
   const { years, totalROI, roiMult, payback, totalCFSpend, inputs, commTotal } = results;
   const yr1 = years[0];
@@ -18,27 +39,6 @@ export default function OverviewTab({ results }: { results: CalculationResult })
     productivityReinvest: y.productivityReinvest,
     totalValue: y.totalValue
   }));
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="rounded-lg border border-[#535353]/10 bg-white p-3 font-sans text-sm">
-          <p className="mb-2 font-heading font-medium text-[#444444]">{label}</p>
-          {payload.map((entry: any, index: number) => (
-            <div key={index} className="mb-1 flex justify-between gap-4">
-              <span className="font-sans" style={{ color: entry.color }}>{entry.name}</span>
-              <span className="font-heading font-medium text-[#444444]">{fmtM(entry.value)}</span>
-            </div>
-          ))}
-          <div className="mt-2 flex justify-between gap-4 border-t border-[#535353]/10 pt-2 font-heading font-medium text-[#444444]">
-            <span>Total Value</span>
-            <span>{fmtM(payload[0].payload.totalValue)}</span>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-bottom-4 duration-500 md:gap-6">
@@ -138,7 +138,7 @@ export default function OverviewTab({ results }: { results: CalculationResult })
         </p>
         <p>
           The compounding renewal stack is the key driver: every dollar of new premium written this year renews at {inputs.renewalRate}%, 
-          stacking on next year's new business to create an expanding annuity that grows automatically. Waiting 12 months to deploy means 
+          stacking on next year&apos;s new business to create an expanding annuity that grows automatically. Waiting 12 months to deploy means 
           <strong className="text-[#444444]"> {fmtM(yr1?.totalValue)}</strong> in Year 1 value is permanently foregone - not deferred.
         </p>
       </CalculatorPanel>

@@ -118,35 +118,18 @@ function SegmentButton({
   );
 }
 
-export default function Sidebar({
+function InputRow({
   inputs,
   updateInput,
-  applySegment,
-  toggleCommercialLob,
-  setCommercialLobPct,
-  setPersonalLobPct,
-}: Props) {
-  const [openSection, setOpenSection] = useState<SectionId | null>(null);
-  const [activeSegment, setActiveSegment] = useState<keyof typeof SEGMENTS>("mid");
-
-  const toggleSection = (id: SectionId) => {
-    setOpenSection((prev) => (prev === id ? null : id));
-  };
-
-  const handleSegmentClick = (seg: keyof typeof SEGMENTS) => {
-    setActiveSegment(seg);
-    applySegment(seg);
-  };
-
-  const InputRow = ({
-    label,
-    prop,
-    suffix,
-    prefix,
-    note,
-    step = 1,
-    type = "number",
-  }: InputRowProps) => (
+  label,
+  prop,
+  suffix,
+  prefix,
+  note,
+  step = 1,
+  type = "number",
+}: InputRowProps & Pick<Props, "inputs" | "updateInput">) {
+  return (
     <div className="mb-3.5">
       <ControlLabel>{label}</ControlLabel>
       <div className={calcInputWrap}>
@@ -177,20 +160,22 @@ export default function Sidebar({
       {note ? <p className="mt-1 font-sans text-[10px] leading-relaxed text-[#8A8A8A]">{note}</p> : null}
     </div>
   );
+}
 
-  const RangeField = ({
-    label,
-    value,
-    onChange,
-    leftLabel,
-    rightLabel,
-  }: {
-    label: string;
-    value: number;
-    onChange: (value: number) => void;
-    leftLabel: string;
-    rightLabel: string;
-  }) => (
+function RangeField({
+  label,
+  value,
+  onChange,
+  leftLabel,
+  rightLabel,
+}: {
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+  leftLabel: string;
+  rightLabel: string;
+}) {
+  return (
     <div className="mb-5">
       <ControlLabel>{label}</ControlLabel>
       <div className="mb-2 flex justify-between font-sans text-[11px] font-semibold">
@@ -207,6 +192,27 @@ export default function Sidebar({
       />
     </div>
   );
+}
+
+export default function Sidebar({
+  inputs,
+  updateInput,
+  applySegment,
+  toggleCommercialLob,
+  setCommercialLobPct,
+  setPersonalLobPct,
+}: Props) {
+  const [openSection, setOpenSection] = useState<SectionId | null>(null);
+  const [activeSegment, setActiveSegment] = useState<keyof typeof SEGMENTS>("mid");
+
+  const toggleSection = (id: SectionId) => {
+    setOpenSection((prev) => (prev === id ? null : id));
+  };
+
+  const handleSegmentClick = (seg: keyof typeof SEGMENTS) => {
+    setActiveSegment(seg);
+    applySegment(seg);
+  };
 
   return (
     <aside className="flex w-full shrink-0 flex-col rounded-xl border border-[#E8E8EC] bg-white p-4 print:w-full md:sticky md:top-24 md:w-[260px] md:self-start md:p-5 lg:w-[280px]">
@@ -392,22 +398,22 @@ export default function Sidebar({
         open={openSection === "business-profile"}
         onToggle={() => toggleSection("business-profile")}
       >
-        <InputRow
+        <InputRow inputs={inputs} updateInput={updateInput}
           label="Annual premium volume"
           prop="annualPremium"
           prefix="$"
           step="1000000"
           note="Total bound premium written today"
         />
-        <InputRow label="Commission / net revenue rate" prop="commissionRate" suffix="%" step={0.5} />
-        <InputRow
+        <InputRow inputs={inputs} updateInput={updateInput} label="Commission / net revenue rate" prop="commissionRate" suffix="%" step={0.5} />
+        <InputRow inputs={inputs} updateInput={updateInput}
           label="Annual new business growth rate"
           prop="newBizRate"
           suffix="%"
           step={1}
           note="% of current book added as new business each year"
         />
-        <InputRow
+        <InputRow inputs={inputs} updateInput={updateInput}
           label="Policy renewal retention rate"
           prop="renewalRate"
           suffix="%"
@@ -421,13 +427,13 @@ export default function Sidebar({
         open={openSection === "quoting-ops"}
         onToggle={() => toggleSection("quoting-ops")}
       >
-        <InputRow label="Monthly quote volume" prop="quoteVol" step={50} />
-        <InputRow label="Current bind rate" prop="bindCurrent" suffix="%" step={1} />
-        <InputRow label="Bind rate with CoverForce" prop="bindCF" suffix="%" step={1} />
-        <InputRow label="Minutes per quote - current" prop="minCurrent" suffix="min" step={5} />
-        <InputRow label="Minutes per quote - CoverForce" prop="minCF" suffix="min" step={1} />
-        <InputRow label="Blended staff hourly cost" prop="hourlyCost" prefix="$" step={5} />
-        <InputRow
+        <InputRow inputs={inputs} updateInput={updateInput} label="Monthly quote volume" prop="quoteVol" step={50} />
+        <InputRow inputs={inputs} updateInput={updateInput} label="Current bind rate" prop="bindCurrent" suffix="%" step={1} />
+        <InputRow inputs={inputs} updateInput={updateInput} label="Bind rate with CoverForce" prop="bindCF" suffix="%" step={1} />
+        <InputRow inputs={inputs} updateInput={updateInput} label="Minutes per quote - current" prop="minCurrent" suffix="min" step={5} />
+        <InputRow inputs={inputs} updateInput={updateInput} label="Minutes per quote - CoverForce" prop="minCF" suffix="min" step={1} />
+        <InputRow inputs={inputs} updateInput={updateInput} label="Blended staff hourly cost" prop="hourlyCost" prefix="$" step={5} />
+        <InputRow inputs={inputs} updateInput={updateInput}
           label="Number of producers / underwriters"
           prop="staffCount"
           step={1}
@@ -440,9 +446,9 @@ export default function Sidebar({
         open={openSection === "quality"}
         onToggle={() => toggleSection("quality")}
       >
-        <InputRow label="Manual error rate - current" prop="errorCurrent" suffix="%" step={0.5} />
-        <InputRow label="Manual error rate - CoverForce" prop="errorCF" suffix="%" step={0.5} />
-        <InputRow label="Cost per error / rework event" prop="costPerError" prefix="$" step={25} />
+        <InputRow inputs={inputs} updateInput={updateInput} label="Manual error rate - current" prop="errorCurrent" suffix="%" step={0.5} />
+        <InputRow inputs={inputs} updateInput={updateInput} label="Manual error rate - CoverForce" prop="errorCF" suffix="%" step={0.5} />
+        <InputRow inputs={inputs} updateInput={updateInput} label="Cost per error / rework event" prop="costPerError" prefix="$" step={25} />
       </SidebarAccordion>
 
       <SidebarAccordion
@@ -450,20 +456,20 @@ export default function Sidebar({
         open={openSection === "technology"}
         onToggle={() => toggleSection("technology")}
       >
-        <InputRow label="CoverForce implementation fee" prop="implFee" prefix="$" step={1000} />
-        <InputRow label="CoverForce monthly fee" prop="monthlyFee" prefix="$" step={500} />
+        <InputRow inputs={inputs} updateInput={updateInput} label="CoverForce implementation fee" prop="implFee" prefix="$" step={1000} />
+        <InputRow inputs={inputs} updateInput={updateInput} label="CoverForce monthly fee" prop="monthlyFee" prefix="$" step={500} />
         <div className="my-4 border-t border-[#535353]/10" />
-        <InputRow label="In-house build cost (year 1)" prop="buildYear1" prefix="$" step={50000} />
-        <InputRow label="In-house annual maintenance" prop="buildAnnual" prefix="$" step={10000} />
-        <InputRow label="IT staff hourly rate" prop="itRate" prefix="$" step={5} />
-        <InputRow
+        <InputRow inputs={inputs} updateInput={updateInput} label="In-house build cost (year 1)" prop="buildYear1" prefix="$" step={50000} />
+        <InputRow inputs={inputs} updateInput={updateInput} label="In-house annual maintenance" prop="buildAnnual" prefix="$" step={10000} />
+        <InputRow inputs={inputs} updateInput={updateInput} label="IT staff hourly rate" prop="itRate" prefix="$" step={5} />
+        <InputRow inputs={inputs} updateInput={updateInput}
           label="IT hours/month on maintenance"
           prop="itHours"
           step={5}
           note="Ongoing hours to maintain in-house connections"
         />
         <div className="my-4 border-t border-[#535353]/10" />
-        <InputRow
+        <InputRow inputs={inputs} updateInput={updateInput}
           label="Carrier API integrations (current)"
           prop="carrierIntegrations"
           step={1}

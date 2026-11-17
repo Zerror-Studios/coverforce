@@ -18,7 +18,7 @@ export default function InactionTab({ results }: { results: CalculationResult })
       
       <CalculatorSection>
         <h3 className={calcHeading}>The Cost of Waiting 12 Months</h3>
-        <p className={`mb-5 mt-1.5 ${calcPara}`}>Software implementations are often delayed due to competing priorities. But in insurance, deferring digitisation doesn't just defer revenue - it permanently erases it because the renewal compounding clock starts a year late.</p>
+        <p className={`mb-5 mt-1.5 ${calcPara}`}>Software implementations are often delayed due to competing priorities. But in insurance, deferring digitisation doesn&apos;t just defer revenue - it permanently erases it because the renewal compounding clock starts a year late.</p>
         
         <CalculatorKpiCard
           label="Total Value Lost to a 12-Month Delay"
@@ -80,7 +80,7 @@ export default function InactionTab({ results }: { results: CalculationResult })
           <div className="py-4 sm:px-5 sm:py-1">
             <p className={calcMetricLabel}>Lost Compounding</p>
             <div className={`mt-2 ${calcRowValue}`}>{fmtM(yr1?.commOnIncremental)}</div>
-            <div className={`mt-1 ${calcSubpara}`}>Year 1 growth that won't renew in Year 2</div>
+            <div className={`mt-1 ${calcSubpara}`}>Year 1 growth that won&apos;t renew in Year 2</div>
           </div>
           <div className="py-4 sm:px-5 sm:py-1 last:sm:pr-0">
             <p className={calcMetricLabel}>Lost IT Savings</p>

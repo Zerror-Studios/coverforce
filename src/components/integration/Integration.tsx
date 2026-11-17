@@ -458,11 +458,13 @@ const Integration = () => {
   const visibleCards = filteredDirectory.slice(0, visibleCount);
   const hasMore = visibleCount < filteredDirectory.length;
 
-  useEffect(() => {
-    setVisibleCount(PAGE_SIZE);
-  }, [lob, market, status, carrierQuery]);
-
   const filtersKey = `${lob}|${market}|${status}|${carrierQuery}`;
+  // Show the first page again whenever the filters change.
+  const [pagedFiltersKey, setPagedFiltersKey] = useState(filtersKey);
+  if (pagedFiltersKey !== filtersKey) {
+    setPagedFiltersKey(filtersKey);
+    setVisibleCount(PAGE_SIZE);
+  }
   const prevFiltersKeyRef = useRef(filtersKey);
 
   useGSAP(

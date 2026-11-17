@@ -44,6 +44,7 @@ const Hero = ({ featured, latest }: HeroProps) => {
             <Link href={featured.href} className="group block w-full min-w-0 max-lg:max-w-none">
               <div className="relative w-full overflow-hidden rounded-md bg-[#F7F7FB]">
                 <div className="relative aspect-video w-full">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- CMS hero image, intentionally a native img */}
                   <img
                     src={featured.image}
                     alt={featured.title}

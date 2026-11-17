@@ -1,7 +1,9 @@
 "use client";
-import { useRef, useEffect, useCallback, useState, type MutableRefObject } from "react";
+import { useRef, useEffect, useLayoutEffect, useCallback, useState, type MutableRefObject } from "react";
 import { flushSync } from "react-dom";
 import Image from "next/image";
+import { useIsClient } from "@/hooks/useIsClient";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { RiAppleFill, RiBattery2Fill, RiSearchLine, RiWifiFill } from "@remixicon/react";
 import {
   Tooltip,
@@ -68,6 +70,7 @@ const eOut2 = (t: number) => 1 - (1 - t) * (1 - t);
 // ─── Dock app icons ───────────────────────────────────────────────────────────
 function DockAppIcon({ src }: { src: string }) {
   return (
+    // eslint-disable-next-line @next/next/no-img-element -- small static dock icon, plain img needed for canvas snapshots
     <img
       src={src}
       alt="icon"
@@ -238,6 +241,7 @@ const MacWindow = ({
         transformOrigin: "top left",
       }}
     >
+      {/* eslint-disable-next-line @next/next/no-img-element -- plain img so the preview can be drawn to the genie canvas */}
       <img
         src={app.previewImage}
         alt={app.label}
@@ -462,30 +466,10 @@ function SnapshotStage({
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function GenieEffect() {
   // Render the interactive pieces client-side after mount.
-  const [mounted, setMounted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isTablet, setIsTablet] = useState(false);
-  const [isLgOnly, setIsLgOnly] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-    const mobileMql = window.matchMedia("(max-width: 767px)");
-    const tabletMql = window.matchMedia("(min-width: 768px) and (max-width: 1023px)");
-    const lgMql = window.matchMedia("(min-width: 1024px) and (max-width: 1279px)");
-    const sync = () => {
-      setIsMobile(mobileMql.matches);
-      setIsTablet(tabletMql.matches);
-      setIsLgOnly(lgMql.matches);
-    };
-    sync();
-    mobileMql.addEventListener("change", sync);
-    tabletMql.addEventListener("change", sync);
-    lgMql.addEventListener("change", sync);
-    return () => {
-      mobileMql.removeEventListener("change", sync);
-      tabletMql.removeEventListener("change", sync);
-      lgMql.removeEventListener("change", sync);
-    };
-  }, []);
+  const mounted = useIsClient();
+  const isMobile = useMediaQuery("(max-width: 767px)");
+  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
+  const isLgOnly = useMediaQuery("(min-width: 1024px) and (max-width: 1279px)");
 
   const [phase, setPhase] = useState<Phase>("idle");
   const [activeApp, setActiveApp] = useState<number | null>(null);
@@ -509,9 +493,25 @@ export default function GenieEffect() {
     activeApp: null,
   });
 
+  // Read through a ref so this callback stays stable: SnapshotStage re-runs its
+  // capture whenever onReady changes identity.
+  const getWinLayoutRef = useRef<() => { pos: Pt; scale: number }>(() => ({
+    pos: { x: 0, y: 0 },
+    scale: 1,
+  }));
+
   const handleSnapshotsReady = useCallback((canvases: HTMLCanvasElement[]) => {
     offRef.current = canvases;
     setSnapshotsReady(true);
+
+    // Open the first app window once the snapshots exist.
+    if (stateRef.current.phase !== "idle") return;
+    const layout = getWinLayoutRef.current();
+    stateRef.current = { phase: "open", activeApp: 0 };
+    setWinPos(layout.pos);
+    setWinScale(layout.scale);
+    setActiveApp(0);
+    setPhase("open");
   }, []);
 
   // All position helpers below resolve against the container's bounding rect.
@@ -567,6 +567,10 @@ export default function GenieEffect() {
       },
     };
   }, [getContainerSize, isMobile, isTablet, isLgOnly]);
+
+  useLayoutEffect(() => {
+    getWinLayoutRef.current = getWinLayout;
+  });
 
   // Returns dock-button center in CONTAINER-LOCAL coords (not viewport coords).
   // The genie canvas draws in container-local coords too, so these match.
@@ -759,18 +763,6 @@ export default function GenieEffect() {
       cancelAnimationFrame(rafRef.current);
     };
   }, []);
-
-  useEffect(() => {
-    if (!mounted || !snapshotsReady) return;
-    if (stateRef.current.phase !== "idle") return;
-
-    const layout = getWinLayout();
-    stateRef.current = { phase: "open", activeApp: 0 };
-    setWinPos(layout.pos);
-    setWinScale(layout.scale);
-    setActiveApp(0);
-    setPhase("open");
-  }, [mounted, snapshotsReady, getWinLayout]);
 
   // Re-center the open window when the container resizes (browser resize,
   // sidebar collapse, parent flexbox changes, etc.). ResizeObserver fires

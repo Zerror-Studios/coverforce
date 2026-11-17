@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type MouseEvent, type ReactNode } from "react";
 import Link from "next/link";
 import CmsImage from "./CmsImage";
 import ButtonArrowIcon from "./ButtonArrowIcon";
@@ -194,12 +194,62 @@ export default function MegaMenu({
   const [contentOpacity, setContentOpacity] = useState(0);
   const [displayConfig, setDisplayConfig] = useState(config);
   const [displayMenuKey, setDisplayMenuKey] = useState(menuKey);
-  const prevMenuKeyRef = useRef<string | null>(null);
+  /** Menu shown since the panel last opened (null = first show pending). */
+  const [shownMenuKey, setShownMenuKey] = useState<string | null>(null);
+  /** A fade-out → swap → fade-in to a different menu is waiting on its timer. */
+  const [swapPending, setSwapPending] = useState(false);
+
+  // State resets run while rendering (on input changes) rather than in effects;
+  // the effects below only own the timers and animation frames.
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (prevOpen !== open) {
+    setPrevOpen(open);
+    setClipShown(false);
+    if (!open) {
+      setShownMenuKey(null);
+      setSwapPending(false);
+      setContentOpacity(0);
+    }
+  }
+
+  // Content (re-)enters whenever the clip finishes opening or enterKey bumps.
+  const [enterInputs, setEnterInputs] = useState({ open, clipShown, enterKey });
+  if (
+    enterInputs.open !== open ||
+    enterInputs.clipShown !== clipShown ||
+    enterInputs.enterKey !== enterKey
+  ) {
+    setEnterInputs({ open, clipShown, enterKey });
+    if (open && clipShown) {
+      setContentEnter(false);
+      setContentOpacity(1);
+    }
+  }
+
+  // Show the first menu directly; switching to another menu fades out first.
+  const [swapInputs, setSwapInputs] = useState({ menuKey, config, open, clipShown });
+  if (
+    swapInputs.menuKey !== menuKey ||
+    swapInputs.config !== config ||
+    swapInputs.open !== open ||
+    swapInputs.clipShown !== clipShown
+  ) {
+    setSwapInputs({ menuKey, config, open, clipShown });
+    if (open && clipShown) {
+      setShownMenuKey(menuKey);
+      if (shownMenuKey === null || shownMenuKey === menuKey) {
+        setDisplayConfig(config);
+        setDisplayMenuKey(menuKey);
+      } else {
+        setContentEnter(false);
+        setContentOpacity(0);
+        setSwapPending(true);
+      }
+    }
+  }
 
   useEffect(() => {
     if (open) {
-      setClipShown(false);
-
       const clipFrame = requestAnimationFrame(() => {
         requestAnimationFrame(() => setClipShown(true));
       });
@@ -209,9 +259,6 @@ export default function MegaMenu({
       };
     }
 
-    prevMenuKeyRef.current = null;
-    setContentOpacity(0);
-    setClipShown(false);
     const timer = window.setTimeout(() => {
       setContentEnter(false);
       onClipClosed?.();
@@ -222,8 +269,6 @@ export default function MegaMenu({
   useEffect(() => {
     if (!open || !clipShown) return;
 
-    setContentEnter(false);
-    setContentOpacity(1);
     const enterTimer = window.setTimeout(() => setContentEnter(true), 100);
 
     return () => {
@@ -232,24 +277,12 @@ export default function MegaMenu({
   }, [open, clipShown, enterKey]);
 
   useEffect(() => {
-    if (!open || !clipShown) return;
-
-    const previousMenuKey = prevMenuKeyRef.current;
-    const isFirstShow = previousMenuKey === null;
-    prevMenuKeyRef.current = menuKey;
-
-    if (isFirstShow || previousMenuKey === menuKey) {
-      setDisplayConfig(config);
-      setDisplayMenuKey(menuKey);
-      return;
-    }
-
-    setContentEnter(false);
-    setContentOpacity(0);
+    if (!swapPending || !open || !clipShown) return;
 
     const swapTimer = window.setTimeout(() => {
       setDisplayConfig(config);
       setDisplayMenuKey(menuKey);
+      setSwapPending(false);
       requestAnimationFrame(() => {
         setContentEnter(true);
         setContentOpacity(1);
@@ -257,7 +290,7 @@ export default function MegaMenu({
     }, CONTENT_SWAP_MS);
 
     return () => window.clearTimeout(swapTimer);
-  }, [menuKey, config, open, clipShown]);
+  }, [swapPending, menuKey, config, open, clipShown]);
 
   const featuredDelay =
     Math.max(

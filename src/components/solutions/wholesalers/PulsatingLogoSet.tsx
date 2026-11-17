@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 import type { MarqueeLogo } from "./MarqueeLine";
 
@@ -47,17 +48,8 @@ function chunkLogos(logos: readonly MarqueeLogo[], perSet: number) {
 }
 
 function useResponsiveLogosPerSet(desktopPerSet: number, mobilePerSet: number) {
-  const [perSet, setPerSet] = useState(desktopPerSet);
-
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`);
-    const sync = () => setPerSet(mq.matches ? mobilePerSet : desktopPerSet);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, [desktopPerSet, mobilePerSet]);
-
-  return perSet;
+  const isMobile = useMediaQuery(`(max-width: ${MOBILE_MAX_WIDTH}px)`);
+  return isMobile ? mobilePerSet : desktopPerSet;
 }
 
 type Phase = "hidden" | "enter" | "visible" | "exit";
@@ -85,11 +77,17 @@ export function PulsatingLogoSet({
   const activePerSet = useResponsiveLogosPerSet(logosPerSet, mobileLogosPerSet);
   const sets = useMemo(() => chunkLogos(logos, activePerSet), [logos, activePerSet]);
   const [setIndex, setSetIndex] = useState(0);
-  const [phase, setPhase] = useState<Phase>("hidden");
+  const [cyclePhase, setPhase] = useState<Phase>("hidden");
+  const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+  // Reduced motion skips the pulse and simply swaps visible sets.
+  const phase: Phase = reduceMotion ? "visible" : cyclePhase;
 
-  useEffect(() => {
+  // Start from the first set again when the chunking changes.
+  const [chunking, setChunking] = useState({ activePerSet, count: sets.length });
+  if (chunking.activePerSet !== activePerSet || chunking.count !== sets.length) {
+    setChunking({ activePerSet, count: sets.length });
     setSetIndex(0);
-  }, [activePerSet, sets.length]);
+  }
 
   const activeLogos = sets[setIndex] ?? sets[0] ?? [];
   const count = activeLogos.length;
@@ -97,10 +95,7 @@ export function PulsatingLogoSet({
 
   useEffect(() => {
     const signal = { cancelled: false };
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
     if (reduceMotion) {
-      setPhase("visible");
       const id = window.setInterval(
         () => setSetIndex((i) => (i + 1) % sets.length),
         intervalMs,
@@ -135,7 +130,7 @@ export function PulsatingLogoSet({
     return () => {
       signal.cancelled = true;
     };
-  }, [intervalMs, sets.length, waveMs]);
+  }, [intervalMs, reduceMotion, sets.length, waveMs]);
 
   return (
     <div

@@ -264,7 +264,7 @@ export default function RevenueMapTab({ results }: { results: CalculationResult 
           <div className={calcPara}>
             <div className={`mb-1 flex items-center gap-1.5 ${calcSubheading}`}><Lightbulb className="size-4 text-[#6B6B6B]" /> {fmtM(lobBreakdown.persTotal)} in Personal Lines - the size of the gap</div>
             <div className={calcSubpara}>
-              {inputs.companyName} is managing <strong className="text-[#444444]">{fmtM(lobBreakdown.persTotal)}</strong> ({100 - inputs.commPct}% of book) in personal lines without a CoverForce equivalent. While CoverForce can't help here today, this premium represents the scale of the digital workflow problem you're solving in commercial - and it signals how much operational leverage is still on the table.
+              {inputs.companyName} is managing <strong className="text-[#444444]">{fmtM(lobBreakdown.persTotal)}</strong> ({100 - inputs.commPct}% of book) in personal lines without a CoverForce equivalent. While CoverForce can&apos;t help here today, this premium represents the scale of the digital workflow problem you&apos;re solving in commercial - and it signals how much operational leverage is still on the table.
             </div>
           </div>
         )}
@@ -272,7 +272,7 @@ export default function RevenueMapTab({ results }: { results: CalculationResult 
           <div className={calcPara}>
             <div className={`mb-1 flex items-center gap-1.5 ${calcSubheading}`}><AlertCircle className="size-4 text-[#444444]" /> {fmtM(commOffPremium)} in commercial lines not yet in scope</div>
             <div className={calcSubpara}>
-              You've toggled off some commercial LOBs - that's <strong className="text-[#444444]">{fmtM(commOffPremium)}</strong> in commercial premium still handled manually. Turning these on expands the CoverForce opportunity to the full <strong className="text-[#444444]">{fmtM(lobBreakdown.commTotal)}</strong> commercial book.
+              You&apos;ve toggled off some commercial LOBs - that&apos;s <strong className="text-[#444444]">{fmtM(commOffPremium)}</strong> in commercial premium still handled manually. Turning these on expands the CoverForce opportunity to the full <strong className="text-[#444444]">{fmtM(lobBreakdown.commTotal)}</strong> commercial book.
             </div>
           </div>
         )}

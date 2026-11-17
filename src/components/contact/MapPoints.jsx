@@ -6,6 +6,7 @@ import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 
 import mapDotsData from '@/data/mapDots.json';
+import { seededRandom } from '@/lib/seededRandom';
 
 const vertexShader = `
   uniform vec2 uMouse;
@@ -226,6 +227,7 @@ export default function MapPoints({ activeOffice = null, onActiveOfficeChange })
 
   const { positions, alphas, nyCoords, denverCoords } = useMemo(() => {
     const dotCount = mapDotsData.length / 2;
+    const rand = seededRandom(dotCount);
     const posArr = new Float32Array(dotCount * 3);
     const alpArr = new Float32Array(dotCount);
 
@@ -233,7 +235,7 @@ export default function MapPoints({ activeOffice = null, onActiveOfficeChange })
       posArr[i * 3]     = mapDotsData[i * 2];
       posArr[i * 3 + 1] = mapDotsData[i * 2 + 1];
       posArr[i * 3 + 2] = 0;
-      alpArr[i] = Math.random() > 0.85 ? 0.3 : 0.8 + Math.random() * 0.2;
+      alpArr[i] = rand() > 0.85 ? 0.3 : 0.8 + rand() * 0.2;
     }
 
     const ny = [79, 15, 0];

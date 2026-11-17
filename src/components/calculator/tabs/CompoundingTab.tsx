@@ -19,6 +19,28 @@ import {
 } from "../calculatorUi";
 import { CalculatorSection } from "../CalculatorKpiCard";
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    const total = payload[0].value + payload[1].value;
+    return (
+      <div className="rounded-lg border border-[#E6E6E6] bg-white p-3 font-sans text-sm">
+        <p className="mb-2 font-heading font-medium text-[#444444]">{label}</p>
+        {payload.map((entry: any, index: number) => (
+          <div key={index} className="mb-1 flex justify-between gap-4">
+            <span className="font-sans" style={{ color: entry.color }}>{entry.name}</span>
+            <span className="font-heading font-medium text-[#444444]">{fmtM(entry.value)}</span>
+          </div>
+        ))}
+        <div className="mt-2 flex justify-between gap-4 border-t border-[#E6E6E6] pt-2 font-heading font-medium text-[#444444]">
+          <span>Total Incremental</span>
+          <span>{fmtM(total)}</span>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
 export default function CompoundingTab({ results }: { results: CalculationResult }) {
   const { years, commTotal, inputs } = results;
 
@@ -36,28 +58,6 @@ export default function CompoundingTab({ results }: { results: CalculationResult
   const renewalPercentage = finalYr
     ? finalYr.renewalsThisYear / (finalYr.renewalsThisYear + finalYr.newBizThisYear)
     : 0;
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      const total = payload[0].value + payload[1].value;
-      return (
-        <div className="rounded-lg border border-[#E6E6E6] bg-white p-3 font-sans text-sm">
-          <p className="mb-2 font-heading font-medium text-[#444444]">{label}</p>
-          {payload.map((entry: any, index: number) => (
-            <div key={index} className="mb-1 flex justify-between gap-4">
-              <span className="font-sans" style={{ color: entry.color }}>{entry.name}</span>
-              <span className="font-heading font-medium text-[#444444]">{fmtM(entry.value)}</span>
-            </div>
-          ))}
-          <div className="mt-2 flex justify-between gap-4 border-t border-[#E6E6E6] pt-2 font-heading font-medium text-[#444444]">
-            <span>Total Incremental</span>
-            <span>{fmtM(total)}</span>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div className="flex flex-col gap-5 duration-500 animate-in fade-in slide-in-from-bottom-4 md:gap-6">

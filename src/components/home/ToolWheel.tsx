@@ -377,14 +377,17 @@ function useIndependentLogoRotation(slotCount: number, poolSize: number) {
     Array.from({ length: slotCount }, () => true),
   );
 
-  useEffect(() => {
+  // Reset the rotation when the slot / pool sizes change.
+  const [sizes, setSizes] = useState({ slotCount, poolSize });
+  if (sizes.slotCount !== slotCount || sizes.poolSize !== poolSize) {
+    setSizes({ slotCount, poolSize });
     setIndices(
       Array.from({ length: slotCount }, (_, i) =>
         poolSize > 0 ? i % poolSize : 0,
       ),
     );
     setOpaque(Array.from({ length: slotCount }, () => true));
-  }, [slotCount, poolSize]);
+  }
 
   useEffect(() => {
     if (slotCount === 0 || poolSize <= 1) return;
