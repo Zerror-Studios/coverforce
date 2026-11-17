@@ -31,10 +31,10 @@ const Hero = () => (
       <Image
         src="/images/solutions/wholesalers/hero.svg"
         alt="Wholesale desk triaging and routing retail submissions"
-        width={588}
-        height={372}
-        // The SVG has ~64px of transparent shadow padding on every side (the
-        // artwork is only 460 of its 588px). Draw it at 116% of the column and
+        width={722}
+        height={474}
+        // The SVG has ~67px of transparent shadow padding on every side (the
+        // artwork is only 588 of its 722px). Draw it at 116% of the column and
         // pull the extra out with -8% margins so the visible artwork fills
         // ~90% of the column.
         className="relative z-10 -mx-[8%] h-auto w-[116%] max-w-none shrink-0"
