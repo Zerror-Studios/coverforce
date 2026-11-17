@@ -66,6 +66,17 @@ export default function WayCardModal({
 }: WayCardModalProps) {
   const [isClosing, setIsClosing] = useState(false);
   const [stored, setStored] = useState<StoredModal | null>(null);
+  // Matches the cards: below 1024px they render no animated backgrounds (dot
+  // grid / globe video / particle globe), so the popup doesn't either.
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 1023px)");
+    const sync = () => setIsSmallScreen(mql.matches);
+    sync();
+    mql.addEventListener("change", sync);
+    return () => mql.removeEventListener("change", sync);
+  }, []);
+  const showAnimatedBackground = !isSmallScreen;
 
   const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef(content);
@@ -290,7 +301,7 @@ export default function WayCardModal({
           </div>
 
           <div
-            className={`relative overflow-hidden border-t border-[#535353]/10 pt-14 pb-12 sm:py-14 ${
+            className={`relative overflow-hidden border-t border-[#535353]/10 pt-8 pb-8 sm:py-14 ${
               stored.previewAlign === "right"
                 ? "pl-6 pr-0 sm:pl-10"
                 : "px-6 sm:px-10"
@@ -301,10 +312,10 @@ export default function WayCardModal({
                 : "#F5F7FA",
             }}
           >
-            {stored.dotGrid ? (
+            {showAnimatedBackground && stored.dotGrid ? (
               <WayCardDotGridScene variant={stored.variant} active track="window" />
             ) : null}
-            {stored.backgroundScene ? (
+            {showAnimatedBackground && stored.backgroundScene ? (
               <div
                 className="pointer-events-none absolute inset-0 z-[1] overflow-hidden"
                 style={
@@ -318,10 +329,10 @@ export default function WayCardModal({
               </div>
             ) : null}
             <div
-              className={`way-modal-preview-slot pointer-events-none relative z-10 h-[300px] w-full sm:h-[360px] ${
+              className={`way-modal-preview-slot pointer-events-none relative z-10 w-full sm:h-[420px] lg:h-[480px] max-sm:[&_img]:h-auto max-sm:[&_img]:max-h-[320px] max-sm:[&_img]:w-full sm:[&_img]:h-full sm:[&_img]:max-h-full sm:[&_img]:w-auto [&_img]:max-w-full ${
                 stored.previewAlign === "right"
                   ? ""
-                  : "mx-auto flex max-w-[820px] items-center justify-center max-md:[&>*]:scale-[0.82] md:[&>*]:scale-100 [&>*]:!relative [&>*]:!inset-auto [&>*]:!top-auto [&>*]:!right-auto [&>*]:!bottom-auto [&>*]:!left-auto [&>*]:!translate-x-0 [&>*]:!translate-y-0"
+                  : "mx-auto flex max-w-[960px] items-center justify-center [&>*]:!relative [&>*]:!inset-auto [&>*]:!top-auto [&>*]:!right-auto [&>*]:!bottom-auto [&>*]:!left-auto [&>*]:!translate-x-0 [&>*]:!translate-y-0"
               }`}
             >
               {stored.previewImage ? (
@@ -331,7 +342,7 @@ export default function WayCardModal({
                     alt=""
                     width={800}
                     height={800}
-                    className="h-auto w-[92%] max-h-[84%] object-contain object-center"
+                    className="object-contain object-center"
                     sizes="(max-width: 1023px) 90vw, 0px"
                   />
                 </div>

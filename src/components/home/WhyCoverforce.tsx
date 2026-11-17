@@ -4,7 +4,10 @@ import { useCallback, useRef, useState, useEffect, useLayoutEffect, useMemo } fr
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scheduleScrollTriggerRefresh } from "@/lib/scheduleScrollTriggerRefresh";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
 import { useSectionHeaderReveal } from "@/hooks/useSectionHeaderReveal";
 import Container from "../common/Container";
 import Image from "next/image";
@@ -33,7 +36,7 @@ const whySlides: WhySlide[] = [
       "that keeps improving for you.",
     ],
     image:
-      "/images/why/ai.avif",
+      "/images/why-coverforce/ai.avif",
     alt: "Abstract blue and purple fluid gradient waves",
   },
   {
@@ -45,7 +48,7 @@ const whySlides: WhySlide[] = [
       "carrier relationships alone.",
     ],
     image:
-      "/images/why/market.avif",
+      "/images/why-coverforce/market.avif",
     alt: "Abstract deep purple liquid waves",
   },
   {
@@ -57,7 +60,7 @@ const whySlides: WhySlide[] = [
       "and battle-tested.",
     ],
     image:
-      "/images/why/carrier.avif",
+      "/images/why-coverforce/carrier.avif",
     alt: "Abstract cyan light geometric glow",
   },
   {
@@ -69,7 +72,7 @@ const whySlides: WhySlide[] = [
       "for FI-grade volume from day one.",
     ],
     image:
-      "/images/why/security.avif",
+      "/images/why-coverforce/security.avif",
     alt: "Abstract violet silk waves on black",
   },
   {
@@ -87,6 +90,8 @@ const whySlides: WhySlide[] = [
 ];
 
 const SLIDE_TRANSITION_MS = 950;
+/** How long each card stays featured before the slider advances on its own. */
+const AUTOPLAY_DELAY_MS = 3000;
 
 /** Desktop shows 5 slots: 4 visible + always-zero right reserve for the next card. */
 const VISIBLE_SLIDE_COUNT = 5;
@@ -167,6 +172,9 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
   const commitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingStepsRef = useRef(0);
   const isExpandingRef = useRef(false);
+  const swiperRef = useRef<SwiperType | null>(null);
+  const [inView, setInView] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   // Monotonic rotation keys so wrap-around mounts the next card on the right
   // (flex 0) instead of reusing the first card from the left.
@@ -194,7 +202,12 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
     if (!track || isExpandingRef.current) return;
     const activeEl = track.querySelector(".why-slide.is-active");
     if (!(activeEl instanceof HTMLElement)) return;
-    const width = activeEl.getBoundingClientRect().width;
+    // getBoundingClientRect includes the GSAP scroll-out scale on the
+    // container; divide it back out so the height never follows that scale.
+    const trackRectWidth = track.getBoundingClientRect().width;
+    if (trackRectWidth <= 0 || track.offsetWidth <= 0) return;
+    const scale = trackRectWidth / track.offsetWidth;
+    const width = activeEl.getBoundingClientRect().width / scale;
     if (width <= 0) return;
     // Exact YouTube thumbnail: active slide width × 9/16
     track.style.setProperty("--why-track-height", `${(width * 9) / 16}px`);
@@ -286,6 +299,46 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
     [clearCommitTimeout],
   );
 
+  // Only autoplay while the section is on screen.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(([entry]) => {
+      const visible = entry.isIntersecting;
+      setInView(visible);
+      const autoplay = swiperRef.current?.autoplay;
+      if (!autoplay) return;
+      // The mobile Swiper stays mounted (hidden) on desktop - keep it idle there.
+      const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+      if (visible && !isDesktop) autoplay.start();
+      else autoplay.stop();
+    });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  // Desktop autoplay: once the slider has settled, advance one card after a
+  // delay. Re-armed on every rotation, so a click also resets the timer.
+  useEffect(() => {
+    if (!inView || isHovered || isExpanding || suppressTransition) return;
+    if (pendingStepsRef.current > 0) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!window.matchMedia("(min-width: 1024px)").matches) return;
+
+    let timer: number;
+    const tick = () => {
+      // Background tab: wait another cycle instead of stalling autoplay.
+      if (document.hidden) {
+        timer = window.setTimeout(tick, AUTOPLAY_DELAY_MS);
+        return;
+      }
+      pendingStepsRef.current = 1;
+      advanceOne();
+    };
+    timer = window.setTimeout(tick, AUTOPLAY_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [inView, isHovered, isExpanding, suppressTransition, rotation, advanceOne]);
+
   useSectionHeaderReveal({ scopeRef: sectionRef, headerRef, headingRef, descRef });
 
   useGSAP(() => {
@@ -346,22 +399,10 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
       ease: "none",
     });
 
-    const lenis = window.lenis;
-    let scrollPending = false;
-    const onLenisScroll = () => {
-      if (scrollPending) return;
-      scrollPending = true;
-      requestAnimationFrame(() => {
-        ScrollTrigger.update();
-        scrollPending = false;
-      });
-    };
-    lenis?.on("scroll", onLenisScroll);
 
-    ScrollTrigger.refresh();
+    scheduleScrollTriggerRefresh();
 
     return () => {
-      lenis?.off("scroll", onLenisScroll);
       parallaxTl.scrollTrigger?.kill();
       parallaxTl.kill();
       overlayTl.scrollTrigger?.kill();
@@ -515,10 +556,19 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
             {/* ── Mobile: normal Swiper ── */}
             <div className="relative mt-8 md:mt-10 lg:hidden">
               <Swiper
+                modules={[Autoplay]}
                 spaceBetween={12}
                 slidesPerView={1.1}
                 speed={600}
-                onSlideChange={(swiper) => setRotation(swiper.activeIndex)}
+                loop
+                autoplay={{
+                  delay: AUTOPLAY_DELAY_MS,
+                  disableOnInteraction: false,
+                  pauseOnMouseEnter: true,
+                }}
+                onSwiper={(swiper) => {
+                  swiperRef.current = swiper;
+                }}
                 className="why-coverforce-swiper !overflow-visible"
               >
                 {whySlides.map((slide) => (
@@ -574,6 +624,8 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
             <div className="relative mt-8 hidden md:mt-10 lg:mt-12 lg:block">
               <div
                 ref={trackRef}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
                 className={`why-slider-track${
                   isExpanding ? " why-slider-track--animating" : ""
                 }${suppressTransition ? " why-slider-track--no-transition" : ""}`}
@@ -623,7 +675,6 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
                         src={slide.image}
                         alt={slide.alt}
                         draggable={false}
-                        priority={visualIndex === 0}
                       />
                       <div
                         className={`pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-linear-to-t from-black/70 via-black/20 to-transparent px-5 pb-5 pt-14 transition-opacity duration-300 ${

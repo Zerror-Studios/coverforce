@@ -2,6 +2,7 @@
 
 import Header from "@/components/common/Header";
 import Footer from "@/components/common/Footer";
+import AnnouncementBanner from "@/components/common/AnnouncementBanner";
 import LenisScroll from "@/components/common/LenisScroll";
 import HomePageLoader from "@/components/home/HomePageLoader";
 import {
@@ -11,6 +12,7 @@ import {
 } from "@/contexts/HomeIntroContext";
 import type { MegaMenuBlogData } from "@/data/megaMenu";
 import { scrollToTop } from "@/lib/scrollToTop";
+import { refreshScrollTriggersInPageOrder } from "@/lib/scheduleScrollTriggerRefresh";
 import {
   getPageTransitionBg,
   installPageTransitionBgSync,
@@ -20,7 +22,7 @@ import {
 import { usePathname } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import gsap from "gsap";
-import ScrollTrigger from "gsap/dist/ScrollTrigger";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -45,7 +47,7 @@ function SiteLayoutInner({
     if (!introEnabled || phase !== "done") return;
 
     const id = window.requestAnimationFrame(() => {
-      ScrollTrigger.refresh();
+      refreshScrollTriggersInPageOrder();
       window.lenis?.resize();
       scrollToTop();
     });
@@ -59,6 +61,7 @@ function SiteLayoutInner({
 
       {!hideChrome ? (
         <header className="site-view-header fixed top-0 z-50 w-full">
+          <AnnouncementBanner />
           <Header megaMenuBlogData={megaMenuBlogData} />
         </header>
       ) : null}
@@ -96,7 +99,7 @@ export default function SiteLayout({
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
-      ScrollTrigger.refresh();
+      refreshScrollTriggersInPageOrder();
       window.lenis?.resize();
       // Hash scrolling is owned by LenisScroll so we don't interrupt a smooth tween.
       if (!window.location.hash) {

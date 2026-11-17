@@ -83,8 +83,6 @@ type PositionsProps = {
 
 const Positions = ({ categories }: PositionsProps) => {
   const sectionRef = useRef<HTMLElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const positionsListRef = useRef<HTMLDivElement>(null);
@@ -98,15 +96,11 @@ const Positions = ({ categories }: PositionsProps) => {
 
   useGSAP(
     () => {
-      const section = sectionRef.current;
-      const container = containerRef.current;
-      const overlay = overlayRef.current;
       const list = positionsListRef.current;
-      if (!section || !container || !overlay || !list) return;
+      if (!list) return;
 
       const rows = gsap.utils.toArray<HTMLElement>(".positions-row", list);
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const isSmallDevice = window.matchMedia("(max-width: 1023px)").matches;
 
       const tweens: gsap.core.Tween[] = [];
 
@@ -134,81 +128,13 @@ const Positions = ({ categories }: PositionsProps) => {
         });
       }
 
-      gsap.set(container, {
-        y: 0,
-        scale: 1,
-        force3D: true,
-        transformOrigin: "50% 50%",
-        backfaceVisibility: "hidden",
-      });
-      gsap.set(overlay, { opacity: 0, pointerEvents: "none" });
-
-      let parallaxTl: gsap.core.Timeline | null = null;
-      let overlayTl: gsap.core.Timeline | null = null;
-
-      if (!reducedMotion && !isSmallDevice) {
-        const getShift = () => container.offsetHeight;
-        const scrollEnd = "bottom -180%";
-        const scrollConfig = {
-          trigger: section,
-          scrub: 0.35,
-          invalidateOnRefresh: true,
-          fastScrollEnd: true,
-        };
-
-        parallaxTl = gsap.timeline({
-          scrollTrigger: {
-            ...scrollConfig,
-            start: "bottom bottom",
-            end: scrollEnd,
-          },
-        });
-
-        parallaxTl.to(container, {
-          y: getShift,
-          scale: 0.8,
-          ease: "none",
-          force3D: true,
-        });
-
-        overlayTl = gsap.timeline({
-          scrollTrigger: {
-            ...scrollConfig,
-            start: "bottom center",
-            end: scrollEnd,
-          },
-        });
-
-        overlayTl.to(overlay, {
-          opacity: 0.85,
-          ease: "none",
-        });
-      }
-
-      const lenis = window.lenis;
-      let scrollPending = false;
-      const onLenisScroll = () => {
-        if (scrollPending) return;
-        scrollPending = true;
-        requestAnimationFrame(() => {
-          ScrollTrigger.update();
-          scrollPending = false;
-        });
-      };
-      lenis?.on("scroll", onLenisScroll);
-
       ScrollTrigger.refresh();
 
       return () => {
-        lenis?.off("scroll", onLenisScroll);
         tweens.forEach((tween) => {
           tween.scrollTrigger?.kill();
           tween.kill();
         });
-        parallaxTl?.scrollTrigger?.kill();
-        parallaxTl?.kill();
-        overlayTl?.scrollTrigger?.kill();
-        overlayTl?.kill();
       };
     },
     { scope: sectionRef, dependencies: [categories] },
@@ -220,7 +146,7 @@ const Positions = ({ categories }: PositionsProps) => {
       ref={sectionRef}
       className="relative z-30 overflow-hidden bg-[#151f4d] text-white"
     >
-      <div ref={containerRef} className="relative z-10 overflow-hidden lg:will-change-transform">
+      <div className="relative z-10 overflow-hidden">
         <Container borderColor="#FFFFFF33" className="relative !px-0">
           <SectionRadialGlow className="absolute left-1/2 top-[10%] z-0 -translate-x-1/2 opacity-70 md:top-[12%]" />
 
@@ -257,12 +183,6 @@ const Positions = ({ categories }: PositionsProps) => {
           </div>
         </Container>
       </div>
-
-      <div
-        ref={overlayRef}
-        className="pointer-events-none absolute inset-0 z-20 bg-[#080808]"
-        aria-hidden
-      />
     </section>
   );
 };

@@ -8,6 +8,9 @@ const BULGE_RADIUS = 110;
 const BULGE_STRENGTH = 28;
 const POINT_SIZE = 3.6;
 const MAX_PIXEL_RATIO = 1.25;
+/** Drift speed in px/s (was 0.35px per frame at 60fps). */
+const DRIFT_PX_PER_S = 21;
+const DRIFT_MS = (SPACING / DRIFT_PX_PER_S) * 1000;
 
 type WayCardDotGridSceneProps = {
   variant: "dark" | "light";
@@ -16,29 +19,34 @@ type WayCardDotGridSceneProps = {
   track?: "card" | "window";
 };
 
+/*
+ * Performance model
+ * -----------------
+ * The grid itself never changes, so it's drawn ONCE into a canvas one row
+ * taller than the box. The idle drift is a CSS transform animation on that
+ * canvas (runs on the compositor - zero JS, zero WebGL per frame) that loops
+ * after exactly one row, so it's seamless. The vertical fade lives in the
+ * root's CSS mask (globals.css), which doesn't move with the canvas.
+ *
+ * WebGL only re-renders while the hover bulge is animating in or out; the
+ * rest of the time the GPU and main thread do nothing for this card.
+ */
+
 const vertexShader = /* glsl */ `
   uniform float uActive;
-  uniform float uDrift;
   uniform float uBulgeStrength;
   uniform float uBulgeRadius;
   uniform vec2 uMouse;
-  uniform float uHeight;
   uniform float uPointSize;
-
-  varying float vAlpha;
 
   void main() {
     vec3 pos = position;
-    pos.y += uDrift;
 
     vec2 delta = pos.xy - uMouse;
     float dist2 = dot(delta, delta);
     float bulge = uActive * uBulgeStrength * exp(-dist2 / (uBulgeRadius * uBulgeRadius));
     vec2 dir = delta / (sqrt(dist2) + 0.001);
     pos.xy += dir * bulge * 0.42;
-
-    float fade = smoothstep(0.0, uHeight * 0.32, pos.y);
-    vAlpha = max(fade, 0.35);
 
     vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);
     gl_PointSize = uPointSize;
@@ -50,15 +58,13 @@ const fragmentShader = /* glsl */ `
   uniform vec3 uColor;
   uniform float uBaseAlpha;
 
-  varying float vAlpha;
-
   void main() {
     vec2 uv = gl_PointCoord * 2.0 - 1.0;
     float dist = dot(uv, uv);
     if (dist > 1.0) discard;
 
     float core = 1.0 - smoothstep(0.15, 1.0, dist);
-    float alpha = uBaseAlpha * vAlpha * core;
+    float alpha = uBaseAlpha * core;
     if (alpha < 0.02) discard;
 
     gl_FragColor = vec4(uColor, alpha);
@@ -92,8 +98,14 @@ export default function WayCardDotGridScene({
   const rootRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(active);
   const mouseRef = useRef({ x: 0.5, y: 0.72 });
+  /** Set by the effect: wakes the render loop when `active` changes. */
+  const wakeRef = useRef<() => void>(() => {});
 
   activeRef.current = active;
+
+  useEffect(() => {
+    wakeRef.current();
+  }, [active]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -110,10 +122,16 @@ export default function WayCardDotGridScene({
     });
     renderer.setPixelRatio(pixelRatio);
     renderer.setClearColor(0x000000, 0);
-    renderer.domElement.style.display = "block";
-    renderer.domElement.style.width = "100%";
-    renderer.domElement.style.height = "100%";
-    root.appendChild(renderer.domElement);
+    const canvas = renderer.domElement;
+    canvas.style.display = "block";
+    root.appendChild(canvas);
+
+    const drift = reducedMotion
+      ? null
+      : canvas.animate(
+          [{ transform: "translate3d(0, 0, 0)" }, { transform: `translate3d(0, ${SPACING}px, 0)` }],
+          { duration: DRIFT_MS, iterations: Infinity, easing: "linear" },
+        );
 
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(0, 1, 0, 1, -10, 10);
@@ -132,12 +150,10 @@ export default function WayCardDotGridScene({
       depthWrite: false,
       uniforms: {
         uActive: { value: 0 },
-        uDrift: { value: 0 },
         uBulgeStrength: { value: BULGE_STRENGTH },
         uBulgeRadius: { value: BULGE_RADIUS },
         uMouse: { value: new THREE.Vector2(0, 0) },
-        uHeight: { value: 1 },
-        uPointSize: { value: POINT_SIZE },
+        uPointSize: { value: POINT_SIZE * pixelRatio },
         uColor: { value: dotColor },
         uBaseAlpha: { value: variant === "dark" ? 0.55 : tone === "blueLight" ? 0.55 : 0.6 },
       },
@@ -152,12 +168,30 @@ export default function WayCardDotGridScene({
     let width = 0;
     let height = 0;
     let displayActive = 0;
-    let drift = 0;
     let frame = 0;
     let inView = false;
     let pageVisible = !document.hidden;
     let resizeTimer: ReturnType<typeof setTimeout> | undefined;
     let trackingMouse = false;
+
+    /** Current drift offset in px (0..SPACING), read from the CSS animation. */
+    const driftOffset = () => {
+      const t = drift?.currentTime;
+      if (typeof t !== "number") return 0;
+      return ((t % DRIFT_MS) / DRIFT_MS) * SPACING;
+    };
+
+    const draw = () => {
+      if (width <= 0 || height <= 0) return;
+      material.uniforms.uActive.value = displayActive;
+      // Mouse is in root coords; the canvas starts SPACING above the root and
+      // is shifted down by the drift, so convert into canvas coords.
+      material.uniforms.uMouse.value.set(
+        mouseRef.current.x * width,
+        mouseRef.current.y * height + SPACING - driftOffset(),
+      );
+      renderer.render(scene, camera);
+    };
 
     const rebuildGrid = () => {
       const size = readSize(root, card);
@@ -165,23 +199,18 @@ export default function WayCardDotGridScene({
 
       width = size.width;
       height = size.height;
+      const canvasH = height + SPACING;
 
       camera.left = 0;
       camera.right = width;
       camera.top = 0;
-      camera.bottom = height;
+      camera.bottom = canvasH;
       camera.updateProjectionMatrix();
 
-      renderer.setSize(width, height, false);
-      material.uniforms.uHeight.value = height;
-      material.uniforms.uPointSize.value = POINT_SIZE * pixelRatio;
-      material.uniforms.uMouse.value.set(
-        mouseRef.current.x * width,
-        mouseRef.current.y * height,
-      );
+      renderer.setSize(width, canvasH, false);
 
       const cols = Math.ceil(width / SPACING) + 1;
-      const rows = Math.ceil(height / SPACING) + 1;
+      const rows = Math.ceil(canvasH / SPACING) + 1;
       const verts = new Float32Array(cols * rows * 3);
       let count = 0;
 
@@ -189,7 +218,7 @@ export default function WayCardDotGridScene({
         for (let col = 0; col < cols; col += 1) {
           const x = col * SPACING + SPACING * 0.5;
           const y = row * SPACING + SPACING * 0.5;
-          if (x > width || y > height) continue;
+          if (x > width || y > canvasH) continue;
           verts[count++] = x;
           verts[count++] = y;
           verts[count++] = 0;
@@ -201,12 +230,41 @@ export default function WayCardDotGridScene({
         new THREE.Float32BufferAttribute(verts.subarray(0, count), 3),
       );
       geometry.computeBoundingSphere();
+      draw();
       return count > 0;
     };
 
     const scheduleRebuild = () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => rebuildGrid(), 80);
+    };
+
+    const shouldRun = () => inView && pageVisible;
+
+    // Only loops while the bulge is easing in, held, or easing out.
+    const animate = () => {
+      frame = 0;
+      if (!shouldRun()) return;
+
+      const target = activeRef.current ? 1 : 0;
+      displayActive += (target - displayActive) * 0.1;
+      const settledIdle = target === 0 && displayActive < 0.002;
+      if (settledIdle) displayActive = 0;
+
+      draw();
+
+      if (!settledIdle) frame = requestAnimationFrame(animate);
+    };
+
+    const wake = () => {
+      if (!frame && shouldRun()) frame = requestAnimationFrame(animate);
+    };
+    wakeRef.current = wake;
+
+    const syncDrift = () => {
+      if (!drift) return;
+      if (shouldRun()) drift.play();
+      else drift.pause();
     };
 
     const updateMouse = (clientX: number, clientY: number) => {
@@ -249,16 +307,16 @@ export default function WayCardDotGridScene({
       if (!(event instanceof MouseEvent)) return;
       updateMouse(event.clientX, event.clientY);
       startMouseTracking();
-      rebuildGrid();
+      wake();
     };
 
     const onLeave = () => {
       stopMouseTracking();
+      wake();
     };
 
     if (track === "window") {
       startMouseTracking();
-      rebuildGrid();
     } else {
       card?.addEventListener("mouseenter", onEnter);
       card?.addEventListener("mouseleave", onLeave);
@@ -271,9 +329,10 @@ export default function WayCardDotGridScene({
     const visibilityObserver = new IntersectionObserver(
       ([entry]) => {
         inView = entry.isIntersecting;
+        syncDrift();
         if (inView) {
           rebuildGrid();
-          if (!frame) frame = requestAnimationFrame(animate);
+          wake();
         }
       },
       { rootMargin: "120px 0px", threshold: 0.01 },
@@ -282,9 +341,8 @@ export default function WayCardDotGridScene({
 
     const onPageVisibility = () => {
       pageVisible = !document.hidden;
-      if (pageVisible && inView && !frame) {
-        frame = requestAnimationFrame(animate);
-      }
+      syncDrift();
+      wake();
     };
 
     document.addEventListener("visibilitychange", onPageVisibility);
@@ -295,50 +353,17 @@ export default function WayCardDotGridScene({
     };
 
     boot();
-    requestAnimationFrame(() => rebuildGrid());
-
-    const shouldRun = () => inView && pageVisible;
-
-    const animate = () => {
-      frame = 0;
-
-      if (!shouldRun()) return;
-
-      const target = activeRef.current ? 1 : 0;
-      displayActive += (target - displayActive) * 0.1;
-
-      if (!reducedMotion) {
-        drift = (drift + 0.35) % SPACING;
-      } else {
-        drift = 0;
-      }
-
-      material.uniforms.uActive.value = displayActive;
-      material.uniforms.uDrift.value = drift;
-
-      if (width > 0 && height > 0) {
-        material.uniforms.uMouse.value.set(
-          mouseRef.current.x * width,
-          mouseRef.current.y * height,
-        );
-        renderer.render(scene, camera);
-      }
-
-      frame = requestAnimationFrame(animate);
-    };
-
-    if (shouldRun()) {
-      frame = requestAnimationFrame(animate);
-    }
 
     const refresh = () => scheduleRebuild();
     window.addEventListener("resize", refresh, { passive: true });
 
     return () => {
+      wakeRef.current = () => {};
       window.removeEventListener("resize", refresh);
       document.removeEventListener("visibilitychange", onPageVisibility);
       clearTimeout(resizeTimer);
       cancelAnimationFrame(frame);
+      drift?.cancel();
       resizeObserver.disconnect();
       visibilityObserver.disconnect();
       stopMouseTracking();
@@ -349,7 +374,7 @@ export default function WayCardDotGridScene({
       geometry.dispose();
       material.dispose();
       renderer.dispose();
-      root.removeChild(renderer.domElement);
+      root.removeChild(canvas);
     };
   }, [variant, track, tone]);
 

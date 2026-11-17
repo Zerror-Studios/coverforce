@@ -6,8 +6,8 @@ import Container from "@/components/common/Container";
 import Button from "@/components/common/Button";
 import RequestDemoButton from "@/components/request-demo/RequestDemoButton";
 import HeroReveal from "@/components/common/HeroReveal";
-import ApiCodeReveal from "@/components/developers/ApiCodeReveal";
 import EyebrowPill from "@/components/common/EyebrowPill";
+import HeroQuoteCode from "@/components/developers/HeroQuoteCode";
 import { HERO_COPY_STACK } from "@/components/common/heroSectionSpacing";
 
 // Lazy-load – R3F must never run on the server
@@ -18,6 +18,35 @@ const WavePlaneCanvas = dynamic(
 
 // Purple → deep navy palette
 const DEVELOPER_COLOURS = ["#100B3C", "#154BC1", "#5100FF", "#5100FF69"];
+
+/**
+ * Desktop-only layers around the terminal, drawn under it. Each is scaled to
+ * 90% around its own centre. They're display:none below md, so (lazy-loaded)
+ * they never download on mobile (~520 KB saved there).
+ */
+const HERO_SIDE_LAYERS = [
+  {
+    // Dashed web → terminal connector; both ends tuck under the cards.
+    src: "/images/developers/hero-connector.svg",
+    alt: "",
+    className: "",
+  },
+  {
+    src: "/images/developers/hero-web.svg",
+    alt: "Web app showing a Hiscox quote ready to bind",
+    className: "origin-[17.1%_29.1%] scale-90",
+  },
+  {
+    src: "/images/developers/hero-ai.svg",
+    alt: "AI assistant returning three bindable quotes over CoverForce MCP",
+    className: "origin-[23.1%_79.4%] scale-90",
+  },
+  {
+    src: "/images/developers/hero-phone.svg",
+    alt: "Mobile app listing quotes from Hiscox, Travelers and Chubb",
+    className: "origin-[89.3%_54.4%] scale-90",
+  },
+] as const;
 
 const Hero = () => {
   return (
@@ -74,37 +103,56 @@ const Hero = () => {
             className="relative z-10 mx-auto w-full max-w-6xl px-2 pb-10 max-md:-mt-48 sm:-mt-60 sm:px-4 md:-mt-28 md:px-4 md:pb-20 lg:-mt-36 lg:max-w-7xl lg:pb-24"
             delay={0.75}
           >
-            <div className="relative mx-auto h-[24rem] w-full sm:h-[30rem] md:h-[32rem] lg:h-[38rem]">
+            {/* Phones: full-width display at its natural ratio (no stretching);
+                md+: fixed-height stage with the display contained. */}
+            <div className="relative mx-auto w-full max-md:overflow-hidden md:h-[32rem] lg:h-[38rem]">
               <Image
-                src="/images/developers/display.svg"
-                alt="CoverForce API request example showing POST /v1/quote"
-                width={1200}
-                height={720}
-                className="h-full w-full object-fill md:object-contain"
+                src="/images/developers/hero-display.png"
+                alt=""
+                width={2156}
+                height={1280}
+                className="h-auto w-full md:h-full md:object-contain"
+                sizes="(min-width: 1280px) 1080px, 100vw"
                 priority
               />
 
-              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2.5 px-[6%] pt-[2%] translate-y-4 sm:translate-y-5 sm:gap-3.5 sm:px-[8%] md:translate-y-3 md:justify-end md:gap-4 md:px-[10%] md:pt-0">
-                <div className="hidden w-14 md:block md:w-16 lg:w-20">
-                  <Image
-                    src="/images/developers/display-logo.svg"
-                    alt="CoverForce logo"
-                    width={1200}
-                    height={720}
-                    className="h-auto w-full object-contain"
-                    priority
-                  />
-                </div>
-                <div className="relative w-full max-w-2xl sm:max-w-3xl md:max-w-xl lg:max-w-3xl">
-                  <Image
-                    src="/images/developers/display-editor.svg"
-                    alt="CoverForce API request editor"
-                    width={1200}
-                    height={720}
-                    className="h-auto w-full object-contain"
-                    priority
-                  />
-                  <ApiCodeReveal className="pointer-events-none absolute inset-0 flex flex-col justify-center pl-[9%] pr-[3%] pb-[8%] pt-[2%] sm:pl-[11%] sm:pb-[10%] md:pl-[11%] md:pb-[10%]" />
+              {/* Display image carries the menubar; nudge content below it */}
+              {/* Box keeps the artwork's 953:501 ratio (≤88% wide, ≤72% tall).
+                  The artwork is split into layers that each keep the full
+                  953×501 canvas, so they stay aligned with each other and with
+                  the typed-code overlay, and each can be scaled around its own
+                  centre (transform origins = each part's measured centre). */}
+              <div className="absolute inset-0 z-10 flex items-center justify-center translate-y-[3%] [container-type:size]">
+                <div className="relative aspect-[953/501] w-[min(88cqw,137cqh)]">
+                  {HERO_SIDE_LAYERS.map((layer) => (
+                    <div
+                      key={layer.src}
+                      className={`absolute inset-0 hidden md:block ${layer.className}`}
+                    >
+                      <Image
+                        src={layer.src}
+                        alt={layer.alt}
+                        width={953}
+                        height={501}
+                        className="size-full"
+                      />
+                    </div>
+                  ))}
+
+                  {/* quote.ts terminal - larger on desktop. On mobile it's the
+                      only layer: centred and enlarged so it sits inside the
+                      display (dark window ~half the display width). */}
+                  <div className="absolute inset-0 origin-[53.3%_52.1%] -translate-x-[3.3%] -translate-y-[2.1%] scale-[2.2] md:translate-x-0 md:translate-y-0 md:scale-115">
+                    <Image
+                      src="/images/developers/hero-terminal.svg"
+                      alt="CoverForce API call returning three bindable quotes"
+                      width={953}
+                      height={501}
+                      className="absolute inset-0 size-full"
+                      priority
+                    />
+                    <HeroQuoteCode className="pointer-events-none absolute inset-0 size-full" />
+                  </div>
                 </div>
               </div>
             </div>

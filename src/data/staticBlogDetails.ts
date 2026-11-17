@@ -72,9 +72,9 @@ export type StaticBlogDetail =
   | CaseStudyStaticBlogDetail
   | ReportStaticBlogDetail;
 
-export const CASE_STUDY_THUMBNAIL = "/images/casestudy.png";
-export const CASE_STUDY_HERO_IMAGE = "/images/casestudy-bg.png";
-export const CASE_STUDY_RESULT_IMAGE = "/images/result.png";
+export const CASE_STUDY_THUMBNAIL = "/images/blog/case-study.png";
+export const CASE_STUDY_HERO_IMAGE = "/images/blog/case-study-bg.png";
+export const CASE_STUDY_RESULT_IMAGE = "/images/blog/result.png";
 
 export const CASE_STUDY_STICKY_STATS: ContentStat[] = [
   { value: "60+", label: "Carrier Integrations" },
@@ -148,7 +148,7 @@ export const CASE_STUDY_DETAIL: CaseStudyStaticBlogDetail = {
     date: "August 15, 2026",
     readTime: "5 min read",
     backgroundImage: CASE_STUDY_HERO_IMAGE,
-    logo: "/images/startups/center-logo.svg",
+    logo: "/images/brand/coverforce-mark.svg",
   },
   title:
     "How a regional brokerage scaled multi-carrier quoting with CoverForce",
@@ -261,13 +261,13 @@ export const REPORT_DETAIL: ReportStaticBlogDetail = {
     {
       badge: "Empathetic Tech",
       title: "The Rise of the Empathetic Technologist",
-      image: "/images/tech.png",
+      image: "/images/blog/tech.png",
       imageAlt: "Empathetic technologist report finding",
     },
     {
       badge: "Trust vs Velocity",
       title: "Building Confidence Through Trust",
-      image: "/images/velocity.png",
+      image: "/images/blog/velocity.png",
       imageAlt: "Trust and velocity report finding",
     },
   ],

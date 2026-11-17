@@ -31,8 +31,8 @@ const TESTIMONIALS: Testimonial[] = [
     name: "Alex Ledbetter",
     role: "Founder, Delegance Brokerage",
     company: "Delegance Brokerage",
-    avatar: "/images/testimonals/Alex Ledbetter.webp",
-    logo: "/images/testimonals/delegance.webp",
+    avatar: "/images/testimonials/alex-ledbetter.webp",
+    logo: "/images/testimonials/delegance.webp",
   },
   {
     id: "2",
@@ -41,8 +41,8 @@ const TESTIMONIALS: Testimonial[] = [
     name: "Jatin Sandilya",
     role: "Founder, Latent Insurance",
     company: "Latent Insurance",
-    avatar: "/images/testimonals/Jatin Sandilya.webp",
-    logo: "/images/testimonals/latent.webp",
+    avatar: "/images/testimonials/jatin-sandilya.webp",
+    logo: "/images/testimonials/latent.webp",
     logoScale: 1.35,
   },
   {
@@ -52,8 +52,8 @@ const TESTIMONIALS: Testimonial[] = [
     name: "Gary McCarthy",
     role: "Founder, Snapbind",
     company: "Snapbind",
-    avatar: "/images/testimonals/gary mccarthy.webp",
-    logo: "/images/testimonals/snapbind.svg",
+    avatar: "/images/testimonials/gary-mccarthy.webp",
+    logo: "/images/testimonials/snapbind.svg",
   },
 ];
 

@@ -1,6 +1,7 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scheduleScrollTriggerRefresh } from "@/lib/scheduleScrollTriggerRefresh";
 import type { RefObject } from "react";
 
 import { animateSplitTextReveal, type SplitTextColorTheme } from "@/lib/animateSplitTextReveal";
@@ -62,32 +63,16 @@ export function useSectionHeaderReveal({
 
           fadeTl.to(desc, { opacity: 1, duration: 0.8, ease: "power2.out" });
 
-          const lenis = window.lenis;
-          const onLenisScroll = () => ScrollTrigger.update();
-          lenis?.on("scroll", onLenisScroll);
 
           cleanups.push(() => {
-            lenis?.off("scroll", onLenisScroll);
             fadeTl.scrollTrigger?.kill();
             fadeTl.kill();
           });
         }
       }
 
-      const lenis = window.lenis;
-      let scrollPending = false;
-      const onLenisScroll = () => {
-        if (scrollPending) return;
-        scrollPending = true;
-        requestAnimationFrame(() => {
-          ScrollTrigger.update();
-          scrollPending = false;
-        });
-      };
-      lenis?.on("scroll", onLenisScroll);
-      ScrollTrigger.refresh();
+      scheduleScrollTriggerRefresh();
 
-      cleanups.push(() => lenis?.off("scroll", onLenisScroll));
 
       return () => cleanups.forEach((cleanup) => cleanup());
     },

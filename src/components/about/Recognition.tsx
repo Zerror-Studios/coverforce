@@ -21,7 +21,7 @@ const CARDS: RecognitionCard[] = [
   {
     id: "recognition-1",
     type: "image",
-    src: "/images/about/recoginition-1.webp",
+    src: "/images/about/recognition/recognition-1.webp",
     alt: "CoverForce Insurtech 50 2025 recognition",
   },
   {
@@ -32,7 +32,7 @@ const CARDS: RecognitionCard[] = [
   {
     id: "recognition-3",
     type: "image",
-    src: "/images/about/recoginition-3.webp",
+    src: "/images/about/recognition/recognition-3.webp",
     alt: "Insurtech industry event",
   },
 ];
@@ -48,9 +48,9 @@ function RecognitionImageCard({ src, alt }: { src: string; alt: string }) {
 function RecognitionTextCard({ text }: { text: string }) {
   return (
     <article
-      className={`flex overflow-hidden rounded-md bg-white ${CARD_HEIGHT} flex-col justify-end p-6 md:p-8`}
+      className={`flex overflow-hidden rounded-md bg-white ${CARD_HEIGHT} flex-col justify-end p-6 md:p-5 lg:p-8`}
     >
-      <p className="font-heading text-2xl font-medium leading-[1.15] tracking-tight text-[#111110] sm:text-3xl sm:leading-[1.12] md:text-4xl lg:text-[1.625rem] lg:leading-[1.12]">
+      <p className="font-heading text-2xl font-medium leading-[1.15] tracking-tight text-[#111110] sm:text-3xl sm:leading-[1.12] md:text-xl lg:text-[1.625rem] lg:leading-[1.12]">
         {text}
       </p>
     </article>
@@ -168,22 +168,10 @@ const Recognition = () => {
         });
       }
 
-      const lenis = window.lenis;
-      let scrollPending = false;
-      const onLenisScroll = () => {
-        if (scrollPending) return;
-        scrollPending = true;
-        requestAnimationFrame(() => {
-          ScrollTrigger.update();
-          scrollPending = false;
-        });
-      };
-      lenis?.on("scroll", onLenisScroll);
 
       ScrollTrigger.refresh();
 
       return () => {
-        lenis?.off("scroll", onLenisScroll);
         revealTl.scrollTrigger?.kill();
         revealTl.kill();
         parallaxTl?.scrollTrigger?.kill();

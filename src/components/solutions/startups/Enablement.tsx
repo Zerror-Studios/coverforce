@@ -542,7 +542,7 @@ function EnablementWheel({ className = "" }: { className?: string }) {
       >
         <div className="flex aspect-square w-[72%] items-center justify-center rounded-full bg-[#ECE7FF]">
           <Image
-            src="/images/startups/center-logo.svg"
+            src="/images/brand/coverforce-mark.svg"
             alt="CoverForce logo"
             width={36}
             height={36}

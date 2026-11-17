@@ -184,22 +184,7 @@ const RealWorkflow = () => {
         onComplete: () => gsap.set(rows, { clearProps: "transform" }),
       });
 
-      const lenis = window.lenis;
-      let scrollPending = false;
-      const onLenisScroll = () => {
-        if (scrollPending) return;
-        scrollPending = true;
-        requestAnimationFrame(() => {
-          ScrollTrigger.update();
-          scrollPending = false;
-        });
-      };
-      lenis?.on("scroll", onLenisScroll);
       ScrollTrigger.refresh();
-
-      return () => {
-        lenis?.off("scroll", onLenisScroll);
-      };
     },
     { scope: listRef },
   );
@@ -353,9 +338,12 @@ const RealWorkflow = () => {
                 <br />
                 <span data-split>to 8 minutes.</span>
               </h2>
-              <RequestDemoButton variant="primary" surface="on-dark">
-                Contact us
-              </RequestDemoButton>
+              {/* Desktop: button under the heading. Below lg it moves under the paragraph. */}
+              <div className="hidden lg:block">
+                <RequestDemoButton variant="primary" surface="on-dark">
+                  Contact us
+                </RequestDemoButton>
+              </div>
             </div>
 
             <div className="flex max-w-md flex-col items-start text-left lg:ml-auto lg:items-end">
@@ -366,6 +354,11 @@ const RealWorkflow = () => {
                 Without CoverForce vs with CoverForce - each step of submission,
                 side by side.
               </p>
+              <div className="mt-6 lg:hidden">
+                <RequestDemoButton variant="primary" surface="on-dark">
+                  Contact us
+                </RequestDemoButton>
+              </div>
             </div>
           </div>
 
@@ -391,7 +384,7 @@ const RealWorkflow = () => {
                           </p>
                           <div className="relative flex h-10 w-44 shrink-0">
                             <Image
-                              src="/Coverforce_logo_blue.svg"
+                              src="/images/brand/coverforce-logo-blue.svg"
                               alt="CoverForce Logo"
                               fill
                               className="object-contain"

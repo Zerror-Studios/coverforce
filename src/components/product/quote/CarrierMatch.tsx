@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight, Check, RefreshCw, ArrowRight } from "lucide-react";
 import Container from "@/components/common/Container";
-import Button from "@/components/common/Button";
 import EyebrowPill from "@/components/common/EyebrowPill";
 import SearchableSelect, {
   type SelectOption,
@@ -85,36 +84,40 @@ function PolicyTypeTabs({
   );
 }
 
-type CarrierAccent = "green" | "red";
+// Card palette - matches the product graphics (step / hero SVG exports).
+const CARD_INK = "#1F2A44";
+const CARD_MUTED = "#6B7280";
+const CARD_BORDER = "#E6E9F2";
+const CARD_PRIMARY = "#3A43AA";
 
-const ACCENT_STYLES: Record<CarrierAccent, { border: string }> = {
-  green: { border: "#72AF23" },
-  red: { border: "#DC2626" },
-};
+const OUT_OF_APPETITE_RED = "#DC2626";
 
 function CarrierLogoCell({
   carrier,
-  accent,
+  outOfAppetite = false,
 }: {
   carrier: Carrier;
-  accent?: CarrierAccent;
+  // Out-of-appetite carriers get a red outline.
+  outOfAppetite?: boolean;
 }) {
   const [showFallback, setShowFallback] = useState(!carrier.logo);
-  const borderColor = accent ? ACCENT_STYLES[accent].border : "#ECEEF2";
 
   return (
     <div
-      className="relative flex flex-col items-center justify-center gap-1.5 rounded-lg border bg-white px-2 py-3"
-      style={{ borderColor }}
+      className="relative flex h-14 items-center justify-center rounded-lg border bg-white px-3 md:h-16"
+      style={{ borderColor: outOfAppetite ? OUT_OF_APPETITE_RED : CARD_BORDER }}
     >
       {carrier.badge ? (
-        <span className="absolute left-2 top-2 rounded bg-[#F4A261] px-1.5 py-0.5 font-mono text-[0.5625rem] font-semibold uppercase leading-none tracking-wide text-white">
+        <span className="absolute left-1.5 top-1.5 rounded bg-[#F4A261] px-1 py-0.5 font-mono text-[0.5rem] font-semibold uppercase leading-none tracking-wide text-white">
           {carrier.badge}
         </span>
       ) : null}
 
       {showFallback || !carrier.logo ? (
-        <span className="font-heading text-[10px] font-semibold text-[#2A297C] md:text-xs">
+        <span
+          className="text-center font-heading text-[10px] font-semibold md:text-xs"
+          style={{ color: CARD_INK }}
+        >
           {carrier.name}
         </span>
       ) : (
@@ -124,25 +127,18 @@ function CarrierLogoCell({
           alt={`${carrier.name} logo`}
           loading="lazy"
           onError={() => setShowFallback(true)}
-          className="h-4 w-auto max-w-full object-contain md:h-8"
+          className="h-5 w-auto max-w-full object-contain md:h-7"
         />
       )}
     </div>
   );
 }
 
-const WRAPPER_GRADIENT_ORANGE =
-  "linear-gradient(135deg, #E66F35 0%, #D62B1C 100%)";
-const WRAPPER_GRADIENT_BLUE =
-  "linear-gradient(135deg, #322696 0%, #322696 48%, #5E3FD0 100%)";
-
 function CarrierGrid({
   carriers,
   maxVisible = MAX_VISIBLE,
   directPaginate = false,
-  accent,
-  gradientWrapper = false,
-  isBlue = false,
+  outOfAppetite = false,
 }: {
   carriers: Carrier[];
   maxVisible?: number;
@@ -151,15 +147,8 @@ function CarrierGrid({
   // carrier list shown before any filters are selected, so e.g. 32
   // logos become two pages of 16 with just arrow navigation.
   directPaginate?: boolean;
-  // Colors every logo tile's outline - green for in-appetite results,
-  // red for out-of-appetite results. Omitted for the neutral default list.
-  accent?: CarrierAccent;
-  // Wraps the tile grid in a gradient background - used for the
-  // default (pre-filter) logo grid and the in-appetite results.
-  gradientWrapper?: boolean;
-  // Swaps the wrapper gradient to the blue/indigo variant used on the
-  // "Appetite Checker" (isBlue) eyebrow variant of this section.
-  isBlue?: boolean;
+  // Red-outlines every tile - used for the out-of-appetite results.
+  outOfAppetite?: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [page, setPage] = useState(0);
@@ -190,23 +179,17 @@ function CarrierGrid({
 
   return (
     <div>
-      <div
-        className={`grid grid-cols-3 sm:grid-cols-4 gap-2 md:gap-2.5 ${gradientWrapper ? "rounded-xl p-2.5 md:p-3" : ""}`}
-        style={
-          gradientWrapper
-            ? { backgroundImage: isBlue ? WRAPPER_GRADIENT_BLUE : WRAPPER_GRADIENT_ORANGE }
-            : undefined
-        }
-      >
+      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:gap-2.5">
         {visible.map((carrier) => (
-          <CarrierLogoCell key={carrier.id} carrier={carrier} accent={accent} />
+          <CarrierLogoCell key={carrier.id} carrier={carrier} outOfAppetite={outOfAppetite} />
         ))}
 
         {!directPaginate && !expanded && hasMore ? (
           <button
             type="button"
             onClick={() => setExpanded(true)}
-            className="flex items-center justify-center rounded-lg border border-dashed border-[#5B35E0]/40 bg-[#F5F3FF] px-2 py-3 font-heading text-xs font-semibold text-[#5B35E0] transition-colors hover:border-[#5B35E0] hover:bg-[#EDE9FE] md:text-sm"
+            className="flex h-14 items-center justify-center rounded-lg border border-dashed bg-white px-2 font-heading text-xs font-semibold transition-colors hover:bg-[#F4F5FB] md:h-16 md:text-sm"
+            style={{ borderColor: CARD_BORDER, color: CARD_PRIMARY }}
           >
             View more
           </button>
@@ -214,21 +197,22 @@ function CarrierGrid({
       </div>
 
       {isPaginated && hasMore ? (
-        <div className="mt-2.5 flex items-center justify-between">
+        <div className="mt-3 flex items-center justify-between">
           {directPaginate ? (
             <span aria-hidden />
           ) : (
             <button
               type="button"
               onClick={() => setExpanded(false)}
-              className="font-mono uppercase text-xs tracking-wide font-medium text-[#9CA3AF] transition-colors hover:text-[#5B35E0]"
+              className="font-sans text-xs font-medium transition-colors hover:opacity-70"
+              style={{ color: CARD_MUTED }}
             >
               Show less
             </button>
           )}
 
           <div className="flex items-center gap-2">
-            <span className="font-mono text-xs text-[#9CA3AF]">
+            <span className="font-sans text-xs" style={{ color: CARD_MUTED }}>
               {page + 1} / {totalPages}
             </span>
             <button
@@ -236,7 +220,8 @@ function CarrierGrid({
               onClick={goPrev}
               disabled={page === 0}
               aria-label="Previous carriers"
-              className="flex size-7 items-center justify-center rounded-full border border-[#DDDDDD] text-[#5B35E0] transition-colors hover:border-[#5B35E0] disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex size-7 items-center justify-center rounded-full border bg-white transition-colors hover:bg-[#F4F5FB] disabled:cursor-not-allowed disabled:opacity-40"
+              style={{ borderColor: CARD_BORDER, color: CARD_PRIMARY }}
             >
               <ChevronLeft className="size-4" />
             </button>
@@ -245,7 +230,8 @@ function CarrierGrid({
               onClick={goNext}
               disabled={page >= totalPages - 1}
               aria-label="Next carriers"
-              className="flex size-7 items-center justify-center rounded-full border border-[#DDDDDD] text-[#5B35E0] transition-colors hover:border-[#5B35E0] disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex size-7 items-center justify-center rounded-full border bg-white transition-colors hover:bg-[#F4F5FB] disabled:cursor-not-allowed disabled:opacity-40"
+              style={{ borderColor: CARD_BORDER, color: CARD_PRIMARY }}
             >
               <ChevronRight className="size-4" />
             </button>
@@ -266,7 +252,6 @@ function MatchResultsCard({
   isChecking,
   hasChecked,
   error,
-  isBlue,
 }: {
   policyType: string;
   industry: string;
@@ -277,112 +262,129 @@ function MatchResultsCard({
   isChecking: boolean;
   hasChecked: boolean;
   error: string | null;
-  isBlue: boolean;
 }) {
   const summaryParts = [policyType, industry, state].filter(Boolean);
 
   return (
-    <div className="rounded-2xl border border-[#ECEEF2] bg-white p-5 md:p-6 lg:p-7">
-      <div className="border-b border-[#ECEEF2] pb-5">
-        <p className="font-sans text-lg font-regular text-[#2A297C]">
-          {hasChecked
-            ? `${inAppetite.length} carriers in appetite`
-            : allCarriers.length
-              ? `${allCarriers.length} carriers available`
-              : "Carriers available"}
-        </p>
-        {summaryParts.length > 0 ? (
-          <p className="mt-1 font-mono text-sm font-medium text-[#444444]">
-            {summaryParts.join(" / ")}
-          </p>
-        ) : !isChecking && !error ? (
-          <p className="mt-1 font-mono text-sm font-medium text-[#444444]">
-            Choose a product, industry, and state to check appetite.
-          </p>
-        ) : null}
-      </div>
-
-      {isChecking ? (
-        <div className="flex flex-col items-center justify-center gap-3 py-16">
-          <Loader2
-            className="size-8 animate-spin text-[#5B35E0]"
-            aria-hidden
-          />
-          <p className="font-heading text-sm font-medium text-[#2A297C]">
-            Checking Appetite...
-          </p>
-        </div>
-      ) : error ? (
-        <div className="py-10 text-center">
-          <p className="font-heading text-sm font-medium text-[#D64545]">
-            {error}
-          </p>
-        </div>
-      ) : hasChecked ? (
-        <>
-          <div className="py-5">
-            <p className="mb-3 font-mono text-sm font-medium uppercase text-[#72AF23]">
-              IN APPETITE ({inAppetite.length})
+    // Translucent frame around a white card, same as the product graphics.
+    <div className="rounded-[1.25rem] border border-white/25 bg-white/20 p-2.5 shadow-[0_24px_60px_rgba(21,31,77,0.12)] backdrop-blur-[2.5px] md:p-3">
+      <div
+        className="rounded-2xl border bg-white p-5 shadow-[0_8px_24px_rgba(21,31,77,0.08)] md:p-6"
+        style={{ borderColor: CARD_BORDER }}
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p
+              className="font-heading text-lg font-semibold md:text-xl"
+              style={{ color: CARD_INK }}
+            >
+              {hasChecked
+                ? `In appetite (${inAppetite.length})`
+                : allCarriers.length
+                  ? `${allCarriers.length} carriers available`
+                  : "Carriers available"}
             </p>
-            {inAppetite.length > 0 ? (
-              <CarrierGrid
-                carriers={inAppetite}
-                maxVisible={MAX_VISIBLE_RESULTS}
-                accent="green"
-                gradientWrapper
-                isBlue={isBlue}
-              />
-            ) : (
-              <p className="font-sans text-sm text-[#9CA3AF]">
-                No carriers in appetite for this selection.
+            {summaryParts.length > 0 ? (
+              <p className="mt-1 font-sans text-sm" style={{ color: CARD_MUTED }}>
+                {summaryParts.join(" · ")}
               </p>
-            )}
+            ) : !isChecking && !error ? (
+              <p className="mt-1 font-sans text-sm" style={{ color: CARD_MUTED }}>
+                Choose a product, industry, and state to check appetite.
+              </p>
+            ) : null}
           </div>
+          <span className="flex shrink-0 items-center gap-1.5 rounded-md bg-[#E3F6EA] px-2.5 py-1 font-sans text-xs font-semibold text-[#16A34A] md:text-sm">
+            <Check className="size-3.5 md:size-4" strokeWidth={2.5} aria-hidden />
+            Live appetite
+          </span>
+        </div>
 
-          <div className="border-t border-[#ECEEF2] pt-5">
-            <p className="mb-3 font-mono text-sm font-medium uppercase text-[#DC2626]">
-              OUT OF APPETITE ({outOfAppetite.length})
-            </p>
-            {outOfAppetite.length > 0 ? (
-              <CarrierGrid
-                carriers={outOfAppetite}
-                maxVisible={MAX_VISIBLE_RESULTS}
-                accent="red"
-              />
-            ) : (
-              <p className="font-sans text-sm text-[#9CA3AF]">
-                No carriers out of appetite for this selection.
-              </p>
-            )}
-          </div>
-        </>
-      ) : (
-        <div className="py-5">
-          {allCarriers.length > 0 ? (
-            <CarrierGrid
-              carriers={allCarriers}
-              directPaginate
-              gradientWrapper
-              isBlue={isBlue}
+        {isChecking ? (
+          <div className="flex flex-col items-center justify-center gap-3 py-16">
+            <Loader2
+              className="size-8 animate-spin"
+              style={{ color: CARD_PRIMARY }}
+              aria-hidden
             />
-          ) : (
-            <div className="flex items-center justify-center py-10">
-              <Loader2
-                className="size-6 animate-spin text-[#5B35E0]"
-                aria-hidden
-              />
+            <p className="font-heading text-sm font-medium" style={{ color: CARD_INK }}>
+              Checking Appetite...
+            </p>
+          </div>
+        ) : error ? (
+          <div className="py-10 text-center">
+            <p className="font-heading text-sm font-medium text-[#D64545]">
+              {error}
+            </p>
+          </div>
+        ) : hasChecked ? (
+          <>
+            <div className="pt-5">
+              {inAppetite.length > 0 ? (
+                <CarrierGrid carriers={inAppetite} maxVisible={MAX_VISIBLE_RESULTS} />
+              ) : (
+                <p className="font-sans text-sm" style={{ color: CARD_MUTED }}>
+                  No carriers in appetite for this selection.
+                </p>
+              )}
             </div>
-          )}
-        </div>
-      )}
 
-      <div className="mt-5 flex flex-col items-start justify-between gap-4 border-t border-[#ECEEF2] pt-5 sm:flex-row sm:items-center">
-        <p className="font-mono text-sm font-medium uppercase text-[#444444]">
-          QUOTES AVAILABLE IN MINUTES
-        </p>
-        <Button href="/contact" variant="primary" className="shrink-0">
-          Get quotes
-        </Button>
+            <div className="mt-5 border-t pt-5" style={{ borderColor: CARD_BORDER }}>
+              <p
+                className="mb-3 font-mono text-sm font-medium uppercase"
+                style={{ color: OUT_OF_APPETITE_RED }}
+              >
+                OUT OF APPETITE ({outOfAppetite.length})
+              </p>
+              {outOfAppetite.length > 0 ? (
+                <CarrierGrid
+                  carriers={outOfAppetite}
+                  maxVisible={MAX_VISIBLE_RESULTS}
+                  outOfAppetite
+                />
+              ) : (
+                <p className="font-sans text-sm" style={{ color: CARD_MUTED }}>
+                  No carriers out of appetite for this selection.
+                </p>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="pt-5">
+            {allCarriers.length > 0 ? (
+              <CarrierGrid carriers={allCarriers} directPaginate />
+            ) : (
+              <div className="flex items-center justify-center py-10">
+                <Loader2
+                  className="size-6 animate-spin"
+                  style={{ color: CARD_PRIMARY }}
+                  aria-hidden
+                />
+              </div>
+            )}
+          </div>
+        )}
+
+        <div
+          className="mt-5 flex flex-col items-start justify-between gap-4 border-t pt-5 sm:flex-row sm:items-center"
+          style={{ borderColor: CARD_BORDER }}
+        >
+          <p
+            className="flex items-center gap-2.5 font-sans text-sm md:text-base"
+            style={{ color: "#4B5563" }}
+          >
+            <RefreshCw className="size-4 text-[#16A34A] md:size-5" strokeWidth={2.25} aria-hidden />
+            Quotes available in minutes
+          </p>
+          <Link
+            href="/contact"
+            className="flex shrink-0 items-center gap-2.5 rounded-lg px-5 py-3 font-sans text-sm font-semibold text-white transition-opacity hover:opacity-90 md:text-base"
+            style={{ background: CARD_PRIMARY }}
+          >
+            <ArrowRight className="size-4 md:size-5" strokeWidth={2.25} aria-hidden />
+            Get quotes
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -615,7 +617,9 @@ const CarrierMatch = ({
   const stateLabel = optionLabel(STATE_OPTIONS, state, "State");
 
   return (
-    <section id={id} ref={sectionRef} className="bg-[#F6F8F9] text-[#0a143b] scroll-mt-20 md:scroll-mt-24">
+    // relative z-20: lifts this section above the next one so the industry /
+    // state dropdowns can overlap it instead of opening behind its content.
+    <section id={id} ref={sectionRef} className="relative z-20 bg-[#F6F8F9] text-[#0a143b] scroll-mt-20 md:scroll-mt-24">
       <Container borderColor="#53535340">
         <div className="py-16 md:py-20 lg:py-24">
           <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12 xl:gap-16">
@@ -693,7 +697,6 @@ const CarrierMatch = ({
               isChecking={isChecking}
               hasChecked={hasChecked}
               error={checkError}
-              isBlue={isBlue}
             />
           </div>
         </div>

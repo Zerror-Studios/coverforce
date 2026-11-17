@@ -18,19 +18,6 @@ import { WayCardHoverProvider } from "./WayCardHoverContext";
 import { WAY_CARD_MODALS } from "@/data/wayCardModals";
 import { CARD_BACKGROUND_STYLES, type CardBackground } from "@/data/wayCardStyles";
 
-const WholesalerMock = dynamic(() => import("./WholesalerMock"), {
-  loading: () => <MockPlaceholder />,
-});
-const BrokerMockWithCardHover = dynamic(
-  () => import("./BrokerMock").then((m) => ({ default: m.BrokerMockWithCardHover })),
-  { loading: () => <MockPlaceholder /> },
-);
-const BrokerMock = dynamic(() => import("./BrokerMock"), {
-  loading: () => <MockPlaceholder />,
-});
-const DeveloperMock = dynamic(() => import("./DeveloperMock"), {
-  loading: () => <MockPlaceholder className="max-w-[min(100%,340px)] sm:max-w-[min(100%,360px)] lg:max-w-[420px]" />,
-});
 const DeveloperTerminalBg = dynamic(() => import("./DeveloperTerminalBg"), {
   ssr: false,
   loading: () => null,
@@ -47,14 +34,84 @@ const GlobeScene = dynamic(() => import("@/components/home/GlobeScene"), {
   ssr: false,
   loading: () => null,
 });
-const AiAppetiteEngineMock = dynamic(
-  () => import("@/components/solutions/wholesalers/AiAppetiteEngineMock"),
-  { loading: () => <MockPlaceholder className="max-w-[min(100%,320px)]" /> },
-);
-const StartupRecentActivityCard = dynamic(
-  () => import("@/components/solutions/startups/StartupRecentActivityCard"),
-  { loading: () => <MockPlaceholder className="max-w-[min(100%,320px)]" /> },
-);
+/** Visible area of an SVG export, in its own units (exports carry transparent shadow margins). */
+type SvgFocus = { x: number; y: number; w: number; h: number };
+
+/**
+ * Card artwork exported as a full SVG, shown at its native size (shrinks to fit).
+ * Alignment uses `focus` - the visible content - rather than the file's edges,
+ * shifted by a percentage of the image so it holds at every card size.
+ */
+function WayCardSvg({
+  src,
+  width,
+  height,
+  focus = { x: 0, y: 0, w: width, h: height },
+  align = "center",
+  valign = "center",
+  scale = 1,
+  maxWidth,
+  maxHeight,
+  lift = 0,
+  shiftX = 0,
+  boost = 1,
+  smallLaptopClassName = "",
+}: {
+  src: string;
+  width: number;
+  height: number;
+  focus?: SvgFocus;
+  align?: "center" | "right";
+  valign?: "center" | "bottom";
+  scale?: number;
+  /** CSS caps that override the default max-w/h-full, e.g. to clear card chrome. */
+  maxWidth?: string;
+  maxHeight?: string;
+  /** Extra upward shift in px (moves without shrinking, unlike padding). */
+  lift?: number;
+  /** Extra horizontal shift in px; negative moves left. */
+  shiftX?: number;
+  /** Visual enlargement around the image's own centre (doesn't move it). */
+  boost?: number;
+  /**
+   * Overrides for small laptops (1024-1279px), where cards are much shorter:
+   * set `--way-lift` (px) / `--way-boost` with `lg:max-xl:[--way-lift:24px]`.
+   */
+  smallLaptopClassName?: string;
+}) {
+  const dx =
+    align === "right"
+      ? ((width - (focus.x + focus.w)) / width) * 100
+      : ((width / 2 - (focus.x + focus.w / 2)) / width) * 100;
+  const dy =
+    valign === "bottom"
+      ? ((height - (focus.y + focus.h)) / height) * 100
+      : ((height / 2 - (focus.y + focus.h / 2)) / height) * 100;
+
+  return (
+    <div
+      className={`flex size-full ${valign === "bottom" ? "items-end lg:pb-2" : "items-center"} ${align === "right" ? "justify-end" : "justify-center"} ${smallLaptopClassName}`}
+    >
+      <img
+        src={src}
+        alt=""
+        width={width}
+        height={height}
+        draggable={false}
+        className="block h-auto max-h-full w-auto max-w-full object-contain"
+        style={{
+          width: scale !== 1 ? width * scale : undefined,
+          maxWidth,
+          maxHeight,
+          objectPosition: align === "right" ? "right center" : undefined,
+          // Lift/boost read CSS vars (default = props) so a breakpoint class
+          // on the wrapper can override them without touching other sizes.
+          transform: `translate(calc(${dx}% + ${shiftX}px), calc(${dy}% - var(--way-lift, ${lift}px))) scale(var(--way-boost, ${boost}))`,
+        }}
+      />
+    </div>
+  );
+}
 
 function MockPlaceholder({ className = "max-w-[250px] sm:max-w-[220px] lg:max-w-[290px]" }: { className?: string }) {
   return (
@@ -96,6 +153,12 @@ type WayCardProps = {
   mobileMockScale?: number;
   /** Static inner mock for sm/md; live mock stays on lg+. */
   previewImage?: string;
+  /** Width class for previewImage (default w-[92%]) - evens out visual size across cards. */
+  previewWidthClass?: string;
+  /** Horizontal shift (% of image width) so previewImage centres on its visible content. */
+  previewShiftX?: number;
+  /** Real SVG size; with it the image box hugs the artwork so previewShiftX is exact. */
+  previewSize?: [number, number];
   /** Max width cap for the live mock at lg only (xl uses mock defaults). */
   mockLgMaxW?: string;
   backgroundScene?: ReactNode;
@@ -113,6 +176,12 @@ type WayCardConfig = Omit<WayCardProps, "children" | "onOpen"> & {
   modalPreviewAlign?: "center" | "right";
 };
 
+/** Card graphics are drawn this much larger than their fitted box so they
+ *  read clearly - live mock on lg+, static preview below lg (tighter there:
+ *  the tagline sits just above it). */
+const MOCK_BOOST = 1.1;
+const PREVIEW_BOOST = 1.08;
+
 // Updated WAY_CARDS - remove lightStrip entries
 const WAY_CARDS: WayCardConfig[] = [
   {
@@ -122,11 +191,22 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "wholesaler",
     dotGrid: true,
     mockShiftDown: true,
-    mobileMockScale: 0.6,
-    previewImage: "/images/home/wholesalers.png",
-    mockLgMaxW: "lg:max-w-[240px]",
-    mock: <WholesalerMock />,
-    modalPreview: <WholesalerMock />,
+    previewImage: "/images/home/three-ways/wholesaler.svg",
+    mock: (
+      <WayCardSvg
+        boost={MOCK_BOOST}
+        src="/images/home/three-ways/wholesaler.svg"
+        width={472}
+        height={352}
+        // Aligned on the main card; the floating card overhangs.
+        focus={{ x: 54.4, y: 54.4, w: 361, h: 243 }}
+        valign="bottom"
+        lift={72}
+        // Short cards at 1024-1279: sit lower, clear of the tagline.
+        smallLaptopClassName="lg:max-xl:[--way-lift:24px] lg:max-xl:[--way-boost:1]"
+      />
+    ),
+    modalPreview: <WayCardSvg src="/images/home/three-ways/wholesaler.svg" width={472} height={352} />,
   },
   {
     label: "Brokers",
@@ -136,11 +216,22 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "broker",
     backgroundScene: <BrokersCardEarth />,
     backgroundSceneBlendScreen: true,
-    mobileMockScale: 0.64,
-    previewImage: "/images/home/brokers.png",
-    mockLgMaxW: "lg:max-w-[220px]",
-    mock: <BrokerMockWithCardHover />,
-    modalPreview: <BrokerMock />,
+    previewImage: "/images/home/three-ways/broker.svg",
+    mock: (
+      <WayCardSvg
+        boost={MOCK_BOOST}
+        src="/images/home/three-ways/broker.svg"
+        width={498}
+        height={325}
+        // Aligned on the main card; the floating card overhangs.
+        focus={{ x: 54.4, y: 54.4, w: 389, h: 216 }}
+        valign="bottom"
+        // +24 vs wholesaler: its main card is shorter, so this lines up their tops.
+        lift={96}
+        smallLaptopClassName="lg:max-xl:[--way-lift:40px] lg:max-xl:[--way-boost:1]"
+      />
+    ),
+    modalPreview: <WayCardSvg src="/images/home/three-ways/broker.svg" width={498} height={325} />,
   },
   {
     label: "Developers",
@@ -156,14 +247,35 @@ const WAY_CARDS: WayCardConfig[] = [
     variant: "dark",
     wide: true,
     background: "developer",
-    className: "lg:col-span-2",
-    mockAlign: "bottom",
-    mobileMockScale: 0.7,
-    previewImage: "/images/home/developers.png",
+    // Full row on tablet (2-col grid) and desktop.
+    className: "sm:col-span-2 sm:max-lg:aspect-[2/1]!",
+    previewImage: "/images/home/three-ways/developer.svg",
+    // No transparent margin in this export, so a smaller width matches the others visually.
+    previewWidthClass: "w-[72%]",
     backgroundScene: <DeveloperTerminalBg />,
-    mock: <DeveloperMock lgCompact />,
-    modalPreview: <DeveloperMock align="modal" />,
-    modalPreviewAlign: "right",
+    mock: (
+      <WayCardSvg
+        boost={MOCK_BOOST}
+        src="/images/home/three-ways/developer.svg"
+        width={412}
+        height={272}
+        align="right"
+        scale={1.2}
+        // Keeps clear of the terminal text and the expand button on narrower laptops.
+        maxWidth="56%"
+        maxHeight="calc(100% - 88px)"
+        // Nudged in from the card's right edge.
+        shiftX={-88}
+        smallLaptopClassName="lg:max-xl:[--way-boost:0.9]"
+      />
+    ),
+    // Popup preview fills its slot height; the developer artwork reads too
+    // large at that size, so cap it at 76% of the slot from 1024px up.
+    modalPreview: (
+      <div className="flex size-full items-center justify-center lg:h-[76%]">
+        <WayCardSvg src="/images/home/three-ways/developer.svg" width={412} height={272} />
+      </div>
+    ),
   },
   {
     label: "Startups",
@@ -173,15 +285,23 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "startup",
     backgroundInteractive: true,
     mockShiftDown: true,
-    mobileMockScale: 0.88,
-    previewImage: "/images/home/startup.png",
-    mockLgMaxW: "lg:max-w-[320px]",
+    previewImage: "/images/home/three-ways/startup.svg",
+    // Centre the phone (left 150 of 229 units), not the whole export.
+    previewShiftX: 17.2,
+    previewSize: [229, 309],
+    previewWidthClass: "w-auto max-w-[92%]",
+    // Focus is the phone (left 150px); the checklist card overhangs to its right.
     mock: (
-      <div className="w-full max-w-full max-sm:mt-6">
-        <AiAppetiteEngineMock />
-      </div>
+      <WayCardSvg
+        boost={MOCK_BOOST}
+        src="/images/home/three-ways/startup.svg"
+        width={229}
+        height={309}
+        focus={{ x: 0, y: 0, w: 150, h: 309 }}
+        smallLaptopClassName="lg:max-xl:[--way-boost:1]"
+      />
     ),
-    modalPreview: <AiAppetiteEngineMock />,
+    modalPreview: <WayCardSvg src="/images/home/three-ways/startup.svg" width={229} height={309} />,
     backgroundScene: <GlobeScene interactive transparent tone="white" />,
   },
   {
@@ -192,15 +312,21 @@ const WAY_CARDS: WayCardConfig[] = [
     background: "carrier",
     dotGrid: true,
     mockShiftDown: true,
-    mobileMockScale: 0.88,
-    previewImage: "/images/home/carriers.png",
-    mockLgMaxW: "lg:max-w-[320px]",
+    previewImage: "/images/home/three-ways/carrier.svg",
+    // Visible content sits 30 units right of the export's centre.
+    previewShiftX: -6.6,
+    previewSize: [453, 346],
+    previewWidthClass: "w-auto max-w-[92%]",
     mock: (
-      <div className="w-full max-w-full max-sm:mt-6">
-        <StartupRecentActivityCard />
-      </div>
+      <WayCardSvg
+        boost={MOCK_BOOST}
+        src="/images/home/three-ways/carrier.svg"
+        width={453}
+        height={346}
+        focus={{ x: 60, y: 60, w: 393, h: 254 }}
+      />
     ),
-    modalPreview: <StartupRecentActivityCard />,
+    modalPreview: <WayCardSvg src="/images/home/three-ways/carrier.svg" width={453} height={346} />,
   },
 ];
 
@@ -257,6 +383,9 @@ const WayCard = memo(function WayCard({
   hideMock = false,
   mobileMockScale,
   previewImage,
+  previewWidthClass = "w-[92%]",
+  previewShiftX,
+  previewSize,
   mockLgMaxW,
   backgroundScene,
   backgroundInteractive = false,
@@ -270,8 +399,10 @@ const WayCard = memo(function WayCard({
   const isMobile = useIsMobile();
   const isCompactMock = useIsMobile("(max-width: 1023px)");
   const isDark = variant === "dark";
-  const enableScene = !isMobile;
-  const enableInteractive = backgroundInteractive && !isMobile;
+  // Animated backgrounds (dot grid, globe video, particle globe, terminal)
+  // only on desktop; phones and tablets get the static card background.
+  const enableScene = !isCompactMock;
+  const enableInteractive = backgroundInteractive && enableScene;
   const resolvedMobileScale =
     mobileMockScale ??
     (mockAlign === "bottom" || mockShiftDown ? 0.72 : 0.82);
@@ -350,9 +481,12 @@ const WayCard = memo(function WayCard({
                 <Image
                   src={previewImage}
                   alt=""
-                  width={800}
-                  height={800}
-                  className="h-auto w-[92%] max-h-[84%] object-contain object-center"
+                  width={previewSize?.[0] ?? 800}
+                  height={previewSize?.[1] ?? 800}
+                  className={`h-auto ${previewWidthClass} max-h-[84%] object-contain object-center`}
+                  style={{
+                    transform: `translateX(${previewShiftX ?? 0}%) scale(${PREVIEW_BOOST})`,
+                  }}
                   sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 0px"
                 />
               ) : (
@@ -479,20 +613,8 @@ export default function ThreeWays() {
 
           fadeTl.to(desc, { opacity: 1, duration: 0.8, ease: "power2.out" });
 
-          const lenis = window.lenis;
-          let scrollPending = false;
-          const onLenisScroll = () => {
-            if (scrollPending) return;
-            scrollPending = true;
-            requestAnimationFrame(() => {
-              ScrollTrigger.update();
-              scrollPending = false;
-            });
-          };
-          lenis?.on("scroll", onLenisScroll);
 
           cleanups.push(() => {
-            lenis?.off("scroll", onLenisScroll);
             fadeTl.scrollTrigger?.kill();
             fadeTl.kill();
           });

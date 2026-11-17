@@ -96,13 +96,13 @@ function AnimatedCarrierBar({
 
 const CARRIER_BARS = [
   {
-    logo: "/images/coailtionloading-logo.svg",
+    logo: "/images/carrier-bar/coalition-loading-logo.svg",
     logoAlt: "Coalition",
     value: 94.8,
     delay: 0,
   },
   {
-    logo: "/images/chubbloading-logo.svg",
+    logo: "/images/carrier-bar/chubb-loading-logo.svg",
     logoAlt: "Chubb",
     value: 10.4,
     delay: MICRO_BAR_STAGGER_MS,

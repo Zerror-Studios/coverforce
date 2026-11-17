@@ -191,23 +191,11 @@ export default function SolutionScrollHero({
           measure();
           updateCardPosition(0);
 
-          const lenis = window.lenis;
-          let scrollPending = false;
-          const onLenisScroll = () => {
-            if (scrollPending) return;
-            scrollPending = true;
-            requestAnimationFrame(() => {
-              ScrollTrigger.update();
-              scrollPending = false;
-            });
-          };
 
-          lenis?.on("scroll", onLenisScroll);
           ScrollTrigger.refresh();
 
           return () => {
             trigger.kill();
-            lenis?.off("scroll", onLenisScroll);
             gsap.set(card, { clearProps: "transform" });
           };
         });
@@ -276,7 +264,7 @@ export default function SolutionScrollHero({
       <Container borderColor="#53535380" className="relative z-10">
         <div className="relative grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="flex flex-col">
-            <div className="relative flex h-svh flex-col">
+            <div className="relative flex h-svh flex-col md:max-lg:h-auto md:max-lg:min-h-svh md:max-lg:pt-28 md:max-lg:pb-6">
               <div ref={heroContentRef} className="flex min-h-0 flex-1 flex-col justify-center">
                 <HeroReveal className="flex flex-col justify-center space-y-8">
                   <EyebrowPill surface="dark">{eyebrow}</EyebrowPill>
@@ -301,6 +289,13 @@ export default function SolutionScrollHero({
                       {secondaryButtonLabel}
                     </Button>
                   </div>
+                  {/* Tablet only: the desktop graphic column (lg+) doesn't
+                      exist here, so show the graphic under the copy. */}
+                  {rightCard ? (
+                    <div className="hidden md:max-lg:mx-auto md:max-lg:block md:max-lg:w-full md:max-lg:max-w-[560px] md:max-lg:pt-4">
+                      {rightCard}
+                    </div>
+                  ) : null}
                 </HeroReveal>
               </div>
 
@@ -432,7 +427,7 @@ export default function SolutionScrollHero({
               <div className="sticky top-0 flex h-svh items-center justify-center">
                 <div
                   ref={cardRef}
-                  className="relative z-40 flex w-full items-center justify-center will-change-transform"
+                  className="relative z-40 flex w-full items-center justify-center"
                 >
                   {rightCard}
                 </div>
@@ -440,7 +435,7 @@ export default function SolutionScrollHero({
               ) : (
                 <div
                   ref={cardRef}
-                  className="relative flex w-full items-center justify-center will-change-transform"
+                  className="relative flex w-full items-center justify-center"
                 >
                   {rightCard}
                 </div>

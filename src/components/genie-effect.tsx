@@ -1,13 +1,14 @@
 "use client";
 import { useRef, useEffect, useCallback, useState, type MutableRefObject } from "react";
 import { flushSync } from "react-dom";
+import Image from "next/image";
+import { RiAppleFill, RiBattery2Fill, RiSearchLine, RiWifiFill } from "@remixicon/react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/magnified-doc";
-import { toCanvas } from "html-to-image";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Phase = "idle" | "opening" | "open" | "closing";
@@ -21,15 +22,29 @@ interface App {
   Icon: React.FC;
   label: string;
   accent: string;
-  tb: [string, string];
   previewImage: string;
+  /** x where the 705px-wide window frame starts inside the preview SVG. */
+  previewFrameX: number;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const WIN_W = 640;
-const WIN_H = 500;
-const WIN_TITLE_H = 42;
+// The preview SVGs differ in size, so each is shifted to put its window frame
+// at WIN_FRAME_X. The box fits the largest one (779×405).
+const WIN_W = 779;
+const WIN_H = 405;
+const WIN_FRAME_X = 73.297;
+// The 705px frame spans x 73.3–778.3; the strip on its left only holds the
+// floating badge. Shift by half that strip so the frame looks centered.
+const WIN_VISUAL_OFFSET_X = 36.6;
+// Traffic-light dots (close / minimize) in box coords.
+const TRAFFIC_LIGHTS_X = [99.297, 112.297];
+const TRAFFIC_LIGHTS_Y = 21;
 const DUR = 500;
+/** Height of the custom menubar drawn on phones (the image's own is cropped). */
+const MOBILE_MENUBAR_H = 28;
+/** Visible artwork extent inside the 779-wide box (badge left → frame right). */
+const MOBILE_CONTENT_LEFT = 44;
+const MOBILE_CONTENT_RIGHT = 778;
 // DPR is read lazily inside setupCanvas - never at module scope, which would
 // run during SSR and either crash or hardcode a value.
 
@@ -71,28 +86,28 @@ function createDockIcon(src: string): React.FC {
 // ─── Apps ─────────────────────────────────────────────────────────────────────
 const APPS: App[] = [
   {
-    id: "loss-run",
-    Icon: createDockIcon("/images/app1.svg"),
-    label: "Loss Run",
-    accent: "#FF6B2A",
-    tb: ["#3a1810", "#280f08"],
-    previewImage: "/images/content2.svg",
-  },
-  {
     id: "acord-125",
-    Icon: createDockIcon("/images/app2.svg"),
+    Icon: createDockIcon("/images/product/submission-intake/dock-acord-125.svg"),
     label: "Acord 125",
     accent: "#FF536A",
-    tb: ["#3a1620", "#280f18"],
-    previewImage: "/images/content2.svg",
+    previewImage: "/images/product/submission-intake/live-demo-1.svg",
+    previewFrameX: 73.297,
+  },
+  {
+    id: "loss-run",
+    Icon: createDockIcon("/images/product/submission-intake/dock-loss-run.svg"),
+    label: "Loss Run",
+    accent: "#FF6B2A",
+    previewImage: "/images/product/submission-intake/live-demo-2.svg",
+    previewFrameX: 26,
   },
   {
     id: "acord-126",
-    Icon: createDockIcon("/images/app3.svg"),
-    label: "Acord 126",
+    Icon: createDockIcon("/images/product/submission-intake/dock-acord-126.svg"),
+    label: "Prior Policy",
     accent: "#1F86F9",
-    tb: ["#0a1838", "#061026"],
-    previewImage: "/images/content2.svg",
+    previewImage: "/images/product/submission-intake/live-demo-3.svg",
+    previewFrameX: 26,
   },
 ];
 
@@ -152,16 +167,30 @@ function renderGenie(
   const srcW = off.width || WIN_W;
   const srcH = off.height || WIN_H;
 
+  // The preview window is translucent glass, so any vertical overlap between
+  // slices stacks alpha and darkens the whole window mid-animation. Snap every
+  // slice to whole device pixels and never paint a device row twice - that
+  // keeps the warp seamless without double-compositing.
+  const dpr = ctx.getTransform().a || 1;
+  const snap = (v: number) => Math.round(v * dpr) / dpr;
+  const px = 1 / dpr;
+  let lastBottom = -Infinity;
+
   for (let y = 0; y < WIN_H; y++) {
     const { left, right, destY } = rows[y];
     const rowW = right - left;
     if (rowW < 0.05) continue;
 
     const nextDestY = y < WIN_H - 1 ? rows[y + 1].destY : destY + Math.max(1, scale);
-    const destH = Math.max(1.5, nextDestY - destY + 1.25);
+    let top = snap(Math.min(destY, nextDestY));
+    let bottom = snap(Math.max(destY, nextDestY));
+    if (bottom - top < px) bottom = top + px;
+    if (top < lastBottom) top = lastBottom;
+    if (bottom <= top) continue;
+    lastBottom = bottom;
 
     const srcY = Math.min(srcH - 1, Math.floor((y / WIN_H) * srcH));
-    ctx.drawImage(off, 0, srcY, srcW, 1, left, destY, rowW, destH);
+    ctx.drawImage(off, 0, srcY, srcW, 1, left, top, rowW, bottom - top);
   }
 
   const glowRaw = dir === "minimize" ? rawT : 1 - rawT;
@@ -178,21 +207,9 @@ function renderGenie(
   }
 }
 
-function DocumentPreviewContent({ src }: { src: string }) {
-  return (
-    <div className="flex h-full w-full items-start justify-center overflow-hidden bg-[#F4F5F7]">
-      <img
-        src={src}
-        alt="document-preview"
-        draggable={false}
-        className="h-full w-full min-w-full object-cover object-top"
-      />
-    </div>
-  );
-}
-
-
-// ─── Mac window wrapper ───────────────────────────────────────────────────────
+// ─── Preview window ───────────────────────────────────────────────────────────
+// The preview SVG already draws its own window chrome, so this only places it
+// and overlays hit areas on the SVG's red/yellow traffic-light dots.
 const MacWindow = ({
   app,
   winPos,
@@ -210,58 +227,34 @@ const MacWindow = ({
   return (
     <div
       ref={domRef}
-      className="absolute flex flex-col overflow-hidden"
+      className="absolute"
       style={{
         width: WIN_W,
         height: WIN_H,
         left: winPos.x,
         top: winPos.y,
-        borderRadius: 13,
-        background: "#1e1e1e",
         zIndex: 40,
         transform: scale === 1 ? undefined : `scale(${scale})`,
         transformOrigin: "top left",
-        boxShadow:
-          "0 32px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.07)",
       }}
     >
-      <div
-        className="flex items-center px-4 shrink-0 relative"
-        style={{
-          height: WIN_TITLE_H,
-          background: `linear-gradient(180deg,${app.tb[0]},${app.tb[1]})`,
-          borderBottom: "1px solid rgba(0,0,0,.45)",
-        }}
-      >
-        <div className="flex items-center gap-2 z-10">
-          <button
-            onClick={onClose}
-            className="w-3.5 h-3.5 rounded-full border-none cursor-pointer hover:brightness-90 transition-all"
-            style={{ background: "#ff5f57", boxShadow: "0 0 0 0.5px #e0443e" }}
-          />
-          <button
-            onClick={onClose}
-            className="w-3.5 h-3.5 rounded-full border-none cursor-pointer hover:brightness-90 transition-all"
-            style={{ background: "#febc2e", boxShadow: "0 0 0 0.5px #d4a017" }}
-          />
-          <div
-            className="w-3.5 h-3.5 rounded-full"
-            style={{ background: "#28c840", boxShadow: "0 0 0 0.5px #1aab29" }}
-          />
-        </div>
-        <span
-          className="absolute inset-x-0 text-center text-xs font-medium pointer-events-none"
-          style={{ color: "rgba(255,255,255,.5)" }}
-        >
-          {app.label}
-        </span>
-      </div>
-      <div
-        className="flex-1 overflow-y-auto"
-        style={{ scrollbarWidth: "none" }}
-      >
-        <DocumentPreviewContent src={app.previewImage} />
-      </div>
+      <img
+        src={app.previewImage}
+        alt={app.label}
+        draggable={false}
+        className="absolute top-0 block max-w-none"
+        style={{ left: WIN_FRAME_X - app.previewFrameX }}
+      />
+      {TRAFFIC_LIGHTS_X.map((cx) => (
+        <button
+          key={cx}
+          type="button"
+          aria-label="Close"
+          onClick={onClose}
+          className="absolute size-3 cursor-pointer rounded-full border-none bg-transparent"
+          style={{ left: cx - 6, top: TRAFFIC_LIGHTS_Y - 6 }}
+        />
+      ))}
     </div>
   );
 };
@@ -406,36 +399,35 @@ function SnapshotStage({
 }: {
   onReady: (canvases: HTMLCanvasElement[]) => void;
 }) {
-  const refs = useRef<(HTMLDivElement | null)[]>([]);
-
   useEffect(() => {
     let cancelled = false;
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
 
-    // Capture work - runs after the page has painted.
+    // Each preview is a single SVG, so draw it straight onto a canvas at the
+    // same offset MacWindow uses. More reliable than DOM-to-image capture
+    // (which can return blank frames, notably in Safari) and much cheaper.
+    const snapshot = (app: App) =>
+      new Promise<HTMLCanvasElement>((resolve, reject) => {
+        const img = new window.Image();
+        img.decoding = "async";
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = WIN_W * ratio;
+          canvas.height = WIN_H * ratio;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return reject(new Error("2D context unavailable"));
+          ctx.scale(ratio, ratio);
+          ctx.drawImage(img, WIN_FRAME_X - app.previewFrameX, 0);
+          resolve(canvas);
+        };
+        img.onerror = () => reject(new Error(`Failed to load ${app.previewImage}`));
+        img.src = app.previewImage;
+      });
+
     const run = async () => {
       try {
-        // Wait one more frame so the offscreen MacWindows have laid out.
-        await new Promise((r) => requestAnimationFrame(() => r(null)));
-        if (cancelled) return;
-
-        // Parallel snapshots - html-to-image's bottleneck is the Image
-        // element rasterizing the SVG, which the browser does off the main
-        // thread, so capturing in parallel is faster than sequential without
-        // overwhelming anything.
-        const canvases = await Promise.all(
-          refs.current
-            .filter((n): n is HTMLDivElement => n !== null)
-            .map((node) =>
-              toCanvas(node, {
-                pixelRatio: 1,
-                width: WIN_W,
-                height: WIN_H,
-                cacheBust: false,
-              }),
-            ),
-        );
-        if (cancelled) return;
-        onReady(canvases);
+        const canvases = await Promise.all(APPS.map(snapshot));
+        if (!cancelled) onReady(canvases);
       } catch (err) {
         console.error("Genie snapshot failed:", err);
         if (!cancelled) onReady([]);
@@ -464,38 +456,7 @@ function SnapshotStage({
     };
   }, [onReady]);
 
-  return (
-    <div
-      aria-hidden
-      style={{
-        position: "fixed",
-        left: -10000,
-        top: 0,
-        pointerEvents: "none",
-      }}
-    >
-      {APPS.map((a, i) => (
-        <div
-          key={a.id}
-          style={{
-            position: "relative",
-            width: WIN_W,
-            height: WIN_H,
-            marginBottom: 20,
-          }}
-        >
-          <MacWindow
-            app={a}
-            winPos={{ x: 0, y: 0 }}
-            onClose={() => {}}
-            domRef={(el) => {
-              refs.current[i] = el;
-            }}
-          />
-        </div>
-      ))}
-    </div>
-  );
+  return null;
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -503,20 +464,25 @@ export default function GenieEffect() {
   // Render the interactive pieces client-side after mount.
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
   const [isLgOnly, setIsLgOnly] = useState(false);
   useEffect(() => {
     setMounted(true);
     const mobileMql = window.matchMedia("(max-width: 767px)");
+    const tabletMql = window.matchMedia("(min-width: 768px) and (max-width: 1023px)");
     const lgMql = window.matchMedia("(min-width: 1024px) and (max-width: 1279px)");
     const sync = () => {
       setIsMobile(mobileMql.matches);
+      setIsTablet(tabletMql.matches);
       setIsLgOnly(lgMql.matches);
     };
     sync();
     mobileMql.addEventListener("change", sync);
+    tabletMql.addEventListener("change", sync);
     lgMql.addEventListener("change", sync);
     return () => {
       mobileMql.removeEventListener("change", sync);
+      tabletMql.removeEventListener("change", sync);
       lgMql.removeEventListener("change", sync);
     };
   }, []);
@@ -559,43 +525,48 @@ export default function GenieEffect() {
 
   const getWinLayout = useCallback((): { pos: Pt; scale: number } => {
     const { w, h } = getContainerSize();
-    if (isMobile) {
-      // Fit with extra side padding so the display reads a bit smaller.
-      const padX = 28;
-      const fit = Math.min(1, (w - padX * 2) / WIN_W);
-      const scale = fit * 0.92;
-      const scaledW = WIN_W * scale;
+    if (isMobile || isTablet) {
+      // As large as fits: the window's real artwork (badge's left edge to the
+      // frame's right edge = MOBILE_CONTENT_LEFT..MOBILE_CONTENT_RIGHT in box
+      // units, measured from the preview SVGs) fills the width minus a small
+      // gutter - the badge stays fully visible.
+      const gutter = isTablet ? 24 : 6;
+      const contentW = MOBILE_CONTENT_RIGHT - MOBILE_CONTENT_LEFT;
+      const scale = Math.min(1, (w - gutter * 2) / contentW);
       const scaledH = WIN_H * scale;
-      const dockReserve = 68;
+      // Compact dock on phones, full-size dock on tablets.
+      const dockReserve = isTablet ? 104 : 68;
       return {
         scale,
         pos: {
-          x: (w - scaledW) / 2,
-          y: Math.max(24, (h - scaledH - dockReserve) / 2 - 8),
+          x: (w - contentW * scale) / 2 - MOBILE_CONTENT_LEFT * scale,
+          // Below the custom mobile menubar.
+          y: Math.max(MOBILE_MENUBAR_H + 12, (h - scaledH - dockReserve) / 2 + MOBILE_MENUBAR_H / 2),
         },
       };
     }
     if (isLgOnly) {
-      const scale = 0.78;
+      const scale = 0.82;
       const scaledW = WIN_W * scale;
       const scaledH = WIN_H * scale;
       const dockReserve = 96;
       return {
         scale,
         pos: {
-          x: (w - scaledW) / 2,
+          x: (w - scaledW) / 2 - WIN_VISUAL_OFFSET_X * scale,
           y: Math.max(36, (h - scaledH - dockReserve) / 2 - 12),
         },
       };
     }
+    const scale = 1.05;
     return {
-      scale: 1,
+      scale,
       pos: {
-        x: (w - WIN_W) / 2,
-        y: (h - WIN_H) / 2 - 20,
+        x: (w - WIN_W * scale) / 2 - WIN_VISUAL_OFFSET_X * scale,
+        y: (h - WIN_H * scale) / 2 - 20,
       },
     };
-  }, [getContainerSize, isMobile, isLgOnly]);
+  }, [getContainerSize, isMobile, isTablet, isLgOnly]);
 
   // Returns dock-button center in CONTAINER-LOCAL coords (not viewport coords).
   // The genie canvas draws in container-local coords too, so these match.
@@ -680,17 +651,35 @@ export default function GenieEffect() {
       setActiveApp(idx);
       startAnim("open", idx, () => {
         stateRef.current.phase = "open";
-        // flushSync forces React to commit the MacWindow into the DOM
-        // synchronously, before clearCanvas runs. Without this, setPhase
-        // batches and the canvas would clear one frame BEFORE the MacWindow
-        // mounts - the page background shows through that gap, producing
-        // the white-shutter flash. With flushSync, by the time clearCanvas
-        // runs the MacWindow (z-40) is already on top of the canvas (z-30),
-        // so the clear is visually invisible.
+        // Commit the MacWindow synchronously so it's in the DOM (z-40, above
+        // the canvas at z-30). Its freshly mounted <img> is NOT painted yet
+        // though - it still has to decode. Clearing the canvas now would show
+        // the bare desktop for a frame or two (the flicker). So the canvas
+        // keeps holding the final genie frame until the image has decoded and
+        // been painted, then it's cleared invisibly underneath the window.
         flushSync(() => {
           setPhase("open");
         });
-        clearCanvas();
+        // The window is translucent glass: if it is visible on top of the
+        // canvas's final frame, the two stack and darken, then lighten again
+        // when the canvas clears (a blink). So keep the window hidden until
+        // its image is decoded, then reveal it and clear the canvas in the
+        // SAME frame - a single clean swap.
+        const win = windowRef.current;
+        if (win) win.style.opacity = "0";
+        const img = win?.querySelector("img");
+        const decoded =
+          img && typeof img.decode === "function"
+            ? img.decode().catch(() => undefined)
+            : Promise.resolve();
+        decoded.then(() => {
+          requestAnimationFrame(() => {
+            // Skip if a minimize already started and owns the canvas.
+            if (stateRef.current.phase !== "open") return;
+            if (windowRef.current) windowRef.current.style.opacity = "";
+            clearCanvas();
+          });
+        });
       });
     },
     [getWinLayout, setupCanvas, startAnim, clearCanvas],
@@ -806,7 +795,7 @@ export default function GenieEffect() {
   return (
     <div
       ref={containerRef}
-      className="relative h-[min(52vh,420px)] min-h-[18rem] w-full select-none overflow-hidden md:h-[min(85vh,860px)] md:min-h-162.5"
+      className="relative h-[min(46vh,340px)] min-h-[19rem] w-full select-none overflow-hidden md:h-[min(62vh,600px)] md:min-h-[30rem] lg:h-[min(85vh,860px)] lg:min-h-162.5"
     >
       <style>{`
         @keyframes blink { 0%,49% { opacity: 1 } 50%,100% { opacity: 0 } }
@@ -817,67 +806,41 @@ export default function GenieEffect() {
         }
       `}</style>
       <div className="absolute inset-0 overflow-hidden">
-      <img
-        src="/macos.png"
-        alt="macos-background"
-        aria-hidden="true"
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-
-      {/* Aurora blobs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div
-          className="absolute rounded-full blur-3xl opacity-25"
-          style={{
-            width: 440,
-            height: 440,
-            left: "8%",
-            top: "20%",
-            background: "radial-gradient(circle,#2670d2,transparent)",
-          }}
-        />
-        <div
-          className="absolute rounded-full blur-3xl opacity-20"
-          style={{
-            width: 360,
-            height: 360,
-            right: "10%",
-            top: "40%",
-            background: "radial-gradient(circle,#5a32c8,transparent)",
-          }}
-        />
-        <div
-          className="absolute rounded-full blur-3xl opacity-15"
-          style={{
-            width: 400,
-            height: 400,
-            left: "38%",
-            top: "3%",
-            background: "radial-gradient(circle,#14a0bd,transparent)",
-          }}
-        />
+        {/* The image includes its own menubar. On phones that bar shrinks to
+            unreadable and gets cut off at the sides, so the image is drawn
+            6.3% taller and shifted up (its bar is 5.9% of its height) to crop
+            it, and a real-size menubar is drawn on top instead. */}
+        <div className="absolute inset-x-0 bottom-0 top-0 max-lg:-top-[6.3%]">
+          <Image
+            src="/images/product/submission-intake/mac-display.png"
+            alt="macos-background"
+            aria-hidden="true"
+            fill
+            sizes="(min-width: 1280px) 1216px, 100vw"
+            quality={90}
+            className="object-cover object-top"
+          />
+        </div>
       </div>
 
-      {/* Menubar - safe to SSR (no motion values, no client-only state) */}
       <div
-        className="absolute top-0 left-0 right-0 flex items-center justify-between px-2 md:px-3"
-        style={{
-          height: 27,
-          zIndex: 50,
-          background: "rgba(0,0,0,.3)",
-          backdropFilter: "blur(16px)",
-          borderBottom: "1px solid rgba(255,255,255,.06)",
-        }}
+        className="absolute inset-x-0 top-0 z-[45] flex items-center justify-between bg-[#4b3f8f]/55 px-3 font-sans text-[11px] leading-none text-white md:text-xs lg:hidden"
+        style={{ height: MOBILE_MENUBAR_H }}
+        aria-hidden
       >
-        <span className="text-white/70 flex max-w-[70%] items-center gap-1 truncate text-[10px] font-semibold tracking-tight md:max-w-none md:text-[11px]">
-         <img src="/macicon.png" alt="mac-icon" aria-hidden="true" className="w-4 h-4 shrink-0" />
-          <span className="truncate">{app?.label ?? "CoverForce"}</span>
-          <span className="hidden md:inline">&nbsp; File &nbsp; Edit &nbsp; View
-          &nbsp; Window &nbsp; Help</span>
-        </span>
-        <span className="text-white/60 text-[10px] font-medium md:text-[11px]">9:41 AM</span>
-      </div>
-
+        <div className="flex items-center gap-3">
+          <RiAppleFill className="size-3.5" />
+          <span className="font-semibold">CoverForce</span>
+          <span className="text-white/85">File</span>
+          <span className="text-white/85">Edit</span>
+          <span className="text-white/85">View</span>
+        </div>
+        <div className="flex items-center gap-2.5">
+          <RiBattery2Fill className="size-3.5" />
+          <RiWifiFill className="size-3.5" />
+          <RiSearchLine className="size-3" />
+          <span>12:24 PM</span>
+        </div>
       </div>
 
       {/* Genie canvas - outside clipped scene so the warp isn't cut off */}

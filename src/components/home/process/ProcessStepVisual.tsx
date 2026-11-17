@@ -1,59 +1,39 @@
 "use client";
 
 import type { ProcessStep } from "@/data/processSteps";
-import dynamic from "next/dynamic";
+import Image from "next/image";
 
-const AcordStepVisual = dynamic(() => import("./AcordStepVisual"), {
-  ssr: false,
-  loading: () => <StepVisualPlaceholder />,
-});
-const ApplicationStepVisual = dynamic(() => import("./ApplicationStepVisual"), {
-  ssr: false,
-  loading: () => <StepVisualPlaceholder />,
-});
-const NaicsStepVisual = dynamic(() => import("./NaicsStepVisual"), {
-  ssr: false,
-  loading: () => <StepVisualPlaceholder />,
-});
-const CompareQuotesStepVisual = dynamic(() => import("./CompareQuotesStepVisual"), {
-  ssr: false,
-  loading: () => <StepVisualPlaceholder />,
-});
-const BindStepVisual = dynamic(() => import("./BindStepVisual"), {
-  ssr: false,
-  loading: () => <StepVisualPlaceholder />,
-});
+// Index 4 (step 5) is drawn by BindStepVisual, which embeds STEP_SVGS[4].
+const STEP_SVGS = [
+  "/images/home/process-flow/step-1.svg",
+  "/images/home/process-flow/step-2.svg",
+  "/images/home/process-flow/step-3.svg",
+  "/images/home/process-flow/step-4.svg",
+  "/images/home/process-flow/step-5.svg",
+];
 
-function StepVisualPlaceholder() {
+/** Step 5: confetti behind, step SVG, and the animated success badge where its check sits. */
+function BindStepVisual({ label }: { label: string }) {
   return (
-    <div
-      className="h-full w-full animate-pulse rounded-xl bg-[#E8ECF0]/60"
-      aria-hidden
-    />
-  );
-}
-
-function ProcessStepVideo({
-  src,
-  label,
-  className = "",
-}: {
-  src: string;
-  label: string;
-  className?: string;
-}) {
-  return (
-    <div className={`relative h-full w-full overflow-hidden ${className}`}>
-      <video
-        src={src}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        className="absolute inset-0 h-full w-full border-0 object-cover object-center outline-none"
-        aria-label={label}
+    <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
+      <Image
+        src="/images/home/process-flow/pop.svg"
+        alt=""
+        fill
+        className="object-cover object-center"
+        aria-hidden
       />
+      <svg
+        viewBox="0 0 433 486"
+        className="relative z-10 h-full w-full"
+        role="img"
+        aria-label={label}
+      >
+        <image href={STEP_SVGS[4]} width="433" height="486" />
+        {/* Badge in step5.svg was 48px centred at (216.4, 108.4); the gif's badge
+            fills ~61% of its frame, so 78px renders it at that size. */}
+        <image href="/images/home/process-flow/success.gif" x="177.4" y="69.4" width="78" height="78" />
+      </svg>
     </div>
   );
 }
@@ -65,11 +45,21 @@ export default function ProcessStepVisual({
   step: ProcessStep;
   stepIndex: number;
 }) {
-  if (stepIndex === 0) return <AcordStepVisual />;
-  if (stepIndex === 1) return <ApplicationStepVisual />;
-  if (stepIndex === 2) return <NaicsStepVisual />;
-  if (stepIndex === 3) return <CompareQuotesStepVisual />;
-  if (stepIndex === 4) return <BindStepVisual />;
+  if (stepIndex === 4) return <BindStepVisual label={step.heading} />;
 
-  return <ProcessStepVideo src={step.videoSrc} label={step.heading} />;
+  const svg = STEP_SVGS[stepIndex];
+  if (svg) {
+    return (
+      <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
+        <img
+          src={svg}
+          alt={step.heading}
+          draggable={false}
+          className="h-full w-full object-contain"
+        />
+      </div>
+    );
+  }
+
+  return null;
 }

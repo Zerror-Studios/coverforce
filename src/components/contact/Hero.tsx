@@ -16,7 +16,7 @@ import ContactForm from "./ContactForm";
 import SectionRadialGlow from "@/components/common/SectionRadialGlow";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import ScrollTrigger from "gsap/dist/ScrollTrigger";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -97,13 +97,6 @@ const Hero = () => {
         0,
       );
 
-      const lenis = window.lenis;
-      const onLenisScroll = () => ScrollTrigger.update();
-      lenis?.on("scroll", onLenisScroll);
-
-      return () => {
-        lenis?.off("scroll", onLenisScroll);
-      };
     },
     { dependencies: [isDesktop] },
   );

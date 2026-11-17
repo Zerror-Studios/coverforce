@@ -5,7 +5,7 @@ import { createSolutionStepMock } from "@/components/solutions/shared/SolutionSt
 import { PRIMARY_BUTTON_GRADIENT } from "@/data/wayCardStyles";
 
 export const wholesalersHeroCardMock = createSolutionStepMock(
-  "/images/solution/wholesaler1.svg",
+  "/images/solutions/wholesalers/operating-step-1.png",
   "AI Inbox and Document Reader",
 );
 
@@ -18,7 +18,6 @@ export const operatingRows = [
     stat: "95%+",
     statLabelLines: ["Extraction", "Accuracy"] as [string, string],
     Mock: wholesalersHeroCardMock,
-    transferTargetId: "wholesalers-step-1-card",
   },
   {
     id: "appetite",
@@ -28,7 +27,7 @@ export const operatingRows = [
     stat: "40+",
     statLabelLines: ["Carriers In", "One Submission"] as [string, string],
     Mock: createSolutionStepMock(
-      "/images/solution/wholesaler2.svg",
+      "/images/solutions/wholesalers/operating-step-2.png",
       "AI Appetite Engine and Smart Routing",
     ),
   },
@@ -40,7 +39,7 @@ export const operatingRows = [
     stat: "200+",
     statLabelLines: ["Broker Codes", "Managed"] as [string, string],
     Mock: createSolutionStepMock(
-      "/images/solution/wholesaler3.svg",
+      "/images/solutions/wholesalers/operating-step-3.png",
       "Broker Code Delegation and Network Controls",
     ),
   },
@@ -53,7 +52,7 @@ export const operatingRows = [
     stat: "1",
     statLabelLines: ["Unified API", "For Programs"] as [string, string],
     Mock: createSolutionStepMock(
-      "/images/solution/wholesaler4.svg",
+      "/images/solutions/wholesalers/operating-step-4.png",
       "Product Digitization",
     ),
   },

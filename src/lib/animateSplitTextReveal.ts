@@ -315,12 +315,8 @@ export function animateSplitTextReveal(
         updateWave(smootherstep(maxProgress));
     }
 
-    const lenis = window.lenis;
-    const onLenisScroll = () => ScrollTrigger.update();
-    lenis?.on("scroll", onLenisScroll);
 
     return () => {
-        lenis?.off("scroll", onLenisScroll);
         st.kill();
         splits.forEach((split) => split.revert());
     };

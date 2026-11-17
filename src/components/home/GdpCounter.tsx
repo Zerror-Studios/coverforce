@@ -78,24 +78,51 @@ export const GdpCounter = ({ className }: GdpCounterProps) => {
   // Start at anchor to keep SSR/client markup aligned; sync to epoch on mount.
   const [value, setValue] = useState(ANCHOR_PREMIUM);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const rootRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const syncFromClock = () => setValue(getPremiumAt());
+    let inView = true;
 
-    syncFromClock();
+    const stop = () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    };
 
     const schedule = () => {
       timeoutRef.current = setTimeout(() => {
-        // Always re-derive from epoch so background tabs catch up correctly.
+        // Always re-derive from epoch so it catches up after a pause.
         syncFromClock();
         schedule();
       }, nextTickMs());
     };
 
-    schedule();
+    // Only tick (and re-render ~12 animated digits) while on screen and the
+    // tab is visible; jump straight to the current value when it resumes.
+    const sync = () => {
+      stop();
+      if (!inView || document.hidden) return;
+      syncFromClock();
+      schedule();
+    };
+
+    sync();
+
+    const el = rootRef.current;
+    const observer =
+      el && typeof IntersectionObserver !== "undefined"
+        ? new IntersectionObserver(([entry]) => {
+            inView = entry.isIntersecting;
+            sync();
+          })
+        : null;
+    if (el) observer?.observe(el);
+    document.addEventListener("visibilitychange", sync);
 
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      stop();
+      observer?.disconnect();
+      document.removeEventListener("visibilitychange", sync);
     };
   }, []);
 
@@ -103,6 +130,7 @@ export const GdpCounter = ({ className }: GdpCounterProps) => {
 
   return (
     <span
+      ref={rootRef}
       className={`inline-flex items-baseline font-mono text-inherit ${className ?? ""}`}
       aria-label={formatted}
     >

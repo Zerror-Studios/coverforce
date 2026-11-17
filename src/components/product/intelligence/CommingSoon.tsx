@@ -122,12 +122,8 @@ const CommingSoon = () => {
         onEnter: reveal,
       });
 
-      const lenis = window.lenis;
-      const onLenisScroll = () => ScrollTrigger.update();
-      lenis?.on("scroll", onLenisScroll);
 
       return () => {
-        lenis?.off("scroll", onLenisScroll);
         st.kill();
         splitsRef.current.forEach((split) => split.revert());
         splitsRef.current = [];

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, Suspense } from "react";
+import React, { useRef, Suspense, useEffect, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { useTexture, Decal, Line } from "@react-three/drei";
@@ -186,30 +186,30 @@ function AnimatedLine({ start, end, color, isNorthern, curveOffset = 0 }: { star
 }
 
 const CARRIER_LOGO_POOL = [
-    "/images/home/carrier/carrier-berkshire-hathaway.png",
-    "/images/home/carrier/carrier-chubb.png",
-    "/images/home/carrier/carrier-coalition.png",
-    "/images/home/carrier/carrier-cowbell.png",
-    "/images/home/carrier/carrier-employers.png",
-    "/images/home/carrier/carrier-markel.png",
-    "/images/home/carrier/carrier-Travelers.png",
-    "/images/home/carrier/carrier-liberty-mutual.png",
-    "/images/home/carrier/carrier-nationwide.png",
+    "/images/home/globe-logos/berkshire-hathaway.png",
+    "/images/home/globe-logos/chubb.png",
+    "/images/home/globe-logos/coalition.png",
+    "/images/home/globe-logos/cowbell.png",
+    "/images/home/globe-logos/employers.png",
+    "/images/home/globe-logos/markel.png",
+    "/images/home/globe-logos/travelers.png",
+    "/images/home/globe-logos/liberty-mutual.png",
+    "/images/home/globe-logos/nationwide.png",
 ];
 
 const BROKER_LOGO_POOL = [
-    "/images/home/distributors/broker-diligence-brokerage.png",
-    "/images/home/distributors/network-isu-steadfast.png",
-    "/images/home/distributors/wholesaler-amwins.png",
-    "/images/home/distributors/startup-broker-buddha-buddhAI.png",
-    "/images/home/distributors/startup-coverwatch.png",
-    "/images/home/distributors/startup-harper.png",
-    "/images/home/distributors/startup-latent-insurance.png",
-    "/images/home/distributors/startup-rosella.png",
-    "/images/home/distributors/wholesaler-jencap.png",
-    "/images/home/distributors/wholesaler-one80.png",
-    "/images/home/distributors/wholesaler-international-underwriting-agency.png",
-    "/images/home/distributors/brown-brown-white.png",
+    "/images/home/globe-logos/broker-diligence-brokerage.png",
+    "/images/home/globe-logos/network-isu-steadfast.png",
+    "/images/home/globe-logos/wholesaler-amwins.png",
+    "/images/home/globe-logos/startup-broker-buddha-buddhai.png",
+    "/images/home/globe-logos/startup-coverwatch.png",
+    "/images/home/globe-logos/startup-harper.png",
+    "/images/home/globe-logos/startup-latent-insurance.png",
+    "/images/home/globe-logos/startup-rosella.png",
+    "/images/home/globe-logos/wholesaler-jencap.png",
+    "/images/home/globe-logos/wholesaler-one80.png",
+    "/images/home/globe-logos/wholesaler-international-underwriting-agency.png",
+    "/images/home/globe-logos/brown-brown-white.png",
 ];
 
 function getLogoPosition(index: number, total: number, isNorthern: boolean, radius: number) {
@@ -257,7 +257,7 @@ function LogoPlacer({ urls, isNorthern, radius, color, tintColor = '#ffffff' }: 
 }
 
 function CenterLogo() {
-    const texture = useTexture("/images/startups/center-logo.svg") as THREE.Texture;
+    const texture = useTexture("/images/brand/coverforce-mark.svg") as THREE.Texture;
     const aspect = texture.image ? (texture.image as any).width / (texture.image as any).height : 1;
     const height = 0.25;
     const width = height * aspect;
@@ -451,9 +451,24 @@ function ResponsiveScene({ children }: { children: React.ReactNode }) {
 }
 
 export default function RequestGlobe2({ logoColor = 'light' }: { logoColor?: 'light' | 'dark' }) {
+    // Stop rendering while scrolled out of view; resumes just before it re-enters.
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [visible, setVisible] = useState(true);
+
+    useEffect(() => {
+        const el = containerRef.current;
+        if (!el) return;
+        const observer = new IntersectionObserver(
+            ([entry]) => setVisible(entry.isIntersecting),
+            { rootMargin: "200px 0px" },
+        );
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
+
     return (
-        <div className="w-full h-[25rem] sm:h-[30rem] lg:h-[40rem] flex items-center justify-center pointer-events-none">
-            <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+        <div ref={containerRef} className="w-full h-[25rem] sm:h-[30rem] lg:h-[40rem] flex items-center justify-center pointer-events-none">
+            <Canvas camera={{ position: [0, 0, 5], fov: 50 }} frameloop={visible ? "always" : "never"}>
                 <ambientLight intensity={0.5} />
                 <directionalLight position={[10, 10, 10]} intensity={1} />
                 <ResponsiveScene>

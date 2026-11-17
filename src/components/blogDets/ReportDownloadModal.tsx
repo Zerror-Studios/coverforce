@@ -270,7 +270,7 @@ export default function ReportDownloadModal({
             onClick={(e) => e.stopPropagation()}
           >
             <Image
-              src="/images/outer-bg.png"
+              src="/images/blog/report-modal-outer-bg.png"
               alt=""
               fill
               priority
@@ -330,7 +330,7 @@ export default function ReportDownloadModal({
 
                     <div className="relative z-10 overflow-hidden rounded-lg p-3 sm:rounded-xl sm:p-4 md:p-5">
                     <Image
-                      src="/images/inner-bg.png"
+                      src="/images/blog/report-modal-inner-bg.png"
                       alt=""
                       fill
                       className="-z-1 object-cover object-center"

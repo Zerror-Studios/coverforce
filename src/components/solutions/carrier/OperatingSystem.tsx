@@ -4,7 +4,7 @@ import OperatingSystemSection from "@/components/solutions/shared/OperatingSyste
 import { createSolutionStepMock } from "@/components/solutions/shared/SolutionStepIllustration";
 
 export const carrierHeroCardMock = createSolutionStepMock(
-  "/images/solution/carriers12.svg",
+  "/images/solutions/carriers/operating-step-1.png",
   "One Integration Across Your Distribution",
 );
 
@@ -15,7 +15,6 @@ export const operatingRows = [
     description:
       "One API connects your products to wholesalers, brokers, and high-growth startups nationwide - no separate partnerships required.",
     Mock: carrierHeroCardMock,
-    transferTargetId: "carrier-step-1-card",
   },
   {
     id: "ai-validated",
@@ -25,7 +24,7 @@ export const operatingRows = [
     stat: "0%",
     statLabelLines: ["API Error", "Rate"] as [string, string],
     Mock: createSolutionStepMock(
-      "/images/solution/carriers2.svg",
+      "/images/solutions/carriers/operating-step-2.png",
       "AI-Native Testing Infrastructure, Error-Free Submissions",
     ),
   },
@@ -37,7 +36,7 @@ export const operatingRows = [
     stat: "1",
     statLabelLines: ["Unified API", "For Programs"] as [string, string],
     Mock: createSolutionStepMock(
-      "/images/solution/carriers3.svg",
+      "/images/solutions/carriers/operating-step-3.png",
       "Carrier Connectivity Without the Long Build",
     ),
   },
