@@ -195,7 +195,10 @@ const WhyCoverforce = ({ paddingTop }: { paddingTop?: boolean }) => {
       ? orderedSlides[expandingTarget]!.slide
       : whySlides[active]!;
   const isExpanding = expandingTarget !== null;
-  isExpandingRef.current = isExpanding;
+  // Keep refs pointing at the latest values for callbacks and effects.
+  useLayoutEffect(() => {
+    isExpandingRef.current = isExpanding;
+  });
 
   const syncTrackHeight = useCallback(() => {
     const track = trackRef.current;

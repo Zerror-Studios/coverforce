@@ -4,6 +4,7 @@ import React, { useRef, Suspense, useEffect, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { useTexture, Decal, Line } from "@react-three/drei";
+import { hashSeed, seededRandom } from "@/lib/seededRandom";
 
 const hitState = { lastHitTime: 0 };
 function triggerCenterHit(time: number) {
@@ -70,7 +71,10 @@ function AnimatedLine({ start, end, color, isNorthern, curveOffset = 0 }: { star
         return new THREE.QuadraticBezierCurve3(start, mid, end);
     }, [start, end, curveOffset]);
 
-    const timeOffset = React.useMemo(() => Math.random() * 2, []);
+    const timeOffset = React.useMemo(
+        () => seededRandom(hashSeed(start.x, start.y, start.z, end.x, end.y, end.z, curveOffset))() * 2,
+        [start, end, curveOffset],
+    );
     const prevT = useRef(0);
     const tempVec = React.useMemo(() => new THREE.Vector3(), []);
 

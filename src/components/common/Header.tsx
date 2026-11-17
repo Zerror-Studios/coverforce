@@ -389,9 +389,12 @@ const Header = ({
   const renderedMenuRef = useRef<string | null>(null);
   const clipOpenRef = useRef(false);
 
-  activeMenuRef.current = activeMenu;
-  renderedMenuRef.current = renderedMenu;
-  clipOpenRef.current = clipOpen;
+  // Keep refs pointing at the latest values for callbacks and effects.
+  useLayoutEffect(() => {
+    activeMenuRef.current = activeMenu;
+    renderedMenuRef.current = renderedMenu;
+    clipOpenRef.current = clipOpen;
+  });
 
   useEffect(() => {
     setDisplayPathname(pathname);

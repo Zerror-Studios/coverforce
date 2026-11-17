@@ -161,10 +161,12 @@ function CarrierGrid({
 
   // Reset pagination whenever the underlying list changes
   // (e.g. new appetite check results come in)
-  useEffect(() => {
+  const [pagedList, setPagedList] = useState({ carriers, maxVisible });
+  if (pagedList.carriers !== carriers || pagedList.maxVisible !== maxVisible) {
+    setPagedList({ carriers, maxVisible });
     setExpanded(false);
     setPage(0);
-  }, [carriers, maxVisible]);
+  }
 
   const hasMore = carriers.length > maxVisible;
   const totalPages = Math.max(1, Math.ceil(carriers.length / pageSize));

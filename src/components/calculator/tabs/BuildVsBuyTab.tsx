@@ -6,6 +6,27 @@ import { Plug } from 'lucide-react';
 import { CalculatorKpiCard, CalculatorKpiRow, CalculatorSection } from '../CalculatorKpiCard';
 import { calcHeading, calcPara, calcSubheading, calcSubpara } from '../calculatorUi';
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="rounded-lg border border-[#535353]/10 bg-white p-3 font-sans text-sm">
+        <p className="mb-2 font-heading font-medium text-[#444444]">{label} (Cumulative Cost)</p>
+        {payload.map((entry: any, index: number) => (
+          <div key={index} className="mb-1 flex justify-between gap-4">
+            <span className="font-sans" style={{ color: entry.color }}>{entry.name}</span>
+            <span className="font-heading font-medium text-[#444444]">{fmtM(entry.value)}</span>
+          </div>
+        ))}
+        <div className="mt-2 flex justify-between gap-4 border-t border-[#535353]/10 pt-2 font-heading font-medium text-[#444444]">
+          <span>Cost Avoided</span>
+          <span>{fmtM(payload[0].value - payload[1].value)}</span>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
 export default function BuildVsBuyTab({ results }: { results: CalculationResult }) {
   const { years, totalCFSpend, buildTotal, inputs, integrationBuildCost, integrationAnnualCost, integrationComplexityMultiplier } = results;
 
@@ -22,27 +43,6 @@ export default function BuildVsBuyTab({ results }: { results: CalculationResult 
       cfAnnual: y.cfCost
     };
   });
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="rounded-lg border border-[#535353]/10 bg-white p-3 font-sans text-sm">
-          <p className="mb-2 font-heading font-medium text-[#444444]">{label} (Cumulative Cost)</p>
-          {payload.map((entry: any, index: number) => (
-            <div key={index} className="mb-1 flex justify-between gap-4">
-              <span className="font-sans" style={{ color: entry.color }}>{entry.name}</span>
-              <span className="font-heading font-medium text-[#444444]">{fmtM(entry.value)}</span>
-            </div>
-          ))}
-          <div className="mt-2 flex justify-between gap-4 border-t border-[#535353]/10 pt-2 font-heading font-medium text-[#444444]">
-            <span>Cost Avoided</span>
-            <span>{fmtM(payload[0].value - payload[1].value)}</span>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-bottom-4 duration-500 md:gap-6">
@@ -79,7 +79,7 @@ export default function BuildVsBuyTab({ results }: { results: CalculationResult 
             <Plug className="size-4 text-[#6B6B6B]" /> The Integration Trap
           </h3>
           <div className={`mb-4 ${calcPara}`}>
-            Building <strong className="text-[#444444]">{inputs.carrierIntegrations} carrier integrations</strong> isn't just {inputs.carrierIntegrations}x the work. Each new API exponentially increases the maintenance burden due to differing data standards, auth methods, and constant schema changes.
+            Building <strong className="text-[#444444]">{inputs.carrierIntegrations} carrier integrations</strong> isn&apos;t just {inputs.carrierIntegrations}x the work. Each new API exponentially increases the maintenance burden due to differing data standards, auth methods, and constant schema changes.
           </div>
           <div className="space-y-2 border-y border-[#535353]/10 py-3">
             <div className="mb-2 flex justify-between font-sans text-xs">
@@ -96,7 +96,7 @@ export default function BuildVsBuyTab({ results }: { results: CalculationResult 
             </div>
           </div>
           <div className={`mt-4 italic ${calcSubpara}`}>
-            "We thought we could build it for $100k. We spent $500k just keeping the APIs connected when the carriers updated their systems."
+            &quot;We thought we could build it for $100k. We spent $500k just keeping the APIs connected when the carriers updated their systems.&quot;
           </div>
         </CalculatorSection>
 

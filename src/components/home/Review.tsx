@@ -271,8 +271,8 @@ const Review = () => {
               }
             }}
             navigation={{
-              prevEl: prevRef.current,
-              nextEl: nextRef.current,
+              prevEl: null,
+              nextEl: null,
             }}
             className="review-swiper !overflow-visible"
           >

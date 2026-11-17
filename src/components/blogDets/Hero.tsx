@@ -144,6 +144,7 @@ const Hero = ({ post, heroMeta }: HeroProps) => {
 
           <div className="relative mt-5 w-full overflow-hidden rounded-md bg-[#F7F7FB]">
             <div className="relative aspect-video w-full">
+              {/* eslint-disable-next-line @next/next/no-img-element -- CMS hero image, intentionally a native img */}
               <img
                 src={post.image}
                 alt={post.title}

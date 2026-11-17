@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useEffect, useRef } from "react";
 import * as THREE from "three";
 
 const SPACING = 22;
@@ -101,7 +101,10 @@ export default function WayCardDotGridScene({
   /** Set by the effect: wakes the render loop when `active` changes. */
   const wakeRef = useRef<() => void>(() => {});
 
-  activeRef.current = active;
+  // Keep refs pointing at the latest values for callbacks and effects.
+  useLayoutEffect(() => {
+    activeRef.current = active;
+  });
 
   useEffect(() => {
     wakeRef.current();

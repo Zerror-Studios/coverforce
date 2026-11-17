@@ -139,12 +139,14 @@ export function ReplayableAnimatedStat({
   className = "",
   ariaLabel,
 }: AnimatedStatProps & { animationKey: number }) {
-  const [roll, setRoll] = useState(false);
+  // Which animationKey has finished its short pre-roll delay. A new key makes
+  // `roll` false immediately, then true again 40ms later, replaying the roll.
+  const [rolledKey, setRolledKey] = useState(0);
+  const roll = animationKey !== 0 && rolledKey === animationKey;
 
   useEffect(() => {
     if (animationKey === 0) return;
-    setRoll(false);
-    const id = window.setTimeout(() => setRoll(true), 40);
+    const id = window.setTimeout(() => setRolledKey(animationKey), 40);
     return () => window.clearTimeout(id);
   }, [animationKey]);
 
@@ -206,9 +208,8 @@ export function PeriodicIncrementalStat({
   className = "",
   enabled = true,
 }: PeriodicIncrementalStatProps) {
-  const [value, setValue] = useState(start);
-  const [animationKey, setAnimationKey] = useState(0);
-  const prevRef = useRef(start);
+  const [tick, setTick] = useState({ value: start, prev: start, key: 0 });
+  const { value, prev, key: animationKey } = tick;
 
   useEffect(() => {
     if (!enabled) return;
@@ -217,34 +218,21 @@ export function PeriodicIncrementalStat({
     if (reducedMotion) return;
 
     const id = window.setInterval(() => {
-      setValue((current) => {
-        const next = current + step;
-        return next > max ? start : next;
+      setTick((current) => {
+        const next = current.value + step;
+        return { prev: current.value, value: next > max ? start : next, key: current.key + 1 };
       });
-      setAnimationKey((key) => key + 1);
     }, intervalMs);
 
     return () => window.clearInterval(id);
   }, [enabled, start, step, max, intervalMs]);
 
-  useEffect(() => {
-    if (animationKey === 0) return;
-
-    const settleMs =
-      MICRO_ROLL_MS * 0.75 + MICRO_ROLL_STAGGER_MS * (String(value).length - 1) + 80;
-    const id = window.setTimeout(() => {
-      prevRef.current = value;
-    }, settleMs);
-
-    return () => window.clearTimeout(id);
-  }, [animationKey, value]);
-
   const columns = useMemo(
     () =>
       animationKey === 0
         ? staticDigitColumns(value)
-        : buildDigitColumns(prevRef.current, value),
-    [animationKey, value],
+        : buildDigitColumns(prev, value),
+    [animationKey, prev, value],
   );
 
   return (
@@ -421,13 +409,15 @@ export function AnimatedSixtyPercentHover({
   cardHovered?: boolean;
   scrollReady?: boolean;
 }) {
-  const [animationKey, setAnimationKey] = useState(0);
+  const [animationKey, setAnimationKey] = useState(scrollReady ? 1 : 0);
+  const [prevInputs, setPrevInputs] = useState({ scrollReady, cardHovered });
   const columns = cardHovered ? TENS_68_COLUMNS : TENS_60_COLUMNS;
 
-  useEffect(() => {
-    if (!scrollReady) return;
-    setAnimationKey((k) => k + 1);
-  }, [scrollReady, cardHovered]);
+  // Replay the roll whenever the card scrolls in or its hover state flips.
+  if (prevInputs.scrollReady !== scrollReady || prevInputs.cardHovered !== cardHovered) {
+    setPrevInputs({ scrollReady, cardHovered });
+    if (scrollReady) setAnimationKey((k) => k + 1);
+  }
 
   return (
     <ReplayableAnimatedStat
