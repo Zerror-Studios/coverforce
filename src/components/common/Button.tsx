@@ -124,9 +124,12 @@ const Button = ({
     if (!autoAnimateMs || autoAnimateMs <= 0) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    replay(true);
+    const first = window.requestAnimationFrame(() => replay(true));
     const id = window.setInterval(() => replay(true), autoAnimateMs);
-    return () => window.clearInterval(id);
+    return () => {
+      window.cancelAnimationFrame(first);
+      window.clearInterval(id);
+    };
   }, [autoAnimateMs, replay]);
 
   const hoverHandlers = {

@@ -279,8 +279,8 @@ const Hero = () => {
         clearProps:
           "position,left,top,xPercent,yPercent,zIndex,margin,transform,opacity,color",
       });
-      setIntroSettled(true);
-      return;
+      const frame = requestAnimationFrame(() => setIntroSettled(true));
+      return () => cancelAnimationFrame(frame);
     }
 
     heroRiseStartedRef.current = true;

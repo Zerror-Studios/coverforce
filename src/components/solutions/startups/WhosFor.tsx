@@ -212,7 +212,7 @@ const WhosFor = () => {
               ref={descRef}
               className="mt-4 max-w-md font-sans text-sm font-regular leading-[1.4] text-[#D1D1D1] md:mt-5 md:text-[1.125rem]"
             >
-              Built for founders who are serious about insurance. If you meet the criteria, you're welcome to apply
+              Built for founders who are serious about insurance. If you meet the criteria, you&apos;re welcome to apply
             </p>
           </div>
 

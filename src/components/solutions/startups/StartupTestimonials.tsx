@@ -217,8 +217,8 @@ export default function StartupTestimonials() {
                 }
               }}
               navigation={{
-                prevEl: prevRef.current,
-                nextEl: nextRef.current,
+                prevEl: null,
+                nextEl: null,
               }}
               className="startup-testimonials-swiper !overflow-visible"
             >

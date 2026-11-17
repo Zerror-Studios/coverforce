@@ -51,6 +51,7 @@ export default function ProcessStepVisual({
   if (svg) {
     return (
       <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element -- SVG graphic; next/image does not optimise SVGs */}
         <img
           src={svg}
           alt={step.heading}

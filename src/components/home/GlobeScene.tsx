@@ -2,6 +2,7 @@
 import { useRef, useMemo, useEffect, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import { hashSeed, seededRandom } from "@/lib/seededRandom";
 
 // ─── constants ────────────────────────────────────────────────────────────────
 const COUNT_FULL = 1400;
@@ -81,11 +82,11 @@ function Particles({
 
   // ── per-particle data ──────────────────────────────────────────────────────
   const data = useMemo(() => {
+    const rand = seededRandom(hashSeed(count, soft ? 1 : 0));
     const angles = new Float32Array(count);
     const baseRadii = new Float32Array(count);
     const noiseOffset = new Float32Array(count);   // seed per particle
     const positions = new Float32Array(count * 3);
-    const velocities = new Float32Array(count * 3);
     const sizes = new Float32Array(count);
     const alphas = new Float32Array(count);
     const colors = new Float32Array(count * 3);
@@ -113,19 +114,19 @@ function Particles({
       let r: number;
 
       if (onRing) {
-        angle = (i / ringCount) * Math.PI * 2 + (Math.random() - 0.5) * 0.06;
-        r = RING_R + (Math.random() - 0.5) * CORE_SPREAD;
+        angle = (i / ringCount) * Math.PI * 2 + (rand() - 0.5) * 0.06;
+        r = RING_R + (rand() - 0.5) * CORE_SPREAD;
       } else {
-        angle = Math.random() * Math.PI * 2;
-        haloSide[i] = Math.random() < 0.5 ? -1 : 1;
-        wavePhase[i] = Math.random() * Math.PI * 2;
+        angle = rand() * Math.PI * 2;
+        haloSide[i] = rand() < 0.5 ? -1 : 1;
+        wavePhase[i] = rand() * Math.PI * 2;
 
         const ca = Math.cos(angle);
         const sa = Math.sin(angle);
-        const radial = haloSide[i] * (HALO_MIN + Math.random() * (HALO_MAX - HALO_MIN));
-        const tangent = (Math.random() - 0.5) * TANGENT_SPREAD;
-        const jitterX = (Math.random() - 0.5) * JITTER_SPREAD;
-        const jitterY = (Math.random() - 0.5) * JITTER_SPREAD;
+        const radial = haloSide[i] * (HALO_MIN + rand() * (HALO_MAX - HALO_MIN));
+        const tangent = (rand() - 0.5) * TANGENT_SPREAD;
+        const jitterX = (rand() - 0.5) * JITTER_SPREAD;
+        const jitterY = (rand() - 0.5) * JITTER_SPREAD;
 
         const bx = RING_R * ca + ca * radial - sa * tangent + jitterX;
         const by = RING_R * sa + sa * radial + ca * tangent + jitterY;
@@ -136,7 +137,7 @@ function Particles({
 
       angles[i] = angle;
       baseRadii[i] = r;
-      noiseOffset[i] = Math.random() * 100;
+      noiseOffset[i] = rand() * 100;
       cosA[i] = Math.cos(angle);
       sinA[i] = Math.sin(angle);
       if (onRing) {
@@ -163,11 +164,11 @@ function Particles({
 
       // Slightly smaller point sprites → “thinner” particles.
       sizes[i] = onRing
-        ? (soft ? 0.058 : 0.068) + Math.random() * (soft ? 0.022 : 0.028)
-        : (soft ? 0.048 : 0.056) + Math.random() * (soft ? 0.028 : 0.036);
+        ? (soft ? 0.058 : 0.068) + rand() * (soft ? 0.022 : 0.028)
+        : (soft ? 0.048 : 0.056) + rand() * (soft ? 0.028 : 0.036);
       const alphaBase = onRing
-        ? 0.92 + Math.random() * 0.08
-        : 0.5 + Math.random() * 0.38;
+        ? 0.92 + rand() * 0.08
+        : 0.5 + rand() * 0.38;
       alphas[i] = soft ? alphaBase * 0.62 : alphaBase;
 
       const gradT = THREE.MathUtils.clamp((y / (RING_R + HALO_MAX) + 1) * 0.5, 0, 1);
@@ -184,7 +185,7 @@ function Particles({
       colors[i * 3 + 2] = bottom[2] + (top[2] - bottom[2]) * gradT;
     }
 
-    return { angles, baseRadii, noiseOffset, positions, velocities, sizes, alphas, colors, ringCore, haloSide, haloBaseX, haloBaseY, wavePhase, cosA, sinA, restX, restY, normX, normY, driftFx, driftFy };
+    return { angles, baseRadii, noiseOffset, positions, sizes, alphas, colors, ringCore, haloSide, haloBaseX, haloBaseY, wavePhase, cosA, sinA, restX, restY, normX, normY, driftFx, driftFy };
   }, [count, soft, tone]);
 
   // ── build geometry ─────────────────────────────────────────────────────────
@@ -252,6 +253,10 @@ function Particles({
     return () => cancelAnimationFrame(raf);
   }, [running, invalidate]);
 
+  // Spring velocities are simulation state mutated every frame, so they live in
+  // a ref and are reset whenever the particle data is rebuilt.
+  const velocityRef = useRef<{ data: typeof data; v: Float32Array } | null>(null);
+
   // ── per-frame update ───────────────────────────────────────────────────────
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime;
@@ -273,7 +278,11 @@ function Particles({
     // motion keeps the same speed and feel.
     const steps = Math.min(3, Math.max(1, Math.round(delta * 60)));
 
-    const { velocities, ringCore, wavePhase, noiseOffset, cosA, sinA, restX, restY, normX, normY, driftFx, driftFy } = data;
+    if (velocityRef.current?.data !== data) {
+      velocityRef.current = { data, v: new Float32Array(count * 3) };
+    }
+    const velocities = velocityRef.current.v;
+    const { ringCore, wavePhase, noiseOffset, cosA, sinA, restX, restY, normX, normY, driftFx, driftFy } = data;
     const wobbleTime = t * PULSE_SPEED;
     const driftTime = t * 0.55;
 
@@ -353,16 +362,16 @@ const BASE_ZOOM = 185;
 const ZOOM_PER_PX = 0.42;
 
 function ResponsiveZoom() {
-  const camera = useThree((st) => st.camera);
   const size = useThree((st) => st.size);
-  const invalidate = useThree((st) => st.invalidate);
+  const get = useThree((st) => st.get);
   useEffect(() => {
+    const { camera, invalidate } = get();
     const zoom = Math.min(BASE_ZOOM, Math.min(size.width, size.height) * ZOOM_PER_PX);
     if (Math.abs(camera.zoom - zoom) < 0.5) return;
     camera.zoom = zoom;
     camera.updateProjectionMatrix();
     invalidate();
-  }, [camera, size.width, size.height, invalidate]);
+  }, [get, size.width, size.height]);
   return null;
 }
 

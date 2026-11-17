@@ -92,6 +92,7 @@ function WayCardSvg({
     <div
       className={`flex size-full ${valign === "bottom" ? "items-end lg:pb-2" : "items-center"} ${align === "right" ? "justify-end" : "justify-center"} ${smallLaptopClassName}`}
     >
+      {/* eslint-disable-next-line @next/next/no-img-element -- SVG graphic; next/image does not optimise SVGs */}
       <img
         src={src}
         alt=""
